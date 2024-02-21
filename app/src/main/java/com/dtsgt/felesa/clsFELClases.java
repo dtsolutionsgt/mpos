@@ -1,13 +1,23 @@
 package com.dtsgt.felesa;
 
+import android.content.Context;
+import android.os.Environment;
+
 import com.dtsgt.base.MiscUtils;
+import com.infile.generador.Generador;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class clsFELClases {
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
+public class clsFELClases {
 
     public class JSONFactura {
 
@@ -185,6 +195,7 @@ public class clsFELClases {
         public String idDTE,iddocumento;
 
         private JSONObject jsdoc,jso,jsitem,jshead,jsr,jsrd,jst;
+
         private JSONArray jsitems;
 
 
@@ -198,7 +209,6 @@ public class clsFELClases {
 
             jsdoc = new JSONObject();
             jsitems=new JSONArray();
-
             jshead = new JSONObject();
 
             jshead.put("tipo_contingencia",3);
@@ -275,6 +285,85 @@ public class clsFELClases {
 
     }
 
+    public class JSONFacturaCont {
+        public MiscUtils mu;
+        public String json;
+        public String idDTE,iddocumento;
+
+        private JSONObject jsdoc,jso,jsitem,jshead,jsr,jsrd,jst;
+        private JSONArray jsitems;
+
+        public void FacturaCont(String iddoc,String establecimiento,int idruta,boolean produccion) throws JSONException {
+            FacturaCont(iddoc,establecimiento,idruta,produccion,2);
+        }
+
+        public void FacturaCont(String iddoc,String establecimiento,int idruta,boolean produccion,int condicion_pago) throws JSONException {
+            iddocumento=iddoc;
+            idDTE=numControlFEL(false,establecimiento,iddoc,idruta,mu);
+
+            jsdoc = new JSONObject();
+            jsitems=new JSONArray();
+            jshead = new JSONObject();
+
+            jshead.put("tipo_contingencia",3);
+            jshead.put("motivo_contingencia","Pérdida de conexión a internet");
+            jshead.put("percibir_iva",false);
+            if (produccion) jshead.put("ambiente","01");else jshead.put("ambiente","00");
+            jshead.put("tipo_dte","01");
+            jshead.put("establecimiento",establecimiento);
+            jshead.put("numero_control",idDTE);
+            jshead.put("condicion_pago",condicion_pago);
+
+        }
+
+        public void Receptor(String nit,String nombre) throws JSONException {
+            jsr = new JSONObject();
+
+            jsr.put("tipo","02");
+            jsr.put("nombre",nombre);
+            jsr.put("numero_documento",nit);
+
+            jshead.put("receptor",jsr);
+
+        }
+
+        public void Direccion(String departamento,String municipio,
+                              String complemento,String correo) throws JSONException {
+            jsrd = new JSONObject();
+            jsrd.put("departamento",departamento);
+            jsrd.put("municipio",municipio);
+            jsrd.put("complemento",complemento);
+
+            jsr.put("direccion",jsrd);
+            jsr.put("correo",correo);
+
+            jshead.put("receptor",jsr);
+        }
+
+        public void agregarProducto(String descripcion,double cantidad,
+                                    double precio_unitario,double descuento_monto) throws JSONException {
+
+            jsitem = new JSONObject();
+
+            jsitem.put("tipo", 1);
+            jsitem.put("cantidad",cantidad);
+            jsitem.put("unidad_medida", 59);
+            jsitem.put("descuento", descuento_monto);
+            jsitem.put("descripcion", descripcion);
+            jsitem.put("precio_unitario", precio_unitario);
+
+            jsitems.put(jsitem);
+        }
+
+        public void json() throws JSONException {
+            jshead.put("items",jsitems);
+            jsdoc.put("documento",jshead);
+
+            json = jsdoc.toString();
+        }
+
+    }
+
     public class JSONAnulacion {
         public String json;
 
@@ -318,6 +407,61 @@ public class clsFELClases {
 
             json = jsdoc.toString();
             json+="";
+        }
+
+    }
+
+    public class JSONContingencia {
+        public String conterr;
+
+        private Generador contgen;
+        private String archivo_llave;
+
+        public JSONContingencia(String Usuario,String Clave,String Ambiente,String Archivo_llave) {
+            archivo_llave=Archivo_llave;
+            Clave="123";
+            contgen=new Generador(Usuario, Clave, Ambiente); // 01 Sucursal, 02 Casa matriz
+        }
+
+        public String certifica(String dtejson) throws Exception {
+            String json="",jsonFirmado="";
+
+            conterr="";
+
+            try {
+                File fcert = new File(Environment.getExternalStorageDirectory(), "/"+archivo_llave);
+                InputStream certStream = new FileInputStream(fcert);
+                String cert = new BufferedReader(new InputStreamReader(certStream)).lines().collect(Collectors.joining());
+
+                try {
+                   json = contgen.generarJson(dtejson);
+                } catch (Exception e) {
+                    throw new Exception("json incorrecto: "+e.getMessage());
+                }
+                try {
+                    jsonFirmado = contgen.firmar(json,cert);
+                } catch (Exception e) {
+                    throw new Exception("error de firma: "+e.getMessage());
+                }
+
+                if (jsonFirmado==null) {
+                    throw new Exception("no se logro firmar.");
+                }
+
+                JSONObject jObj = new JSONObject(jsonFirmado);
+
+                Boolean rslt=jObj.getBoolean("ok");
+
+                if (rslt) {
+                    String token=jObj.getString("token");
+                    return token;
+                } else {
+                    conterr=jObj.toString();return "";
+                }
+
+            } catch (Exception e) {
+                throw new Exception("Contingencia: "+e.getMessage());
+           }
         }
 
     }
@@ -370,9 +514,12 @@ public class clsFELClases {
         public String solicitante_correo;
     }
 
-    //region Aux
+    //region Metodos
 
-    private String numControlFEL(boolean esFactura,String codEstab,String uid,int idruta,MiscUtils mu) {
+
+
+
+    public String numControlFEL(boolean esFactura,String codEstab,String uid,int idruta,MiscUtils mu) {
         String nc="DTE-",cpos;
 
         if (esFactura) nc=nc+"01-";else nc=nc+"03-";
@@ -387,7 +534,6 @@ public class clsFELClases {
 
         return nc;
     }
-
 
     //endregion
 

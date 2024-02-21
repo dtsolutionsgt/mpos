@@ -11,9 +11,6 @@ android {
     defaultConfig {
         applicationId "com.dtsgt.mpos"
         minSdkVersion 24
-        //noinspection ExpiredTargetSdkVersion
-      24
-
     }
 
     sourceSets {

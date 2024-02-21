@@ -24,15 +24,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.stream.Collectors;
 
 import com.infile.generador.Generador;
 
@@ -42,10 +38,10 @@ public class FELESATest extends PBase {
     private clsFELClases.JSONFactura jfact;
     private clsFELClases.JSONCredito jcred;
     private clsFELClases.JSONAnulacion janul;
+    private clsFELClases.JSONContingencia jcont;
 
     private clsFactESA FactESA;
     private clsAnulESA AnulESA;
-    private Generador contgen;
 
     private clsD_facturaObj D_facturaObj;
     private clsD_facturadObj D_facturadObj;
@@ -54,8 +50,8 @@ public class FELESATest extends PBase {
 
     private JSONObject jsdoc;
 
-    private String FELestabl,FELUsuario,FELClave;
-    private String corel,dnum,cnombre,cnit,cdir, ccorreo,cgiro,cdep,cmuni;
+    private String FELestabl,FELUsuario,FELClave, FELArchContLLave;
+    private String corel,dnum,cnombre,cnit,cdir, ccorreo,cgiro,cdep,cmuni,cllave;
     private long fcor,cornum;
     private int callbackmode;
 
@@ -79,10 +75,11 @@ public class FELESATest extends PBase {
             FELestabl="0001";
             FELUsuario="06141106141147";
             FELClave="df3b5497c338a7e78d659a468e72a670";
+            FELArchContLLave ="Certificado_06141106141147.crt";
 
             FactESA=new clsFactESA(this,FELUsuario,FELClave);
             AnulESA=new clsAnulESA(this,FELUsuario,FELClave);
-            contgen=new Generador(FELUsuario, FELClave, "02"); // 01 Sucursal, 02 Casa matriz
+            jcont=fclas.new JSONContingencia(FELUsuario, FELClave,"02", FELArchContLLave);
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -423,14 +420,74 @@ public class FELESATest extends PBase {
     //region Contingencia
 
     private void contingenciaCF() {
-        contingenciaCF_prueba();
+        //contingenciaCF_prueba();
+        contingenciaFact_prueba();
     }
 
     private void contingenciaCF_prueba() {
-        try {
+        String jss;
 
+        try {
+            clsFELClases.JSONCreditoCont jcf=fclas.new JSONCreditoCont();
+            jcf.mu=mu;
+
+            jcf.CreditoCont("5467900",FELestabl,101,false);
+            jcf.Receptor("11111111111128","2247806","Receptor Prueba","61101","Prueba Receptor");
+            jcf.Direccion("06","14","Calle 2","implementacionsv1@infile.com");
+            jcf.agregarProducto("Prueba item 1",1,100,13);
+            jcf.json();
+
+            jss=jcf.json;
+
+            cllave=jcont.certifica(jss);
+            if (!cllave.isEmpty()) msgbox("Certificado en contingencia");else msgbox("No se logro certificar:\n "+jcont.conterr);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void contingenciaFact_prueba() {
+        String jss;
+
+        try {
+            clsFELClases.JSONFacturaCont jcf=fclas.new JSONFacturaCont();
+            jcf.mu=mu;
+
+            jcf.FacturaCont("4467901",FELestabl,101,false);
+            //jcf.Receptor("11111111111128","Receptor Prueba");
+            jcf.agregarProducto("Prueba item 1",1,100,13);
+            jcf.json();
+
+            jss=jcf.json;
+            cllave=jcont.certifica(jss);
+            if (!cllave.isEmpty()) msgbox("Certificado en contingencia");else msgbox("No se logro certificar:\n "+jcont.conterr);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    /*
+    private String contingenciaJSON(String dtejson,String archivo_llave_cert) {
+        try {
+
+            File fcert = new File(Environment.getExternalStorageDirectory(), "/"+"Certificado_06141106141147.crt");
+            InputStream certStream = new FileInputStream(fcert);
+            String cert = new BufferedReader(new InputStreamReader(certStream)).lines().collect(Collectors.joining());
+
+            String json = contgen.generarJson(dtejson);
+            String jsonFirmado = contgen.firmar(json,cert);
+
+            JSONObject jObj = new JSONObject(jsonFirmado);
+
+            Boolean rslt=jObj.getBoolean("ok");
+
+            if (rslt) {
+                String token=jObj.getString("token");
+                return token;
+            } else return "";
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return "";
         }
     }
 
@@ -459,6 +516,8 @@ public class FELESATest extends PBase {
         }
     }
 
+     */
+
     private String numControlFEL(boolean esFactura,String codEstab,String uid) {
         String nc="DTE-",cpos;
 
@@ -478,7 +537,6 @@ public class FELESATest extends PBase {
     //endregion
 
     //region Download
-
 
     private void downloadFile() {
         try {
