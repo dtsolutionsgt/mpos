@@ -195,12 +195,12 @@ public class FELESATest extends PBase {
     }
 
     public void doCont(View view) {
-        String s1;
-
-        s1=numControlFEL(true,FELestabl,"1234567890");
         //contingencia();
+        //contingenciaCF_prueba();
+        //contingenciaFact_prueba();
 
-        contingenciaCF();
+        //contingenciaCF();
+        contingenciaFactura();
     }
 
     //endregion
@@ -419,6 +419,18 @@ public class FELESATest extends PBase {
 
     //region Contingencia
 
+    private void contingenciaFactura() {
+
+        D_facturaObj.fill("ORDER BY COREL DESC");
+        corel=D_facturaObj.first().corel;
+
+        D_facturafObj.fill("WHERE (COREL='"+corel+"')");
+        cnombre=D_facturafObj.first().nombre;
+        cnit=D_facturafObj.first().nit;cnit=cnit.replace("-","");
+
+        contFactura();
+    }
+
     private void contingenciaCF() {
         //contingenciaCF_prueba();
         //contingenciaFact_prueba();
@@ -445,6 +457,47 @@ public class FELESATest extends PBase {
         //}
 
         contCF();
+    }
+
+    private boolean contFactura() {
+        String jss;
+
+        try {
+            clsFELClases.JSONFacturaCont jcf=fclas.new JSONFacturaCont();
+            jcf.mu=mu;
+
+            jcf.FacturaCont(corel,FELestabl,101,false);
+
+            jcf.Receptor(cnit,cnombre);
+            //jcf.Direccion(cdep,cmuni,cdir,ccorreo);
+
+            D_facturadObj.fill("WHERE (COREL='"+corel+"')");
+
+            for (int i = 0; i <D_facturadObj.count; i++) {
+                jcf.agregarProducto("Producto "+(i+1),
+                        D_facturadObj.items.get(i).cant,
+                        D_facturadObj.items.get(i).precio,  // precio con iva
+                        D_facturadObj.items.get(i).desmon);
+            }
+
+            jcf.json();
+
+            jss=jcf.json;
+            cllave=jcont.certifica(jss);
+            if (!cllave.isEmpty()) {
+                msgbox("Certificado en mode de contingencia");
+                certFacturaCont(cllave);
+                FactESA.Certifica("100004051",jfact.json);
+                return true;
+            } else {
+                msgbox("No se logro certificar:\n "+jcont.conterr);
+
+                return false;
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+
     }
 
     private boolean contCF() {
@@ -524,6 +577,32 @@ public class FELESATest extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
+    private boolean certFacturaCont(String cllave) {
+        try {
+            jfact=fclas.new JSONFactura();
+
+            jfact.Factura(FELestabl);
+
+            D_facturadObj.fill("WHERE (COREL='"+corel+"')");
+            for (int i = 0; i <D_facturadObj.count; i++) {
+                jfact.agregarServicio("Producto "+(i+1),
+                        D_facturadObj.items.get(i).cant,
+                        D_facturadObj.items.get(i).precio,  // precio con iva
+                        D_facturadObj.items.get(i).desmon);
+            }
+
+            jfact.agregarAdenda(" ");
+            jfact.agregarContingencia(cllave);
+
+            jfact.json();
+            return true;
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
 
     /*
     private String contingenciaJSON(String dtejson,String archivo_llave_cert) {

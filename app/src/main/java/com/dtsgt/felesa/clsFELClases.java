@@ -1,6 +1,5 @@
 package com.dtsgt.felesa;
 
-import android.content.Context;
 import android.os.Environment;
 
 import com.dtsgt.base.MiscUtils;
@@ -26,7 +25,8 @@ public class clsFELClases {
         private JSONObject jsdoc,jso,jsitem,jshead,jsad,jsrec;
         private JSONArray jsitems;
 
-        private boolean receptor;
+        private String llave_cont;
+        private boolean receptor,contingencia;
 
         public void Factura(String establecimiento) throws JSONException {
             Factura(establecimiento,2);
@@ -41,7 +41,8 @@ public class clsFELClases {
             jshead.put("establecimiento",establecimiento);
             jshead.put("condicion_pago",condicion_pago);
 
-            receptor =false;
+            receptor=false;
+            contingencia=false;
         }
 
         public void agregarProducto(String descripcion,double cantidad,
@@ -91,11 +92,17 @@ public class clsFELClases {
             receptor =true;
         }
 
+        public void agregarContingencia(String cllave) {
+            contingencia=true;
+            llave_cont=cllave;
+        }
+
         public void json() throws JSONException {
 
             if (receptor) jshead.put("receptor",jsrec);
             jshead.put("items",jsitems);
             jshead.put("adendas",jsad);
+            if (contingencia) jshead.put("documento_firmado",llave_cont);
             jsdoc.put("documento",jshead);
 
             json = jsdoc.toString();
@@ -110,6 +117,10 @@ public class clsFELClases {
         private JSONObject jsdoc,jso,jsitem,jshead,jsr,jsrd,jst;
         private JSONArray jsitems;
 
+        private String llave_cont;
+        private boolean contingencia;
+
+
         public void Credito(String establecimiento) throws JSONException {
             Credito(establecimiento,2);
         }
@@ -123,6 +134,7 @@ public class clsFELClases {
             jshead.put("establecimiento",establecimiento);
             jshead.put("condicion_pago",condicion_pago);
 
+            contingencia=false;
         }
 
         public void Receptor(String numero_documento,String nrc,String nombre,
@@ -180,8 +192,14 @@ public class clsFELClases {
             jsitems.put(jsitem);
         }
 
+        public void agregarContingencia(String cllave) {
+            contingencia=true;
+            llave_cont=cllave;
+        }
+
         public void json() throws JSONException {
             jshead.put("items",jsitems);
+            if (contingencia) jshead.put("documento_firmado",llave_cont);
             jsdoc.put("documento",jshead);
 
             json = jsdoc.toString();
@@ -327,6 +345,7 @@ public class clsFELClases {
 
         }
 
+        /*
         public void Direccion(String departamento,String municipio,
                               String complemento,String correo) throws JSONException {
             jsrd = new JSONObject();
@@ -339,6 +358,8 @@ public class clsFELClases {
 
             jshead.put("receptor",jsr);
         }
+
+         */
 
         public void agregarProducto(String descripcion,double cantidad,
                                     double precio_unitario,double descuento_monto) throws JSONException {
@@ -419,7 +440,6 @@ public class clsFELClases {
 
         public JSONContingencia(String Usuario,String Clave,String Ambiente,String Archivo_llave) {
             archivo_llave=Archivo_llave;
-            Clave="123";
             contgen=new Generador(Usuario, Clave, Ambiente); // 01 Sucursal, 02 Casa matriz
         }
 
@@ -514,10 +534,7 @@ public class clsFELClases {
         public String solicitante_correo;
     }
 
-    //region Metodos
-
-
-
+    //region Aux
 
     public String numControlFEL(boolean esFactura,String codEstab,String uid,int idruta,MiscUtils mu) {
         String nc="DTE-",cpos;

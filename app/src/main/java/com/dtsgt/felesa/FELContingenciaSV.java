@@ -29,7 +29,6 @@ import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_contingencia_svObj;
-import com.dtsgt.classes.extWaitDlg;
 import com.dtsgt.fel.FELmsgbox;
 import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.mpos.PBase;
@@ -46,7 +45,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class FELFacturaSV extends PBase {
+public class FELContingenciaSV extends PBase {
 
     private TextView lbl1, lbl2, lbl3, lblHalt;
     private ProgressBar pbar;
@@ -72,7 +71,7 @@ public class FELFacturaSV extends PBase {
     private clsD_factura_felObj D_factura_felObj;
     private clsD_factura_fel_paisObj D_factura_fel_paisObj;
     private clsD_factura_svObj D_factura_svObj;
-
+    private clsT_contingencia_svObj T_contingencia_svObj;
     private clsP_productoObj prod;
     private clsD_fel_bitacoraObj D_fel_bitacoraObj;
 
@@ -98,10 +97,10 @@ public class FELFacturaSV extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        try {
 
+        try {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_felfactura_sv);
+            setContentView(R.layout.activity_felcontingencia_sv);
 
             super.InitBase();
 
@@ -117,7 +116,8 @@ public class FELFacturaSV extends PBase {
             pbar.setVisibility(View.INVISIBLE);
 
             felcorel = gl.felcorel;
-            ffcorel = felcorel;corel=felcorel;
+            ffcorel = felcorel;
+            corel = felcorel;
             gl.feluuid = "";
 
             getURL();
@@ -163,7 +163,7 @@ public class FELFacturaSV extends PBase {
             D_factura_felObj = new clsD_factura_felObj(this, Con, db);
             D_factura_fel_paisObj = new clsD_factura_fel_paisObj(this, Con, db);
             D_factura_svObj = new clsD_factura_svObj(this, Con, db);
-
+            T_contingencia_svObj=new clsT_contingencia_svObj(this,Con,db);
 
             D_fel_bitacoraObj = new clsD_fel_bitacoraObj(this, Con, db);
 
@@ -175,14 +175,14 @@ public class FELFacturaSV extends PBase {
 
             facts.add(felcorel);
 
-            String FELArchContLLave ="Certificado_06141106141147.crt";
-            String FELAmbiente="02";
+            String FELArchContLLave = "Certificado_06141106141147.crt";
+            String FELAmbiente = "02";
 
             FactESA = new clsFactESA(this, fel.fel_usuario_certificacion, fel.fel_llave_certificacion);
-            jcont=fclas.new JSONContingencia(fel.fel_usuario_certificacion,fel.fel_llave_certificacion,
-                                             FELAmbiente, FELArchContLLave);
+            jcont = fclas.new JSONContingencia(fel.fel_usuario_certificacion, fel.fel_llave_certificacion,
+                    FELAmbiente, FELArchContLLave);
 
-            ws = new WebServiceHandler(FELFacturaSV.this, gl.wsurl, 60000);
+            ws = new WebServiceHandler(FELContingenciaSV.this, gl.wsurl, 60000);
 
             ffail = 0;
             fidx = 0;
@@ -199,10 +199,10 @@ public class FELFacturaSV extends PBase {
             }
 
         } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {
+            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
-
 
     //region Events
 
@@ -225,16 +225,14 @@ public class FELFacturaSV extends PBase {
 
         if (app.isOnWifi() == 0) {
             gl.FELmsg = "ERROR DE CONEXIÓN A INTERNET";
-            gl.feluuid = "";
-            marcaFacturaContingencia();
+            startActivity(new Intent(this, FELmsgbox.class));finish();
         } else {
             try {
                 Handler mtimer = new Handler();
                 Runnable mrunner = () -> certificaDocumento();
                 mtimer.postDelayed(mrunner, 200);
             } catch (Exception e) {
-                msgbox(new Object() {
-                }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+                msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             }
         }
     }
@@ -287,8 +285,7 @@ public class FELFacturaSV extends PBase {
 
                     jfact.agregarReceptor(cnom, cnit, ccor);
                 } catch (Exception e) {
-                    msgbox(new Object() {
-                    }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+                    msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
                 }
             }
 
@@ -304,10 +301,15 @@ public class FELFacturaSV extends PBase {
 
             jfact.agregarAdenda(" ");
 
+            T_contingencia_svObj.fill("WHERE (COREL='" + felcorel + "')");
+            if (T_contingencia_svObj.count>0) {
+                cllave=T_contingencia_svObj.first().llave;
+                jfact.agregarContingencia(cllave);
+            }
+
             jfact.json();
         } catch (Exception e) {
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
 
@@ -356,13 +358,18 @@ public class FELFacturaSV extends PBase {
                         D_facturadObj.items.get(i).imp);
             }
 
+            T_contingencia_svObj.fill("WHERE (COREL='" + felcorel + "')");
+            if (T_contingencia_svObj.count>0) {
+                cllave=T_contingencia_svObj.first().llave;
+                jfact.agregarContingencia(cllave);
+            }
+
             jcred.json();
 
             String sj = jcred.json;
             sj = sj + "";
         } catch (Exception e) {
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
 
@@ -406,7 +413,7 @@ public class FELFacturaSV extends PBase {
                 callBackSingle();
             } else {
                 gl.FELmsg = "Ocurrió error en FEL :\n\n" + "Factura: " + felcorel + "\n" + fel.error;gl.feluuid = "";
-                marcaFacturaContingencia();
+                startActivity(new Intent(this, FELmsgbox.class));finish();
             }
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
@@ -433,9 +440,7 @@ public class FELFacturaSV extends PBase {
                 }
             } else {
                 gl.FELmsg = "Ocurrió error en FEL :\n\n" + "Factura: " + fel.mpos_identificador_fact + "\n" + fel.error;
-                gl.feluuid = "";
-                startActivity(new Intent(this, FELmsgbox.class));
-                finish();
+                startActivity(new Intent(this, FELmsgbox.class));finish();
             }
         } catch (Exception e) {
             msgbox(new Object() {
@@ -515,170 +520,6 @@ public class FELFacturaSV extends PBase {
         } catch (Exception e) {
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
-        }
-    }
-
-    //endregion
-
-    //region Contingencia
-
-    private void marcaFacturaContingencia() {
-        try {
-            D_facturaObj.fill("WHERE Corel='"+corel+"'");
-            fact = D_facturaObj.first();
-            tipodoc = D_facturaObj.first().ayudante;
-
-            String fcont = fact.feelcontingencia;
-            if (fcont.equalsIgnoreCase(" ")) fcont = "";
-            if (!fcont.isEmpty()) return;
-
-            fact.feelcontingencia = corel;
-            fact.statcom = "N";
-
-            D_facturaObj.update(fact);
-
-            generaLlaveContingencia();
-        } catch (Exception e) {
-            msgbox2(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
-        }
-    }
-
-    private void generaLlaveContingencia() {
-        try {
-            if (!tipodoc.equalsIgnoreCase("C")) {
-                contingenciaFactura();
-            } else {
-                contingenciaCF();
-            }
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void contingenciaFactura() {
-
-        D_facturaObj.fill("ORDER BY COREL DESC");
-        corel=D_facturaObj.first().corel;
-
-        D_facturafObj.fill("WHERE (COREL='"+corel+"')");
-        cnombre=D_facturafObj.first().nombre;
-        cnit=D_facturafObj.first().nit;cnit=cnit.replace("-","");
-
-        contFactura();
-    }
-
-    private void contingenciaCF() {
-
-        D_facturaObj.fill("ORDER BY COREL DESC");
-        corel=D_facturaObj.first().corel;
-
-        D_facturafObj.fill("WHERE (COREL='"+corel+"')");
-        cnombre=D_facturafObj.first().nombre;
-        cnit=D_facturafObj.first().nit;cnit=cnit.replace("-","");
-        cdir=D_facturafObj.first().direccion;
-        ccorreo =D_facturafObj.first().correo;
-        dnum="11111111111128";
-
-        D_factura_svObj.fill("WHERE (COREL='" + corel + "')");
-        cgiro = D_factura_svObj.first().codigo_tipo_negocio + "";
-        cdep = D_factura_svObj.first().codigo_departamento;
-        cdep = cdep.substring(1, 3);
-        cmuni = D_factura_svObj.first().codigo_municipio;
-        cmuni = cmuni.substring(3, 5);
-
-        contCF();
-    }
-
-    private void contFactura() {
-        String jss;
-
-        try {
-            clsFELClases.JSONFacturaCont jcf=fclas.new JSONFacturaCont();
-            jcf.mu=mu;
-
-            jcf.FacturaCont(corel,fel.fel_codigo_establecimiento,gl.codigo_ruta,false);
-
-            if (tipodoc.equalsIgnoreCase("N")) jcf.Receptor(cnit,cnombre);
-
-            D_facturadObj.fill("WHERE (COREL='"+corel+"')");
-
-            for (int i = 0; i <D_facturadObj.count; i++) {
-                jcf.agregarProducto("Producto "+(i+1),
-                        D_facturadObj.items.get(i).cant,
-                        D_facturadObj.items.get(i).precio,  // precio con iva
-                        D_facturadObj.items.get(i).desmon);
-            }
-
-            jcf.json();jss=jcf.json;
-
-            gl.FEL_llave_cont=jcont.certifica(jss);
-
-            if (!gl.FEL_llave_cont.isEmpty()) {
-                gl.FELmsg+="\n\nCertificado en modo de contingencia";
-                guardaLlaveContingencia();
-            } else {
-                gl.FELmsg+="\n\nNo se logro generar la contingencia:\n "+jcont.conterr;
-                startActivity(new Intent(this, FELmsgbox.class));finish();
-            }
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void contCF() {
-        String jss;
-
-        try {
-            clsFELClases.JSONCreditoCont jcf=fclas.new JSONCreditoCont();
-            jcf.mu=mu;
-
-            jcf.CreditoCont(corel,fel.fel_codigo_establecimiento,gl.codigo_ruta,false);
-            jcf.Receptor(dnum,cnit,cnombre,cgiro,cnombre);
-            jcf.Direccion(cdep,cmuni,cdir, ccorreo);
-
-            D_facturadObj.fill("WHERE (COREL='"+corel+"')");
-
-            for (int i = 0; i <D_facturadObj.count; i++) {
-                jcf.agregarProducto("Producto "+(i+1),
-                        D_facturadObj.items.get(i).cant,
-                        D_facturadObj.items.get(i).preciodoc,  // precio sin iva
-                        D_facturadObj.items.get(i).imp);
-            }
-
-            jcf.json();jss=jcf.json;
-
-            gl.FEL_llave_cont=jcont.certifica(jss);
-
-            if (!gl.FEL_llave_cont.isEmpty()) {
-                gl.FELmsg+="\n\nCertificado en modo de contingencia";
-                guardaLlaveContingencia();
-            } else {
-                gl.FELmsg+="\n\nNo se logro generar la contingencia:\n "+jcont.conterr;
-                startActivity(new Intent(this, FELmsgbox.class));finish();
-            }
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-
-    private void guardaLlaveContingencia() {
-        try {
-            clsT_contingencia_svObj T_contingencia_svObj = new clsT_contingencia_svObj(this, Con, db);
-
-            clsClasses.clsT_contingencia_sv item = clsCls.new clsT_contingencia_sv();
-
-            item.corel = corel;
-            item.bandera = 0;
-            item.llave = gl.FEL_llave_cont;
-
-            T_contingencia_svObj.add(item);
-
-            startActivity(new Intent(this, FELmsgbox.class));
-            finish();
-
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -1222,6 +1063,7 @@ public class FELFacturaSV extends PBase {
             D_fel_bitacoraObj.reconnect(Con,db);
             D_factura_fel_paisObj.reconnect(Con,db);
             D_factura_svObj.reconnect(Con,db);
+            T_contingencia_svObj.reconnect(Con,db);
 
             prod.reconnect(Con,db);
         } catch (Exception e) {
@@ -1235,5 +1077,6 @@ public class FELFacturaSV extends PBase {
     }
 
     //endregion
+
 
 }

@@ -40,7 +40,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity">
-       <activity
+        <activity
+            android:name="com.dtsgt.felesa.FELContingenciaSV"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
@@ -825,8 +828,6 @@
             android:exported="false"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
-
-
         <activity
             android:name=".ProductoLista"
             android:exported="false"

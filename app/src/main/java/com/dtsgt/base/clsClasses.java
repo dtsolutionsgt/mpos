@@ -1523,6 +1523,12 @@ public class clsClasses {
 
     //region T Clases
 
+    public class clsT_contingencia_sv {
+        public String corel;
+        public int  bandera;
+        public String llave;
+    }
+
     public class clsT_prodmenu {
         public int  id;
         public int  idsess;

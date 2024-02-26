@@ -1788,6 +1788,16 @@ public class BaseDatosVersion {
             sql="CREATE INDEX D_factura_anulacion_idx1 ON D_factura_anulacion(COREL)";db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [T_contingencia_sv] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "BANDERA INTEGER NOT NULL,"+
+                    "LLAVE TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
 
         try {
 
