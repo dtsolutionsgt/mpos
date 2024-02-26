@@ -418,7 +418,6 @@ public class FELContingenciaSV extends PBase {
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
-
     }
 
     private void callBackSingle() {
