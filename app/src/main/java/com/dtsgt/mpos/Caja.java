@@ -107,7 +107,7 @@ public class Caja extends PBase {
             sql="SELECT SUM(P.VALOR)  ,P.CODPAGO, M.NOMBRE " +
                     "FROM D_FACTURAP P INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
                     "INNER JOIN P_MEDIAPAGO M ON P.CODPAGO = M.CODIGO " +
-                    "WHERE F.KILOMETRAJE=0 AND M.NIVEL <> 1 " +
+                    "WHERE (F.KILOMETRAJE=0) AND (M.NIVEL<>1) AND (P.ANULADO=0) " +
                     "GROUP BY P.CODPAGO, M.NOMBRE " +
                     "ORDER BY M.NOMBRE ";
 
