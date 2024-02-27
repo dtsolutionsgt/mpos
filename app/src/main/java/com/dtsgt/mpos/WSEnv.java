@@ -475,8 +475,11 @@ public class WSEnv extends PBase {
                 ss += "Caja reporte total: " + cjReporteTot + "\n";
                 ss += "Caja reporte sin envio: " + (cjReporteTot - cjReporteSend) + "\n";
 
-                ss += "Stock total: " + cStockTot + "\n";
-                ss += "Stock sin envio: " + (cStockTot - cStockSend) + "\n";
+                //ss += "Stock total: " + cStockTot + "\n";
+                //ss += "Stock sin envio: " + (cStockTot - cStockSend) + "\n";
+                ss += "Stock total: 1\n";
+                ss += "Stock sin envio: 0\n";
+
 
                 msgboxwait(ss);
 
@@ -1725,8 +1728,8 @@ public class WSEnv extends PBase {
 
             clsP_stockObj P_cStockObj = new clsP_stockObj(this, Con, db);
             P_cStockObj.fill("WHERE ENVIADO=0");
-            cStockTot = P_cStockObj.count;
-            total_enviar += cStockTot;
+            //cStockTot = P_cStockObj.count;
+            //total_enviar += cStockTot;
 
             clsD_fel_bitacoraObj D_fel_bitacoraObj = new clsD_fel_bitacoraObj(this, Con, db);
             D_fel_bitacoraObj.fill("WHERE STATCOM=0");

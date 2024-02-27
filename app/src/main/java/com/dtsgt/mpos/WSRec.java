@@ -154,7 +154,7 @@ public class WSRec extends PBase {
 
             try {
                 if (gl.codigo_pais.equalsIgnoreCase("GT")) {
-                    gl.Sincronizar_Clientes=true;
+                    gl.Sincronizar_Clientes=false;
                 } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                     gl.Sincronizar_Clientes=true;
                 } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
