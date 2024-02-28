@@ -1121,7 +1121,7 @@ public class Venta extends PBase {
             impval=prc.impval;
             totsin=prc.totsin;
 
-            /*
+           /*
             tot = prc.tot;
             descmon = savetot-tot;//prc.descmon;
             prodtot = tot;
@@ -1368,6 +1368,10 @@ public class Venta extends PBase {
 
             } else {
                 precdoc=prec;
+            }
+
+            if (prec==0) {
+                msgbox("Precio 0, no se puede vender");return false;
             }
 
             ins.init("T_VENTA");
@@ -1642,6 +1646,10 @@ public class Venta extends PBase {
                 } else {
                     precdoc=prec;
                 }
+            }
+
+            if (prec==0) {
+                msgbox("Precio 0, no se puede vender");return false;
             }
 
             valimp=cant*prec*imp/100;valimp=mu.round2(valimp);

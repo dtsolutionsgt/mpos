@@ -766,6 +766,10 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
+            android:name=".ProductoLista"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysVisible" />
+        <activity
             android:name=".BarrilPendientes"
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"

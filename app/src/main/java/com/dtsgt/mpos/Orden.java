@@ -867,7 +867,7 @@ public class Orden extends PBase {
 
             if (!tipo.equalsIgnoreCase("M")) {
                 if (tipo.equalsIgnoreCase("P")) {
-                    if (gl.limcant>0) {
+                    //if (gl.limcant>0) {
                         if (exists) descflag=false;
                         processCant(updateitem);
                     } else {

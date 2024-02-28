@@ -1364,12 +1364,13 @@ public class clsFELInFile {
         nitEmisor= nitEmisor.replace("-","");
 
         String nom=escape_caracteres_sat(nombreEmisor);
+        String nomcom=escape_caracteres_sat(nombreComercial);
 
         xml+="<dte:Emisor AfiliacionIVA=\""+afiliacionIVA+"\" " +
                 "CodigoEstablecimiento=\""+codigoEstablecimiento+"\" " +
                 "CorreoEmisor=\""+correoEmisor+"\" " +
                 "NITEmisor=\""+nitEmisor+"\" " +
-                "NombreComercial=\""+nombreComercial+"\" " +
+                "NombreComercial=\""+nomcom+"\" " +
                 "NombreEmisor=\""+nom+"\">";
     }
 
