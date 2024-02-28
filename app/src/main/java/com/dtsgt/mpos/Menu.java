@@ -3596,16 +3596,7 @@ public class Menu extends PBase {
 				if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
 					startActivity(new Intent(Menu.this, FELVerificacion.class));
 				} else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
-
-					clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
-					D_facturaObj.fill("WHERE (STATCOM='N') ORDER BY COREL DESC");
-					if (D_facturaObj.count>0) {
-						gl.felcorel=D_facturaObj.first().corel;
-						startActivity(new Intent(Menu.this, FELContingenciaSV.class));
-					} else {
-						msgbox("No hay documentos pendientes de certificacion");
-					}
-
+					startActivity(new Intent(Menu.this, FELContingenciaSV.class));
 				}
 			} catch (Exception e) {
 				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

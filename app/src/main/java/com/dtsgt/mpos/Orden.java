@@ -867,7 +867,7 @@ public class Orden extends PBase {
 
             if (!tipo.equalsIgnoreCase("M")) {
                 if (tipo.equalsIgnoreCase("P")) {
-                    //if (gl.limcant>0) {
+                    if (gl.limcant>0) {
                         if (exists) descflag=false;
                         processCant(updateitem);
                     } else {
@@ -876,18 +876,18 @@ public class Orden extends PBase {
                         } else {
                             processCant(updateitem);
                         }
-                     }
-                } else if (tipo.equalsIgnoreCase("S")) {
-                    if (exists) descflag=false;
-                    processCant(updateitem);
-                } else if (tipo.equalsIgnoreCase("PB")) {
-                    if (!app.barrilAbierto(prodid)) {
-                        msgbox("El producto no tiene abierto el barril");return;
                     }
-
-                    if (exists) descflag=false;
-                    processCant(updateitem);
+            } else if (tipo.equalsIgnoreCase("S")) {
+                if (exists) descflag=false;
+                processCant(updateitem);
+            } else if (tipo.equalsIgnoreCase("PB")) {
+                if (!app.barrilAbierto(prodid)) {
+                    msgbox("El producto no tiene abierto el barril");return;
                 }
+
+                if (exists) descflag=false;
+                processCant(updateitem);
+            }
             } else if (tipo.equalsIgnoreCase("M")){
                 gl.prodmenu=gl.prodcod;
                 gl.prodid=prodid;

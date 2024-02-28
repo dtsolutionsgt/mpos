@@ -62,6 +62,7 @@ import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.fel.FELVerificacion;
+import com.dtsgt.felesa.FELContingenciaSV;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
@@ -5238,7 +5239,7 @@ public class Venta extends PBase {
                 if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
                     startActivity(new Intent(Venta.this, FELVerificacion.class));
                 } else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
-                    startActivity(new Intent(Venta.this, FELVerificacion.class));
+                    startActivity(new Intent(Venta.this, FELContingenciaSV.class));
                 }
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

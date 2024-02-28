@@ -115,7 +115,8 @@
             android:onClick="doFELESA"
             android:text="FEL  ESA"
             android:textSize="34sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="invisible" />
 
     </RelativeLayout>
 

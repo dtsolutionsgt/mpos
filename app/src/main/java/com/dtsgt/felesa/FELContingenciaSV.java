@@ -31,8 +31,10 @@ import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_contingencia_svObj;
 import com.dtsgt.fel.FELmsgbox;
 import com.dtsgt.fel.clsFELInFile;
+import com.dtsgt.mpos.Caja;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
+import com.dtsgt.mpos.WSEnv;
 
 import org.json.JSONException;
 
@@ -58,17 +60,10 @@ public class FELContingenciaSV extends PBase {
 
     private clsFELInFile fel;
 
-    private WebServiceHandler ws;
-    private XMLObject xobj;
-
     private clsD_facturaObj D_facturaObj;
     private clsD_facturadObj D_facturadObj;
     private clsD_facturafObj D_facturafObj;
     private clsD_facturapObj D_facturapObj;
-    private clsD_facturacObj D_facturacObj;
-    private clsD_facturarObj D_facturarObj;
-    private clsD_facturaprObj D_facturaprObj;
-    private clsD_factura_felObj D_factura_felObj;
     private clsD_factura_fel_paisObj D_factura_fel_paisObj;
     private clsD_factura_svObj D_factura_svObj;
     private clsT_contingencia_svObj T_contingencia_svObj;
@@ -88,11 +83,11 @@ public class FELContingenciaSV extends PBase {
     private ArrayList<String> factlist = new ArrayList<String>();
     private ArrayList<String> rutas = new ArrayList<String>();
 
-    private String felcorel, corel, ffcorel, scorel, CSQL, idfact, tipodoc;
+    private String felcorel, scorel, CSQL, idfact, tipodoc,felerror,msgm;
     private String dnum,cnombre,cnit,cdir, ccorreo,cgiro,cdep,cmuni,cllave;
 
     private boolean ddemomode, factsend, contmode;
-    private int ftot, ffail, fidx, cliid, felnivel;
+    private int ffail, cliid, felnivel,doccant,docpos,doccert;
 
 
     @Override
@@ -111,13 +106,10 @@ public class FELContingenciaSV extends PBase {
             lbl3 = findViewById(R.id.textView152);
             lbl3.setText("");
             lblHalt = findViewById(R.id.textView218);
-            lblHalt.setVisibility(View.VISIBLE);
+            lblHalt.setVisibility(View.INVISIBLE);
             pbar = findViewById(R.id.progressBar);
             pbar.setVisibility(View.INVISIBLE);
 
-            felcorel = gl.felcorel;
-            ffcorel = felcorel;
-            corel = felcorel;
             gl.feluuid = "";
 
             getURL();
@@ -125,7 +117,6 @@ public class FELContingenciaSV extends PBase {
             fel = new clsFELInFile(this, this, gl.timeout);
             fel.halt = false;
             fel.autocancel = true;
-            xobj = new XMLObject(ws);
 
             clsP_sucursalObj sucursal = new clsP_sucursalObj(this, Con, db);
 
@@ -157,10 +148,6 @@ public class FELContingenciaSV extends PBase {
             D_facturadObj = new clsD_facturadObj(this, Con, db);
             D_facturafObj = new clsD_facturafObj(this, Con, db);
             D_facturapObj = new clsD_facturapObj(this, Con, db);
-            D_facturarObj = new clsD_facturarObj(this, Con, db);
-            D_facturacObj = new clsD_facturacObj(this, Con, db);
-            D_facturaprObj = new clsD_facturaprObj(this, Con, db);
-            D_factura_felObj = new clsD_factura_felObj(this, Con, db);
             D_factura_fel_paisObj = new clsD_factura_fel_paisObj(this, Con, db);
             D_factura_svObj = new clsD_factura_svObj(this, Con, db);
             T_contingencia_svObj=new clsT_contingencia_svObj(this,Con,db);
@@ -173,7 +160,7 @@ public class FELContingenciaSV extends PBase {
             lbl2.setText(" ");
             pbar.setVisibility(View.VISIBLE);
 
-            facts.add(felcorel);
+            buildList();
 
             String FELArchContLLave = "Certificado_06141106141147.crt";
             String FELAmbiente = "02";
@@ -182,25 +169,22 @@ public class FELContingenciaSV extends PBase {
             jcont = fclas.new JSONContingencia(fel.fel_usuario_certificacion, fel.fel_llave_certificacion,
                     FELAmbiente, FELArchContLLave);
 
-            ws = new WebServiceHandler(FELContingenciaSV.this, gl.wsurl, 60000);
-
-            ffail = 0;
-            fidx = 0;
-
             if (facts.size() > 0) {
+                felcorel=facts.get(0);
+                ffail=0;felerror="";
+                doccert=0;docpos++;
+
                 Handler mtimer = new Handler();
                 Runnable mrunner = () -> {
                     procesaDocumento();
                 };
                 mtimer.postDelayed(mrunner, 100);
             } else {
-                finish();
-                return;
+                showMsgExit("No existen documentos pendientes de certificación.");
             }
 
         } catch (Exception e) {
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
 
@@ -222,6 +206,7 @@ public class FELContingenciaSV extends PBase {
 
     private void procesaDocumento() {
         updateLabel();
+        felDocument("Documento "+docpos+" de "+doccant);
 
         if (app.isOnWifi() == 0) {
             gl.FELmsg = "ERROR DE CONEXIÓN A INTERNET";
@@ -361,7 +346,7 @@ public class FELContingenciaSV extends PBase {
             T_contingencia_svObj.fill("WHERE (COREL='" + felcorel + "')");
             if (T_contingencia_svObj.count>0) {
                 cllave=T_contingencia_svObj.first().llave;
-                jfact.agregarContingencia(cllave);
+                jcred.agregarContingencia(cllave);
             }
 
             jcred.json();
@@ -375,75 +360,46 @@ public class FELContingenciaSV extends PBase {
 
     @Override
     public void felCallBack() {
-        long tdiff;
-        double tsec;
-
-        try {
-            Date systemTime = Calendar.getInstance().getTime();
-            fel.ftime3 = systemTime.getTime();
-
-            if (fel.ftime1 > 0) {
-                if (fel.ftime2 > 0) {
-                    tdiff = fel.ftime2 - fel.ftime1;
-                    tsec = ((double) tdiff) / 1000;
-                    fbita.tiempo_firma = tsec;
-
-                    if (fel.ftime3 > 0) {
-                        tdiff = fel.ftime3 - fel.ftime2;
-                        tsec = ((double) tdiff) / 1000;
-                        fbita.tiempo_cert = tsec;
-                    }
-
-                    fbita.estado = 1;
-                    if (fel.halt) fbita.estado = 0;
-                    D_fel_bitacoraObj.update(fbita);
-                }
-            }
-        } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
-        }
 
         try {
             if (!FactESA.errorflag) {
                 felProgress(FactESA.respuesta.mensaje);
-                if (!FactESA.respuesta.duplicado) {
+                doccert++;
                     guardaRespuestaFEL();
                     marcaFactura();
-                }
-                callBackSingle();
             } else {
-                gl.FELmsg = "Ocurrió error en FEL :\n\n" + "Factura: " + felcorel + "\n" + fel.error;gl.feluuid = "";
-                startActivity(new Intent(this, FELmsgbox.class));finish();
+                if (ffail==0) felerror="Ocurrió error en FEL :\n\n" + "Factura: " + felcorel + "\n" + fel.error;gl.feluuid = "";
+                ffail++;
             }
+            callBackMulti();
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
 
-    private void callBackSingle() {
+    private void callBackMulti() {
+
         try {
-            if (!FactESA.errorflag) {
-                gl.feluuid = FactESA.respuesta.codigoGeneracion;
-                //toastlong("Envio completo "+ gl.feluuid);
-                if (gl.peEnvio) {
-                    if (!gl.feluuid.isEmpty()) {
-                        if (gl.feluuid.length() > 10) {
-                            if (gl.feluuid.indexOf("-") > 1) {
-                                envioFactura(felcorel);
-                                finish();
-                            }
-                        }
+            if (facts.size()>1) {
+                facts.remove(0);
+                felcorel=facts.get(0);
+                docpos++;
+
+                procesaDocumento();
+            } else {
+                if (ffail==0) {
+                    if (doccert>1) {
+                        showMsgExitEnvio("Certificación completa.\n\nCertificados "+doccert+" documentos");
+                    } else {
+                        showMsgExitEnvio("Certificación completa.\n\nCertificado 1 documento");
                     }
                 } else {
-                    finish();
+                    gl.FELmsg="Documentos certificados: "+doccert+".\nErrores: "+ffail+"\n"+felerror;
+                    startActivity(new Intent(this, FELmsgbox.class));finish();
                 }
-            } else {
-                gl.FELmsg = "Ocurrió error en FEL :\n\n" + "Factura: " + fel.mpos_identificador_fact + "\n" + fel.error;
-                startActivity(new Intent(this, FELmsgbox.class));finish();
             }
         } catch (Exception e) {
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
 
@@ -524,361 +480,31 @@ public class FELContingenciaSV extends PBase {
 
     //endregion
 
-    //region Envio de la factura
-
-    private void envioFactura(String cor) {
-        scorel=cor;
-
-        Handler mtimer = new Handler();
-        Runnable mrunner = () -> {
-            ws.callback = 1;
-            ws.execute();
-        };
-        mtimer.postDelayed(mrunner, 200);
-    }
-
-    private void processFactura() {
-
-        clsClasses.clsD_facturad item;
-        String tipo_producto,vsql;
-        int contingencia,uruta;
-
-        try {
-
-            corel=scorel;
-
-            AppMethods f = new AppMethods(this,null,Con,db);
-            clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
-
-            D_facturaObj.fill("WHERE COREL='"+corel+"'");
-            D_facturadObj.fill("WHERE (COREL='"+corel+"') AND (PRODUCTO<>0)");
-            D_facturapObj.fill("WHERE COREL='"+corel+"'");
-            D_facturarObj.fill("WHERE COREL='"+corel+"'");
-            D_facturacObj.fill("WHERE COREL='"+corel+"'");
-            D_facturaprObj.fill("WHERE COREL='"+corel+"'");
-            D_factura_felObj.fill("WHERE COREL='"+corel+"'");
-            D_factura_fel_paisObj.fill("WHERE COREL='"+corel+"'");
-            D_factura_svObj.fill("WHERE COREL='"+corel+"'");
-
-            idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
-            cliid=D_facturaObj.first().cliente;
-            try {
-                contingencia=Integer.parseInt(D_facturaObj.first().feelcontingencia);
-                if (contingencia<1) contingencia=0;
-            } catch (Exception e) {
-                contingencia=0;
-            }
-
-            D_factura_fel_paisObj.fill("WHERE COREL='"+corel+"'");
-            D_factura_svObj.fill("WHERE COREL='"+corel+"'");
-
-            CSQL="DELETE FROM D_FACTURA WHERE COREL='"+corel+"';";
-            CSQL=CSQL+"DELETE FROM D_FACTURAD WHERE COREL='"+corel+"';";
-            CSQL=CSQL+"DELETE FROM D_FACTURAP WHERE COREL='"+corel+"';";
-            CSQL=CSQL+"DELETE FROM D_FACTURAC WHERE COREL='"+corel+"';";
-            CSQL=CSQL+"DELETE FROM D_FACTURAPR WHERE COREL='"+corel+"';";
-            CSQL=CSQL+"DELETE FROM D_FACTURA_FEL_PAIS WHERE COREL='"+corel+"';";
-            CSQL=CSQL+"DELETE FROM D_FACTURA_SV WHERE COREL='"+corel+"';";
-
-
-            CSQL=CSQL+addFactheader(D_facturaObj.first())+ ";";
-
-            String UpdateToStock = "";
-
-            for (int i = 0; i <D_facturadObj.count; i++) {
-                item=D_facturadObj.items.get(i);
-                CSQL=CSQL+D_facturadObj.addItemSql(D_facturadObj.items.get(i)) + ";";
-
-                tipo_producto = f.prodTipo(D_facturadObj.items.get(i).producto);
-                if (tipo_producto.equalsIgnoreCase("P")) {
-                    UpdateToStock =D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
-                    if (!UpdateToStock.isEmpty()) CSQL=CSQL+ UpdateToStock;
-                    if (gl.peInvCompart){
-                        for (int r = 0; r <rutas.size(); r++) {
-                            uruta=Integer.parseInt(rutas.get(r));
-                            vsql=addUpdateItem(uruta,item.producto,-item.cant,item.umstock);
-                            CSQL=CSQL+ vsql;
-                        }
-                    }
-                }
-            }
-
-            for (int i = 0; i < D_facturapObj.count; i++) {
-                CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
-            }
-
-            for (int i = 0; i < D_facturarObj.count; i++) {
-                CSQL=CSQL+D_factRaddItemSql(D_facturarObj.items.get(i)) + ";";
-            }
-
-            for (int i = 0; i < D_facturacObj.count; i++) {
-                CSQL=CSQL+D_factCaddItemSql(D_facturacObj.items.get(i)) + ";";
-            }
-
-            for (int i = 0; i < D_facturaprObj.count; i++) {
-                CSQL=CSQL+addPropinaItem(D_facturaprObj.items.get(i)) + ";";
-            }
-
-            for (int i = 0; i < D_facturaprObj.count; i++) {
-                CSQL=CSQL+addPropinaItem(D_facturaprObj.items.get(i)) + ";";
-            }
-
-            for (int i = 0; i < D_factura_svObj.count; i++) {
-                CSQL=CSQL+D_factSVItemSql(D_factura_svObj.items.get(i)) + ";";
-            }
-
-            for (int i = 0; i < D_factura_fel_paisObj.count; i++) {
-                CSQL=CSQL+D_fact_fel_paisItemSql(D_factura_fel_paisObj.items.get(i)) + ";";
-            }
-
-
-            CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
-                    "WHERE (SERIE='"+D_facturaObj.first().serie+"') AND (ACTIVA=1) AND (RESGUARDO=0) AND (RUTA=" + gl.codigo_ruta + ");";
-
-            if (contingencia>0) {
-                CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+contingencia+"  " +
-                        "WHERE (ACTIVA=1) AND (RESGUARDO=1) AND (RUTA=" + gl.codigo_ruta + ");";
-            }
-
-            P_clienteObj.fill("WHERE CODIGO_CLIENTE="+cliid);
-
-            ss="DELETE FROM P_CLIENTE WHERE (Empresa="+gl.emp+") AND (CODIGO_CLIENTE="+cliid+")";
-            CSQL = CSQL + ss + ";";
-            ss=P_clienteObj.addItemSql(P_clienteObj.first(),gl.emp);
-            CSQL = CSQL + ss + ";";
-
-        } catch (Exception e) {
-            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    public String addFactheader(clsClasses.clsD_factura item) {
-
-        String fst;
-
-        //#EJC20200702:Correccion formato de fechas
-        String fs=""+du.univfecha(item.fecha);
-        String fse=""+du.univfechahora(item.fecha);
-        if (item.feelfechaprocesado>0) fst=du.univfecha(item.feelfechaprocesado);else fst="20000101 00:00:00";
-
-        ins.init("D_factura");
-        ins.add("EMPRESA",item.empresa);
-        ins.add("COREL",item.corel);
-        ins.add("ANULADO",item.anulado);
-        ins.add("FECHA",fs);
-        ins.add("RUTA",item.ruta);
-        ins.add("VENDEDOR",item.vendedor);
-        ins.add("CLIENTE",item.cliente);
-        ins.add("KILOMETRAJE",item.kilometraje);
-        ins.add("FECHAENTR",fse);
-        ins.add("FACTLINK",item.factlink);
-        ins.add("TOTAL",item.total);
-        ins.add("DESMONTO",item.desmonto);
-        ins.add("IMPMONTO",item.impmonto);
-        ins.add("PESO",item.peso);
-        ins.add("BANDERA",item.bandera);
-        ins.add("STATCOM",item.statcom);
-        ins.add("CALCOBJ",item.calcobj);
-        ins.add("SERIE",item.serie);
-        ins.add("CORELATIVO",item.corelativo);
-        ins.add("IMPRES",item.impres);
-        ins.add("ADD1",item.add1);
-        ins.add("ADD2",item.add2);
-        ins.add("ADD3",item.add3);
-        ins.add("DEPOS",item.depos);
-        ins.add("PEDCOREL",item.pedcorel);
-        ins.add("REFERENCIA",item.referencia);
-        ins.add("ASIGNACION",item.asignacion);
-        ins.add("SUPERVISOR",item.supervisor);
-        ins.add("AYUDANTE",item.ayudante);
-        ins.add("VEHICULO",item.vehiculo);
-        ins.add("CODIGOLIQUIDACION",item.codigoliquidacion);
-        ins.add("RAZON_ANULACION",item.razon_anulacion);
-        ins.add("FEELSERIE",item.feelserie);
-        ins.add("FEELNUMERO",item.feelnumero);
-        ins.add("FEELUUID",item.feeluuid);
-        ins.add("FEELFECHAPROCESADO",fst);
-        ins.add("FEELCONTINGENCIA",item.feelcontingencia);
-
-        return ins.sql();
-
-    }
-
-    public String addPropinaItem(clsClasses.clsD_facturapr item) {
-
-        String fs=""+du.univfecha(item.fecha);
-
-        ins.init("D_facturapr");
-        ins.add("EMPRESA",item.empresa);
-        ins.add("COREL",item.corel);
-        ins.add("ANULADO",item.anulado);
-        ins.add("FECHA",fs);
-        ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
-        ins.add("CODIGO_VENDEDOR",item.codigo_vendedor);
-        ins.add("PROPINA",item.propina);
-        ins.add("PROPPERC",item.propperc);
-        ins.add("PROPEXTRA",item.propextra);
-        return ins.sql();
-
-    }
-
-    public String D_factCaddItemSql(clsClasses.clsD_facturac item) {
-
-        ins.init("D_facturac");
-        ins.add("EMPRESA",gl.emp);
-        ins.add("COREL",item.corel);
-        ins.add("CODIGO_MENU",item.codigo_menu);
-        ins.add("IDCOMBO",item.idcombo);
-        ins.add("UNID",item.unid);
-        ins.add("CANT",item.cant);
-        ins.add("IDSELECCION",item.idseleccion);
-        ins.add("ORDEN",item.orden);
-        ins.add("NOMBRE",item.nombre);
-        return ins.sql();
-
-    }
-
-    public String D_factRaddItemSql(clsClasses.clsD_facturar item) {
-
-        ins.init("D_facturar");
-        ins.add("EMPRESA",gl.emp);
-        ins.add("COREL",item.corel);
-        ins.add("PRODUCTO",item.producto);
-        ins.add("CANT",item.cant);
-        ins.add("UM",item.um);
-        return ins.sql();
-
-    }
-
-    public String D_factSVItemSql(clsClasses.clsD_factura_sv item) {
-
-        ins.init("D_factura_sv");
-        ins.add("COREL",item.corel);
-        ins.add("EMPRESA",item.empresa);
-        ins.add("CODIGO_TIPO_FACTURA",item.codigo_tipo_factura);
-        ins.add("CODIGO_DEPARTAMENTO",item.codigo_departamento);
-        ins.add("CODIGO_MUNICIPIO",item.codigo_municipio);
-        ins.add("CODIGO_TIPO_NEGOCIO",item.codigo_tipo_negocio);
-
-        return ins.sql();
-    }
-
-    public String D_fact_fel_paisItemSql(clsClasses.clsD_factura_fel_pais item) {
-
-        ins.init("D_factura_fel_pais");
-
-        ins.add("empresa",item.empresa);
-        ins.add("corel",item.corel);
-        ins.add("codigo_pais",item.codigo_pais);
-        ins.add("codigo_moneda",item.codigo_moneda);
-        ins.add("SV_mensaje",item.sv_mensaje);
-        ins.add("SV_pdf_path",item.sv_pdf_path);
-        ins.add("SV_identificador",item.sv_identificador);
-        ins.add("SV_codigoGeneracion",item.sv_codigogeneracion);
-        ins.add("SV_selloRecepcion",item.sv_sellorecepcion);
-        ins.add("SV_numeroControl",item.sv_numerocontrol);
-        ins.add("SV_status",item.sv_status);
-        ins.add("SV_fechaEmision",item.sv_fechaemision);
-        ins.add("SV_estado",item.sv_estado);
-        ins.add("SV_totalNoSuj",item.sv_totalnosuj);
-        ins.add("SV_totalExenta",item.sv_totalexenta);
-        ins.add("SV_totalGravada",item.sv_totalgravada);
-        ins.add("SV_subTotalVentas",item.sv_subtotalventas);
-        ins.add("SV_descuNoSuj",item.sv_descunosuj);
-        ins.add("SV_descuExenta",item.sv_descuexenta);
-        ins.add("SV_descuGravada",item.sv_descugravada);
-        ins.add("SV_porcentajeDescuento",item.sv_porcentajedescuento);
-        ins.add("SV_totalDescu",item.sv_totaldescu);
-        ins.add("SV_subTotal",item.sv_subtotal);
-        ins.add("SV_ivaRete1",item.sv_ivarete1);
-        ins.add("SV_reteRenta",item.sv_reterenta);
-        ins.add("SV_montoTotalOperacion",item.sv_montototaloperacion);
-        ins.add("SV_totalNoGravado",item.sv_totalnogravado);
-        ins.add("SV_totalPagar",item.sv_totalpagar);
-        ins.add("SV_totalLetras",item.sv_totalletras);
-        ins.add("SV_saldoFavor",item.sv_saldofavor);
-        ins.add("SV_totalIva",item.sv_totaliva);
-
-        return ins.sql();
-
-    }
-
-    private void statusFactura() {
-
-        try {
-
-            String rs =(String) xobj.getSingle("CommitResult",String.class);
-            if (!rs.equalsIgnoreCase("#")) {
-                factsend=false;return;
-            } else {
-                factsend=true;
-            }
-
-            try {
-                sql="UPDATE D_Factura SET STATCOM='S' WHERE COREL='"+corel+"'";
-                db.execSQL(sql);
-            } catch (SQLException e) {
-            }
-
-        } catch (Exception e) {
-            msgbox2(e.getMessage());
-        }
-    }
-
-    private void processComplete() {
-
-        Date currentTime = Calendar.getInstance().getTime();
-        Log.i("FEL_FINISH: ", currentTime.toString());
-
-        if (ws.errorflag) {
-            toastlong("Error de envio");
-        } else {
-            toastlong("Envio completo "+ gl.feluuid);
-        }
-        finish();
-    }
-
-    //endregion
-
-    //region WebService handler
-
-    public class WebServiceHandler extends com.dtsgt.classes.WebService {
-
-        public WebServiceHandler(PBase Parent, String Url, int TimeOut) {
-            super(Parent, Url, TimeOut);
-        }
-
-        @Override
-        public void wsExecute() {
-            try {
-                processFactura();
-                callMethod("Commit", "SQL", CSQL);
-            } catch (Exception e) {
-                error = e.getMessage();errorflag=true;
-            }
-        }
-    }
-
-    @Override
-    public void wsCallBack(Boolean throwing, String errmsg, int errlevel) {
-        try {
-            if (throwing) throw new Exception(errmsg);
-
-            if (ws.errorflag) {
-                processComplete();return;
-            }
-
-            statusFactura();
-            processComplete();
-        } catch (Exception e) {
-            msgbox2(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
-            processComplete();
-        }
-    }
-
-    //endregion
 
     //region Aux
+
+    private void buildList() {
+        String cor;
+
+        try {
+            long flim=du.addDays(du.getActDate(),-5);
+
+            D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0) " +
+                    "AND (FECHA>="+flim+") ORDER BY FEELCONTINGENCIA");
+
+            facts.clear();
+
+            for (int i = 0; i <D_facturaObj.count; i++) {
+                cor=D_facturaObj.items.get(i).corel;
+                facts.add(cor);
+            }
+
+            doccant=facts.size();docpos=0;
+
+        } catch (Exception e) {
+            msgexit(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     private void updateLabel() {
         Handler handler = new Handler();
@@ -891,7 +517,17 @@ public class FELContingenciaSV extends PBase {
     @Override
     public void felProgress(String msg) {
         Handler mtimer = new Handler();
-        Runnable mrunner = () -> lbl1.setText(msg);
+        Runnable mrunner = () ->
+            lbl1.setText(msg);
+
+        mtimer.postDelayed(mrunner, 50);
+    }
+
+    public void felDocument(String msg) {
+        Handler mtimer = new Handler();
+        Runnable mrunner = () ->
+                lbl2.setText(msg);
+
         mtimer.postDelayed(mrunner, 50);
     }
 
@@ -1038,9 +674,32 @@ public class FELContingenciaSV extends PBase {
         try {
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setMessage(msg);
+            dialog.setTitle("Certificación de documentos");
             dialog.setCancelable(false);
             dialog.setNeutralButton("OK", (dialog1, which) -> {
                 gl.feluuid="";finish();
+            });
+            dialog.show();
+        } catch (Exception ex) {
+        }
+    }
+
+    public void showMsgExitEnvio(String msg) {
+        try {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setMessage(msg);
+            dialog.setTitle("Certificación de documnetos");
+            dialog.setCancelable(false);
+            dialog.setNeutralButton("OK", (dialog1, which) -> {
+
+                Handler mtimer = new Handler();
+                Runnable mrunner= () -> {
+                    gl.autocom = 1;
+                    startActivity(new Intent(FELContingenciaSV.this, WSEnv.class));
+                };
+                mtimer.postDelayed(mrunner,200);
+
+                finish();
             });
             dialog.show();
         } catch (Exception ex) {
