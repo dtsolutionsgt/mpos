@@ -437,7 +437,6 @@ public class WSEnv extends PBase {
     }
 
     private void processComplete() {
-
         try {
 
             try {
