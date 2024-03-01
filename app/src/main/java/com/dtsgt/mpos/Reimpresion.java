@@ -81,7 +81,7 @@ public class Reimpresion extends PBase {
 	private String pserie,pnumero,pruta,pvend,pcli,presol,presfecha,pfser,pfcor;
 	private String presvence,presrango,pvendedor,pcliente,pclicod,pclidir;
 	private double ptot;
-	private boolean imprimecan=false;
+	private boolean imprimecan=false,modo_sv,modo_gt;
 	private int residx,ncFact;
 
 	@Override
@@ -110,6 +110,10 @@ public class Reimpresion extends PBase {
 			setHandlers();
 
 			setFechaAct();
+
+			modo_sv=false;modo_gt=false;
+			if (gl.codigo_pais.equalsIgnoreCase("GT")) modo_gt=true;
+			if (gl.codigo_pais.equalsIgnoreCase("SV")) modo_sv=true;
 
 			listItems();
 
@@ -276,8 +280,9 @@ public class Reimpresion extends PBase {
 		clsClasses.clsCFDV vItem;	
 		int vP,f;
 		double val;
-		String id,sf,sval,tm;
+		String id,sf,sval,tm,td,cont;
 		long ff;
+		boolean cont_flag;
 
 		items.clear();
 		
@@ -299,7 +304,7 @@ public class Reimpresion extends PBase {
 					progress.show();
 					//(D_FACTURA.STATCOM='N') AND
 					sql = "SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO," +
-						  "D_FACTURA.IMPRES, D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR " +
+						  "D_FACTURA.IMPRES, D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR,D_FACTURA.FEELCONTINGENCIA " +
 						  "FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE " +
 						  "WHERE (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
 						  "ORDER BY D_FACTURA.COREL DESC";
@@ -340,18 +345,32 @@ public class Reimpresion extends PBase {
 
 							vItem =clsCls.new clsCFDV();
 
-							vItem.Cod=DT.getString(0);
+							vItem.Cod=DT.getString(0);vItem.tipodoc="";cont_flag=false;
+
 							vItem.Desc=DT.getString(1);
 							if (tipo==2) vItem.Desc+=" - "+DT.getString(4);
 
 							if (tipo==3) {
 								sf=DT.getString(2)+ StringUtils.right("000000" + Integer.toString(DT.getInt(4)), 6);;
+								if (tipo==3 && modo_sv) {
+									td=DT.getString(7);vItem.tipodoc="F";
+									if (td.equalsIgnoreCase("T")) vItem.tipodoc="T";
+									if (td.equalsIgnoreCase("C")) vItem.tipodoc="C";
+								}
+
+								vItem.UUID=DT.getString(6)+"";
+								cont=DT.getString(8)+"";
+								if (vItem.UUID.length()<5) {
+									if (cont.length()>5) cont_flag=true;
+								}
+
 							} else if (tipo==1||tipo==6||tipo==7){
 								sf=DT.getString(0);
-							}else {
+							} else {
 								f=DT.getInt(2);sf=du.sfecha(f)+" "+du.shora(f);
 							}
 
+							vItem.flag=cont_flag;
 							vItem.Fecha=sf;
 
 							val=DT.getDouble(3);sval=""+val;

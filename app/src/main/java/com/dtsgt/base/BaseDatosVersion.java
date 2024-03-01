@@ -1798,6 +1798,23 @@ public class BaseDatosVersion {
             db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [P_gran_cont] ("+
+                    "NRC TEXT NOT NULL,"+
+                    "IDDEP TEXT NOT NULL,"+
+                    "IDMUNI TEXT NOT NULL,"+
+                    "IDNEG TEXT NOT NULL,"+
+                    "DEP TEXT NOT NULL,"+
+                    "MUNI TEXT NOT NULL,"+
+                    "NIT TEXT NOT NULL,"+
+                    "PRIMARY KEY ([NRC])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX P_gran_cont_idx1 ON P_gran_cont(NRC)";db.execSQL(sql);
+        } catch (Exception e) { }
+
+
 
         try {
 

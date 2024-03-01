@@ -395,9 +395,9 @@ public class Anulacion extends PBase {
 		clsClasses.clsCFDV vItem;	
 		int vP,f,regs=0;
 		double val, total=0;
-		String id,sf,sval,td;
+		String id,sf,sval,td,cont;
 		long dfi,dff,ff,fsvf,fsvc;
-		boolean guardar;
+		boolean guardar,cont_flag;
 
 		items.clear();
 		selidx=-1;vP=0;
@@ -419,7 +419,7 @@ public class Anulacion extends PBase {
 
 				if (cbcer.isChecked()) {
 					sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
-							"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR, D_FACTURA.AYUDANTE "+
+							"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR, D_FACTURA.AYUDANTE,D_FACTURA.FEELCONTINGENCIA "+
 							"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
 							"WHERE (D_FACTURA.FEELUUID=' ')  ORDER BY D_FACTURA.FECHAENTR DESC ";
 				} else {
@@ -427,7 +427,7 @@ public class Anulacion extends PBase {
 					dff=datefin;if (dff<fecha_menor) dff=fecha_menor;
 
 					sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
-							"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR, D_FACTURA.AYUDANTE "+
+							"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR, D_FACTURA.AYUDANTE,D_FACTURA.FEELCONTINGENCIA "+
 							"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
 							"WHERE (D_FACTURA.ANULADO=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
 							"ORDER BY D_FACTURA.FECHAENTR  DESC";
@@ -460,24 +460,33 @@ public class Anulacion extends PBase {
 					
 					vItem =clsCls.new clsCFDV();
 			  	
-					vItem.Cod=DT.getString(0);vItem.tipodoc="";
-					if (tipo==3 && modo_sv) {
-						td=DT.getString(7);vItem.tipodoc="F";
-						if (td.equalsIgnoreCase("T")) vItem.tipodoc="T";
-						if (td.equalsIgnoreCase("C")) vItem.tipodoc="C";
-					}
+					vItem.Cod=DT.getString(0);vItem.tipodoc="";cont_flag=false;
 
 					vItem.Desc=DT.getString(1);
 					if (tipo==2) vItem.Desc+=" - "+DT.getString(4);
 					
 					if (tipo==3) {
 						sf=DT.getString(2)+ StringUtils.right("000000" + Integer.toString(DT.getInt(4)), 6);;
+
+						if (tipo==3 && modo_sv) {
+							td=DT.getString(7);vItem.tipodoc="F";
+							if (td.equalsIgnoreCase("T")) vItem.tipodoc="T";
+							if (td.equalsIgnoreCase("C")) vItem.tipodoc="C";
+						}
+
+						vItem.UUID=DT.getString(5)+"";
+						cont=DT.getString(8)+"";
+						if (vItem.UUID.length()<5) {
+							if (cont.length()>5) cont_flag=true;
+						}
+
 					} else if(tipo==1||tipo==6){
 						sf=DT.getString(0);
 					} else{
 						f=DT.getInt(2);sf=du.sfecha(f)+" "+du.shora(f);
 					}
-					
+
+					vItem.flag=cont_flag;
 					vItem.Fecha=sf;
 					val=DT.getDouble(3);
 					total += val;

@@ -42,7 +42,7 @@
             android:layout_toStartOf="@+id/imageView154"
             android:layout_toEndOf="@+id/imageView146"
             android:ems="10"
-            android:hint="Escribe código o parte de la descripción"
+            android:hint="criteria"
             android:inputType="text"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -82,7 +82,7 @@
                 android:gravity="center_horizontal"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
-                android:text="BUSQUEDA DE PRODUCTO"
+                android:text="BÚSQUEDA DE PRODUCTO"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#FFFFFF"
                 android:textSize="24sp"

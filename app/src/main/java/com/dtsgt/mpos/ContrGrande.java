@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsP_departamentoObj;
 import com.dtsgt.classes.clsP_giro_negocioObj;
+import com.dtsgt.classes.clsP_gran_contObj;
 import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_tiponegObj;
 import com.dtsgt.classes.clsT_sv_gcontObj;
@@ -17,14 +18,15 @@ import com.dtsgt.classes.extListDlg;
 public class ContrGrande extends PBase {
 
     private TextView lblDep, lblMuni;
-    private EditText txtGiro;
+    private EditText txtGiro,txtNIT;
 
     private clsP_departamentoObj P_departamentoObj;
     private clsP_municipioObj P_municipioObj;
 	private clsP_giro_negocioObj P_giro_negocioObj;
     private clsT_sv_gcontObj T_sv_gcontObj;
+    private clsP_gran_contObj P_gran_contObj;
 
-    private String iddep,idmuni,dep,muni,neg;
+    private String iddep,idmuni,dep,muni,neg,nit,nrc;
     private int idneg;
 
     @Override
@@ -38,14 +40,19 @@ public class ContrGrande extends PBase {
             lblDep  = findViewById(R.id.textView308);lblDep.setText("");
             lblMuni = findViewById(R.id.textView311);lblMuni.setText("");
             txtGiro  = findViewById(R.id.editTextNumber5);txtGiro.setText("");
+            txtNIT  = findViewById(R.id.editTextNumber8);txtNIT.setText("");
 
             P_departamentoObj=new clsP_departamentoObj(this,Con,db);
             P_municipioObj=new clsP_municipioObj(this,Con,db);
             P_giro_negocioObj=new clsP_giro_negocioObj(this,Con,db);
             T_sv_gcontObj=new clsT_sv_gcontObj(this,Con,db);
+            P_gran_contObj=new clsP_gran_contObj(this,Con,db);
 
-            cargaSeleccion();
+            nrc=gl.gNITCliente;
+
+            if (!cargaNRC()) cargaSeleccion();
             cargaDepartamentos();
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -56,6 +63,7 @@ public class ContrGrande extends PBase {
     public void doContinue(View view) {
         if (validaDatos()) {
             guardaSeleccion();
+            guardaNRC();
             finish();
         }
     }
@@ -186,6 +194,68 @@ public class ContrGrande extends PBase {
 
     //region Aux
 
+    private boolean cargaNRC() {
+        try {
+            iddep = "";
+            idmuni = "";
+            dep = "";
+            muni = "";
+            neg = "";
+            idneg = 0;
+
+            P_gran_contObj.fill("WHERE (NRC='"+nrc+"')");
+            if (P_gran_contObj.count==0) return false;
+
+            iddep = P_gran_contObj.first().iddep;
+            idmuni = P_gran_contObj.first().idmuni;
+            try {
+                idneg = Integer.parseInt(P_gran_contObj.first().idneg);
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());idneg=0;
+            }
+
+            dep = P_gran_contObj.first().dep;
+            muni = P_gran_contObj.first().muni;
+            nit = P_gran_contObj.first().nit;
+
+            lblDep.setText(dep);
+            lblMuni.setText(muni);
+            txtGiro.setText(""+idneg);
+            txtNIT.setText(nit);
+
+            return true;
+
+        } catch (Exception e) {
+            iddep="";idmuni="";idneg=0;
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return false;
+        }
+    }
+
+    private void guardaNRC() {
+        clsClasses.clsP_gran_cont item = clsCls.new clsP_gran_cont();
+
+        try {
+            item.nrc=nrc;
+            item.iddep=iddep;
+            item.idmuni=idmuni;
+            item.idneg=""+idneg;
+            item.dep=dep;
+            item.muni=muni;
+            item.nit=nit;
+
+            P_gran_contObj.add(item);
+
+        } catch (Exception e) {
+            try {
+                P_gran_contObj.update(item);
+            } catch (Exception ee) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+ee.getMessage());return;
+            }
+        }
+
+    }
+
     private void cargaSeleccion() {
         try {
             iddep = "";
@@ -208,6 +278,8 @@ public class ContrGrande extends PBase {
                 lblDep.setText(dep);
                 lblMuni.setText(muni);
                 txtGiro.setText(""+idneg);
+                txtNIT.setText("");
+
             }
         } catch (Exception e) {
             iddep="";idmuni="";idneg=0;
@@ -269,6 +341,12 @@ public class ContrGrande extends PBase {
                 txtGiro.requestFocus();txtGiro.selectAll();return false;
             }
 
+            nit=txtNIT.getText().toString();
+            if (!app.validaNITSal(nit)) {
+                msgbox("NIT incorrecto");
+                txtNIT.requestFocus();txtNIT.selectAll();return false;
+            }
+
             idneg=Integer.parseInt(gn);
 
             return true;
@@ -304,6 +382,7 @@ public class ContrGrande extends PBase {
             P_municipioObj.reconnect(Con,db);
             P_giro_negocioObj.reconnect(Con,db);
             T_sv_gcontObj.reconnect(Con,db);
+            P_gran_contObj=new clsP_gran_contObj(this,Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

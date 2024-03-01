@@ -756,8 +756,8 @@ public class FacturaRes extends PBase {
 	}
 
 	private void fillTotals() {
-
 		clsClasses.clsCDB item;
+		boolean agr_impuesto=false;
 
 		items.clear();gl.percepcion=0;
 
@@ -801,9 +801,21 @@ public class FacturaRes extends PBase {
 				item.Bandera=0;
 				items.add(item);
 
-				item = clsCls.new clsCDB();
-				item.Cod="Impuestos";item.Desc=mu.frmcur(totimp);item.Bandera=0;
-				items.add(item);
+				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+					agr_impuesto= gl.sal_PER;
+				} else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+					agr_impuesto=true;
+				} else if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+					agr_impuesto=false;
+				}
+
+				if (agr_impuesto) {
+					item = clsCls.new clsCDB();
+					item.Cod = "Impuestos";
+					item.Desc = mu.frmcur(totimp);
+					item.Bandera = 0;
+					items.add(item);
+				}
 
 				/*
 				if (gl.contrib.equalsIgnoreCase("C")) {
@@ -1238,8 +1250,8 @@ public class FacturaRes extends PBase {
 				svnit="N";tipo_factura=1;
 				if (gl.codigo_cliente==gl.emp*10) {
 					svnit="T";tipo_factura=3;
-				}
-				if (gl.sal_NRC) {
+				} else {
+				//if (gl.sal_NRC) {
 					if (gl.sal_PER) {
 						svnit="C";tipo_factura=2;
 					} else {

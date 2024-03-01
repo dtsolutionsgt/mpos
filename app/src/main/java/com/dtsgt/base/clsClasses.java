@@ -912,6 +912,16 @@ public class clsClasses {
         public String descripcion;
     }
 
+    public class clsP_gran_cont {
+        public String nrc;
+        public String iddep;
+        public String idmuni;
+        public String idneg;
+        public String dep;
+        public String muni;
+        public String nit;
+    }
+
     public class clsP_impuesto {
         public  int codigo_impuesto;
 		public int  codigo;
@@ -1931,6 +1941,7 @@ public class clsClasses {
 		public int id,ival;
 		public String Cod,Desc,Fecha,Valor,Sid, UUID, FechaFactura,tipodoc;
 		public double val, precio;
+        public boolean flag;
 	}
 	
 	public class clsExist {

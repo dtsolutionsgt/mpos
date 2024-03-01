@@ -132,12 +132,9 @@ public class CliPos extends PBase {
 
         txtRef.setText("Ciudad");
 
-
         if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-            //txtNIT.setText("8000-220402-123-4");
-            //txtNIT.setText("8000-6");
-            txtNIT.setText("166284-5");
-            txtNom.setText("Nombre");
+            txtNIT.setText("80002204021234");txtNom.setText("Nombre");
+            //txtNIT.setText("166284-5");txtNom.setText("Nombre");
         }
 
 
@@ -244,7 +241,7 @@ public class CliPos extends PBase {
             }
 
             if (flag_NRC) {
-                msgAskCG("Grande contribuyente ");
+                msgAskCG("Gran contribuyente ");
             } else {
                 if (!existeCliente()){
                     if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente)) procesaNIT(sNITCliente);
@@ -1046,12 +1043,11 @@ public class CliPos extends PBase {
 	}
 
 	private boolean existeCliente() {
-
 		Cursor DT;
         boolean resultado=false;
         int nitcf=gl.emp*10;
 
-		try{
+		try {
 
 			String NIT=txtNIT.getText().toString();
 
@@ -1059,7 +1055,6 @@ public class CliPos extends PBase {
 				txtNIT.requestFocus();
 				resultado=false;
 			} else {
-
 				sql="SELECT CODIGO, NOMBRE,DIRECCION,NIVELPRECIO,DIRECCION, MEDIAPAGO,TIPO_CONTRIBUYENTE,CODIGO_CLIENTE, EMAIL,TELEFONO FROM P_CLIENTE " +
 					"WHERE (NIT='" + NIT + "') AND (CODIGO_CLIENTE<>"+nitcf+")";
 				DT=Con.OpenDT(sql);
@@ -1314,27 +1309,14 @@ public class CliPos extends PBase {
 
     private int nitnumsv(String nit) {
         int guc,val,val1,val2;
-        String NN,N;
-
-        N=nit;NN=N;
 
         try {
-            guc = N.length() - NN.replaceAll("-","").length();
-            String[] sp = N.split("-");
+            val=gl.emp*10;
+            nit =nit.replaceAll("-","");
+            nit=nit.substring(5);
 
-            if (guc==3) {
-                val1=Integer.parseInt(sp[1]);
-                val2=Integer.parseInt(sp[2]);
-                val=val1*1000+val2;
-
-                return val;
-            } else if (guc==1) {
-                val1=Integer.parseInt(sp[0]);
-                val2=Integer.parseInt(sp[1]);
-                val=val1*10+val2;
-
-                return val;
-            }
+            val=Integer.parseInt(nit);
+            return val;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1536,7 +1518,7 @@ public class CliPos extends PBase {
     private void msgAskCG(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        dialog.setTitle("Credito fiscal");
+        dialog.setTitle("Crédito fiscal");
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

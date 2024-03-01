@@ -83,7 +83,13 @@ public class ListAdaptCFDV extends BaseAdapter {
 			holder.lblFechaFactura.setVisibility(View.VISIBLE);
 		}
 
-		if(selectedIndex!= -1 && position == selectedIndex) {
+		if (itemDetailsrrayList.get(position).flag) {
+			holder.lblFecha.setBackgroundColor(Color.parseColor("#F39375"));
+		}else {
+			holder.lblFecha.setBackgroundColor(Color.TRANSPARENT);
+		}
+
+		if (selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
 		} else {
 			convertView.setBackgroundColor(Color.TRANSPARENT);
