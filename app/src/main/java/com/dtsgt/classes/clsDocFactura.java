@@ -838,6 +838,7 @@ public class clsDocFactura extends clsDocument {
                 pr=round2(pr);
                 rep.add3lrr(s1,item.desc,pr);
 
+
                 dval1=0;dval2=0;
                 s1=rep.frmdec(dval1);
                 tot=pr*item.cant;
