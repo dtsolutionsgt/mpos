@@ -68,7 +68,7 @@ public class clsDocFactura extends clsDocument {
 				DT.moveToFirst();
 
 				serie=DT.getString(0);
-				numero=""+DT.getInt(1);
+				numero=""+DT.getInt(1);corel_doc=DT.getInt(1);
 				ruta=DT.getString(2);codigo_ruta=ruta;
 
 				vend=DT.getString(3);
@@ -93,7 +93,7 @@ public class clsDocFactura extends clsDocument {
 				impres=DT.getInt(12);
 				cantimpres=0;
 
-                feluuid=DT.getString(14);
+                feluuid=DT.getString(14);if (feluuid.isEmpty()) feluuid=" ";
                 feldcert=sfecha(DT.getLong(15));
                 s1=DT.getString(16);if (!s1.isEmpty() && !s1.equalsIgnoreCase(" ")) serie=s1;
                 s2=DT.getString(17);if (!s2.isEmpty() && !s2.equalsIgnoreCase(" ")) numero=s2;
@@ -242,6 +242,8 @@ public class clsDocFactura extends clsDocument {
 		val=vend;
 		vendedor=val;
 
+        svcf_nit="";svcf_dep="";svcf_muni="";svcf_neg="";
+
         if (pais.equalsIgnoreCase("SV")) {
             String ss="";
 
@@ -267,7 +269,7 @@ public class clsDocFactura extends clsDocument {
                 }
 
                 ss=""+DT.getInt(2);
-                sql="SELECT DESCRIPCION FROM P_tiponeg WHERE CODIGO_TIPO_NEGOCIO="+ss;
+                sql="SELECT DESCRIPCION FROM P_giro_negocio WHERE (CODIGO="+ss+") AND (COD_PAIS='SV')";
                 DTt=Con.OpenDT(sql);
                 if (DTt.getCount()>0) {
                     DTt.moveToFirst();
@@ -276,12 +278,12 @@ public class clsDocFactura extends clsDocument {
             } else {
                 nomdepto="";nommuni="";nomtipo="";
             }
+
+            svcf_dep=nomdepto;svcf_muni=nommuni;svcf_neg=nomtipo;
         }
 
-
 		try {
-
-			sql="SELECT NOMBRE,PERCEPCION,TIPO_CONTRIBUYENTE,DIRECCION,NIT,DIACREDITO " +
+			sql="SELECT NOMBRE,PERCEPCION,TIPO_CONTRIBUYENTE,DIRECCION,NIT,DIACREDITO,EMAIL " +
 				"FROM P_CLIENTE WHERE CODIGO_CLIENTE ='"+cli+"'";
 
 			DT=Con.OpenDT(sql);	
@@ -298,10 +300,23 @@ public class clsDocFactura extends clsDocument {
 			clidir=DT.getString(3);
 			nit_cliente =DT.getString(4);
 			diacred=DT.getInt(5);
+            clicorreo=DT.getString(6);
 			
 		} catch (Exception e) {
 			val=cli;
 	    }
+
+        if (pais.equalsIgnoreCase("SV")) {
+            String ss = "";
+
+            sql="SELECT NIT FROM P_gran_cont WHERE (NRC='"+nit_cliente+"') ";
+            DT=Con.OpenDT(sql);
+            if (DT.getCount()>0) {
+                DT.moveToFirst();
+                svcf_nit=DT.getString(0);
+            }
+
+        }
 
 		try {
 
@@ -347,37 +362,41 @@ public class clsDocFactura extends clsDocument {
 
         plines.clear();
 
-        sql="SELECT P.DESC2, SUM(P.VALOR) " +
-                "FROM P_MEDIAPAGO M INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
-                "WHERE (COREL='" +corel+ "') GROUP BY P.DESC2";
+        if (pais.equalsIgnoreCase("GT")) {
 
-        sql="SELECT P.DESC2, P.VALOR, P.DESC1, P.TIPO " +
-                "FROM P_MEDIAPAGO M INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
-                "WHERE (COREL='" +corel+ "') ";
-        try {
-            DT=Con.OpenDT(sql);
+            sql = "SELECT P.DESC2, SUM(P.VALOR) " +
+                    "FROM P_MEDIAPAGO M INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
+                    "WHERE (COREL='" + corel + "') GROUP BY P.DESC2";
 
-            if (DT.getCount()>0) {
-                DT.moveToFirst();
-                while (!DT.isAfterLast()) {
-                    s1=DT.getString(0);
-                    s3=DT.getString(2);
-                    tp=DT.getString(3);
-                    //if (s1.isEmpty()) s1="Contado";
-                    if (tp.equalsIgnoreCase("E")) s1="Contado";
-                    plines.add(addtotsptic(s1,DT.getDouble(1)));
-                    if (tp.equalsIgnoreCase("K")) {
-                        if (!s3.equalsIgnoreCase("NO_AUT_20221022")) {
-                            plines.add("Autorizacion: "+s3);
+            sql = "SELECT P.DESC2, P.VALOR, P.DESC1, P.TIPO " +
+                    "FROM P_MEDIAPAGO M INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
+                    "WHERE (COREL='" + corel + "') ";
+            try {
+                DT = Con.OpenDT(sql);
+
+                if (DT.getCount() > 0) {
+                    DT.moveToFirst();
+                    while (!DT.isAfterLast()) {
+                        s1 = DT.getString(0);
+                        s3 = DT.getString(2);
+                        tp = DT.getString(3);
+                        //if (s1.isEmpty()) s1="Contado";
+                        if (tp.equalsIgnoreCase("E")) s1 = "Contado";
+                        plines.add(addtotsptic(s1, DT.getDouble(1)));
+                        if (tp.equalsIgnoreCase("K")) {
+                            if (!s3.equalsIgnoreCase("NO_AUT_20221022")) {
+                                plines.add("Autorizacion: " + s3);
+                            }
                         }
+                        DT.moveToNext();
                     }
-                    DT.moveToNext();
                 }
+
+            } catch (Exception e) {
             }
-
-        } catch (Exception e) {
+        } else   if (pais.equalsIgnoreCase("SV")) {
+            if (pagoefectivo==1) plines.add("Contado");else plines.add("A credito");
         }
-
 
         propina=0;
         try {
@@ -666,7 +685,7 @@ public class clsDocFactura extends clsDocument {
             if ( tipo_doc==1) {
                 return detailFacturaSV();
             } else if ( tipo_doc==2) {
-                return detailBaseSV();
+                return detailCreditoSV();
             } else if ( tipo_doc==3) {
                 return detailTicketSV();
             } else {
@@ -757,32 +776,75 @@ public class clsDocFactura extends clsDocument {
     protected boolean detailFacturaSV() {
         itemData item;
         double pr,imp,tot,totval,dval1,dval2;
-        String ps,cu,cp;
+        String ps,cu,cp,s1;
+        int nl;
 
-        rep.add("Cant Descripcion");
-        rep.add3sss("Precio","No sujeto","Gravado");
+        rep.add("# Descripcion");
+        rep.add3sss("Cant","Descuento","Precio");
+        rep.add3sss("Exento","No sujeto","Gravado");
         rep.line();
 
         for (int i = 0; i <items.size(); i++) {
             item=items.get(i);
             if (!item.flag) {
 
-                ps=item.nombre;if (ps.length()>prw-5) ps=ps.substring(0,prw-6);
-                ps=rep.ltrim(""+((int) item.cant),4)+" "+ps;
-                rep.add(ps);
+                nl=i+1;
+                ps=item.nombre;if (ps.length()>prw-3) ps=ps.substring(0,prw-3);
+                rep.add(nl+" "+ps);
 
-                imp=item.imp;
-                //pr=item.prec-imp;
+                s1=item.cant+" "+item.um;
                 pr=item.prec_orig;
                 pr=round2(pr);
+                rep.add3lrr(s1,item.desc,pr);
+
+                dval1=0;dval2=0;
+                s1=rep.frmdec(dval1);
                 tot=pr*item.cant;
                 tot=round2(tot);
+                rep.add3lrr(s1,dval2,tot);
 
-                ps=rep.frmdec(item.prec_orig);
+
+            } else {
+                rep.add("   - "+item.nombre);
+            }
+        }
+
+        rep.line();
+
+        return true;
+    }
+
+    protected boolean detailCreditoSV() {
+        itemData item;
+        double pr,imp,tot,totval,dval1,dval2;
+        String ps,cu,cp,s1;
+        int nl;
+
+        rep.add("# Descripcion");
+        rep.add3sss("Cant","Descuento","Precio");
+        rep.add3sss("Exento","No sujeto","Gravado");
+        rep.line();
+
+        for (int i = 0; i <items.size(); i++) {
+            item=items.get(i);
+            if (!item.flag) {
+
+                nl=i+1;
+                ps=item.nombre;if (ps.length()>prw-3) ps=ps.substring(0,prw-3);
+                rep.add(nl+" "+ps);
+
+                s1=item.cant+" "+item.um;
+                pr=item.prec;
+                pr=round2(pr);
+                rep.add3lrr(s1,item.desc,pr);
+
                 dval1=0;dval2=0;
-                if (imp==0) dval1=tot; else dval2=tot;
+                s1=rep.frmdec(dval1);
+                tot=pr*item.cant;
+                tot=round2(tot);
+                rep.add3lrr(s1,dval2,tot);
 
-                rep.add3lrr(ps,dval1,dval2);
+
             } else {
                 rep.add("   - "+item.nombre);
             }
@@ -1385,33 +1447,29 @@ public class clsDocFactura extends clsDocument {
         totperc=stot*(percep/100);totperc=round2(totperc);
         totimp=imp-totperc;
 
-        rep.addtotsp("Sumas: ", stot);
-        //rep.addtotsp("Venta sujeta: ", fh_grav);
-        //rep.addtotsp("Venta no sujeta: ", fh_exent);
-        //rep.addtotsp("Importe exonerado: ", fh_exon);
-        if (desc>=0.01) {
-            rep.addtotsp("Descuento: ", -desc);
-        }
+        rep.addtotsp("Venta gravada: ", fh_grav);
+        rep.addtotsp("Venta no sujeta: ", fh_exent);
+        rep.addtotsp("Venta exenta: ", fh_exon);
+        rep.addtotsp("Subtotal: ", stot);
+        if (desc>=0.01) rep.addtotsp("Descuento: ", -desc);
         if (fh_val1>0) rep.addtotsp("IVA Retenido: ", fh_imp1);
-        //if (fh_val2>0) rep.addtotsp("IVA Retenido: ", fh_imp2);
-        rep.addtotsp("Venta total : ", tot);
+        rep.addtotsp("Venta total: ", tot);
+        rep.addtotsp("Total a pagar: ", tot);
 
         montoLetra();
 
         if (plines.size()>0) {
-            rep.add("Formas de pago:");
+            rep.add("Condiciones de la operación: ");
             for (int ii= 0; ii <plines.size(); ii++) {
                 rep.add(plines.get(ii));
             }
         }
 
-        /*
-        rep.add("");
-        rep.add("No. OC exenta ");
-        rep.add("No. cons. registro exonerado");
-        rep.add("No. registro SAG");
-        rep.add("");
-        */
+        if (!serie.isEmpty()) {
+            rep.add("Sello de recepcion: ");
+            rep.add(serie);
+            rep.add("");
+        }
 
         if (modorest) {
             rep.add("");
@@ -1419,62 +1477,6 @@ public class clsDocFactura extends clsDocument {
         }
 
         rep.add("");
-
-        /*
-        try {
-            rep.addc("Original: Cliente");
-            rep.addc("Copia: Obligado Tributario Emisor");
-            rep.addc("La factura es beneficio de todos exija la.");
-            rep.add("");
-            if (!textopie.isEmpty()) {
-                rep.addc(textopie);
-            }
-        } catch (Exception e) {}
-        */
-
-        //banderafel=true;
-        if (banderafel) {
-
-            if (feluuid.equalsIgnoreCase(" ")) {
-                rep.add("");
-                rep.add("Factura generada en modo de contingencia");
-                rep.add("Numero de Acceso: "+contacc);
-                rep.add("Su factura pueden encontrar en el portal");
-                rep.add("SAT bajo identificacion: "+serie+numero);
-            }
-
-            if (!feluuid.equalsIgnoreCase(" ")) {
-                rep.add("");
-                rep.add("Número de autorización: ");
-                rep.add(feluuid);
-                rep.add("Fecha de certificación: "+feldcert);
-            }
-
-            if (!felIVA.isEmpty()) {
-                rep.add(felIVA);
-            }
-            if (!felISR.isEmpty()) {
-                rep.add(felISR);
-                if (!felISR2.isEmpty()) {
-                    rep.add(felISR2);
-                }
-            }
-
-            rep.add("");
-            rep.add(felcert);
-            rep.add(felnit);
-            rep.add("");
-            rep.add("Powered by DTSolutions, S.A.");
-            rep.addc("dts.com.gt");
-        }
-
-        //#HS_20181212 Validación para factura pendiente de pago
-        if (pendiente == 4){
-            rep.add("");
-            rep.add("ESTE NO ES UN DOCUMENTO LEGAL");
-            rep.add("EXIJA SU FACTURA ORIGINAL");
-            rep.add("");
-        }
 
         /*
         if (parallevar){
@@ -1497,12 +1499,11 @@ public class clsDocFactura extends clsDocument {
         } else {
             rep.add("");
         }
-        */
 
         agregaDomicilio();
 
-        rep.add("");
-        rep.add("");
+        */
+
         rep.add("");
         rep.add("");
 
@@ -1644,25 +1645,19 @@ public class clsDocFactura extends clsDocument {
         totperc=stot*(percep/100);totperc=round2(totperc);
         totimp=imp-totperc;
 
-        rep.addtotsp("Subtotal: ", fh_grav+fh_exent);
+        if (desc>=0.01) rep.addtotsp("Subtotal: ", fh_grav+fh_exent);
         //rep.addtotsp("Subtotal: ", stot);
-        rep.addtotsp("Total gravado: ", fh_grav);
+        //rep.addtotsp("Total gravado: ", fh_grav);
         //rep.addtotsp("Subtotal: ", fh_grav+fh_exent+fh_imp1);
         //rep.addtotsp("Total Gravado: ", fh_grav+fh_imp1);
-        rep.addtotsp("Total exento: ", 0);
-        rep.addtotsp("Venta no sujeta: ", fh_exent);
+        //rep.addtotsp("Total exento: ", 0);
+        //rep.addtotsp("Venta no sujeta: ", fh_exent);
         //rep.addtotsp("Importe exonerado: ", fh_exon);
         if (desc>=0.01) rep.addtotsp("Descuento: ", -desc);
-        rep.addtotsp("Total : ", tot);
+        rep.addtotsp("Total a pagar: ", tot);
 
-        montoLetra();
+        // montoLetra();
 
-        if (plines.size()>0) {
-            rep.add("Formas de pago:");
-            for (int ii= 0; ii <plines.size(); ii++) {
-                rep.add(plines.get(ii));
-            }
-        }
 
         if (modorest) {
             rep.add("");

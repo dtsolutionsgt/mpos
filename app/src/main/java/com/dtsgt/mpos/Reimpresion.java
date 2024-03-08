@@ -27,6 +27,7 @@ import com.dtsgt.classes.clsDocCajaPagos;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsDocMov;
 import com.dtsgt.classes.clsDocPedido;
+import com.dtsgt.classes.clsP_gran_contObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.ladapt.ListAdaptCFDV;
 
@@ -304,7 +305,7 @@ public class Reimpresion extends PBase {
 					progress.show();
 					//(D_FACTURA.STATCOM='N') AND
 					sql = "SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO," +
-						  "D_FACTURA.IMPRES, D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR,D_FACTURA.FEELCONTINGENCIA " +
+						  "D_FACTURA.IMPRES, D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR,D_FACTURA.FEELCONTINGENCIA, D_FACTURA.AYUDANTE " +
 						  "FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE " +
 						  "WHERE (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
 						  "ORDER BY D_FACTURA.COREL DESC";
@@ -353,7 +354,7 @@ public class Reimpresion extends PBase {
 							if (tipo==3) {
 								sf=DT.getString(2)+ StringUtils.right("000000" + Integer.toString(DT.getInt(4)), 6);;
 								if (tipo==3 && modo_sv) {
-									td=DT.getString(7);vItem.tipodoc="F";
+									td=DT.getString(9);vItem.tipodoc="F";
 									if (td.equalsIgnoreCase("T")) vItem.tipodoc="T";
 									if (td.equalsIgnoreCase("C")) vItem.tipodoc="C";
 								}
@@ -540,10 +541,14 @@ public class Reimpresion extends PBase {
 			fdoc.idpais=gl.codigo_pais;
 			fdoc.PropinaAparte=gl.peFactPropinaAparte;
 
+			fdoc.tiendanom=gl.tiendanom;
+			fdoc.tiendanit=gl.tiendanit;
+
 			if (gl.codigo_pais.equalsIgnoreCase("HN")) cargaTotalesHonduras();
 			if (gl.codigo_pais.equalsIgnoreCase("SV")) {
 				cargaTotalesSalvador();
 				fdoc.sal_nit="NIT: ";
+				fdoc.svcf_nit="";fdoc.svcf_dep="";fdoc.svcf_muni="";fdoc.svcf_neg="";
 				if (svnit.equalsIgnoreCase("C")) fdoc.sal_nit="NRC: ";
 			}
 
@@ -552,7 +557,10 @@ public class Reimpresion extends PBase {
 
 			if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura,gl.peMFact)) {
                 gl.QRCodeStr = fdoc.QRCodeStr;
-                app.doPrint();
+				if (gl.codigo_pais.equalsIgnoreCase("HN")) gl.QRCodeStr="";
+				if (gl.codigo_pais.equalsIgnoreCase("SV")) gl.QRCodeStr="";
+
+				app.doPrint();
 
 				try {
 					sql="UPDATE D_FACTURA SET IMPRES=2 WHERE COREL='"+itemid+"'";

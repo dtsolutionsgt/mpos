@@ -342,7 +342,13 @@ public class ContrGrande extends PBase {
             }
 
             nit=txtNIT.getText().toString();
-            if (!app.validaNITSal(nit)) {
+
+            if (nit.isEmpty()) {
+                msgbox("NIT incorrecto");
+                txtNIT.requestFocus();txtNIT.selectAll();return false;
+            }
+
+            if (nit.length()!=14) {
                 msgbox("NIT incorrecto");
                 txtNIT.requestFocus();txtNIT.selectAll();return false;
             }

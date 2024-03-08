@@ -133,8 +133,8 @@ public class CliPos extends PBase {
         txtRef.setText("Ciudad");
 
         if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-            txtNIT.setText("80002204021234");txtNom.setText("Nombre");
-            //txtNIT.setText("166284-5");txtNom.setText("Nombre");
+            //txtNIT.setText("80002204021234");txtNom.setText("Nombre");
+            txtNIT.setText("166284-5");txtNom.setText("jaroslav pospichal ");txtCorreo.setText("jpospichal@dts.com.gt");
         }
 
 
@@ -1313,7 +1313,8 @@ public class CliPos extends PBase {
         try {
             val=gl.emp*10;
             nit =nit.replaceAll("-","");
-            nit=nit.substring(5);
+
+            if (nit.length()==14) nit=nit.substring(5);
 
             val=Integer.parseInt(nit);
             return val;
@@ -1523,6 +1524,10 @@ public class CliPos extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+
+                if (sCorreoCliente.isEmpty()) {
+                    msgbox2("Falta correo");return;
+                }
 
                 if (gl.sal_NRC) {
                     browse=3;

@@ -1205,6 +1205,9 @@ public class WSRec extends PBase {
 
         } catch (Exception e) {
             db.endTransaction();
+            String ss=e.getMessage() + "---" + sql;
+            //toastlong(ss);
+            //toastlong(ss);
             msgboxwait("DB Commit Error\n" + e.getMessage() + "\n" + sql);
             return false;
         }

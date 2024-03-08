@@ -988,6 +988,9 @@ public class FacturaRes extends PBase {
 				fdoc.fraseISR = gl.peFraseISR;
 				fdoc.PropinaAparte=gl.peFactPropinaAparte;
 
+				fdoc.tiendanom=gl.tiendanom;
+				fdoc.tiendanit=gl.tiendanit;
+
 				fdoc.idpais=gl.codigo_pais;
 				if (gl.codigo_pais.equalsIgnoreCase("HN")) cargaTotalesHonduras();
 				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
@@ -1002,8 +1005,10 @@ public class FacturaRes extends PBase {
                 fdoc.buildPrint(corel,0,"",gl.peMFact);
 
 				if (gl.peMFact)	gl.QRCodeStr=fdoc.QRCodeStr;else gl.QRCodeStr="";
+				if (gl.codigo_pais.equalsIgnoreCase("HN")) gl.QRCodeStr="";
+				if (gl.codigo_pais.equalsIgnoreCase("SV")) gl.QRCodeStr="";
 
-             	app.doPrint(gl.peNumImp,0);
+				app.doPrint(gl.peNumImp,0);
 
             }
 

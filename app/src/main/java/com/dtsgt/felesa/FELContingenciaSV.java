@@ -368,7 +368,7 @@ public class FELContingenciaSV extends PBase {
                     guardaRespuestaFEL();
                     marcaFactura();
             } else {
-                if (ffail==0) felerror="Ocurrió error en FEL :\n\n" + "Factura: " + felcorel + "\n" + fel.error;gl.feluuid = "";
+                if (ffail==0) felerror="Ocurrió error en FEL :\n\n" + "Factura: " + felcorel + "\n" + FactESA.error;gl.feluuid = "";
                 ffail++;
             }
             callBackMulti();
@@ -479,7 +479,6 @@ public class FELContingenciaSV extends PBase {
     }
 
     //endregion
-
 
     //region Aux
 

@@ -1035,12 +1035,14 @@ public class MainActivity extends PBase {
 
             if (gl.tienda != 0) {
                 try {
-                    sql = "SELECT DESCRIPCION, FEL_USUARIO_CERTIFICACION, FEL_LLAVE_CERTIFICACION FROM P_SUCURSAL WHERE CODIGO_SUCURSAL='" + gl.tienda + "'";
+                    sql = "SELECT DESCRIPCION, FEL_USUARIO_CERTIFICACION, FEL_LLAVE_CERTIFICACION, NIT " +
+                          "FROM P_SUCURSAL WHERE CODIGO_SUCURSAL='" + gl.tienda + "'";
                     DT = Con.OpenDT(sql);
                     DT.moveToFirst();
                     gl.tiendanom = DT.getString(0);
                     gl.felUsuarioCertificacion = DT.getString(1);
                     gl.felLlaveCertificacion = DT.getString(2);
+                    gl.tiendanit = DT.getString(3);
                 } catch (Exception e) {
                     gl.tiendanom = "";
                 }

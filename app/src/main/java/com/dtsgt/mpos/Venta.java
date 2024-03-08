@@ -2519,6 +2519,8 @@ public class Venta extends PBase {
 
             dt=Con.OpenDT(sql);
 
+            int rc=dt.getCount();
+
             if (dt.getCount()==0){
                 msgbox("¡No está definido el precio o ningúno artículo de la familia tiene existencia disponible!");return;
             }

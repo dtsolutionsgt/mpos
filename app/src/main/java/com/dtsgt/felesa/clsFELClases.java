@@ -181,13 +181,17 @@ public class clsFELClases {
 
             JSONArray jstrib = new JSONArray();
 
-            jst = new JSONObject();
-            jst.put("codigo", "20");
-            impuesto_monto=mu.round2(impuesto_monto);
-            jst.put("monto", impuesto_monto);
-            jstrib.put(jst);
+            if (impuesto_monto > 0) {
 
-            jsitem.put("tributos", jstrib);
+                jst = new JSONObject();
+                jst.put("codigo", "20");
+                impuesto_monto=mu.round2(impuesto_monto);
+                jst.put("monto", impuesto_monto);
+                jstrib.put(jst);
+
+                jsitem.put("tributos", jstrib);
+
+            }
 
             jsitems.put(jsitem);
         }

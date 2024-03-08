@@ -37,7 +37,7 @@ public class appGlobals extends Application {
 	public String ref1,ref2,ref3,escaneo,corel_d_mov,barra,parVer,gcods,prtipo,prpar;
 	public String gNITCliente, gDirCliente, gNombreCliente, gCorreoCliente,gTelCliente;
 	public String felcorel,felserie,felnum,feluuid,prodid,pedid,pedcorel,idorden,mesanom,nom_est;
-	public String tiendanom,cajanom,urlglob,menuitemid,titReport,pickcode,pickname,wsurl;
+	public String tiendanom,tiendanit,cajanom,urlglob,menuitemid,titReport,pickcode,pickname,wsurl;
 	public int tiponcredito,validarCred,gpsdist,gcodi,savemantid,salaid,idmesero,modoclave;
     public boolean vcredito,vcheque,vchequepost,validimp,dev,banco,disc,iniciaVenta,listaedit,exitflag;
 	public boolean closeCliDet, closeVenta,closePedido, promapl, pagado, pagocobro, sinimp, rutapos, devol, modoadmin,

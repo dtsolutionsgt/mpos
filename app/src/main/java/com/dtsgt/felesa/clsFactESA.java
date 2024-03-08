@@ -44,9 +44,6 @@ public class clsFactESA {
     //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/invalidacion
     //URL Producción https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/invalidacion
 
-
-
-
     public clsFactESA(PBase Parent, String Usuario, String Clave) {
         parent = Parent;
         cont = Parent;
@@ -118,12 +115,44 @@ public class clsFactESA {
 
             try {
                 is= connection.getInputStream();
-            } catch (SocketTimeoutException s){
+            } catch (SocketTimeoutException s) {
                 error="No responde3: " + s.getMessage();
+                errorflag=true;return errorflag;
+            } catch (Exception e) {
+                try {
+                    InputStream ise =connection.getErrorStream();
+                    BufferedReader rd = new BufferedReader(new InputStreamReader(ise));
+                    String line;
+                    StringBuilder sb = new StringBuilder();
+
+                    while((line = rd.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    rd.close();
+
+                    String jstr=sb.toString();
+                    jObj = new JSONObject(jstr);
+
+                    error=""+jObj.getString("mensaje")+"\n";
+                    jstr=jObj.getString("errores").toString();
+                    jstr=jstr.replace("{","");jstr=jstr.replace("}","");
+                    error+=jstr;
+
+                    errorflag=true;return errorflag;
+                } catch (Exception ee) {
+                    error=e.getMessage();
+                    errorflag=true;return errorflag;
+                }
+            }
+
+
+            try {
+                responsecode =connection.getResponseCode();
+            } catch (Exception e) {
+                error=e.getMessage();
                 errorflag=true;return errorflag;
             }
 
-            responsecode =connection.getResponseCode();
 
             if (responsecode==200 | responsecode==201) {
 
