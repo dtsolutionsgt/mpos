@@ -176,11 +176,11 @@ public class FELFacturaSV extends PBase {
             facts.add(felcorel);
 
             String FELArchContLLave ="Certificado_06141106141147.crt";
-            String FELAmbiente="02";
+            String FELContingenciaAmbiente="02";
 
             FactESA = new clsFactESA(this, fel.fel_usuario_certificacion, fel.fel_llave_certificacion);
             jcont=fclas.new JSONContingencia(fel.fel_usuario_certificacion,fel.fel_llave_certificacion,
-                                             FELAmbiente, FELArchContLLave);
+                                             FELContingenciaAmbiente, FELArchContLLave);
 
             ws = new WebServiceHandler(FELFacturaSV.this, gl.wsurl, 60000);
 

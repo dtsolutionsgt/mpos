@@ -36,13 +36,11 @@ public class clsFactESA {
 
     private String usuario, clave;
 
-    //URL Sandbox https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
-    //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
-    //URL Producción https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/certificar
-
     //URL Sandbox https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/invalidacion
     //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/invalidacion
     //URL Producción https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/invalidacion
+
+    String WSURL="https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
 
     public clsFactESA(PBase Parent, String Usuario, String Clave) {
         parent = Parent;
@@ -65,8 +63,6 @@ public class clsFactESA {
 
         try {
             responsecode=0;error="";errorflag=false;
-
-            String WSURL="https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
 
             timeout=45000;
 

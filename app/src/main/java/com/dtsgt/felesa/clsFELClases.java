@@ -1,8 +1,13 @@
 package com.dtsgt.felesa;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 
+import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.MiscUtils;
+import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsP_fel_sv_ambObj;
 import com.infile.generador.Generador;
 
 import org.json.JSONArray;
@@ -181,16 +186,20 @@ public class clsFELClases {
 
             JSONArray jstrib = new JSONArray();
 
-            if (impuesto_monto > 0) {
+            impuesto_monto=mu.round2(impuesto_monto);
+
+            if (impuesto_monto >0) {
 
                 jst = new JSONObject();
                 jst.put("codigo", "20");
-                impuesto_monto=mu.round2(impuesto_monto);
+
                 jst.put("monto", impuesto_monto);
                 jstrib.put(jst);
 
                 jsitem.put("tributos", jstrib);
 
+            } else {
+                jsitem.put("tipo_venta", "3");
             }
 
             jsitems.put(jsitem);
@@ -536,6 +545,38 @@ public class clsFELClases {
         public String solicitante_nom;
         public String solicitante_nit;
         public String solicitante_correo;
+    }
+
+    public class FELAmbiente {
+        public String ArchLlave,URL;
+
+        //URL Sandbox https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
+        //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
+        //URL Producción https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/certificar
+
+
+        public FELAmbiente(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
+
+            clsP_fel_sv_ambObj P_fel_sv_ambObj=new clsP_fel_sv_ambObj(context,dbconnection,dbase);
+
+            P_fel_sv_ambObj.fill();
+            clsClasses.clsP_fel_sv_amb item=P_fel_sv_ambObj.first();
+
+            ArchLlave=item.archivo;
+
+            URL="https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
+
+            switch (item.ambiente) {
+                case 1:
+                    URL="https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
+                    break;
+                case 2:
+                    URL Producción https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/certificar
+                    break;
+            }
+
+        }
+
     }
 
     //region Aux

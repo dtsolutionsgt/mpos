@@ -32,7 +32,7 @@ public class clsDocument {
 	public long ffecha;
     public int pendiente,diacred,pagoefectivo,empid,tipo_doc,corel_doc;
 	public String TipoCredito, NoAutorizacion,LAN_IP;
-	public double ptotal,pdesc,pprop,propvalor,propperc;
+	public double ptotal,pdesc,pprop,propvalor,propperc,sv_subt;
     public String svcf_nit,svcf_dep,svcf_muni,svcf_neg;
 
     public boolean es_pickup, es_delivery;

@@ -18,6 +18,7 @@ import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import com.dtsgt.base.AppMethods;
@@ -58,10 +60,15 @@ import com.dtsgt.felesa.FELESATest;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.LA_Login;
 import com.dtsgt.webservice.startMainTimer;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.File;
 import java.util.ArrayList;
 
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class MainActivity extends PBase {
 
@@ -402,7 +409,8 @@ public class MainActivity extends PBase {
     }
 
     public void doFELESA(View view) {
-        startActivity(new Intent(this, FELESATest.class));
+        dodwn();
+        //startActivity(new Intent(this, FELESATest.class));
         //felESA();
     }
 
@@ -1361,302 +1369,63 @@ public class MainActivity extends PBase {
 
     //endregion
 
-    /*
+    private void dodwn() {
 
-    //URL Sandbox https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
-    //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
-    //URL Producción https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/certificar
-
-    private void felESA() {
-        firmaFELESA();
-    }
-
-    private void firmaFELESA() {
-        JSONObject jsitem;
+        String fbname,fname,bckfile;
+        File file;
 
         try {
+            if (app.isOnWifi()==0) {
+                msgbox("Sin conexión al internet.");return;
+            }
 
+            bckfile="Certificado_06141106141147.crt";
 
-            jsdoc = new JSONObject();
+            fname=Environment.getExternalStorageDirectory()+"/"+bckfile;
+            fbname="fel_esa_cert/"+bckfile;
 
-            JSONObject jshead = new JSONObject();
-            jshead.put("tipo_dte","01");
-            jshead.put("establecimiento","0001");
-            jshead.put("condicion_pago",2);
+            FirebaseStorage storage;
+            StorageReference storageReference, apkref;
 
-            //jsdoc.put("documento",jshead);
+            storage = FirebaseStorage.getInstance();
+            storageReference = storage.getReference();
 
-            JSONArray jsitems=new JSONArray();
+            apkref = storageReference.child(fbname);
+            file=new File(fname);
+            Uri localfile = Uri.fromFile(file);
 
-            jsitem = new JSONObject();
+            apkref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    String ss=uri.toString();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    msgbox("Error de descarga2: \n"+exception.getMessage());
+                }
+            });
 
-            jsitem.put("tipo", 1);
-            jsitem.put("cantidad", 1);
-            jsitem.put("unidad_medida", 59);
-            jsitem.put("descuento", 25);
-            jsitem.put("descripcion", "Prueba item 1");
-            jsitem.put("precio_unitario", 250);
+            apkref.getFile(localfile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
 
-            jsitems.put(jsitem);
-
-            jshead.put("items",jsitems);
-
-            JSONObject jsad = new JSONObject();
-            jsad.put("adenda 1","01");
-            jsad.put("adenda 2","02");
-            jshead.put("adendas",jsad);
-
-            jsdoc.put("documento",jshead);
-
-
-            executeWSFirm();
-
+                    if (file.exists()) {
+                        msgbox("LLave de certificacion descargada");
+                    } else {
+                        msgbox("No se pudo descargar archivo por falta de conexión al internet.");
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    msgbox("Error de descarga: \n"+exception.getMessage());
+                }
+            });
         } catch (Exception e) {
-            error=e.getMessage();errorflag=true;
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
-
-    private void executeWSFirm() throws Exception {
-
-        try {
-
-            jsfirm = jsdoc.toString();
-            errorflag=false;
-            error="";
-
-            firmcomplete=false;
-            halt=false;
-
-            AsyncCallWS wstask = new AsyncCallWS();
-            wstask.execute();
-
-        } catch (Exception e) {
-            throw e;
-        }
-
-    }
-
-    private Boolean wsExecuteF(){
-        URL url;
-        HttpURLConnection connection = null;
-        JSONObject jObj = null;
-        responsecode =0;
-        error = "";
-        errfirma=false;
-        errorflag = false;
-        modoiduni=false;
-
-        try {
-
-            String WSURL="https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
-            timeout=45000;
-
-            url = new URL(WSURL);
-            connection = (HttpURLConnection)url.openConnection();
-            connection.setConnectTimeout(timeout);
-            connection.setReadTimeout(timeout);
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type","application/json");
-            //connection.setRequestProperty("Content-Length",""+ jsfirm.getBytes().length);
-            connection.setRequestProperty("usuario","06141106141147");
-            connection.setRequestProperty("llave","df3b5497c338a7e78d659a468e72a670");
-            connection.setRequestProperty("identificador","100000007");
-            connection.setUseCaches (false);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-
-
-            try {
-                connection.connect();
-            } catch (SocketTimeoutException s){
-                error="ERROR_202212140931 " + s.getMessage();
-                errorcon=true;errorflag=true;constat=false;
-                return errorflag;
-            } catch (IOException e) {
-                error=e.getMessage();
-                errorcon=true;errorflag=true;constat=false;
-                return errorflag;
-            } catch (Exception e) {
-                error=e.getMessage();
-                errorcon=true;errorflag=true;constat=false;
-                return errorflag;
-            }
-
-            String sco= URLUtil.isValidUrl(WSURL)+"";
-
-            DataOutputStream wr = null;
-
-            try {
-                wr = new DataOutputStream(connection.getOutputStream ());
-            } catch (SocketTimeoutException s){
-                error="ERROR_202212140931A " + s.getMessage();
-                errorcon=true;errorflag=true;constat=false;
-                return errorflag;
-            } catch (IOException e) {
-                error=e.getMessage();
-                errorcon=true;errorflag=true;constat=false;
-                return null;
-            }
-
-            wr.writeBytes (jsfirm);
-            wr.flush ();
-            wr.close ();
-
-            InputStream is;
-
-            try {
-                is= connection.getInputStream();
-            } catch (SocketTimeoutException s){
-                error="ERROR_202212140931B " + s.getMessage();
-                errorcon=true;errorflag=true;constat=false;
-                return errorflag;
-            } catch (IOException e) {
-                String se=e.getMessage();
-                se=se+"";
-                throw(e);
-                //is= connection.getInputStream();
-            }
-
-            responsecode =connection.getResponseCode();
-
-            if (responsecode==200 | responsecode==201) {
-
-                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-                String line;
-                StringBuilder sb = new StringBuilder();
-
-                while((line = rd.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                rd.close();
-
-                String jstr=sb.toString();
-                jObj = new JSONObject(jstr);
-
-                Boolean rslt=jObj.getBoolean("ok");
-
-                if (rslt) {
-                    errorflag=false;
-                    firma=jObj.getString("archivo");
-                } else {
-                    errorflag=true;
-                    try {
-                        String vResultado="";
-                        String vDescripcion="";
-                        try {
-                            vResultado =jObj.getString("resultado");
-                            vDescripcion =jObj.getString("descripcion");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        if (!vResultado.equalsIgnoreCase("") || !vDescripcion.equalsIgnoreCase("")){
-                            error+=vDescripcion;
-                        }else{
-                            //#EJC20200707: Obtener mensaje de error específico en respuesta.
-                            JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
-
-                            for (int i=0; i<ArrayError.length(); i++) {
-                                JSONObject theJsonObject = ArrayError.getJSONObject(i);
-                                String name = theJsonObject.getString("mensaje_error");
-                                error = name;
-                            }
-
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } else {
-                error=""+ responsecode;errorflag=true;errfirma=true;
-                return errorflag;
-            }
-        } catch (SocketTimeoutException s){
-            error="ERROR_202212140931C " + s.getMessage();
-            errorcon=true;errorflag=true;constat=false;
-            return errorflag;
-        } catch (Exception e) {
-            error=e.getMessage();errorflag=true;errfirma=true;
-            return errorflag;
-        } finally {
-
-        }
-        return errorflag;
-    }
-
-    private void wsFinishedF() {
-        try  {
-            firmcomplete=true;
-
-            if (halt) {
-                errorflag=true;error="Interrupido por usuario";
-                //parent.felCallBack();
-            } else {
-
-                if (!errorflag && !errcert) {
-                    Date currentTime = Calendar.getInstance().getTime();
-                    sendJSONCert();
-                } else {
-                    //parent.felCallBack();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private class AsyncCallWS extends AsyncTask<String, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(String... params)  {
-            try  {
-                wsExecuteF();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return errorflag;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            try {
-                if (!errorflag){
-                    wsFinishedF();
-                }else{
-                    errcert = errorflag;;
-                    //parent.felCallBack();
-                    return;
-                }
-            } catch (Exception e)  {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        protected void onPreExecute() {}
-
-        @Override
-        protected void onProgressUpdate(Void... values) {}
-
-        @Override
-        protected void onCancelled() {
-            try {
-                firmcomplete=true;
-                errorflag=true;error+="Se agotó tiempo de certificación";
-                //parent.felCallBack();
-            } catch (Exception e) {
-                String ss=e.getMessage();
-                ss=ss+"";
-            }
-
-            super.onCancelled();
-
-        }
-
-    }
-
-    */
 
     //region Custom dialog
 

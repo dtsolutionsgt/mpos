@@ -1814,6 +1814,15 @@ public class BaseDatosVersion {
             sql="CREATE INDEX P_gran_cont_idx1 ON P_gran_cont(NRC)";db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [P_fel_sv_amb] ("+
+                    "ID INTEGER NOT NULL,"+
+                    "ambiente INTEGER NOT NULL,"+
+                    "archivo TEXT NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
 
 
         try {

@@ -885,6 +885,12 @@ public class clsClasses {
         public int codigo_factorconv;
     }
 
+    public class clsP_fel_sv_amb {
+        public int  id;
+        public int  ambiente;
+        public String  archivo;
+    }
+
     public class clsP_frase {
         public int  codigo_frase;
         public String texto;

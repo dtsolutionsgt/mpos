@@ -163,11 +163,14 @@ public class FELContingenciaSV extends PBase {
             buildList();
 
             String FELArchContLLave = "Certificado_06141106141147.crt";
-            String FELAmbiente = "02";
+
+
+
+            String FELContingenciaAmbiente = "02";
 
             FactESA = new clsFactESA(this, fel.fel_usuario_certificacion, fel.fel_llave_certificacion);
             jcont = fclas.new JSONContingencia(fel.fel_usuario_certificacion, fel.fel_llave_certificacion,
-                    FELAmbiente, FELArchContLLave);
+                    FELContingenciaAmbiente, FELArchContLLave);
 
             if (facts.size() > 0) {
                 felcorel=facts.get(0);

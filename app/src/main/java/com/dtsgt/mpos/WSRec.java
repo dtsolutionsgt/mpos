@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -18,6 +19,8 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.XMLObject;
@@ -38,6 +41,7 @@ import com.dtsgt.classes.clsP_descuentoObj;
 import com.dtsgt.classes.clsP_empresaObj;
 import com.dtsgt.classes.clsP_encabezado_reporteshhObj;
 import com.dtsgt.classes.clsP_factorconvObj;
+import com.dtsgt.classes.clsP_fel_sv_ambObj;
 import com.dtsgt.classes.clsP_fraseObj;
 import com.dtsgt.classes.clsP_giro_negocioObj;
 import com.dtsgt.classes.clsP_impresoraObj;
@@ -87,6 +91,11 @@ import com.dtsgt.classesws.*;
 import com.dtsgt.fel.FELFactura;
 import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -1166,15 +1175,6 @@ public class WSRec extends PBase {
 
             db.beginTransaction();
 
-            /*
-            String sq="";
-            for (int i = 0; i < script.size(); i++) {
-                sql = script.get(i);
-                sq=sq+sql+"\n";
-            }
-            sq=sq+" ";
-            */
-
             for (int i = 0; i < script.size(); i++) {
                 sql = script.get(i);
                 db.execSQL(sql);
@@ -1394,7 +1394,7 @@ public class WSRec extends PBase {
     private void fechaContratoFEL() {
         if (gl.tienda==0) return;
         try {
-            String wsql="SELECT dbo.AndrDate(FEL_FECHA_VENCE_CONTRATO) FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+gl.tienda;
+            String wsql="SELECT dbo.AndrDate(FEL_FECHA_VENCE_CONTRATO),FEL_ESA_modo_sandbox,FEL_ESA_Archivo FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+gl.tienda;
             wso.execute(wsql,rnFechaContrato);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -1403,8 +1403,13 @@ public class WSRec extends PBase {
 
     private void updateFechaContrato() {
         long fc;
+        String FELsvcrt;
+        int FELsvmodo;
+
         try {
-            if (wso.errflag) throw new Exception(wso.error);
+            if (wso.errflag) {
+                throw new Exception(wso.error);
+            }
 
             if (wso.openDTCursor.getCount()>0) {
                 wso.openDTCursor.moveToFirst();
@@ -1416,10 +1421,57 @@ public class WSRec extends PBase {
                     fc=2001010000;
                 }
 
+                try {
+                    FELsvmodo=wso.openDTCursor.getInt(1);
+                    FELsvcrt=wso.openDTCursor.getString(2);
+                } catch (Exception e) {
+                    FELsvmodo=-1;FELsvcrt="";
+                }
+
                 sql="UPDATE P_SUCURSAL SET FECHA_CONTR="+fc+"  WHERE CODIGO_SUCURSAL="+gl.tienda;
                 db.execSQL(sql);
 
-                validaFechaContrato();
+                //validaFechaContrato();
+
+                if (cod_pais.equalsIgnoreCase("SV")) {
+                    aplicaAmbienteSV(FELsvcrt,FELsvmodo);
+                }
+
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void aplicaAmbienteSV( String FELsvcrt, int FELsvmodo) {
+        try {
+
+            if (FELsvmodo<0) return;
+
+            if (FELsvcrt.isEmpty()) {
+                msgbox("Archivo de certificacion FEL ESA incorrecto.");return;
+            }
+
+            if (FELsvcrt.length()<7) {
+                msgbox("Archivo de certificacion FEL ESA incorrecto.");return;
+            }
+
+            clsP_fel_sv_ambObj P_fel_sv_ambObj=new clsP_fel_sv_ambObj(this,Con,db);
+
+            clsClasses.clsP_fel_sv_amb item = clsCls.new clsP_fel_sv_amb();
+
+            item.id=1;
+            item.ambiente=FELsvmodo;
+            item.archivo=FELsvcrt;
+
+            try {
+                P_fel_sv_ambObj.add(item);
+            } catch (Exception e) {
+                P_fel_sv_ambObj.update(item);
+            }
+
+            if (FELsvmodo>=0) {
+                validaFELESA_archivo(FELsvcrt);
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -4031,7 +4083,6 @@ public class WSRec extends PBase {
         }
     }
 
-
     //endregion
 
     //region Web Service calls
@@ -4107,7 +4158,7 @@ public class WSRec extends PBase {
 
     private void validaFechaContrato() {
         try {
-            sql="SELECT dbo.AndrDate(FEL_FECHA_VENCE_CONTRATO) FROM P_SUCURSAL WHERE (CODIGO_SUCURSAL="+gl.tienda+")";
+            sql="SELECT dbo.AndrDate(FEL_FECHA_VENCE_CONTRATO),FEL_ESA_modo_sandbox,FEL_ESA_Archivo FROM P_SUCURSAL WHERE (CODIGO_SUCURSAL="+gl.tienda+")";
             wso.execute(sql,rnFechaContrato);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -4115,6 +4166,8 @@ public class WSRec extends PBase {
     }
 
     private void fechaContrato() {
+        int i=2;
+
         try {
             if (wso.errflag) throw new Exception(wso.error);
 
@@ -4126,6 +4179,7 @@ public class WSRec extends PBase {
             try {
                 dt.moveToFirst();
                 ffel=dt.getLong(0);
+
             } catch (Exception e) {
                 ffel=0;
             }
@@ -4397,6 +4451,62 @@ public class WSRec extends PBase {
             if (cod_pais.isEmpty()) cod_pais="-";
         } catch (Exception e) {
             //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());cod_pais="SV";
+        }
+    }
+
+    private void validaFELESA_archivo(String FELsvcrt) {
+        String fname,fbname;
+        File file;
+
+        try {
+            fname=Environment.getExternalStorageDirectory()+"/"+FELsvcrt;
+            fbname="fel_esa_cert/"+FELsvcrt;
+            file=new File(fname);
+            Uri localfile = Uri.fromFile(file);
+
+            if (file.exists()) return;
+            if (app.isOnWifi()==0) {
+                msgbox("No se puede descargar la lLave de certificacion por falta de conexión al internet.");
+                return;
+            }
+
+            FirebaseStorage storage;
+            StorageReference storageReference, apkref;
+            storage = FirebaseStorage.getInstance();
+            storageReference = storage.getReference();
+            apkref = storageReference.child(fbname);
+
+            apkref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    String ss=uri.toString();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    msgbox("Error de descarga2: \n"+exception.getMessage());
+                }
+            });
+
+            apkref.getFile(localfile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+
+                    if (file.exists()) {
+                        msgbox("LLave de certificacion descargada");
+                    } else {
+                        msgbox("Error en descarga de la lLave de certificacion por falta de conexión al internet.");
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    msgbox("Error de descarga: \n"+exception.getMessage());
+                }
+            });
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
