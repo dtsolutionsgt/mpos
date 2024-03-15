@@ -548,11 +548,17 @@ public class clsFELClases {
     }
 
     public class FELAmbiente {
-        public String ArchLlave,URL;
+        public String ArchivoLlave,URL,URLAnul;
 
+        // +++++ Certificacion
         //URL Sandbox https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
         //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
         //URL Producción https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/certificar
+
+        // +++++ Anulacion
+        //URL Sandbox https://sandbox-certificador.infile.com.sv/api/v1/
+        //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/invalidacion
+        //URL Producción https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/invalidacion
 
 
         public FELAmbiente(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
@@ -562,16 +568,19 @@ public class clsFELClases {
             P_fel_sv_ambObj.fill();
             clsClasses.clsP_fel_sv_amb item=P_fel_sv_ambObj.first();
 
-            ArchLlave=item.archivo;
+            ArchivoLlave=item.archivo;
 
             URL="https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
+            URLAnul="https://sandbox-certificador.infile.com.sv/api/v1/";
 
             switch (item.ambiente) {
                 case 1:
-                    URL="https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
+                    URL = "https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
+                    URLAnul = "https://certificador.infile.com.sv/api/v1/certificacion/test/documento/invalidacion";
                     break;
                 case 2:
-                    URL Producción https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/certificar
+                    URL = "https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/certificar";
+                    URLAnul = "https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/invalidacion";
                     break;
             }
 

@@ -1545,19 +1545,6 @@ public class clsClasses {
         public String llave;
     }
 
-    public class clsT_prodmenu {
-        public int  id;
-        public int  idsess;
-        public int  iditem;
-        public String codigo;
-        public String nombre;
-        public String descrip;
-        public String nota;
-        public int  bandera;
-        public int  idlista;
-        public int  cant;
-    }
-
     public class clsT_cierre {
         public int  id;
         public int  dia;
@@ -1617,6 +1604,14 @@ public class clsClasses {
         public String feeluuid;
         public long feelfechaprocesado;
         public String feelcontingencia;
+    }
+
+    public class clsT_fel_sv_error {
+        public String corel;
+        public int  id;
+        public long fecha;
+        public int  bandera;
+        public String texto;
     }
 
     public class clsT_ipbypass {
@@ -1792,6 +1787,19 @@ public class clsClasses {
         public double total;
         public String nota;
         public String codigo_tipo_producto;
+    }
+
+    public class clsT_prodmenu {
+        public int  id;
+        public int  idsess;
+        public int  iditem;
+        public String codigo;
+        public String nombre;
+        public String descrip;
+        public String nota;
+        public int  bandera;
+        public int  idlista;
+        public int  cant;
     }
 
     public class clsT_stock {

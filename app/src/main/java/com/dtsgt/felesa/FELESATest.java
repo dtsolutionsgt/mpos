@@ -77,8 +77,10 @@ public class FELESATest extends PBase {
             FELClave="df3b5497c338a7e78d659a468e72a670";
             FELArchContLLave ="Certificado_06141106141147.crt";
 
-            FactESA=new clsFactESA(this,FELUsuario,FELClave);
-            AnulESA=new clsAnulESA(this,FELUsuario,FELClave);
+            clsFELClases.FELAmbiente FELambiente=fclas.new FELAmbiente(this, Con, db);
+
+            FactESA=new clsFactESA(this,FELUsuario,FELClave,FELambiente.URL);
+            AnulESA=new clsAnulESA(this,FELUsuario,FELClave,FELambiente.URL);
             jcont=fclas.new JSONContingencia(FELUsuario, FELClave,"02", FELArchContLLave);
 
         } catch (Exception e) {

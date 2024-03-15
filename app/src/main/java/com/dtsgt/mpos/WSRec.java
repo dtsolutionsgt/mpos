@@ -4484,7 +4484,7 @@ public class WSRec extends PBase {
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
-                    msgbox("Error de descarga2: \n"+exception.getMessage());
+                    msgbox("LLave cert FEL ESA, Error de descarga2: \n"+exception.getMessage());
                 }
             });
 
@@ -4495,13 +4495,13 @@ public class WSRec extends PBase {
                     if (file.exists()) {
                         msgbox("LLave de certificacion descargada");
                     } else {
-                        msgbox("Error en descarga de la lLave de certificacion por falta de conexión al internet.");
+                        msgbox("Error en descarga de la llave de certificacion por falta de conexión al internet.");
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
-                    msgbox("Error de descarga: \n"+exception.getMessage());
+                    msgbox("LLave cert FEL ESA,Error de descarga: \n"+exception.getMessage());
                 }
             });
 

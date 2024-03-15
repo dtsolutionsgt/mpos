@@ -1824,6 +1824,21 @@ public class BaseDatosVersion {
             db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [T_fel_sv_error] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "ID INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "BANDERA INTEGER NOT NULL,"+
+                    "TEXTO TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL],[ID])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX T_fel_sv_error_idx1 ON T_fel_sv_error(FECHA)";db.execSQL(sql);
+            sql="CREATE INDEX T_fel_sv_error_idx2 ON T_fel_sv_error(BANDERA)";db.execSQL(sql);
+        } catch (Exception e) { }
+
 
         try {
 

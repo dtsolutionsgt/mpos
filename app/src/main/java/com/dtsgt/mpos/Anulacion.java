@@ -193,7 +193,11 @@ public class Anulacion extends PBase {
 			//fel.fel_usuario_certificacion="06141106141147";
 			//fel.fel_llave_certificacion="df3b5497c338a7e78d659a468e72a670";
 
-			AnulESA=new clsAnulESA(this,fel.fel_usuario_certificacion,fel.fel_llave_certificacion);
+			clsFELClases fclas = new clsFELClases();
+			clsFELClases.FELAmbiente FELambiente=fclas.new FELAmbiente(this, Con, db);
+
+			AnulESA=new clsAnulESA(this,fel.fel_usuario_certificacion,
+					              fel.fel_llave_certificacion,FELambiente.URLAnul);
 
 		} else {
 			fel=new clsFELInFile(this,this,gl.timeout);

@@ -3,8 +3,10 @@ package com.dtsgt.felesa;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.dtsgt.base.clsClasses;
 import com.dtsgt.mpos.PBase;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -15,15 +17,17 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class clsFactESA {
 
     public boolean errorflag;
-    public String  error="",estado;
-
+    public String  error="",estado,jsonsave,WSURL;
 
     private clsFELClases fclas=new clsFELClases();
     public clsFELClases.respuesta respuesta =fclas.new respuesta();
+    public ArrayList<String> erritems= new ArrayList<String>();
 
     private JSONObject jso = new JSONObject();
 
@@ -36,21 +40,20 @@ public class clsFactESA {
 
     private String usuario, clave;
 
-    //URL Sandbox https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/invalidacion
-    //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/invalidacion
-    //URL Producción https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/invalidacion
 
-    String WSURL="https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
+    //String WSURL="https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
 
-    public clsFactESA(PBase Parent, String Usuario, String Clave) {
+    public clsFactESA(PBase Parent, String Usuario, String Clave, String URL) {
         parent = Parent;
         cont = Parent;
         usuario = Usuario;
         clave = Clave;
+        WSURL=URL;
     }
 
     public void Certifica(String Corel,String json)  {
-        corel=Corel;jsfirm=json;
+        corel=Corel;
+        jsfirm=json;jsonsave=json;
 
         AsyncCallWS wstask = new AsyncCallWS();
         wstask.execute();
@@ -60,9 +63,11 @@ public class clsFactESA {
         HttpURLConnection connection = null;
         JSONObject jObj=null;
         URL url;
+        String ekey,eval;
 
         try {
             responsecode=0;error="";errorflag=false;
+            erritems.clear();
 
             timeout=45000;
 
@@ -129,11 +134,32 @@ public class clsFactESA {
                     String jstr=sb.toString();
                     jObj = new JSONObject(jstr);
 
-                    error=""+jObj.getString("mensaje")+"\n";
-                    jstr=jObj.getString("errores").toString();
-                    jstr=jstr.replace("{","");jstr=jstr.replace("}","");
-                    error+=jstr;
+                    String jsm=jObj.getString("mensaje");
+                    error=""+jsm+"\n";
+                    erritems.add(jsm);
 
+                    try {
+                        JSONObject jserr=jObj.getJSONObject("errores");
+
+                        Iterator<String> keys = jserr.keys();
+                        while (keys.hasNext()) {
+                            ekey = keys.next();
+                            eval=jserr.getString(ekey);
+                            error+=eval+"\n";
+                            erritems.add(eval);
+                        }
+
+                    } catch (Exception ee) {
+                        try {
+                            jstr=jObj.getString("errores").toString();
+                            jstr=jstr.replace("{","");jstr=jstr.replace("}","");
+                            error+=jstr;
+                        } catch (Exception eee) {
+                            error+=" error no identificado";
+                        }
+                    }
+
+                    error=error+"";
                     errorflag=true;return errorflag;
                 } catch (Exception ee) {
                     error=e.getMessage();
@@ -222,7 +248,17 @@ public class clsFactESA {
                     }
 
                 } else {
-                    error=" " +jObj.getString("mensaje");
+                    error=" "+jObj.getString("mensaje");
+                    erritems.add("-"+error);
+                    try {
+                        jstr=jObj.getString("errores").toString();
+                        jstr=jstr.replace("{","");jstr=jstr.replace("}","");
+                        error+=jstr;
+                        erritems.add("- "+jstr);
+                    } catch (Exception eee) {
+                        error+=" error no identificado";
+                        erritems.add("-"+" error no identificado");
+                    }
                     errorflag=true;return errorflag;
                 }
             } else {

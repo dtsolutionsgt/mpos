@@ -57,6 +57,7 @@ public class FELContingenciaSV extends PBase {
     private clsFELClases.JSONCredito jcred;
     private clsFELClases.JSONContingencia jcont;
     private clsFactESA FactESA;
+    private clsFELClases.FELAmbiente FELambiente;
 
     private clsFELInFile fel;
 
@@ -162,13 +163,13 @@ public class FELContingenciaSV extends PBase {
 
             buildList();
 
-            String FELArchContLLave = "Certificado_06141106141147.crt";
+            FELambiente=fclas.new FELAmbiente(this, Con, db);
+            //String FELArchContLLave ="Certificado_06141106141147.crt";
+            String FELArchContLLave=FELambiente.ArchivoLlave;
+            String FELContingenciaAmbiente="02";
 
-
-
-            String FELContingenciaAmbiente = "02";
-
-            FactESA = new clsFactESA(this, fel.fel_usuario_certificacion, fel.fel_llave_certificacion);
+            FactESA = new clsFactESA(this, fel.fel_usuario_certificacion,
+                                     fel.fel_llave_certificacion,FELambiente.URL);
             jcont = fclas.new JSONContingencia(fel.fel_usuario_certificacion, fel.fel_llave_certificacion,
                     FELContingenciaAmbiente, FELArchContLLave);
 

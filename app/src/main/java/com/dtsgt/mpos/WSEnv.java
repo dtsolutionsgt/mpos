@@ -136,7 +136,6 @@ public class WSEnv extends PBase {
         wso=new wsOpenDT(gl.wsurl);
         rnVentaHora= () -> { ventaHoraCallback();};
 
-
         D_facturaObj = new clsD_facturaObj(this, Con, db);
         D_facturadObj = new clsD_facturadObj(this, Con, db);
         D_facturapObj = new clsD_facturapObj(this, Con, db);
@@ -158,7 +157,6 @@ public class WSEnv extends PBase {
         P_cjPagosObj = new clsP_cajapagosObj(this, Con, db);
         P_cjReporteObj = new clsP_cajareporteObj(this, Con, db);
         D_cxcObj=new clsD_cxcObj(this,Con,db);
-
 
         preparaEnvio();
 
@@ -521,26 +519,28 @@ public class WSEnv extends PBase {
     }
 
     private void limpiaTablas() {
-        long ff=du.getActDate();
+        long ff=du.getActDate(),fm=du.getActDate();
 
         ff=du.addDays(ff,-7);
+        fm=du.addDays(fm,-30);
 
         try {
             sql="DELETE FROM D_fel_bitacora WHERE fecha<"+ff;
-            db.execSQL(sql);
+            //db.execSQL(sql);
         } catch (Exception e) {
             //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
         try {
             sql="DELETE FROM D_fel_error WHERE fecha<"+ff;
-            db.execSQL(sql);
+            //db.execSQL(sql);
         } catch (Exception e) {
             //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
         try {
-
+            sql="DELETE FROM T_fel_sv_error WHERE fecha<"+fm;
+            db.execSQL(sql);
         } catch (Exception e) {
             //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1692,7 +1692,7 @@ public class WSEnv extends PBase {
         ferr = "";
         movErr = "";
 
-        //limpiaTablas();
+        limpiaTablas();
 
         try {
 

@@ -21,6 +21,7 @@ public class clsAnulESA {
     public String codigoGeneracion,selloRecepcion,mensaje;
     public boolean resultado;
     public int anulresult;
+    public String WSURL;
 
     private clsFELClases fclas=new clsFELClases();
 
@@ -32,17 +33,14 @@ public class clsAnulESA {
 
     private String jsanul,usuario,clave;
 
-    //URL Sandbox https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
-    //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
-    //URL Producción https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/certificar
+    //private String WSURL="https://sandbox-certificador.infile.com.sv/api/v1/";
 
-    private String WSURL="https://sandbox-certificador.infile.com.sv/api/v1/";
-
-    public clsAnulESA(PBase Parent, String Usuario, String Clave) {
+    public clsAnulESA(PBase Parent, String Usuario, String Clave, String URL) {
         parent = Parent;
         cont = Parent;
         usuario = Usuario;
         clave = Clave;
+        WSURL=URL;
     }
 
     public void Anular(String json) throws Exception {
