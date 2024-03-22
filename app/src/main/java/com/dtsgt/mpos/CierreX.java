@@ -78,6 +78,7 @@ public class CierreX extends PBase {
     private boolean exito, reimpresion=false, esvacio;
     private ProgressDialog progressDialog;
     private String CorreoSucursal="", nombrecopia="";
+    private int rep1ln;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -392,7 +393,7 @@ public class CierreX extends PBase {
 
         Cursor dt;
 
-        try{
+        try {
 
             itemR.clear();
 
@@ -416,23 +417,28 @@ public class CierreX extends PBase {
                 switch (sw){
 
                     case 0:
-
                         sql="00";
                         break;
-
                     case 1:
-
-                        if(gl.reportid==9){
+                        if (gl.reportid==9) {
                             condition =" WHERE ANULADO=0 AND KILOMETRAJE = 0 ";
-                        }else if(gl.reportid==10){
+                        } else if(gl.reportid==10){
                             condition=" WHERE ANULADO=0 AND KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
-                        sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), CAST(FECHA/10000 AS INTEGER) " +
-                                "FROM D_FACTURA "+
-                                condition+
+                        if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                            sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), CAST(FECHA/10000 AS INTEGER) " +
+                                "FROM D_FACTURA " +
+                                condition +
                                 "GROUP BY SERIE, IMPMONTO, CAST(FECHA/10000 AS INTEGER) " +
                                 "ORDER BY CAST(FECHA/10000 AS INTEGER)";
+                        } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                            sql="SELECT '', SERIE, 0, AYUDANTE, '', '', COUNT(COREL), SUM(IMPMONTO), SUM(TOTAL), CAST(FECHA/10000 AS INTEGER) " +
+                                "FROM D_FACTURA " +
+                                condition +
+                                "GROUP BY AYUDANTE, SERIE, CAST(FECHA/10000 AS INTEGER) " +
+                                "ORDER BY CAST(FECHA/10000 AS INTEGER)";
+                        }
                         break;
 
                     case 2:
@@ -481,7 +487,6 @@ public class CierreX extends PBase {
                                 "P_MEDIAPAGO ON D_FACTURAP.CODPAGO = P_MEDIAPAGO.CODIGO " +
                                 "WHERE D_FACTURA.ANULADO=0  "+condition+" " +
                                 "GROUP BY P_MEDIAPAGO.NOMBRE";
-
 
                         break;
 
@@ -598,11 +603,10 @@ public class CierreX extends PBase {
                         msgbox("Ocurrió un error, vuelva a intentarlo");return false;
                     } else {
 
-                        if (sw==4) {
-                            esvacio=dt.getCount()==0;
-                        }
+                        if (sw==1) rep1ln=dt.getCount();
+                        if (sw==4) esvacio=dt.getCount()==0;
 
-                        if(dt.getCount()!=0){
+                        if (dt.getCount()!=0){
 
                             dt.moveToFirst();
 
@@ -767,17 +771,15 @@ public class CierreX extends PBase {
 
             br.close() ;
 
-        }catch (IOException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            msgbox("getTXT: "+e);
+        } catch (IOException e) {
+           msgbox("getTXT: "+e);
             e.printStackTrace();
         }
 
         try{
             lblFact.setText(text);
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            msgbox("getTXT setText: "+e);
+        } catch (Exception e){
+           msgbox("getTXT setText: "+e);
         }
 
     }
@@ -928,7 +930,7 @@ public class CierreX extends PBase {
                         totSinImp+=mu.round2(itemRZ.get(j).precio);
                     }
 
-                    for(int a=0; a<itemRZ.size(); a++){
+                    for (int a=0; a<itemRZ.size(); a++){
                         if(itemRZ.get(a).id.equals("1")){
                             counter+=1;
                         }
@@ -947,7 +949,7 @@ public class CierreX extends PBase {
                     if(itemR.get(i).tipo==1){
 
                         test = "Reporte 1";
-                        if(acc1==1){
+                        if (acc1==1){
 
                             tot=0;
                             totF=0;
@@ -963,14 +965,28 @@ public class CierreX extends PBase {
                             rep.add("Vesion MPos : "+gl.parVer);
                             rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
                             rep.line();
-                            rep.add("Cant.Fact   Costo  Impuesto    Total");
+
+                            if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                                rep.add("Cant.Fact   Costo  Impuesto    Total");
+                            } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                                rep.add("Cant.   Subtotal    Impuesto       Total");
+                            }
+
                             rep.line();
                             rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
                             acc1 = 2;
                         }
 
-                        if(!series.equals(itemR.get(i).serie)){
-                            rep.add("--------(    Serie "+itemR.get(i).serie+"    )------------");
+                        if (!series.equals(itemR.get(i).serie)){
+                            if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                                rep.add("Serie "+itemR.get(i).serie);
+                            } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                                String dn="Ticket";
+                                if (itemR.get(i).codProd.equalsIgnoreCase("N")) {
+                                    dn="Factura";
+                                } else if(itemR.get(i).codProd.equalsIgnoreCase("C")) dn="Credito fiscal";
+                                rep.add(dn);
+                            }
                         }
 
                         series=itemR.get(i).serie;
@@ -983,15 +999,17 @@ public class CierreX extends PBase {
                         impF += itemR.get(i).imp;
                         cantF += itemR.get(i).cant;
 
-                        if (i+1==itemR.size()){
+                        //if (i+1>=itemR.size()){
+                        if (i+1>=rep1ln) {
 
                             rep.line();
-                            //rep.add3Tot(SumaCant, totSinImpF, impF, totF);
-                            //rep.add3Tot2(cantF, sinImp, impF, tot);
+                            rep.add3Tot2(cantF, sinImp, impF, tot);
 
                             totF += tot;
                             SumaCant += cantF;
                             totSinImpF += sinImp;
+                            rep.line();
+                            rep.empty();
 
                         } else {
 
@@ -1014,7 +1032,7 @@ public class CierreX extends PBase {
                             }
                         }
 
-                    }else if(itemR.get(i).tipo==11){
+                    } else if(itemR.get(i).tipo==11){
 
                         test = "Reporte 10";
                         if(acc11==1){
@@ -1064,7 +1082,7 @@ public class CierreX extends PBase {
                             SumaCant += cantF;
                             totSinImpF += sinImp;
 
-                        }else {
+                        } else {
 
                             String fecha1=String.valueOf(itemR.get(i).fecha).substring(0,6);
                             String fecha2=String.valueOf(itemR.get(i + 1).fecha).substring(0,6);
@@ -1120,7 +1138,7 @@ public class CierreX extends PBase {
                             }
                         }
 
-                        if(i!=0){
+                        if (i!=0){
 
                             String fecha1=String.valueOf(itemR.get(i).fecha).substring(0,6);
                             String fecha2=String.valueOf(itemR.get(i - 1).fecha).substring(0,6);

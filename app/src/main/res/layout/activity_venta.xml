@@ -8,14 +8,37 @@
     android:onClick="doFocus"
     tools:context=".Venta">
 
+    <RelativeLayout
+        android:id="@+id/reltipodoc"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/relRoad"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toEndOf="@+id/relSep2"
+        android:background="@drawable/frame_rect">
+
+        <TextView
+            android:id="@+id/textView333"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="CREDITO FISCAL"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
     <GridView
         android:id="@+id/gridView2"
         android:layout_width="100dp"
         android:layout_height="match_parent"
-        android:layout_below="@id/relRoad"
+        android:layout_below="@id/reltipodoc"
         android:layout_alignParentRight="true"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
         android:numColumns="1" />
 

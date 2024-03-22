@@ -51,7 +51,9 @@
             android:paddingRight="5dp"
             android:text="Anulación"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#1A8AC6" />
+            android:textColor="#1A8AC6"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/lblDescrip"
@@ -67,28 +69,80 @@
             android:text="Medium Text"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#1A8AC6"
-            android:textSize="22sp"
+            android:textSize="24sp"
             android:textStyle="bold" />
     </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/llFechas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/relRoad"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
-        android:layout_toStartOf="@+id/imgImg"
-        android:orientation="vertical">
+        android:layout_toStartOf="@+id/imgImg">
+
+        <RelativeLayout
+            android:id="@+id/relfilters"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignBottom="@+id/llFechaFin"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toEndOf="@+id/llFechaIni">
+
+            <EditText
+                android:id="@+id/editTextText4"
+                android:layout_width="330dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="text"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imageView156"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/editTextText4"
+                android:layout_marginStart="0dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toEndOf="@+id/editTextText4"
+                android:clickable="true"
+                android:onClick="doClear"
+                android:padding="10dp"
+                android:src="@drawable/erase" />
+
+            <TextView
+                android:id="@+id/textView335"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/editTextText4"
+                android:layout_alignEnd="@+id/editTextText4"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/spinner_style"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:onClick="doDocuments"
+                android:paddingStart="15dp"
+                android:text="Todos los documentos"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/llFechaIni"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="48dp">
 
             <TextView
                 android:id="@+id/lblCFact30"
-                android:layout_width="80dp"
+                android:layout_width="100dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
@@ -98,12 +152,12 @@
                 android:text="Inicio :"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#FFFFFF"
-                android:textSize="20sp"
+                android:textSize="24sp"
                 android:textStyle="normal" />
 
             <TextView
                 android:id="@+id/lblDateini2"
-                android:layout_width="150dp"
+                android:layout_width="180dp"
                 android:layout_height="39dp"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="5dp"
@@ -113,18 +167,19 @@
                 android:gravity="center"
                 android:onClick="showDateDialog1"
                 android:text="00/00/0000"
-                android:textSize="20sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/llFechaFin"
-            android:layout_width="match_parent"
-            android:layout_height="48dp">
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_below="@id/llFechaIni">
 
             <TextView
                 android:id="@+id/lblCFact29"
-                android:layout_width="80dp"
+                android:layout_width="100dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
@@ -134,12 +189,12 @@
                 android:text="Fin :    "
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#FFFFFF"
-                android:textSize="20sp"
+                android:textSize="24sp"
                 android:textStyle="normal" />
 
             <TextView
                 android:id="@+id/lblDatefin2"
-                android:layout_width="150dp"
+                android:layout_width="180dp"
                 android:layout_height="39dp"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="5dp"
@@ -149,10 +204,10 @@
                 android:gravity="center"
                 android:onClick="showDateDialog2"
                 android:text="00/00/0000"
-                android:textSize="20sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
         </RelativeLayout>
-    </LinearLayout>
+    </RelativeLayout>
 
     <ListView
         android:id="@+id/listView1"
@@ -254,7 +309,7 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:text="NO CERTIFICADAS"
-        android:textSize="20sp"
+        android:textSize="24sp"
         android:textStyle="bold" />
 
 </RelativeLayout>

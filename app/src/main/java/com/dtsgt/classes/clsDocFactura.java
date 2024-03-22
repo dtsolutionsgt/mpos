@@ -1473,6 +1473,9 @@ public class clsDocFactura extends clsDocument {
         */
 
         rep.add("");
+        rep.addc("Powered by DTSolutions, S.A.");
+        rep.addc("dts.com.gt");
+        rep.add("");
         rep.add("");
 
         return super.buildFooter();
@@ -1492,7 +1495,7 @@ public class clsDocFactura extends clsDocument {
         rep.addtotsp("Venta gravada: ", fh_grav);
         rep.addtotsp("Venta no sujeta: ", fh_exent);
         rep.addtotsp("Venta exenta: ", fh_exon);
-        rep.addtotsp("Subtotal: ", stot);
+        rep.addtotsp("Subtotal: ", sv_subt);
         if (desc>=0.01) rep.addtotsp("Descuento: ", -desc);
         if (fh_val1>0) rep.addtotsp("IVA Retenido: ", fh_imp1);
         rep.addtotsp("Venta total: ", tot);
@@ -1544,6 +1547,9 @@ public class clsDocFactura extends clsDocument {
         //agregaDomicilio();
 
         rep.add("");
+        rep.addc("Powered by DTSolutions, S.A.");
+        rep.addc("dts.com.gt");
+        rep.add("");
         rep.add("");
 
         return super.buildFooter();
@@ -1584,6 +1590,10 @@ public class clsDocFactura extends clsDocument {
         //rep.add("Datos del Cliente");
         //rep.add("Nombre: Consumidor Final");
         //rep.add("DUI/NIT: C/F");
+
+        rep.add("");
+        rep.addc("Powered by DTSolutions, S.A.");
+        rep.addc("dts.com.gt");
         rep.add("");
         rep.add("");
         rep.add("");

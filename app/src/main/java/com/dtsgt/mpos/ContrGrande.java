@@ -64,6 +64,7 @@ public class ContrGrande extends PBase {
         if (validaDatos()) {
             guardaSeleccion();
             guardaNRC();
+            gl.mododocesa=2;
             finish();
         }
     }

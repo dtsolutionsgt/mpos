@@ -410,13 +410,17 @@ public class Menu extends PBase {
 	//region Reimpresion
 	
 	public void showPrintMenuTodo() {
-
 		try {
+
+			String ddc=gl.peMFact?"Factura":"Ticket";
+			if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+				ddc="Documentos";
+			}
 
 			extListDlg listdlg = new extListDlg();
 			listdlg.buildDialog(Menu.this,"Reimpresión");
 
-     		listdlg.add((gl.peMFact?"Factura":"Ticket"));
+     		listdlg.add(ddc);
 			//listdlg.add("Depósito");
 			//listdlg.add("Pagos");
 			//listdlg.add("Recarga");

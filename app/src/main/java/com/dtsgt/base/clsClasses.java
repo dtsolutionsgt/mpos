@@ -1952,7 +1952,7 @@ public class clsClasses {
 	}
 	
 	public class clsCFDV {
-		public int id,ival;
+		public int id,ival,colflag;
 		public String Cod,Desc,Fecha,Valor,Sid, UUID, FechaFactura,tipodoc;
 		public double val, precio;
         public boolean flag;

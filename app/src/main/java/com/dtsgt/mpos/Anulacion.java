@@ -10,11 +10,15 @@ import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dtsgt.base.AppMethods;
@@ -34,6 +38,7 @@ import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
+import com.dtsgt.classes.extListDlg;
 import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.felesa.clsAnulESA;
 import com.dtsgt.felesa.clsFELClases;
@@ -56,7 +61,10 @@ import java.util.Calendar;
 public class Anulacion extends PBase {
 
 	private ListView listView;
-	private TextView lblTipo, lblRegs, lblTotal;
+	private TextView lblTipo, lblRegs, lblTotal,lblfiltro;
+	private EditText txtfiltro;
+	private RelativeLayout relflt;
+
 	private CheckBox cbcer;
     private ProgressBar pbar;
 	
@@ -99,7 +107,7 @@ public class Anulacion extends PBase {
 	private String pserie,pnumero,pruta,pvend,pcli,presol,presfecha,pfser,pfcor;
 	private String presvence,presrango,pvendedor,pcliente,pclicod,pclidir;
 	private double ptot;
-	private int residx,idcliente;
+	private int residx,idcliente,docidx=0;
 
 	//Fecha
 	private boolean dateTxt,report;
@@ -126,8 +134,11 @@ public class Anulacion extends PBase {
 		lblDatefin = findViewById(R.id.lblDatefin2);
 		lblRegs = findViewById(R.id.lblRegs);
 		lblTotal = findViewById(R.id.lblTotal);
-		cbcer = findViewById(R.id.checkBox27);cbcer.setVisibility(View.INVISIBLE);
+		lblfiltro = findViewById(R.id.textView335);lblfiltro.setVisibility(View.INVISIBLE);
+		txtfiltro = findViewById(R.id.editTextText4);
+		relflt = findViewById(R.id.relfilters);relflt.setVisibility(View.INVISIBLE);
 
+		cbcer = findViewById(R.id.checkBox27);cbcer.setVisibility(View.INVISIBLE);
         pbar=findViewById(R.id.progressBar7);pbar.setVisibility(View.INVISIBLE);
 
 		app = new AppMethods(this, gl, Con, db);
@@ -137,6 +148,13 @@ public class Anulacion extends PBase {
 		tipo=gl.tipo;
 		if (gl.peModal.equalsIgnoreCase("APR")) modoapr=true;
 
+		if (gl.codigo_pais.equalsIgnoreCase("SV")) modo_sv=true;
+
+		if (modo_sv) {
+			lblfiltro.setVisibility(View.VISIBLE);
+		}
+
+
 		if (gl.dias_anul<5) gl.dias_anul=5;
 		fecha_menor=du.addDays(du.getActDate(),-gl.dias_anul);
 		fecha_menor=du.ffecha00(fecha_menor);
@@ -144,7 +162,10 @@ public class Anulacion extends PBase {
 		if (tipo==0) lblTipo.setText("Pedido");
 		if (tipo==1) lblTipo.setText("Recibo");
 		if (tipo==2) lblTipo.setText("Depósito");
-		if (tipo==3) lblTipo.setText((gl.peMFact?"Factura":"Ticket"));
+		if (tipo==3) {
+			lblTipo.setText((gl.peMFact?"Factura":"Ticket"));
+			relflt.setVisibility(View.VISIBLE);
+		}
 		if (tipo==4) lblTipo.setText("Recarga");
 		if (tipo==5) lblTipo.setText("Devolución a bodega");
 
@@ -257,35 +278,12 @@ public class Anulacion extends PBase {
 
 	//region Events
 
-	private void getURL() {
-		gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
-		gl.timeout = 6000;
+	public void doClear(View view) {
+		txtfiltro.setText("");
+	}
 
-		try {
-
-			File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
-
-			if (file1.exists()) {
-
-				FileInputStream fIn = new FileInputStream(file1);
-				BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
-
-				gl.wsurl = myReader.readLine();
-				String line = myReader.readLine();
-
-				if(line.isEmpty()) {
-					gl.timeout = 6000;
-				}
-				else {
-					gl.timeout = Integer.valueOf(line);
-				}
-
-				myReader.close();
-			}
-
-		} catch (Exception e) {}
-
-		if (gl.wsurl.isEmpty()) toast("Falta archivo con URL");
+	public void doDocuments(View view) {
+		showMenu();
 	}
 
 	public void anulDoc(View view) {
@@ -335,7 +333,7 @@ public class Anulacion extends PBase {
 	}
 
 	private void setHandlers(){
-		try{
+		try {
 
 			listView.setOnTouchListener(new SwipeListener(this) {
 				public void onSwipeRight() {
@@ -385,6 +383,17 @@ public class Anulacion extends PBase {
 				}
 			});
 
+			txtfiltro.addTextChangedListener(new TextWatcher() {
+
+				public void afterTextChanged(Editable s) {}
+
+				public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+				public void onTextChanged(CharSequence s, int start, int before, int count) {
+					listItems();
+				}
+			});
+
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -399,8 +408,8 @@ public class Anulacion extends PBase {
 		clsClasses.clsCFDV vItem;	
 		int vP,f,regs=0;
 		double val, total=0;
-		String id,sf,sval,td,cont;
-		long dfi,dff,ff,fsvf,fsvc;
+		String id,sf,sval,td,cont,flt,ft;
+		long dfi,dff,ff,fsvf,fsvc,nd;
 		boolean guardar,cont_flag;
 
 		items.clear();
@@ -421,11 +430,34 @@ public class Anulacion extends PBase {
 			
 			if (tipo==3) {
 
+				flt="";
+				switch (docidx) {
+					case 1:
+						flt=" AND (D_FACTURA.AYUDANTE='N') ";break;
+					case 2:
+						flt=" AND (D_FACTURA.AYUDANTE='T') ";break;
+					case 3:
+						flt=" AND (D_FACTURA.AYUDANTE='C') ";break;
+				}
+
+				ft=txtfiltro.getText().toString();
+				if (!ft.isEmpty()) {
+					flt+=" AND ((P_CLIENTE.NOMBRE LIKE '%"+ft+"%') ";
+					try {
+						nd=Long.parseLong(ft);
+						flt+=" OR (D_FACTURA.CORELATIVO ="+nd+") ";
+					} catch (Exception e) {}
+					flt+=" OR (D_FACTURA.FEELUUID LIKE '%"+ft+"%')) ";
+				}
+
+
 				if (cbcer.isChecked()) {
 					sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
 							"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR, D_FACTURA.AYUDANTE,D_FACTURA.FEELCONTINGENCIA "+
 							"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
-							"WHERE (D_FACTURA.FEELUUID=' ')  ORDER BY D_FACTURA.FECHAENTR DESC ";
+							"WHERE (D_FACTURA.FEELUUID=' ')  " +
+							flt+
+							"ORDER BY D_FACTURA.FECHAENTR DESC ";
 				} else {
 					dfi=dateini;if (dfi<fecha_menor) dfi=fecha_menor;
 					dff=datefin;if (dff<fecha_menor) dff=fecha_menor;
@@ -434,6 +466,7 @@ public class Anulacion extends PBase {
 							"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR, D_FACTURA.AYUDANTE,D_FACTURA.FEELCONTINGENCIA "+
 							"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
 							"WHERE (D_FACTURA.ANULADO=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+							flt+
 							"ORDER BY D_FACTURA.FECHAENTR  DESC";
 				}
 			}
@@ -463,8 +496,9 @@ public class Anulacion extends PBase {
 					id=DT.getString(0);guardar=true;
 					
 					vItem =clsCls.new clsCFDV();
-			  	
+
 					vItem.Cod=DT.getString(0);vItem.tipodoc="";cont_flag=false;
+					vItem.colflag=-1;
 
 					vItem.Desc=DT.getString(1);
 					if (tipo==2) vItem.Desc+=" - "+DT.getString(4);
@@ -481,7 +515,9 @@ public class Anulacion extends PBase {
 						vItem.UUID=DT.getString(5)+"";
 						cont=DT.getString(8)+"";
 						if (vItem.UUID.length()<5) {
-							if (cont.length()>5) cont_flag=true;
+							vItem.colflag=2;cont_flag=true;
+						} else {
+							vItem.colflag = 1;
 						}
 
 					} else if(tipo==1||tipo==6){
@@ -559,7 +595,6 @@ public class Anulacion extends PBase {
 	}
 	
 	private void anulDocument() {
-		
 		try {
 			db.beginTransaction();
 			
@@ -792,8 +827,16 @@ public class Anulacion extends PBase {
 			clsFELClases.anulacionDatos ad=fclas.new anulacionDatos();
 
 			ad.uuid=uuid;
-			ad.establecimiento=fel.fel_codigo_establecimiento;
 
+			if (uuid.length()<10) {
+				anulFactura(itemid);return;
+			}
+
+			if (app.isOnWifi() == 0) {
+				msgbox("NO SE PUEDE ANULAR POR FALTA DE CONEXIÓN A INTERNET");return;
+			}
+
+			ad.establecimiento=fel.fel_codigo_establecimiento;
 			ad.solicitante_nom=fel.fel_nombre_comercial;
 			ad.solicitante_nit=fel.fel_nit;
 			ad.solicitante_correo=fel.fel_correo;
@@ -2139,10 +2182,72 @@ public class Anulacion extends PBase {
 	//endregion
 	
 	//region Aux
-	
+
+	private void showMenu() {
+
+		try {
+
+			extListDlg listdlg = new extListDlg();
+			listdlg.buildDialog(Anulacion.this,"Documentos");
+
+			listdlg.add("Todos los documentos");
+			listdlg.add("Factura");
+			listdlg.add("Ticket");
+			listdlg.add("Crédito fiscal");
+
+			listdlg.setOnItemClickListener((parent, view, position, id) -> {
+
+				try {
+					docidx=position;
+					listItems();
+
+					listdlg.dismiss();
+				} catch (Exception e) {}
+			});
+
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
+			listdlg.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+	}
+
+	private void getURL() {
+		gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
+		gl.timeout = 6000;
+
+		try {
+
+			File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
+
+			if (file1.exists()) {
+
+				FileInputStream fIn = new FileInputStream(file1);
+				BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+
+				gl.wsurl = myReader.readLine();
+				String line = myReader.readLine();
+
+				if(line.isEmpty()) {
+					gl.timeout = 6000;
+				}
+				else {
+					gl.timeout = Integer.valueOf(line);
+				}
+
+				myReader.close();
+			}
+
+		} catch (Exception e) {}
+
+		if (gl.wsurl.isEmpty()) toast("Falta archivo con URL");
+	}
+
 	private void msgAsk(String msg) {
 
-		try{
+		try {
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 			dialog.setTitle("mPos");
 			dialog.setMessage("¿" + msg  + "?");
@@ -2150,7 +2255,7 @@ public class Anulacion extends PBase {
 			dialog.setPositiveButton("Si", (dialog1, which) -> anulDocument());
 			dialog.setNegativeButton("No", null);
 			dialog.show();
-		}catch (Exception e){
+		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 			

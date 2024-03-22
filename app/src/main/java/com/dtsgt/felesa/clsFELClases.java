@@ -566,6 +566,11 @@ public class clsFELClases {
             clsP_fel_sv_ambObj P_fel_sv_ambObj=new clsP_fel_sv_ambObj(context,dbconnection,dbase);
 
             P_fel_sv_ambObj.fill();
+
+            if (P_fel_sv_ambObj.count==0) {
+                ArchivoLlave="";return;
+            }
+
             clsClasses.clsP_fel_sv_amb item=P_fel_sv_ambObj.first();
 
             ArchivoLlave=item.archivo;

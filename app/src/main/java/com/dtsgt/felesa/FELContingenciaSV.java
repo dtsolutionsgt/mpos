@@ -3,9 +3,11 @@ package com.dtsgt.felesa;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.SQLException;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -29,6 +31,7 @@ import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_contingencia_svObj;
+import com.dtsgt.classes.clsT_fel_sv_errorObj;
 import com.dtsgt.fel.FELmsgbox;
 import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.mpos.Caja;
@@ -36,11 +39,13 @@ import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 import com.dtsgt.mpos.WSEnv;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -87,7 +92,7 @@ public class FELContingenciaSV extends PBase {
     private String felcorel, scorel, CSQL, idfact, tipodoc,felerror,msgm;
     private String dnum,cnombre,cnit,cdir, ccorreo,cgiro,cdep,cmuni,cllave;
 
-    private boolean ddemomode, factsend, contmode;
+    private boolean ddemomode, factsend, contmode, envio_error_FEL=false;
     private int ffail, cliid, felnivel,doccant,docpos,doccert;
 
 
@@ -372,6 +377,7 @@ public class FELContingenciaSV extends PBase {
                     guardaRespuestaFEL();
                     marcaFactura();
             } else {
+                guardaError();
                 if (ffail==0) felerror="Ocurrió error en FEL :\n\n" + "Factura: " + felcorel + "\n" + FactESA.error;gl.feluuid = "";
                 ffail++;
             }
@@ -398,6 +404,7 @@ public class FELContingenciaSV extends PBase {
                         showMsgExitEnvio("Certificación completa.\n\nCertificado 1 documento");
                     }
                 } else {
+                    enviaErrores();
                     gl.FELmsg="Documentos certificados: "+doccert+".\nErrores: "+ffail+"\n"+felerror;
                     startActivity(new Intent(this, FELmsgbox.class));finish();
                 }
@@ -483,6 +490,119 @@ public class FELContingenciaSV extends PBase {
     }
 
     //endregion
+
+    //region Envio Error
+
+    private void guardaError() {
+        clsClasses.clsT_fel_sv_error eitem;
+
+        try {
+            if (FactESA.erritems.size()==0) return;
+
+            envio_error_FEL=true;
+            clsT_fel_sv_errorObj T_fel_sv_errorObj=new clsT_fel_sv_errorObj(this,Con,db);
+
+            for (int i = 0; i <FactESA.erritems.size(); i++) {
+
+                eitem = clsCls.new clsT_fel_sv_error();
+
+                eitem.corel=felcorel;
+                eitem.id=i+1;
+                eitem.fecha=du.getActDate();
+                eitem.bandera=0;
+                eitem.texto=FactESA.erritems.get(i);
+
+                try {
+                    T_fel_sv_errorObj.add(eitem);
+                } catch (Exception e) {}
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void enviaErrores() {
+        if (!envio_error_FEL) return;
+
+        try {
+            Handler mtimer = new Handler();
+            Runnable mrunner= () -> {
+                enviaError(false);
+            };
+            mtimer.postDelayed(mrunner,200);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void enviaError(boolean agregajson) {
+        String subject,body,ss,cor,scor=" ";
+        String dir=Environment.getExternalStorageDirectory()+"";
+        long fsize,fslim;
+
+        try {
+
+            File f1 = new File(dir + "/posdts.db");
+            File f2 = new File(dir + "/posdts_"+gl.codigo_ruta+".db");
+            File f3 = new File(dir + "/posdts_"+gl.codigo_ruta+".zip");
+            FileUtils.copyFile(f1, f2);
+            Uri dburi = Uri.fromFile(f3);
+
+            app.zip(dir+"/posdts_"+gl.codigo_ruta+".db",dir + "/posdts_"+gl.codigo_ruta+".zip");
+
+            try {
+                fsize=f3.length();fslim=25*1024*1000;
+                if (fsize>fslim) {
+                    msgbox("El tamaño de archivo mayor de 25MB, por favor avize a soporte ");
+                }
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+            long ff=du.getActDate();ff=du.addDays(ff,-2);
+
+            body="";
+            clsT_fel_sv_errorObj T_fel_sv_errorObj=new clsT_fel_sv_errorObj(this,Con,db);
+            T_fel_sv_errorObj.fill("WHERE (FECHA>="+ff+")");
+            for (int i = 0; i <T_fel_sv_errorObj.count; i++) {
+                cor=T_fel_sv_errorObj.items.get(i).corel;
+                if (!cor.equalsIgnoreCase(scor)) {
+                    body+="\n\n";scor=cor;
+                }
+
+                ss=cor+" "+T_fel_sv_errorObj.items.get(i).texto;
+                body+=ss+"\n";
+            }
+
+            if (agregajson) body+="\n\n\n\n"+FactESA.jsonsave;
+            body+="\n\n\n\n";
+
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+
+            subject= "Error FEL ESA : "+gl.tiendanom+" caja : "+gl.codigo_ruta;
+
+            String[] TO = {"dtsolutionsgt@gmail.com"};
+
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+            emailIntent.setData(Uri.parse("mailto:"));
+            emailIntent.setType("text/plain");
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+            emailIntent.putExtra(Intent.EXTRA_TEXT,body);
+            emailIntent.putExtra(Intent.EXTRA_STREAM, dburi);
+
+            startActivity(emailIntent);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //endregion
+
 
     //region Aux
 

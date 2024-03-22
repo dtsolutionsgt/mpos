@@ -108,6 +108,9 @@ public class CliPos extends PBase {
         //wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
 
         gl.pedcorel="";gl.parallevar=false;gl.cf_domicilio=false;
+        gl.mododocesa=-1;
+
+
         bloqueado=false;
 
         //domicilio=gl.modo_domicilio;
@@ -134,9 +137,8 @@ public class CliPos extends PBase {
 
         if (gl.codigo_pais.equalsIgnoreCase("SV")) {
             //txtNIT.setText("80002204021234");txtNom.setText("Nombre");
-            txtNIT.setText("166284-5");txtNom.setText("jaroslav pospichal ");txtCorreo.setText("jpospichal@dts.com.gt");
+            //txtNIT.setText("166284-5");txtNom.setText("jaroslav pospichal ");txtCorreo.setText("jpospichal@dts.com.gt");
         }
-
 
         if (gl.cliente_dom!=0) cargaCliente();
     }
@@ -158,6 +160,8 @@ public class CliPos extends PBase {
                 ddnom =txtNom.getText().toString();if (ddnom.isEmpty()) ddnom="Consumidor final";
                 ddir =txtRef.getText().toString();if (ddir.isEmpty()) ddir="Ciudad";
                 dcor="consumidorfinal@gmail.com";
+
+                gl.mododocesa=0;
 
                 consFinal=true;
                 gl.sal_PER=false;
@@ -191,6 +195,15 @@ public class CliPos extends PBase {
 
             if (sNITCliente.length()<3) {
                 msgbox("Identificación incorrecta");return;
+            }
+
+            if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                if (sNombreCliente.isEmpty()) {
+                    msgbox("Falta definir nombre");return;
+                }
+                if (sNombreCliente.length()<5) {
+                    msgbox("Nombre debe tener minimo 5 letras");return;
+                }
             }
 
             if (sDireccionCliente.isEmpty()) {
@@ -243,6 +256,7 @@ public class CliPos extends PBase {
             if (flag_NRC) {
                 msgAskCG("Gran contribuyente ");
             } else {
+                gl.mododocesa=1;
                 if (!existeCliente()){
                     if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente)) procesaNIT(sNITCliente);
                 } else {
@@ -465,7 +479,6 @@ public class CliPos extends PBase {
 	}
 
 	private void procesaNIT(String snit) {
-
         int codigo=nitnum(snit);
 
 		try {

@@ -5,7 +5,7 @@
     android:installLocation="preferExternal"
     android:largeHeap="true"
     android:versionCode="5"
-    android:versionName="5.4.1.0">
+    android:versionName="5.4.2.0">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -212,11 +212,13 @@
             android:name=".Reimpresion"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_reimpresion"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name=".Anulacion"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_anulacion"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name=".Deposito"

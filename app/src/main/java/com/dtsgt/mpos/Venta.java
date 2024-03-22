@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
@@ -88,10 +89,10 @@ public class Venta extends PBase {
     private ListView listView,listMas;
     private GridView gridViewOpciones,grdbtn,grdfam,grdprod;
     private TextView lblTot,lblTit,lblAlm,lblVend, lblCambiarNivelPrecio,lblCant,lblBarra;
-    private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir;
+    private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir, lbldocesa;
     private EditText txtBarra,txtFilter;
     private ImageView imgroad,imgscan,imgllevar;
-    private RelativeLayout relScan;
+    private RelativeLayout relScan,reldocesa;
 
     private ArrayList<clsVenta> items= new ArrayList<clsVenta>();
     private ListAdaptVenta adapter;
@@ -150,7 +151,7 @@ public class Venta extends PBase {
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos,descflag,meseros=false;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
     private boolean horiz=true,porcentaje,domenvio,modoHN,modoSV,desclinmsg;
-    private int codigo_cliente, emp,pedidoscant,cod_prod;
+    private int codigo_cliente, emp,pedidoscant,cod_prod,mododocesa;
     private String cliid,saveprodid,pedcorel;
     private int famid = -1;
     public boolean DescPorProducto, DesPorLinea = false, DesPorMarca = false;
@@ -227,14 +228,14 @@ public class Venta extends PBase {
             prc=new Precio(this,mu,2,gl.peDescMax);
             khand=new clsKeybHandler(this,lblCant,lblKeyDP);
 
-        rnFbCallBack = new Runnable() {
-            public void run() {
-                runFbCallBack();
-            }
-        };
-        fbs =new fbStock("Stock",gl.tienda);
+            rnFbCallBack = new Runnable() {
+                public void run() {
+                    runFbCallBack();
+                }
+            };
+            fbs =new fbStock("Stock",gl.tienda);
 
-        modoMeseros();
+            modoMeseros();
 
             menuItems();
             setHandlers();
@@ -1777,7 +1778,7 @@ public class Venta extends PBase {
             if (gl.codigo_cliente==0) {
                 toast("Falta definir cliente "+gl.codigo_cliente);
                 browse=8;
-                startActivity(new Intent(this,Clientes.class));
+                startActivity(new Intent(this,CliPos.class));
                 return;
             }
 
@@ -3954,37 +3955,40 @@ public class Venta extends PBase {
     private void setControls(){
 
         try{
-            listView = (ListView) findViewById(R.id.listView1);
-            listMas= (ListView) findViewById(R.id.listMas);
-            gridViewOpciones = (GridView) findViewById(R.id.gridView2);
+            listView = findViewById(R.id.listView1);
+            listMas= findViewById(R.id.listMas);
+            gridViewOpciones = findViewById(R.id.gridView2);
             gridViewOpciones.setEnabled(true);
-            grdfam = (GridView) findViewById(R.id.grdFam);
-            grdprod = (GridView) findViewById(R.id.grdProd);
-            grdbtn = (GridView) findViewById(R.id.grdbtn);
+            grdfam = findViewById(R.id.grdFam);
+            grdprod = findViewById(R.id.grdProd);
+            grdbtn = findViewById(R.id.grdbtn);
 
-            lblTot= (TextView) findViewById(R.id.lblTot);
-            lblDesc= (TextView) findViewById(R.id.textView115);lblDesc.setText( "Desc : "+mu.frmcur(0));
-            lblStot= (TextView) findViewById(R.id.textView103); lblStot.setText("Subt : "+mu.frmcur(0));
-            lblTit= (TextView) findViewById(R.id.lblTit);
-            lblAlm= (TextView) findViewById(R.id.lblTit2);
-            lblVend= (TextView) findViewById(R.id.lblTit4);
-            lblCambiarNivelPrecio = (TextView) findViewById(R.id.lblTit3);
-            lblPokl= (TextView) findViewById(R.id.lblTit5);
+            lblTot= findViewById(R.id.lblTot);
+            lblDesc= findViewById(R.id.textView115);lblDesc.setText( "Desc : "+mu.frmcur(0));
+            lblStot= findViewById(R.id.textView103); lblStot.setText("Subt : "+mu.frmcur(0));
+            lblTit= findViewById(R.id.lblTit);
+            lblAlm= findViewById(R.id.lblTit2);
+            lblVend= findViewById(R.id.lblTit4);
+            lblCambiarNivelPrecio = findViewById(R.id.lblTit3);
+            lblPokl= findViewById(R.id.lblTit5);
+            lblCant= findViewById(R.id.lblCant);lblCant.setText("");
+            lblBarra= findViewById(R.id.textView122);lblBarra.setText("");
+            lblKeyDP= findViewById(R.id.textView110);
+            lblDir= findViewById(R.id.lblDir);
+            lbldocesa = findViewById(R.id.textView333);lbldocesa.setText("");
 
-            lblCant= (TextView) findViewById(R.id.lblCant);lblCant.setText("");
-            lblBarra= (TextView) findViewById(R.id.textView122);lblBarra.setText("");
-            lblKeyDP=(TextView) findViewById(R.id.textView110);
-            lblDir=(TextView) findViewById(R.id.lblDir);
+            imgroad= findViewById(R.id.imgRoadTit);
+            imgscan= findViewById(R.id.imageView13);
+            imgllevar= findViewById(R.id.imageView110);
 
-            imgroad= (ImageView) findViewById(R.id.imgRoadTit);
-            imgscan= (ImageView) findViewById(R.id.imageView13);
-            imgllevar= (ImageView) findViewById(R.id.imageView110);
+            txtBarra= findViewById(R.id.editText10);
 
-            txtBarra=(EditText) findViewById(R.id.editText10);
+            relScan= findViewById(R.id.relScan);
+            reldocesa = findViewById(R.id.reltipodoc);
 
-            relScan= (RelativeLayout) findViewById(R.id.relScan);
+            if (!gl.codigo_pais.equalsIgnoreCase("SV")) reldocesa.setVisibility(View.INVISIBLE);
 
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
@@ -4146,6 +4150,8 @@ public class Venta extends PBase {
 
         lblTot.setText("Total : "+mu.frmcur(0));
         lblVend.setText("");
+        gl.mododocesa=-1;
+        lbldocesa.setVisibility(View.INVISIBLE);
 
         khand.clear(true);khand.enable();
 
@@ -4564,12 +4570,28 @@ public class Venta extends PBase {
     }
 
     private void cargaCliente() {
-
         Cursor DT;
         String ss;
         double lcred,cred,disp;
 
-        //browse=0;
+        lbldocesa.setVisibility(View.INVISIBLE);
+        if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+            if (gl.mododocesa>=0) {
+                lbldocesa.setVisibility(View.VISIBLE);
+                switch (gl.mododocesa) {
+                    case 0: //Ticket
+                        lbldocesa.setBackgroundColor(Color.parseColor("#94E139"));
+                        lbldocesa.setText("Ticket");break;
+                    case 1:
+                        lbldocesa.setBackgroundColor(Color.parseColor("#39BFE1"));
+                        lbldocesa.setText("Factura");break;
+                    case 2:
+                        lbldocesa.setBackgroundColor(Color.parseColor("#E1B039"));
+                        lbldocesa.setText("Crédito Fiscal");break;
+                }
+            }
+
+        } else reldocesa.setVisibility(View.INVISIBLE);
 
         gl.exitflag=false;
         if (!gl.scancliente.isEmpty())  gl.cliente=gl.scancliente;
@@ -4611,7 +4633,8 @@ public class Venta extends PBase {
             if (DT!=null) DT.close();
 
         } catch (Exception e) {
-            lblVend.setText("");
+            lblVend.setText("");lbldocesa.setVisibility(View.INVISIBLE);
+
         }
     }
 
@@ -6160,7 +6183,7 @@ public class Venta extends PBase {
             if (gl.iniciaVenta) {
 
                 browse=0;
-                lblVend.setText(" ");
+                lblVend.setText(" ");lbldocesa.setVisibility(View.INVISIBLE);
 
                 gl.nit_tipo="N";
                 gl.numero_orden=" ";

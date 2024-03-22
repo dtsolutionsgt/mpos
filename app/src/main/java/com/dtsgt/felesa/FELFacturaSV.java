@@ -103,7 +103,6 @@ public class FELFacturaSV extends PBase {
     private boolean ddemomode, factsend, contmode;
     private int ftot, ffail, fidx, cliid, felnivel;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
@@ -171,8 +170,6 @@ public class FELFacturaSV extends PBase {
             D_factura_felObj = new clsD_factura_felObj(this, Con, db);
             D_factura_fel_paisObj = new clsD_factura_fel_paisObj(this, Con, db);
             D_factura_svObj = new clsD_factura_svObj(this, Con, db);
-
-
             D_fel_bitacoraObj = new clsD_fel_bitacoraObj(this, Con, db);
 
             prod = new clsP_productoObj(this, Con, db);
@@ -185,6 +182,11 @@ public class FELFacturaSV extends PBase {
 
             FELambiente=fclas.new FELAmbiente(this, Con, db);
             //String FELArchContLLave ="Certificado_06141106141147.crt";
+
+            if (FELambiente.ArchivoLlave.isEmpty()) {
+                showMsgExit("No está configurado ambiente de certificación o archivo de la llave de certificacion.");return;
+            }
+
             String FELArchContLLave=FELambiente.ArchivoLlave;
             String FELContingenciaAmbiente="02";
 
@@ -213,7 +215,6 @@ public class FELFacturaSV extends PBase {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
-
 
     //region Events
 
@@ -1335,6 +1336,7 @@ public class FELFacturaSV extends PBase {
     public void showMsgExit(String msg) {
         try {
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle("MPos");
             dialog.setMessage(msg);
             dialog.setCancelable(false);
             dialog.setNeutralButton("OK", (dialog1, which) -> {
