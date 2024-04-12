@@ -2953,12 +2953,107 @@ public class AppMethods {
 		return idcli==gl.emp*10;
 	}
 
-    //endregion
+	public String purgeString(String ss) {
+		try {
+
+			ss=ss.trim();
+
+			ss=ss.replace("!","");
+			ss=ss.replace("#","");
+			ss=ss.replace("$","");
+			ss=ss.replace("%","");
+			ss=ss.replace("/","");
+			ss=ss.replace("(","");
+			ss=ss.replace(")","");
+			ss=ss.replace("=","");
+			ss=ss.replace("?","");
+			ss=ss.replace("'","");
+			ss=ss.replace("+","");
+			ss=ss.replace("*","");
+			ss=ss.replace(":","");
+			ss=ss.replace(";","");
+			ss=ss.replace(".","");
+			ss=ss.replace("@","");
+			ss=ss.replace("&","");
+			ss=ss.replace("_","");
+
+			ss=ss.replace("ñ","n");
+			ss=ss.replace("Ñ","N");
+
+			ss=ss.replace("á","a");
+			ss=ss.replace("é","e");
+			ss=ss.replace("í","i");
+			ss=ss.replace("ó","o");
+			ss=ss.replace("ú","u");
+			ss=ss.replace("ü","u");
+			ss=ss.replace("Á","A");
+			ss=ss.replace("É","E");
+			ss=ss.replace("Í","I");
+			ss=ss.replace("Ó","O");
+			ss=ss.replace("Ú","U");
+			ss=ss.replace("Ü","U");
+
+			return ss;
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			return ss;
+		}
+	}
+
+	public String purgeEmail(String ss) {
+		try {
+
+			ss=ss.trim();
+
+			ss=ss.replace("!","");
+			ss=ss.replace("#","");
+			ss=ss.replace("$","");
+			ss=ss.replace("%","");
+			ss=ss.replace("/","");
+			ss=ss.replace("(","");
+			ss=ss.replace(")","");
+			ss=ss.replace("=","");
+			ss=ss.replace("?","");
+			ss=ss.replace("'","");
+			ss=ss.replace("+","");
+			ss=ss.replace("*","");
+			ss=ss.replace(":","");
+			ss=ss.replace(";","");
+			ss=ss.replace("&","");
+
+			//ss=ss.replace(".","");
+			//ss=ss.replace("@","");
+			//ss=ss.replace("_","");
+
+			ss=ss.replace("ñ","n");
+			ss=ss.replace("Ñ","N");
+
+			ss=ss.replace("á","a");
+			ss=ss.replace("é","e");
+			ss=ss.replace("í","i");
+			ss=ss.replace("ó","o");
+			ss=ss.replace("ú","u");
+			ss=ss.replace("ü","u");
+			ss=ss.replace("Á","A");
+			ss=ss.replace("É","E");
+			ss=ss.replace("Í","I");
+			ss=ss.replace("Ó","O");
+			ss=ss.replace("Ú","U");
+			ss=ss.replace("Ü","U");
+
+			return ss;
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			return ss;
+		}
+	}
+
+	//endregion
 
     //region Common
-	
+
 	protected void toast(String msg) {
-		Toast toast= Toast.makeText(cont,msg, Toast.LENGTH_SHORT);  
+		Toast toast= Toast.makeText(cont,msg, Toast.LENGTH_SHORT);
 		toast.setGravity(Gravity.TOP, 0, 0);
 		toast.show();
 	}

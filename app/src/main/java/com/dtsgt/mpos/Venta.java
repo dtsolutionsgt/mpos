@@ -271,7 +271,13 @@ public class Venta extends PBase {
                         if (!gl.cliposflag) {
                             gl.cliposflag=true;
                             if (!gl.exitflag) {
-                                if (!gl.peRest) startActivity(new Intent(Venta.this,CliPos.class));
+                                if (!gl.peRest) {
+                                    if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                                        startActivity(new Intent(Venta.this,CliPosSVSel.class));
+                                    } else  {
+                                        startActivity(new Intent(Venta.this,CliPos.class));
+                                    }
+                                }
                             }
                         }
                     }
@@ -993,129 +999,6 @@ public class Venta extends PBase {
                 }
             }
 
-            /*
-            clsDesc = new clsDescuento(this, ""+cod_prod, cant);
-            desc = clsDesc.getDesc();
-            mdesc = clsDesc.monto;
-            savecant=cant;
-            descmon=0;
-
-            //Se valida si existe descuento por producto
-            if (DescPorProducto) {
-                if (desc + mdesc > 0) {
-
-                    browse = 3;
-                    gl.promprod = "" + cod_prod;// prodid;
-                    gl.promcant = cant;
-
-                    if (desc > 0) {
-                        gl.prommodo = 0;
-                        gl.promdesc = desc;
-                    } else {
-                        gl.prommodo = 1;
-                        gl.promdesc = mdesc;
-                    }
-
-                    saveprodid = prodid;
-                    if (descflag) startActivity(new Intent(this, DescBon.class));
-                    descflag = true;
-
-                } else {
-
-                    if (gl.bonus.size() > 0) {
-                        Intent intent = new Intent(this, BonList.class);
-                        startActivity(intent);
-                    }
-                }
-            } else if (DesPorLinea) {
-                desc = 0;
-                descLinea = 0;
-
-                if (getLineaProducto()) {
-
-                    Cursor dt;
-                    double auxCant = 0;
-
-                    //T_venta
-                    int cprod = app.codigoProducto(prodid);
-
-                    clsT_ventaObj T_Venta = new clsT_ventaObj(this, Con, db);
-                    T_Venta.fill();
-
-                    for (int i = 0; i < T_Venta.count; i++) {
-                        sql="SELECT LINEA, CODIGO_PRODUCTO FROM P_PRODUCTO WHERE (CODIGO='"+T_Venta.items.get(i).producto+"')";
-                        dt=Con.OpenDT(sql);
-                        if (lineaId == dt.getInt(0)) {
-                            if (dt.getInt(1) != cprod) {
-                                auxCant += T_Venta.items.get(i).cant;
-                            }
-                        }
-                        if (dt!=null) dt.close();
-                    }
-
-                    auxCant = auxCant + cant;
-                    clsDescLinea = new clsDescuento(this, "" + cod_prod, auxCant);
-                    descLinea = clsDescLinea.getDesc();
-
-                    browse = 3;
-                    gl.promprod =""+cod_prod;// prodid;
-                    gl.promcant = cant;
-
-                    if (descLinea > 0) {
-                        gl.prommodo = 0;
-                        gl.promdesc = descLinea;
-                        saveprodid=prodid;
-                        if (descflag) startActivity(new Intent(this, DescBon.class));
-                        descflag=true;
-                    }
-                }
-
-                if (descLinea == 0) {
-                    if (getMarcaProducto()) {
-
-                        Cursor dt;
-                        double auxCant = 0;
-
-                        //T_venta
-                        int cprod = app.codigoProducto(prodid);
-
-                        clsT_ventaObj T_Venta = new clsT_ventaObj(this, Con, db);
-                        T_Venta.fill();
-
-                        for (int i = 0; i < T_Venta.count; i++) {
-                            sql = "SELECT MARCA, CODIGO_PRODUCTO FROM P_PRODUCTO WHERE (CODIGO='" + T_Venta.items.get(i).producto + "')";
-                            dt = Con.OpenDT(sql);
-                            if (marcaId == dt.getInt(0)) {
-                                if (dt.getInt(1) != cprod) {
-                                    auxCant += T_Venta.items.get(i).cant;
-                                }
-                            }
-                            if (dt != null) dt.close();
-                        }
-
-                        auxCant = auxCant + cant;
-                        clsDescMarca = new clsDescuento(this, "" + cod_prod, auxCant);
-                        descMarca = clsDescMarca.getDesc();
-
-                        browse = 3;
-                        gl.promprod = "" + cod_prod;// prodid;
-                        gl.promcant = cant;
-
-                        if (descMarca > 0) {
-                            gl.prommodo = 0;
-                            gl.promdesc = descMarca;
-                            saveprodid = prodid;
-                            if (descflag) startActivity(new Intent(this, DescBon.class));
-                            descflag = true;
-                        }
-                    }
-                }
-            } else {
-                descLinea = 0;
-                descMarca = 0;
-                desc = 0;
-            }*/
-
             prodPrecio();
 
             precsin = prc.precsin;
@@ -1339,15 +1222,6 @@ public class Venta extends PBase {
         impval=mu.round6dec(impval); //JP20230911
         impval=impval*cant;
 
-
-        /*
-        vtot=vtot*100;
-        prri=Math.round(vtot);
-        vtot=(double) prri;
-        prodtot=vtot*0.01;
-        */
-
-        //prodtot=mu.round(prec*cant,2);
 
         try {
 
@@ -1597,9 +1471,10 @@ public class Venta extends PBase {
             if (savetot>0) desc=100*descmon/savetot;else desc=0;
 
             imp=mu.round2dec(imp*cant);
-            //impval=mu.round2dec(prc.impval); //JP20230911
+            impval=mu.round2dec(prc.impval); //JP20230911
             impval=impval*cant;
-            impval=mu.round6dec(prc.impval); //JP20230911
+            impval=impval*ptot/savetot;
+            //impval=mu.round6dec(prc.impval); //JP20230911
 
             if (sinimp) precdoc=precsin; else precdoc=prec;
 
@@ -1778,7 +1653,11 @@ public class Venta extends PBase {
             if (gl.codigo_cliente==0) {
                 toast("Falta definir cliente "+gl.codigo_cliente);
                 browse=8;
-                startActivity(new Intent(this,CliPos.class));
+                if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                    startActivity(new Intent(Venta.this,CliPosSVSel.class));
+                } else  {
+                    startActivity(new Intent(Venta.this,CliPos.class));
+                }
                 return;
             }
 
@@ -2679,7 +2558,11 @@ public class Venta extends PBase {
                         } else {
                             if (!gl.forcedclose) {
                                 gl.modo_domicilio=false;
-                                startActivity(new Intent(Venta.this, CliPos.class));
+                                if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                                    startActivity(new Intent(Venta.this,CliPosSVSel.class));
+                                } else  {
+                                    startActivity(new Intent(Venta.this,CliPos.class));
+                                }
                             }
                         }
                     //}
@@ -2698,7 +2581,11 @@ public class Venta extends PBase {
                 case 61:
                     gl.modo_domicilio=true;
                     gl.dom_total=tot;
-                    startActivity(new Intent(Venta.this, CliPos.class));
+                    if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                        startActivity(new Intent(Venta.this,CliPosSVSel.class));
+                    } else  {
+                        startActivity(new Intent(Venta.this,CliPos.class));
+                    }
                     break;
                 case 62:
                     if (hasProducts()) inputMesa(); else toastcent("La órden está vacia");
@@ -5301,11 +5188,11 @@ public class Venta extends PBase {
 
             clsViewObj ViewObj=new clsViewObj(this,Con,db);
 
-            sql="SELECT P_NIVELPRECIO_SUCURSAL.CODIGO_NIVEL_PRECIO AS NIVEL,P_NIVELPRECIO.NOMBRE AS NNOMBRE ,'','','','','','','' " +
+            sql="SELECT P_NIVELPRECIO_SUCURSAL.CODIGO_NIVEL_PRECIO AS NIVEL,P_NIVELPRECIO.NOMBRE AS NNOMBRE ,P_NIVELPRECIO.ACTIVO,'','','','','','' " +
                     "FROM P_NIVELPRECIO INNER JOIN P_NIVELPRECIO_SUCURSAL ON P_NIVELPRECIO.CODIGO = P_NIVELPRECIO_SUCURSAL.CODIGO_NIVEL_PRECIO " +
                     "WHERE (P_NIVELPRECIO_SUCURSAL.CODIGO_SUCURSAL="+gl.tienda+") " +
                     "UNION " +
-                    "SELECT P_SUCURSAL.CODIGO_NIVEL_PRECIO AS NIVEL,P_NIVELPRECIO.NOMBRE AS NNOMBRE,'','','','','','','' " +
+                    "SELECT P_SUCURSAL.CODIGO_NIVEL_PRECIO AS NIVEL,P_NIVELPRECIO.NOMBRE AS NNOMBRE,P_NIVELPRECIO.ACTIVO,'','','','','','' " +
                     "FROM P_SUCURSAL INNER JOIN P_NIVELPRECIO ON P_SUCURSAL.CODIGO_NIVEL_PRECIO = P_NIVELPRECIO.CODIGO " +
                     "WHERE (P_SUCURSAL.CODIGO_SUCURSAL ="+gl.tienda+") " +
                     "ORDER BY NNOMBRE";
@@ -5313,7 +5200,7 @@ public class Venta extends PBase {
             ViewObj.fillSelect(sql);
 
             for (int i = 0; i <ViewObj.count; i++) {
-                listdlg.add(ViewObj.items.get(i).f1);
+                 if (ViewObj.items.get(i).f2.equalsIgnoreCase("-1")) listdlg.add(ViewObj.items.get(i).f1);
             }
 
             listdlg.setOnItemClickListener((parent, view, position, id) -> {
@@ -6214,7 +6101,13 @@ public class Venta extends PBase {
                         if (!gl.cliposflag) {
                             gl.cliposflag=true;
                             if (!gl.forcedclose) {
-                                if (!gl.peRest) startActivity(new Intent(Venta.this,CliPos.class));
+                                if (!gl.peRest) {
+                                    if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                                        startActivity(new Intent(Venta.this,CliPosSVSel.class));
+                                    } else  {
+                                        startActivity(new Intent(Venta.this,CliPos.class));
+                                    }
+                                }
                             }
                         }
                     }

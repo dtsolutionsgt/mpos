@@ -517,7 +517,7 @@ public class clsDocument {
                     //rep.addc(l);
                     s=l;
                 } else {
-                    sfticket=serie+l;l="";
+                    sfticket=serie+"-"+l;l="";
                     //rep.addc(sfticket);
                     s=sfticket;
                 }

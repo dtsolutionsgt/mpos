@@ -70,6 +70,9 @@ public class appGlobals extends Application {
 	public String felInfile="INFILE";
 	public String felSal="INFILESV";
 
+	//FEL Salvador
+	public boolean sv_flag_nit,sv_flag_ncr,sv_cli_nue;
+
 	//Tamaño de pantalla
     public int scrx,scry,scrdim;
     public boolean scrhoriz;

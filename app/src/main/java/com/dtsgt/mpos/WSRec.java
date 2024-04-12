@@ -1871,7 +1871,7 @@ public class WSRec extends PBase {
                 var.activa = mu.bool(item.ACTIVA);
                 var.codigo_corel=item.CODIGO_COREL;
 
-                script.add(handler.addItemSql(var));
+                if (var.activa==1) script.add(handler.addItemSql(var));
             }
 
         } catch (Exception e) {

@@ -94,8 +94,8 @@ public class FacturaRes extends PBase {
 
 	private ListView listView;
 	private TextView lblPago,lblFact,lblMPago,lblCred, lblCard,lblPend,lblMonto,lblKeyDP;
-	private TextView lblTotal,lblPEfect,lblPCard,lblPreimp,lblProp,lblVuelto;
-	private ImageView imgBon,imgMPago,imgCred, imgCard, imgPend,imgPreimp,imgProp;
+	private TextView lblTotal,lblPEfect,lblPCard,lblPreimp,lblProp,lblVuelto,lblDesc;
+	private ImageView imgBon,imgMPago,imgCred, imgCard, imgPend,imgPreimp,imgProp,imgDesc;
 	private EditText txtVuelto;
 	private RelativeLayout rl_facturares;
 
@@ -182,30 +182,32 @@ public class FacturaRes extends PBase {
 
 		super.InitBase();
 
-        listView = (ListView) findViewById(R.id.listView1);
-		lblPago = (TextView) findViewById(R.id.TextView01);
-		lblFact = (TextView) findViewById(R.id.lblFact);
-		lblMPago = (TextView) findViewById(R.id.lblCVence);
-		lblCred = (TextView) findViewById(R.id.lblPend);
-		lblCard = (TextView) findViewById(R.id.textView4);
-        lblMonto = (TextView) findViewById(R.id.lblCant2);lblMonto.setText("");
-        lblKeyDP = (TextView) findViewById(R.id.textView110);
-        lblTotal = (TextView) findViewById(R.id.lblFact3);
-        lblPEfect = (TextView) findViewById(R.id.textView166);
-        lblPCard = (TextView) findViewById(R.id.textView167);
-        lblPend = (TextView) findViewById(R.id.textView197);
-        lblPreimp= (TextView) findViewById(R.id.textView220);
-        lblProp= (TextView) findViewById(R.id.textView240);
+        listView =  findViewById(R.id.listView1);
+		lblPago =  findViewById(R.id.TextView01);
+		lblFact =  findViewById(R.id.lblFact);
+		lblMPago =  findViewById(R.id.lblCVence);
+		lblCred =  findViewById(R.id.lblPend);
+		lblCard =  findViewById(R.id.textView4);
+        lblMonto =  findViewById(R.id.lblCant2);lblMonto.setText("");
+        lblKeyDP =  findViewById(R.id.textView110);
+        lblTotal =  findViewById(R.id.lblFact3);
+        lblPEfect =  findViewById(R.id.textView166);
+        lblPCard =  findViewById(R.id.textView167);
+        lblPend =  findViewById(R.id.textView197);
+        lblPreimp=  findViewById(R.id.textView220);
+        lblProp=  findViewById(R.id.textView240);
+		lblDesc= findViewById(R.id.textView246);
 
-		imgBon = (ImageView) findViewById(R.id.imageView6);
-		imgMPago = (ImageView) findViewById(R.id.btnImp);
-		imgCred = (ImageView) findViewById(R.id.imageView3);
-		imgCard = (ImageView) findViewById(R.id.imageView2);
-        imgPend = (ImageView) findViewById(R.id.imageView84);
-        imgPreimp = (ImageView) findViewById(R.id.imageView105);
-        imgProp = (ImageView) findViewById(R.id.imageView111);
+		imgBon = findViewById(R.id.imageView6);
+		imgMPago =  findViewById(R.id.btnImp);
+		imgCred =  findViewById(R.id.imageView3);
+		imgCard =  findViewById(R.id.imageView2);
+        imgPend =  findViewById(R.id.imageView84);
+        imgPreimp =  findViewById(R.id.imageView105);
+        imgProp =  findViewById(R.id.imageView111);
+		imgDesc =  findViewById(R.id.imageView117);
 
-		rl_facturares=(RelativeLayout)findViewById(R.id.relativeLayout1);
+		rl_facturares= findViewById(R.id.relativeLayout1);
 		rl_facturares.setVisibility(View.VISIBLE);
 
         T_factrecetaObj=new clsT_factrecetaObj(this,Con,db);
@@ -216,6 +218,12 @@ public class FacturaRes extends PBase {
         P_impresoraObj=new clsP_impresoraObj(this,Con,db);
         T_comandaObj=new clsT_comandaObj(this,Con,db);
 		D_facturadObj=new clsD_facturadObj(this,Con,db);
+
+		if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+			lblDesc.setVisibility(View.INVISIBLE);imgDesc.setVisibility(View.INVISIBLE);
+		} else {
+			lblDesc.setVisibility(View.VISIBLE);imgDesc.setVisibility(View.VISIBLE);
+		}
 
 		rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
 
@@ -773,24 +781,34 @@ public class FacturaRes extends PBase {
 			if (gl.sinimp) {
 
 				totimp=mu.round2(totimp);
-				stot=stot-totimp;
 
-				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+				/*
+				if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+					stot=stot-totimp;
+				} else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+					stot=stot-totimp;
 					if ((stot>percep_val) && (gl.sal_PER)) gl.percepcion=1;
 					if (stot<100) gl.percepcion=0;
 				} else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-					stot=stot+totimp;
-					totimp=stot-stotsinimp;
 					stot=stot-totimp;
 				}
+				*/
 
 				totperc=stot*(gl.percepcion/100);
 				totperc=mu.round2dec(totperc);
 				totimp=totimp+totperc;
 
                 descmon=descmon+descaddmonto;
-				tot=stot+totimp-descmon;
-			    //tot=stot+totimp-descmon+totperc;
+
+				if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+					tot=stot-descmon;
+				} else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+					tot=stot-descmon+totimp;
+				} else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+					//tot=stot-descmon+totimp;
+					tot=stot-descmon;
+				}
+
 				tot=tot+propina;
 				tot=mu.round2(tot);
 
@@ -799,6 +817,10 @@ public class FacturaRes extends PBase {
 				//item.Desc=mu.frmcur(stot+totimp);
 				item.Desc=mu.frmcur(stot);
 				item.Bandera=0;
+				items.add(item);
+
+				item = clsCls.new clsCDB();
+				item.Cod="Descuento";item.Desc=mu.frmcur(-descmon);item.Bandera=0;
 				items.add(item);
 
 				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
@@ -825,9 +847,7 @@ public class FacturaRes extends PBase {
 				}
 				*/
 
-				item = clsCls.new clsCDB();
-				item.Cod="Descuento";item.Desc=mu.frmcur(-descmon);item.Bandera=0;
-				items.add(item);
+
 
                 if (propina>0){
 
@@ -1114,7 +1134,7 @@ public class FacturaRes extends PBase {
 
 		Cursor dt,dtc;
 		String vprod,vumstock,vumventa,vbarra,ssq,svnit,llevdom;
-		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec,adescmon,adescv1,valp;
+		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec,adescmon,adescv1,valp,vvimp;
 		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend,
 			intcod,itemuid,cuid,tipo_factura=1;
 		boolean flag,pagocarta=false;
@@ -1214,13 +1234,6 @@ public class FacturaRes extends PBase {
 	   		ins.add("TOTAL",tot);
 			ins.add("DESMONTO",descmon);
 
-			/*
-			if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-				totimp=tot/1.15;
-				totimp=totimp*0.15;
-				totimp=mu.round2(totimp);
-			}
-			*/
 
 			ins.add("IMPMONTO",totimp);//ins.add("IMPMONTO",totimp+totperc);
 			ins.add("PESO",peso);
@@ -1314,6 +1327,7 @@ public class FacturaRes extends PBase {
                 adescmon=adescv1*descaddmonto/stot;
                 adescv1=dt.getDouble(5);
 				intcod=app.codigoProducto(dt.getString(0));
+				vvimp=dt.getDouble(3);
 
 			  	ins.init("D_FACTURAD");
 				ins.add("COREL",corel);
@@ -1322,7 +1336,7 @@ public class FacturaRes extends PBase {
 				ins.add("ANULADO",false);
 				ins.add("CANT",dt.getDouble(1));
 				ins.add("PRECIO",dt.getDouble(2));
-				ins.add("IMP",dt.getDouble(3));
+				ins.add("IMP",vvimp);
 				ins.add("DES",dt.getDouble(4));
 				ins.add("DESMON",dt.getDouble(5)+adescmon);
 				ins.add("TOTAL",dt.getDouble(6)-adescmon);

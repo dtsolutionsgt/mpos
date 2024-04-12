@@ -5,12 +5,15 @@
     android:installLocation="preferExternal"
     android:largeHeap="true"
     android:versionCode="5"
-    android:versionName="5.4.2.0">
+    android:versionName="5.4.2.5">
 
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
     <uses-feature android:name="android.hardware.usb.host" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -212,14 +215,14 @@
             android:name=".Reimpresion"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_reimpresion"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".Anulacion"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_anulacion"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".Deposito"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -821,6 +824,7 @@
             android:exported="false" />
         <activity
             android:name="com.dtsgt.felesa.FELFacturaSV"
+            android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -830,6 +834,32 @@
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
             android:name="com.dtsgt.felesa.FELContingenciaSV"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".CliPosSVSel"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysVisible" />
+        <activity
+            android:name=".CliPosSVCons"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".CliPosSVGiro"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysVisible" />
+        <activity
+            android:name=".CliPosSVCred"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysVisible" />
+        <activity
+            android:name=".CliPosSVRes"
+            android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
     </application>

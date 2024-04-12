@@ -1,0 +1,134 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".CliPosSVGiro" >
+
+        <RelativeLayout
+            android:id="@+id/relclipos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="false"
+            android:layout_centerVertical="false"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginRight="2dp"
+            android:background="#FFFFFF"
+            android:paddingBottom="1dp">
+
+            <ImageView
+                android:id="@+id/imageView154"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_below="@+id/relRoad"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="5dp"
+                android:clickable="true"
+                android:onClick="doClear"
+                android:padding="10dp"
+                android:src="@drawable/erase" />
+
+            <EditText
+                android:id="@+id/editTextText2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/relRoad"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_toStartOf="@+id/imageView154"
+                android:layout_toEndOf="@+id/imageView146"
+                android:ems="10"
+                android:inputType="text"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:id="@+id/relRoad"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/frame_rect_blue">
+
+                <ImageView
+                    android:id="@+id/imgTitLogo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:adjustViewBounds="true"
+                    android:background="#FFFFFF"
+                    android:paddingStart="5dp"
+                    android:paddingRight="10dp"
+                    android:src="@drawable/logo_panel"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/lblTit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_toRightOf="@+id/imgRoadTit"
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:text="GIRO DE NEGOCIO"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/imageView146"
+                android:layout_width="124dp"
+                android:layout_height="75dp"
+                android:layout_below="@+id/relRoad"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentBottom="false"
+                android:layout_marginStart="-8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:onClick="doExit"
+                android:padding="10dp"
+                android:src="@drawable/key_bksp"
+                android:visibility="visible" />
+
+            <ListView
+                android:id="@+id/listView1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/imageView146"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:id="@+id/textView330"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/editTextText2"
+                android:layout_alignBottom="@+id/textView329"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="131dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="0dp"
+                android:text="Ingrese partes de la descripción separadas por espacios" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
