@@ -965,8 +965,8 @@ public class FacturaRes extends PBase {
 	}
 
 	private void impresionDocumento() {
-
         String fname = Environment.getExternalStorageDirectory()+"/print.txt";
+		boolean print_flag;
 
 		try {
 
@@ -988,7 +988,14 @@ public class FacturaRes extends PBase {
 
 			impres=0;
 
-			if (app.impresora()) {
+			print_flag=app.impresora();
+			if (print_flag) {
+				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+					print_flag=gl.peESAComprobante;
+				}
+			}
+
+			if (print_flag) {
 
 			    fdoc.impresionorden=gl.pelOrdenComanda;
 				if (gl.peNumOrdCommandaVenta) {

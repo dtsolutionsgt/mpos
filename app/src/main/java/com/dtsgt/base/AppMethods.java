@@ -1297,7 +1297,18 @@ public class AppMethods {
 			gl.peDescPerc = false;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=170";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
 
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peESAComprobante = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peESAComprobante = false;
+		}
 
 	}
 

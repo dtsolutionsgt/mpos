@@ -33,8 +33,8 @@ public class CliPosSVSel extends PBase {
 
             P_clienteObj=new clsP_clienteObj(this,Con,db);
 
-            //txtNIT.setText("12345678901111");
-            //txtNRC.setText("12345678");
+            txtNIT.setText("12345678901111");
+            txtNRC.setText("12345678");
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -103,11 +103,7 @@ public class CliPosSVSel extends PBase {
         try {
             gl.sv_cli_nue=true;
             P_clienteObj.fill("WHERE (NIT='"+nit+"')");
-            if (P_clienteObj.count>0) {
-                gl.sv_cli_nue=false;
-            } else {
-
-            }
+            if (P_clienteObj.count>0) gl.sv_cli_nue=false;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -117,11 +113,7 @@ public class CliPosSVSel extends PBase {
         try {
             gl.sv_cli_nue=true;
             P_clienteObj.fill("WHERE (NIT='"+nrc+"')");
-            if (P_clienteObj.count>0) {
-                gl.sv_cli_nue=false;
-            } else {
-
-            }
+            if (P_clienteObj.count>0) gl.sv_cli_nue=false;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

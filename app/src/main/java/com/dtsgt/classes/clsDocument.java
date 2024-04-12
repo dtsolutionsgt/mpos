@@ -1434,6 +1434,9 @@ public class clsDocument {
         } else if (pais.equalsIgnoreCase("SV")) {
             facturaflag = true;
 
+            //Imprime solo ticket
+            tipo_doc=3;
+
             if ( tipo_doc==1) {
                 facturaflag = true;
                 saveHeadLinesSVFactura(reimpres);
