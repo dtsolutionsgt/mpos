@@ -388,13 +388,12 @@ public class FacturaRes extends PBase {
 				lblCred.setVisibility(View.INVISIBLE);
 			}
 
+			//if (gl.mesero_precuenta) prnCuenta(null);
 
-        //if (gl.mesero_precuenta) prnCuenta(null);
+			sn=gl.gNITCliente;
 
-		sn=gl.gNITCliente;
-
-		long aac=du.getyear(du.getActDate());
-		if (aac>2060) msgbox("Año incorrecto ( "+aac+" ), por favor informe a soporte.");
+			long aac=du.getyear(du.getActDate());
+			if (aac>2060) msgbox("Año incorrecto ( "+aac+" ), por favor informe a soporte.");
 
 
 		} catch (Exception e) {
