@@ -1588,9 +1588,18 @@ public class clsDocFactura extends clsDocument {
             rep.add("Le atendio: "+nommesero);
         }
 
-        agregaDomicilio();
+        if (parallevar){
+            rep.add("");
+            rep.addc("P A R A  L L E V A R");
+            rep.add("");
+        }
 
-        rep.add("");
+        if (domicilio) {
+            rep.add("");
+            rep.addc("D O M I C I L I O");
+            rep.add("");
+        }
+
         //rep.add("Datos del Cliente");
         //rep.add("Nombre: Consumidor Final");
         //rep.add("DUI/NIT: C/F");

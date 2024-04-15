@@ -155,242 +155,244 @@ public class FacturaRes extends PBase {
 	//@SuppressLint("MissingPermission")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 
-        try {
+		try {
 
-            appGlobals ggl=((appGlobals) this.getApplication());corcheck=true;
+			super.onCreate(savedInstanceState);
+
+			appGlobals ggl=((appGlobals) this.getApplication());corcheck=true;
 
 			if (ggl.mesero_precuenta) {
 				corcheck=false;
-                if (pantallaHorizontal()) {
+				if (pantallaHorizontal()) {
 					setContentView(R.layout.activity_factura_res_precue);horiz=true;
-                } else {
-                    setContentView(R.layout.activity_factura_res_ver_precue);horiz=false;
-                }
-            } else {
-				corcheck=true;
-                if (pantallaHorizontal()) {
-                    setContentView(R.layout.activity_factura_res);horiz=true;
-                } else {
-                    setContentView(R.layout.activity_factura_res_ver);horiz=false;
-                }
-            }
-        } catch (Exception e) {
-            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-		super.InitBase();
-
-        listView =  findViewById(R.id.listView1);
-		lblPago =  findViewById(R.id.TextView01);
-		lblFact =  findViewById(R.id.lblFact);
-		lblMPago =  findViewById(R.id.lblCVence);
-		lblCred =  findViewById(R.id.lblPend);
-		lblCard =  findViewById(R.id.textView4);
-        lblMonto =  findViewById(R.id.lblCant2);lblMonto.setText("");
-        lblKeyDP =  findViewById(R.id.textView110);
-        lblTotal =  findViewById(R.id.lblFact3);
-        lblPEfect =  findViewById(R.id.textView166);
-        lblPCard =  findViewById(R.id.textView167);
-        lblPend =  findViewById(R.id.textView197);
-        lblPreimp=  findViewById(R.id.textView220);
-        lblProp=  findViewById(R.id.textView240);
-		lblDesc= findViewById(R.id.textView246);
-
-		imgBon = findViewById(R.id.imageView6);
-		imgMPago =  findViewById(R.id.btnImp);
-		imgCred =  findViewById(R.id.imageView3);
-		imgCard =  findViewById(R.id.imageView2);
-        imgPend =  findViewById(R.id.imageView84);
-        imgPreimp =  findViewById(R.id.imageView105);
-        imgProp =  findViewById(R.id.imageView111);
-		imgDesc =  findViewById(R.id.imageView117);
-
-		rl_facturares= findViewById(R.id.relativeLayout1);
-		rl_facturares.setVisibility(View.VISIBLE);
-
-        T_factrecetaObj=new clsT_factrecetaObj(this,Con,db);
-        P_prodrecetaObj=new clsP_prodrecetaObj(this,Con,db);
-        T_comboObj=new clsT_comboObj(this,Con,db);
-        P_productoObj=new clsP_productoObj(this,Con,db);
-        P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
-        P_impresoraObj=new clsP_impresoraObj(this,Con,db);
-        T_comandaObj=new clsT_comandaObj(this,Con,db);
-		D_facturadObj=new clsD_facturadObj(this,Con,db);
-
-		if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-			lblDesc.setVisibility(View.INVISIBLE);imgDesc.setVisibility(View.INVISIBLE);
-		} else {
-			lblDesc.setVisibility(View.VISIBLE);imgDesc.setVisibility(View.VISIBLE);
-		}
-
-		rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
-
-		lblVuelto = new TextView(this,null);
-		txtVuelto = new EditText(this,null);
-
-		String sn=gl.gNITCliente;
-
-		cliid=gl.cliente;
-		rutapos=gl.rutapos;
-		Nivel_Media_Pago =gl.media;
-		EsNivelPrecioDelivery = gl.EsNivelPrecioDelivery;
-
-		credito=gl.credito;
-
-		try {
-			if (!gl.nummesapedido.equalsIgnoreCase("0")) {}
-		} catch (Exception e) {
-			gl.nummesapedido="";
-		}
-
-		gl.cobroPendiente = false;
-		dispventa = gl.dvdispventa;dispventa=mu.round(dispventa,2);
-		notaC = gl.tiponcredito;
-        pendiente=false;
-
-        if (!gl.pelCaja) {
-            imgPreimp.setVisibility(View.INVISIBLE);lblPreimp.setVisibility(View.INVISIBLE);
-        }
-
-        if (!gl.numero_orden.equalsIgnoreCase(" ")) {
-            imgPreimp.setVisibility(View.VISIBLE);lblPreimp.setVisibility(View.VISIBLE);
-        }
-
-        imgProp.setVisibility(View.INVISIBLE);lblProp.setVisibility(View.INVISIBLE);
-        if (gl.peRest | gl.emp==47) {
-            imgProp.setVisibility(View.VISIBLE);lblProp.setVisibility(View.VISIBLE);
-            //if (gl.pePropinaFija && gl.pePropinaPerc<=0) {
-            //    imgProp.setVisibility(View.INVISIBLE);lblProp.setVisibility(View.INVISIBLE);
-            //}
-        }
-
-        mu.currsymb(gl.peMon);
-
-		app = new AppMethods(this, gl, Con, db);
-        khand=new clsKeybHandler(this,lblMonto,lblKeyDP);
-
-        app.parametrosExtra();
-
-        imgCred.setVisibility(View.INVISIBLE);lblCred.setVisibility(View.INVISIBLE);
-        imgMPago.setVisibility(View.INVISIBLE);lblMPago.setVisibility(View.INVISIBLE);
-
-        if (!gl.pePedidos) {
-            imgPend.setVisibility(View.INVISIBLE);lblPend.setVisibility(View.INVISIBLE);
-        }
-
-		if (gl.cred_lim<=0 || gl.facturaVen != 0) {
-			imgCred.setVisibility(View.INVISIBLE);lblCred.setVisibility(View.INVISIBLE);
-		} else if(gl.cred_lim > 0){
-			if (gl.pePagoCredito) {
-				imgCred.setVisibility(View.VISIBLE);lblCred.setVisibility(View.VISIBLE);
-			}
-		}
-
-		//imgCred.setVisibility(View.VISIBLE);lblCred.setVisibility(View.VISIBLE);
-
-		fecha=du.getActDateTime();
-		fechae=fecha;
-
-		dweek=mu.dayofweek();
-
-		try {
-			esorden=!gl.ordcorel.isEmpty();
-		} catch (Exception e) {
-			esorden=false;
-		}
-
-		rnfbocLista = () -> fbocLista();
-		rnfbocDel = () -> fbocDel();
-
-		fboe=new fbOrdenEstado("OrdenEstado",gl.tienda);
-		fboc=new fbOrdenCuenta("OrdenCuenta",gl.tienda);
-		fbrs=new fbResSesion("ResSesion",gl.tienda);
-		fbma=new fbMesaAbierta("MesaAbierta",gl.tienda);
-
-		if (esorden) {
-			fbo=new fbOrden("Orden",gl.tienda,gl.ordcorel);
-			fbo.listItems(null);
-		}
-
-		app.getURL();
-
-		wso=new wsOpenDT(gl.wsurl);
-		rncreditoDisp = () -> creditoDisp();
-
-		clsDesc=new clsDescGlob(this);
-
-		descpmon=totalDescProd(); //descpmon=0;
-		dmax=clsDesc.dmax;
-		acum=clsDesc.acum;
-        descaddmonto=0;
-
-		try {
-			db.execSQL("DELETE FROM T_PAGO");
-		} catch (SQLException e) {}
-
-		processFinalPromo();
-        pagoPendiente();
-
-		printcallback= new Runnable() {
-
-		    public void run() {
-
-				if (notaC==2){
-
-					String vModo=(gl.peModal.equalsIgnoreCase("TOL")?"TOL":"*");
-					fdev.buildPrint(gl.dvcorrelnc,0, vModo);
-
-					SystemClock.sleep(3000);
-					prn_nc.printnoask(printclose, "printnc.txt");
-					SystemClock.sleep(3000);
-					if (impres>0) prn_nc.printnoask(printclose, "printnc.txt");
+				} else {
+					setContentView(R.layout.activity_factura_res_ver_precue);horiz=false;
 				}
+			} else {
+				corcheck=true;
+				if (pantallaHorizontal()) {
+					setContentView(R.layout.activity_factura_res);horiz=true;
+				} else {
+					setContentView(R.layout.activity_factura_res_ver);horiz=false;
+				}
+			}
 
-				askPrint();
-		    }
-		};
+			super.InitBase();
 
-		printclose= () -> {
-			//FacturaRes.super.finish();
-		};
+			listView =  findViewById(R.id.listView1);
+			lblPago =  findViewById(R.id.TextView01);
+			lblFact =  findViewById(R.id.lblFact);
+			lblMPago =  findViewById(R.id.lblCVence);
+			lblCred =  findViewById(R.id.lblPend);
+			lblCard =  findViewById(R.id.textView4);
+			lblMonto =  findViewById(R.id.lblCant2);lblMonto.setText("");
+			lblKeyDP =  findViewById(R.id.textView110);
+			lblTotal =  findViewById(R.id.lblFact3);
+			lblPEfect =  findViewById(R.id.textView166);
+			lblPCard =  findViewById(R.id.textView167);
+			lblPend =  findViewById(R.id.textView197);
+			lblPreimp=  findViewById(R.id.textView220);
+			lblProp=  findViewById(R.id.textView240);
+			lblDesc= findViewById(R.id.textView246);
 
-		printexit= () -> {
-			gl.ventalock=false;
-			FacturaRes.super.finish();
-		};
+			imgBon = findViewById(R.id.imageView6);
+			imgMPago =  findViewById(R.id.btnImp);
+			imgCred =  findViewById(R.id.imageView3);
+			imgCard =  findViewById(R.id.imageView2);
+			imgPend =  findViewById(R.id.imageView84);
+			imgPreimp =  findViewById(R.id.imageView105);
+			imgProp =  findViewById(R.id.imageView111);
+			imgDesc =  findViewById(R.id.imageView117);
 
-		prn=new printer(this,printexit,gl.validimp);
-		prn_nc=new printer(this,printclose,gl.validimp);
+			rl_facturares= findViewById(R.id.relativeLayout1);
+			rl_facturares.setVisibility(View.VISIBLE);
 
-		fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"",gl.peComboDet);
-		fdoc.deviceid =gl.deviceId;
+			T_factrecetaObj=new clsT_factrecetaObj(this,Con,db);
+			P_prodrecetaObj=new clsP_prodrecetaObj(this,Con,db);
+			T_comboObj=new clsT_comboObj(this,Con,db);
+			P_productoObj=new clsP_productoObj(this,Con,db);
+			P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
+			P_impresoraObj=new clsP_impresoraObj(this,Con,db);
+			T_comandaObj=new clsT_comandaObj(this,Con,db);
+			D_facturadObj=new clsD_facturadObj(this,Con,db);
 
-		fdev=new clsDocDevolucion(this,prn_nc.prw,gl.peMon,gl.peDecImp, "printnc.txt");
-		fdev.deviceid =gl.deviceId;
+			if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+				lblDesc.setVisibility(View.INVISIBLE);imgDesc.setVisibility(View.INVISIBLE);
+			} else {
+				lblDesc.setVisibility(View.VISIBLE);imgDesc.setVisibility(View.VISIBLE);
+			}
 
-		saved=false;
+			rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
 
-		fbs =new fbStock("Stock",gl.tienda);
+			lblVuelto = new TextView(this,null);
+			txtVuelto = new EditText(this,null);
 
-		if (corcheck) assignCorel();
+			String sn=gl.gNITCliente;
 
-		cliPorDia();
+			cliid=gl.cliente;
+			rutapos=gl.rutapos;
+			Nivel_Media_Pago =gl.media;
+			EsNivelPrecioDelivery = gl.EsNivelPrecioDelivery;
 
-		setHandlers();
+			credito=gl.credito;
 
-        txtVuelto.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+			try {
+				if (!gl.nummesapedido.equalsIgnoreCase("0")) {}
+			} catch (Exception e) {
+				gl.nummesapedido="";
+			}
 
-        pend=tot;
-        if (tot>credito) credito=0;
+			gl.cobroPendiente = false;
+			dispventa = gl.dvdispventa;dispventa=mu.round(dispventa,2);
+			notaC = gl.tiponcredito;
+			pendiente=false;
 
-        if (credito<=0) {
-            imgCred.setVisibility(View.INVISIBLE);
-            lblCred.setVisibility(View.INVISIBLE);
-        }
+			if (!gl.pelCaja) {
+				imgPreimp.setVisibility(View.INVISIBLE);lblPreimp.setVisibility(View.INVISIBLE);
+			}
 
-    }
+			if (!gl.numero_orden.equalsIgnoreCase(" ")) {
+				imgPreimp.setVisibility(View.VISIBLE);lblPreimp.setVisibility(View.VISIBLE);
+			}
+
+			imgProp.setVisibility(View.INVISIBLE);lblProp.setVisibility(View.INVISIBLE);
+			if (gl.peRest | gl.emp==47) {
+				imgProp.setVisibility(View.VISIBLE);lblProp.setVisibility(View.VISIBLE);
+				//if (gl.pePropinaFija && gl.pePropinaPerc<=0) {
+				//    imgProp.setVisibility(View.INVISIBLE);lblProp.setVisibility(View.INVISIBLE);
+				//}
+			}
+
+			mu.currsymb(gl.peMon);
+
+			app = new AppMethods(this, gl, Con, db);
+			khand=new clsKeybHandler(this,lblMonto,lblKeyDP);
+
+			app.parametrosExtra();
+
+			imgCred.setVisibility(View.INVISIBLE);lblCred.setVisibility(View.INVISIBLE);
+			imgMPago.setVisibility(View.INVISIBLE);lblMPago.setVisibility(View.INVISIBLE);
+
+			if (!gl.pePedidos) {
+				imgPend.setVisibility(View.INVISIBLE);lblPend.setVisibility(View.INVISIBLE);
+			}
+
+			if (gl.cred_lim<=0 || gl.facturaVen != 0) {
+				imgCred.setVisibility(View.INVISIBLE);lblCred.setVisibility(View.INVISIBLE);
+			} else if(gl.cred_lim > 0){
+				if (gl.pePagoCredito) {
+					imgCred.setVisibility(View.VISIBLE);lblCred.setVisibility(View.VISIBLE);
+				}
+			}
+
+			//imgCred.setVisibility(View.VISIBLE);lblCred.setVisibility(View.VISIBLE);
+
+			fecha=du.getActDateTime();
+			fechae=fecha;
+
+			dweek=mu.dayofweek();
+
+			try {
+				esorden=!gl.ordcorel.isEmpty();
+			} catch (Exception e) {
+				esorden=false;
+			}
+
+			rnfbocLista = () -> fbocLista();
+			rnfbocDel = () -> fbocDel();
+
+			fboe=new fbOrdenEstado("OrdenEstado",gl.tienda);
+			fboc=new fbOrdenCuenta("OrdenCuenta",gl.tienda);
+			fbrs=new fbResSesion("ResSesion",gl.tienda);
+			fbma=new fbMesaAbierta("MesaAbierta",gl.tienda);
+
+			if (esorden) {
+				fbo=new fbOrden("Orden",gl.tienda,gl.ordcorel);
+				fbo.listItems(null);
+			}
+
+			app.getURL();
+
+			wso=new wsOpenDT(gl.wsurl);
+			rncreditoDisp = () -> creditoDisp();
+
+			clsDesc=new clsDescGlob(this);
+
+			descpmon=totalDescProd(); //descpmon=0;
+			dmax=clsDesc.dmax;
+			acum=clsDesc.acum;
+			descaddmonto=0;
+
+			try {
+				db.execSQL("DELETE FROM T_PAGO");
+			} catch (SQLException e) {}
+
+			processFinalPromo();
+			pagoPendiente();
+
+			printcallback= new Runnable() {
+
+				public void run() {
+
+					if (notaC==2){
+
+						String vModo=(gl.peModal.equalsIgnoreCase("TOL")?"TOL":"*");
+						fdev.buildPrint(gl.dvcorrelnc,0, vModo);
+
+						SystemClock.sleep(3000);
+						prn_nc.printnoask(printclose, "printnc.txt");
+						SystemClock.sleep(3000);
+						if (impres>0) prn_nc.printnoask(printclose, "printnc.txt");
+					}
+
+					askPrint();
+				}
+			};
+
+			printclose= () -> {
+				//FacturaRes.super.finish();
+			};
+
+			printexit= () -> {
+				gl.ventalock=false;
+				FacturaRes.super.finish();
+			};
+
+			prn=new printer(this,printexit,gl.validimp);
+			prn_nc=new printer(this,printclose,gl.validimp);
+
+			fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"",gl.peComboDet);
+			fdoc.deviceid =gl.deviceId;
+
+			fdev=new clsDocDevolucion(this,prn_nc.prw,gl.peMon,gl.peDecImp, "printnc.txt");
+			fdev.deviceid =gl.deviceId;
+
+			saved=false;
+
+			fbs =new fbStock("Stock",gl.tienda);
+
+			if (corcheck) assignCorel();
+
+			cliPorDia();
+
+			setHandlers();
+
+			txtVuelto.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+
+			pend=tot;
+			if (tot>credito) credito=0;
+
+			if (credito<=0) {
+				imgCred.setVisibility(View.INVISIBLE);
+				lblCred.setVisibility(View.INVISIBLE);
+			}
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+	}
 
 	//region Events
 
@@ -408,7 +410,7 @@ public class FacturaRes extends PBase {
 	}
 
 	public void paySelect(View view) {
-        pendiente=false;
+		pendiente=false;
 		try{
 
 			if (fcorel==0) {
@@ -430,7 +432,7 @@ public class FacturaRes extends PBase {
 	}
 
 	public void payCash(View view) {
-        pendiente=false;
+		pendiente=false;
 		try{
 
 			if (fcorel==0) {
@@ -446,8 +448,8 @@ public class FacturaRes extends PBase {
 		}
 	}
 
-    public void payCard(View view) {
-        pendiente=false;
+	public void payCard(View view) {
+		pendiente=false;
 		gl.modo_cortesia=false;
 
 		if (tot<=0) {
@@ -455,27 +457,27 @@ public class FacturaRes extends PBase {
 		}
 
 
-        try {
-            if (fcorel==0) {
-                msgbox("No existe un correlativo disponible, no se puede emitir factura");return;
-            }
+		try {
+			if (fcorel==0) {
+				msgbox("No existe un correlativo disponible, no se puede emitir factura");return;
+			}
 
-            pagoPendiente();
+			pagoPendiente();
 
-            if (gl.total_pago>0) {
-                browse=3;
+			if (gl.total_pago>0) {
+				browse=3;
 				gl.modo_cortesia=false;
-                startActivity(new Intent(this,PagoTarjeta.class));
-            } else {
-                checkPago();
-            }
-        } catch (Exception e){
-             mu.msgbox("payCard: " + e.getMessage());
-        }
-    }
+				startActivity(new Intent(this,PagoTarjeta.class));
+			} else {
+				checkPago();
+			}
+		} catch (Exception e){
+			mu.msgbox("payCard: " + e.getMessage());
+		}
+	}
 
-    public void payCred(View view) {
-        pendiente=false;
+	public void payCred(View view) {
+		pendiente=false;
 		try{
 
 			if (fcorel==0) {
@@ -484,7 +486,7 @@ public class FacturaRes extends PBase {
 
 			if (app.isOnWifi()>0) {
 				sql="SELECT SUM(Monto_Total),SUM(Saldo) FROM D_CxC " +
-					 "WHERE (IdCliente="+gl.codigo_cliente+") AND (ESTADO='C')";
+						"WHERE (IdCliente="+gl.codigo_cliente+") AND (ESTADO='C')";
 				wso.execute(sql,rncreditoDisp);
 				toast("VALIDANDO CREDITO DISPONIBLE . . .");
 			} else {
@@ -497,15 +499,15 @@ public class FacturaRes extends PBase {
 		}
 	}
 
-    public void pendientePago(View view){
-        if (fcorel==0) {
-            msgbox("No existe un correlativo disponible, no se puede emitir factura");return;
-        }
-        askPendientePago();
-    }
+	public void pendientePago(View view){
+		if (fcorel==0) {
+			msgbox("No existe un correlativo disponible, no se puede emitir factura");return;
+		}
+		askPendientePago();
+	}
 
-    public void delPay(View view) {
-	    askDelPago();
+	public void delPay(View view) {
+		askDelPago();
 	}
 
 	public void doDesc(View view) {
@@ -521,9 +523,9 @@ public class FacturaRes extends PBase {
         browse=5;
         startActivity(new Intent(this,ValidaSuper.class));
 		*/
-    }
+	}
 
-    public void prnCuenta(View view) {
+	public void prnCuenta(View view) {
 		try {
 			if (tot<=0) {
 				msgbox("Total incorrecto");return;
@@ -533,9 +535,9 @@ public class FacturaRes extends PBase {
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
-    }
+	}
 
-    public void showBon(View view) {
+	public void showBon(View view) {
 		try{
 			Intent intent = new Intent(this,BonVenta.class);
 			startActivity(intent);
@@ -544,69 +546,69 @@ public class FacturaRes extends PBase {
 		}
 	}
 
-    public void DaVuelto(View view) {
-        try{
-            Davuelto();
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
+	public void DaVuelto(View view) {
+		try{
+			Davuelto();
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+	}
 
-    public void doPropina(View view) {
-        ingresaPropina();
-    }
+	public void doPropina(View view) {
+		ingresaPropina();
+	}
 
-    public void pago100(View view){
+	public void pago100(View view){
 		if (tot<=0) {
 			msgbox("Total incorrecto");return;
 		}
-        khand.val="100";
-        validaPagoEfectivo();
-    }
+		khand.val="100";
+		validaPagoEfectivo();
+	}
 
-    public void pago50(View view){
+	public void pago50(View view){
 		if (tot<=0) {
 			msgbox("Total incorrecto");return;
 		}
-        khand.val="50";
-        validaPagoEfectivo();
-    }
+		khand.val="50";
+		validaPagoEfectivo();
+	}
 
-    public void pago20(View view){
+	public void pago20(View view){
 		if (tot<=0) {
 			msgbox("Total incorrecto");return;
 		}
-        khand.val="20";
-        validaPagoEfectivo();
-    }
+		khand.val="20";
+		validaPagoEfectivo();
+	}
 
-    public void pago10(View view){
+	public void pago10(View view){
 		if (tot<=0) {
 			msgbox("Total incorrecto");return;
 		}
-        khand.val="10";
-        validaPagoEfectivo();
-    }
+		khand.val="10";
+		validaPagoEfectivo();
+	}
 
-    public void pago5(View view){
+	public void pago5(View view){
 		if (tot<=0) {
 			msgbox("Total incorrecto");return;
 		}
-        khand.val="5";
-        validaPagoEfectivo();
-    }
+		khand.val="5";
+		validaPagoEfectivo();
+	}
 
-    public void doKey(View view) {
-        khand.handleKey(view.getTag().toString());
-        if (khand.isEnter) {
+	public void doKey(View view) {
+		khand.handleKey(view.getTag().toString());
+		if (khand.isEnter) {
 			if (tot<=0) {
 				msgbox("Total incorrecto");return;
 			}
-            validaPagoEfectivo();
-        }
-    }
+			validaPagoEfectivo();
+		}
+	}
 
-    private void setHandlers(){
+	private void setHandlers(){
 
 		try{
 
@@ -803,7 +805,8 @@ public class FacturaRes extends PBase {
 				if (gl.codigo_pais.equalsIgnoreCase("GT")) {
 					tot=stot-descmon;
 				} else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-					tot=stot-descmon+totimp;
+					//tot=stot-descmon+totimp;
+					tot=stot-descmon;
 				} else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
 					//tot=stot-descmon+totimp;
 					tot=stot-descmon;

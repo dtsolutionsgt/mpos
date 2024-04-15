@@ -2,8 +2,10 @@ package com.dtsgt.mpos;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.dtsgt.classes.clsP_clienteObj;
@@ -36,6 +38,7 @@ public class CliPosSVSel extends PBase {
             txtNIT.setText("12345678901111");
             txtNRC.setText("12345678");
 
+            setHandlers();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -93,6 +96,27 @@ public class CliPosSVSel extends PBase {
 
     public void doExit(View view) {
         finish();
+    }
+
+    private void setHandlers() {
+
+        cbdomicilio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                                   @Override
+                                                   public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                                                       if (isChecked) cbllevar.setChecked(false);
+                                                   }
+                                               }
+        );
+
+        cbllevar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                                @Override
+                                                public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                                                    if (isChecked) cbdomicilio.setChecked(false);
+                                                }
+                                            }
+        );
+
+
     }
 
     //endregion

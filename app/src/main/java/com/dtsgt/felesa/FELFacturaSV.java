@@ -268,7 +268,7 @@ public class FELFacturaSV extends PBase {
                 JSONfactura("T");
             }
 
-            lbl1.setText("Certificando Factura...");
+            lbl1.setText("Certificando documento ...");
 
             if (!tipodoc.equalsIgnoreCase("C")) {
                 FactESA.Certifica(felcorel, jfact.json);
@@ -1182,7 +1182,7 @@ public class FELFacturaSV extends PBase {
     private void updateLabel() {
         Handler handler = new Handler();
         Runnable runnable = () -> handler.post(() -> {
-            lbl1.setText("Certificando factura ");lbl3.setText("");
+            lbl1.setText("Certificando documento . . . ");lbl3.setText("");
         });
         new Thread(runnable).start();
     }
