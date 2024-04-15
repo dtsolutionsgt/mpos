@@ -65,8 +65,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-;
-
 public class Menu extends PBase {
 
 	private GridView gridView;
@@ -88,6 +86,7 @@ public class Menu extends PBase {
     private clsP_cajacierreObj caja;
     private clsP_modo_emergenciaObj P_modo_emergenciaObj;
     private clsP_paramextObj P_paramextObj;
+	private clsD_facturaObj D_facturaObj;
 
     private int selId,selIdx,menuid,iicon,idalm,idalmdpred,idcierre,modo_invcent;
 	private String rutatipo,sdoc;
@@ -116,6 +115,7 @@ public class Menu extends PBase {
 
             P_modo_emergenciaObj=new clsP_modo_emergenciaObj(this,Con,db);
             P_paramextObj=new clsP_paramextObj(this,Con,db);
+			D_facturaObj=new clsD_facturaObj(this,Con,db);
 
             gl.validDate=false;
 			gl.lastDate=0;
@@ -2415,6 +2415,7 @@ public class Menu extends PBase {
 		return true;
 	}
 
+	@SuppressLint("SuspiciousIndentation")
 	private boolean validaVenta() {
 		Cursor DT;
 		int ci,cf,ca1,ca2;
@@ -2891,7 +2892,7 @@ public class Menu extends PBase {
     }
 
     private boolean validaFacturas() {
-
+		boolean fsend;
         long fi,ff;
 
         if (!app.usaFEL()) return true;
@@ -2911,10 +2912,18 @@ public class Menu extends PBase {
             if (fc==0) {
                 return true;
             } else {
-				if (gl.emp!=7) {
+				fsend=true;
+
+				File file1 = new File(Environment.getExternalStorageDirectory(), "/debug.txt");
+				if (file1.exists()) fsend=false;
+
+				if (fsend) {
 					msgAskSend("Existen facturas pendientes de certificacion con más de 3 días. Por favor envie siguente correo al soporte.");
 					return false;
-				} else return true;
+				} else {
+					toast("Existen facturas pendientes de certificacion con más de 3 días.");
+					return true;
+				}
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
@@ -3296,7 +3305,86 @@ public class Menu extends PBase {
 
     }
 
-    public void msgAskCorregirFechas() {
+	public void msgAskCorregirFechas() {
+		try {
+			D_facturaObj.fill("WHERE (FECHA>6900000000)");
+
+			if (D_facturaObj.count==0) {
+				msgbox("No existen facturas con la fecha incorrecta");return;
+			}
+
+			if (D_facturaObj.count>10) {
+				D_facturaObj.fill("WHERE (FECHA>6900000000) ORDER BY CORELATIVO LIMIT 10");
+				msgAskCorregirFechasTop10("Existe mas que 10 facturas incorrectas. Se van a procesar primeras 10.");
+			} else {
+				msgAskCorregirFechasList();
+			}
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void msgAskCorregirFechasTop10(String msg) {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage(msg);
+		dialog.setCancelable(false);
+		dialog.setPositiveButton("Continuar", (dialog1, which) -> msgAskCorregirFechasList());
+		dialog.setNegativeButton("Salir", (dialog12, which) -> {});
+		dialog.show();
+	}
+
+	private void msgAskCorregirFechasList() {
+		String fflist="",msg="Factura termina a :\n";
+		try {
+
+			for (int i = 0; i <D_facturaObj.count; i++) {
+				fflist=fflist+". . . "+D_facturaObj.items.get(i).corelativo+",";
+			}
+
+			ExDialog dialog = new ExDialog(this);
+			dialog.setMessage(msg+fflist);
+			dialog.setCancelable(false);
+			dialog.setPositiveButton("Continuar", (dialog1, which) -> msgAskCorregirFechas2());
+			dialog.setNegativeButton("Salir", (dialog12, which) -> {});
+			dialog.show();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	public void msgAskCorregirFechas2() {
+
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage("¿Corregir fechas erroneas a la fecha actual?");
+		dialog.setCancelable(false);
+
+		dialog.setPositiveButton("Corregir", (dialog12, which) -> {
+			Long fActual,fdActual;
+			String cor;
+
+			try {
+
+				fActual = du.getFechaActual();fdActual = du.getActDateTime();
+
+				for (int i = 0; i <D_facturaObj.count; i++) {
+					cor=D_facturaObj.items.get(i).corel;
+					sql="UPDATE D_FACTURA SET FECHA="+fActual+",FECHAENTR="+fdActual+" WHERE (COREL='"+cor+"')";
+					db.execSQL(sql);
+				}
+
+				msgbox("Fechas corregidas.");
+			} catch (Exception e) {
+				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			}
+
+		});
+
+		dialog.setNegativeButton("Salir", (dialog1, which) -> {});
+
+		dialog.show();
+	}
+
+	public void msgAskCorregirFechas_orig() {
 
 		ExDialog dialog = new ExDialog(this);
 		dialog.setMessage("¿Corregir  fechas erroneas por la fecha actual?");
@@ -3335,7 +3423,7 @@ public class Menu extends PBase {
 		dialog.show();
 	}
 
-    private void msgAskEmerg(String msg) {
+	private void msgAskEmerg(String msg) {
 
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
@@ -3409,7 +3497,6 @@ public class Menu extends PBase {
 		dialog.show();
 	}
 
-
 	//endregion
 
 	//region Activity Events
@@ -3424,6 +3511,7 @@ public class Menu extends PBase {
 
             P_paramextObj.reconnect(Con,db);
 			P_modo_emergenciaObj.reconnect(Con,db);
+			D_facturaObj.reconnect(Con,db);
 
 			setPrintWidth();
 

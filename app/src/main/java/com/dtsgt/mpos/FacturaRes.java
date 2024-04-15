@@ -135,208 +135,208 @@ public class FacturaRes extends PBase {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-        try {
+		try {
 
-            appGlobals ggl=((appGlobals) this.getApplication());
+			appGlobals ggl=((appGlobals) this.getApplication());
 
-            if (ggl.mesero_precuenta) {
-                if (pantallaHorizontal()) {
+			if (ggl.mesero_precuenta) {
+				if (pantallaHorizontal()) {
 					setContentView(R.layout.activity_factura_res_precue);horiz=true;
-                } else {
-                    setContentView(R.layout.activity_factura_res_ver_precue);horiz=false;
-                }
-            } else {
-                if (pantallaHorizontal()) {
-                    setContentView(R.layout.activity_factura_res);horiz=true;
-                } else {
-                    setContentView(R.layout.activity_factura_res_ver);horiz=false;
-                }
-            }
-
-
-		super.InitBase();
-
-        listView = (ListView) findViewById(R.id.listView1);
-		lblPago = (TextView) findViewById(R.id.TextView01);
-		lblFact = (TextView) findViewById(R.id.lblFact);
-		lblMPago = (TextView) findViewById(R.id.lblCVence);
-		lblCred = (TextView) findViewById(R.id.lblPend);
-		lblCard = (TextView) findViewById(R.id.textView4);
-        lblMonto = (TextView) findViewById(R.id.lblCant2);lblMonto.setText("");
-        lblKeyDP = (TextView) findViewById(R.id.textView110);
-        lblTotal = (TextView) findViewById(R.id.lblFact3);
-        lblPEfect = (TextView) findViewById(R.id.textView166);
-        lblPCard = (TextView) findViewById(R.id.textView167);
-        lblPend = (TextView) findViewById(R.id.textView197);
-        lblPreimp= (TextView) findViewById(R.id.textView220);
-        lblProp= (TextView) findViewById(R.id.textView240);
-
-		imgBon = (ImageView) findViewById(R.id.imageView6);
-		imgMPago = (ImageView) findViewById(R.id.btnImp);
-		imgCred = (ImageView) findViewById(R.id.imageView3);
-		imgCard = (ImageView) findViewById(R.id.imageView2);
-        imgPend = (ImageView) findViewById(R.id.imageView84);
-        imgPreimp = (ImageView) findViewById(R.id.imageView105);
-        imgProp = (ImageView) findViewById(R.id.imageView111);
-
-		rl_facturares=(RelativeLayout)findViewById(R.id.relativeLayout1);
-		rl_facturares.setVisibility(View.VISIBLE);
-
-        T_factrecetaObj=new clsT_factrecetaObj(this,Con,db);
-        P_prodrecetaObj=new clsP_prodrecetaObj(this,Con,db);
-        T_comboObj=new clsT_comboObj(this,Con,db);
-        P_productoObj=new clsP_productoObj(this,Con,db);
-        P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
-        P_impresoraObj=new clsP_impresoraObj(this,Con,db);
-        T_comandaObj=new clsT_comandaObj(this,Con,db);
-
-		rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
-
-		lblVuelto = new TextView(this,null);
-		txtVuelto = new EditText(this,null);
-
-		String sn=gl.gNITCliente;
-
-		cliid=gl.cliente;
-		rutapos=gl.rutapos;
-		Nivel_Media_Pago =gl.media;
-		EsNivelPrecioDelivery = gl.EsNivelPrecioDelivery;
-
-		credito=gl.credito;
-        idfel=gl.peFEL;
-
-		try {
-			if (!gl.nummesapedido.equalsIgnoreCase("0")) {
-			}
-		} catch (Exception e) {
-			gl.nummesapedido="";
-		}
-
-		gl.cobroPendiente = false;
-		dispventa = gl.dvdispventa;dispventa=mu.round(dispventa,2);
-		notaC = gl.tiponcredito;
-        pendiente=false;
-
-        if (!gl.pelCaja) {
-            imgPreimp.setVisibility(View.INVISIBLE);lblPreimp.setVisibility(View.INVISIBLE);
-        }
-
-        if (!gl.numero_orden.equalsIgnoreCase(" ")) {
-            imgPreimp.setVisibility(View.VISIBLE);lblPreimp.setVisibility(View.VISIBLE);
-        }
-
-        imgProp.setVisibility(View.INVISIBLE);lblProp.setVisibility(View.INVISIBLE);
-        if (gl.peRest | gl.emp==47) {
-            imgProp.setVisibility(View.VISIBLE);lblProp.setVisibility(View.VISIBLE);
-            //if (gl.pePropinaFija && gl.pePropinaPerc<=0) {
-            //    imgProp.setVisibility(View.INVISIBLE);lblProp.setVisibility(View.INVISIBLE);
-            //}
-        }
-
-        mu.currsymb(gl.peMon);
-
-		app = new AppMethods(this, gl, Con, db);
-        khand=new clsKeybHandler(this,lblMonto,lblKeyDP);
-
-        app.parametrosExtra();
-
-        imgCred.setVisibility(View.VISIBLE);lblCred.setVisibility(View.VISIBLE);
-        imgMPago.setVisibility(View.INVISIBLE);lblMPago.setVisibility(View.INVISIBLE);
-
-        if (!gl.pePedidos) {
-            imgPend.setVisibility(View.INVISIBLE);lblPend.setVisibility(View.INVISIBLE);
-        }
-
-        if (Nivel_Media_Pago ==4) {
-            if (credito<=0 || gl.facturaVen != 0) {
-                imgCred.setVisibility(View.INVISIBLE);lblCred.setVisibility(View.INVISIBLE);
-            } else if(credito > 0){
-                imgCred.setVisibility(View.VISIBLE);lblCred.setVisibility(View.VISIBLE);
-            }
-        }
-
-        fecha=du.getActDateTime();
-		fechae=fecha;
-
-		dweek=mu.dayofweek();
-
-		clsDesc=new clsDescGlob(this);
-
-		descpmon=totalDescProd(); //descpmon=0;
-		dmax=clsDesc.dmax;
-		acum=clsDesc.acum;
-        descaddmonto=0;
-
-		try {
-			db.execSQL("DELETE FROM T_PAGO");
-		} catch (SQLException e) {}
-
-		processFinalPromo();
-        pagoPendiente();
-
-		printcallback= new Runnable() {
-
-		    public void run() {
-
-				if (notaC==2){
-
-					String vModo=(gl.peModal.equalsIgnoreCase("TOL")?"TOL":"*");
-					fdev.buildPrint(gl.dvcorrelnc,0, vModo);
-
-					SystemClock.sleep(3000);
-					prn_nc.printnoask(printclose, "printnc.txt");
-					SystemClock.sleep(3000);
-					if (impres>0) prn_nc.printnoask(printclose, "printnc.txt");
+				} else {
+					setContentView(R.layout.activity_factura_res_ver_precue);horiz=false;
 				}
+			} else {
+				if (pantallaHorizontal()) {
+					setContentView(R.layout.activity_factura_res);horiz=true;
+				} else {
+					setContentView(R.layout.activity_factura_res_ver);horiz=false;
+				}
+			}
 
-				askPrint();
-		    }
-		};
 
-		printclose= () -> {
-			//FacturaRes.super.finish();
-		};
+			super.InitBase();
 
-		printexit= () -> {
-			gl.ventalock=false;
-			FacturaRes.super.finish();
-		};
+			listView = (ListView) findViewById(R.id.listView1);
+			lblPago = (TextView) findViewById(R.id.TextView01);
+			lblFact = (TextView) findViewById(R.id.lblFact);
+			lblMPago = (TextView) findViewById(R.id.lblCVence);
+			lblCred = (TextView) findViewById(R.id.lblPend);
+			lblCard = (TextView) findViewById(R.id.textView4);
+			lblMonto = (TextView) findViewById(R.id.lblCant2);lblMonto.setText("");
+			lblKeyDP = (TextView) findViewById(R.id.textView110);
+			lblTotal = (TextView) findViewById(R.id.lblFact3);
+			lblPEfect = (TextView) findViewById(R.id.textView166);
+			lblPCard = (TextView) findViewById(R.id.textView167);
+			lblPend = (TextView) findViewById(R.id.textView197);
+			lblPreimp= (TextView) findViewById(R.id.textView220);
+			lblProp= (TextView) findViewById(R.id.textView240);
 
-		prn=new printer(this,printexit,gl.validimp);
-		prn_nc=new printer(this,printclose,gl.validimp);
+			imgBon = (ImageView) findViewById(R.id.imageView6);
+			imgMPago = (ImageView) findViewById(R.id.btnImp);
+			imgCred = (ImageView) findViewById(R.id.imageView3);
+			imgCard = (ImageView) findViewById(R.id.imageView2);
+			imgPend = (ImageView) findViewById(R.id.imageView84);
+			imgPreimp = (ImageView) findViewById(R.id.imageView105);
+			imgProp = (ImageView) findViewById(R.id.imageView111);
 
-		fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"",gl.peComboDet);
-		fdoc.deviceid =gl.deviceId;
+			rl_facturares=(RelativeLayout)findViewById(R.id.relativeLayout1);
+			rl_facturares.setVisibility(View.VISIBLE);
 
-		fdev=new clsDocDevolucion(this,prn_nc.prw,gl.peMon,gl.peDecImp, "printnc.txt");
-		fdev.deviceid =gl.deviceId;
+			T_factrecetaObj=new clsT_factrecetaObj(this,Con,db);
+			P_prodrecetaObj=new clsP_prodrecetaObj(this,Con,db);
+			T_comboObj=new clsT_comboObj(this,Con,db);
+			P_productoObj=new clsP_productoObj(this,Con,db);
+			P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
+			P_impresoraObj=new clsP_impresoraObj(this,Con,db);
+			T_comandaObj=new clsT_comandaObj(this,Con,db);
 
-		saved=false;
+			rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
 
-		assignCorel();
+			lblVuelto = new TextView(this,null);
+			txtVuelto = new EditText(this,null);
 
-		cliPorDia();
+			String sn=gl.gNITCliente;
 
-		setHandlers();
+			cliid=gl.cliente;
+			rutapos=gl.rutapos;
+			Nivel_Media_Pago =gl.media;
+			EsNivelPrecioDelivery = gl.EsNivelPrecioDelivery;
 
-        txtVuelto.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+			credito=gl.credito;
+			idfel=gl.peFEL;
 
-        pend=tot;
-        if (tot>credito) credito=0;
+			try {
+				if (!gl.nummesapedido.equalsIgnoreCase("0")) {
+				}
+			} catch (Exception e) {
+				gl.nummesapedido="";
+			}
 
-        if (credito<=0) {
-            imgCred.setVisibility(View.INVISIBLE);
-            lblCred.setVisibility(View.INVISIBLE);
-        }
+			gl.cobroPendiente = false;
+			dispventa = gl.dvdispventa;dispventa=mu.round(dispventa,2);
+			notaC = gl.tiponcredito;
+			pendiente=false;
 
-        //if (gl.peImpOrdCos) msgAskComanda("Imprimir comanda");
+			if (!gl.pelCaja) {
+				imgPreimp.setVisibility(View.INVISIBLE);lblPreimp.setVisibility(View.INVISIBLE);
+			}
 
-        //if (gl.mesero_precuenta) prnCuenta(null);
+			if (!gl.numero_orden.equalsIgnoreCase(" ")) {
+				imgPreimp.setVisibility(View.VISIBLE);lblPreimp.setVisibility(View.VISIBLE);
+			}
 
-		sn=gl.gNITCliente;
+			imgProp.setVisibility(View.INVISIBLE);lblProp.setVisibility(View.INVISIBLE);
+			if (gl.peRest | gl.emp==47) {
+				imgProp.setVisibility(View.VISIBLE);lblProp.setVisibility(View.VISIBLE);
+				//if (gl.pePropinaFija && gl.pePropinaPerc<=0) {
+				//    imgProp.setVisibility(View.INVISIBLE);lblProp.setVisibility(View.INVISIBLE);
+				//}
+			}
 
-		long aac=du.getyear(du.getActDate());
-		if (aac>2060) msgbox("Año incorrecto ( "+aac+" ), por favor informe a soporte.");
+			mu.currsymb(gl.peMon);
+
+			app = new AppMethods(this, gl, Con, db);
+			khand=new clsKeybHandler(this,lblMonto,lblKeyDP);
+
+			app.parametrosExtra();
+
+			imgCred.setVisibility(View.VISIBLE);lblCred.setVisibility(View.VISIBLE);
+			imgMPago.setVisibility(View.INVISIBLE);lblMPago.setVisibility(View.INVISIBLE);
+
+			if (!gl.pePedidos) {
+				imgPend.setVisibility(View.INVISIBLE);lblPend.setVisibility(View.INVISIBLE);
+			}
+
+			if (Nivel_Media_Pago ==4) {
+				if (credito<=0 || gl.facturaVen != 0) {
+					imgCred.setVisibility(View.INVISIBLE);lblCred.setVisibility(View.INVISIBLE);
+				} else if(credito > 0){
+					imgCred.setVisibility(View.VISIBLE);lblCred.setVisibility(View.VISIBLE);
+				}
+			}
+
+			fecha=du.getActDateTime();
+			fechae=fecha;
+
+			dweek=mu.dayofweek();
+
+			clsDesc=new clsDescGlob(this);
+
+			descpmon=totalDescProd(); //descpmon=0;
+			dmax=clsDesc.dmax;
+			acum=clsDesc.acum;
+			descaddmonto=0;
+
+			try {
+				db.execSQL("DELETE FROM T_PAGO");
+			} catch (SQLException e) {}
+
+			processFinalPromo();
+			pagoPendiente();
+
+			printcallback= new Runnable() {
+
+				public void run() {
+
+					if (notaC==2){
+
+						String vModo=(gl.peModal.equalsIgnoreCase("TOL")?"TOL":"*");
+						fdev.buildPrint(gl.dvcorrelnc,0, vModo);
+
+						SystemClock.sleep(3000);
+						prn_nc.printnoask(printclose, "printnc.txt");
+						SystemClock.sleep(3000);
+						if (impres>0) prn_nc.printnoask(printclose, "printnc.txt");
+					}
+
+					askPrint();
+				}
+			};
+
+			printclose= () -> {
+				//FacturaRes.super.finish();
+			};
+
+			printexit= () -> {
+				gl.ventalock=false;
+				FacturaRes.super.finish();
+			};
+
+			prn=new printer(this,printexit,gl.validimp);
+			prn_nc=new printer(this,printclose,gl.validimp);
+
+			fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"",gl.peComboDet);
+			fdoc.deviceid =gl.deviceId;
+
+			fdev=new clsDocDevolucion(this,prn_nc.prw,gl.peMon,gl.peDecImp, "printnc.txt");
+			fdev.deviceid =gl.deviceId;
+
+			saved=false;
+
+			assignCorel();
+
+			cliPorDia();
+
+			setHandlers();
+
+			txtVuelto.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+
+			pend=tot;
+			if (tot>credito) credito=0;
+
+			if (credito<=0) {
+				imgCred.setVisibility(View.INVISIBLE);
+				lblCred.setVisibility(View.INVISIBLE);
+			}
+
+			//if (gl.peImpOrdCos) msgAskComanda("Imprimir comanda");
+
+			//if (gl.mesero_precuenta) prnCuenta(null);
+
+			sn=gl.gNITCliente;
+
+			long aac=du.getyear(du.getActDate());
+			if (aac>2060) msgbox("Año incorrecto ( "+aac+" ), por favor informe a soporte.");
 
 
 		} catch (Exception e) {
