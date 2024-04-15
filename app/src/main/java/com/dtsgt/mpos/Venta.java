@@ -4584,13 +4584,23 @@ public class Venta extends PBase {
              //f1=du.getActDate();f1=du.cfecha(du.getyear(f1),du.getmonth(f1),1);
              //if (f1<flim) flim=f1;
 
-             //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0) AND (FECHA>="+flim+")";
+             sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0) AND (FECHA>="+flim+")";
              //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0)";
-             sql="select * from d_factura  where anulado=0 and " +
-                 "(feelfechaprocesado=0 OR feeluuid=' ') and fecha>="+flim+";";
+             //sql="select * from d_factura  where (anulado=0) and " +
+             //    "(feelfechaprocesado=0 OR feeluuid=' ') and fecha>="+flim+";";
 
              Cursor DT=Con.OpenDT(sql);
              int i=DT.getCount();
+
+
+             if (DT.getCount()>0) {
+                 DT.moveToFirst();
+                 while (!DT.isAfterLast()) {
+                     String ss=DT.getString(0);
+                     DT.moveToNext();
+                 }
+             }
+
              if (DT!=null) DT.close();
              return i;
 

@@ -237,6 +237,7 @@ public class FacturaRes extends PBase {
 
 			credito=gl.credito;
 
+
 			try {
 				if (!gl.nummesapedido.equalsIgnoreCase("0")) {}
 			} catch (Exception e) {
@@ -388,7 +389,9 @@ public class FacturaRes extends PBase {
 				lblCred.setVisibility(View.INVISIBLE);
 			}
 
-			//if (gl.mesero_precuenta) prnCuenta(null);
+        //if (gl.peImpOrdCos) msgAskComanda("Imprimir comanda");
+
+        //if (gl.mesero_precuenta) prnCuenta(null);
 
 			sn=gl.gNITCliente;
 

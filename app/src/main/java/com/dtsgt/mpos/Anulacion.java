@@ -455,9 +455,8 @@ public class Anulacion extends PBase {
 					sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
 							"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR, D_FACTURA.AYUDANTE,D_FACTURA.FEELCONTINGENCIA "+
 							"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
-							"WHERE (D_FACTURA.FEELUUID=' ')  " +
-							flt+
-							"ORDER BY D_FACTURA.FECHAENTR DESC ";
+							"WHERE (D_FACTURA.FEELUUID=' ') AND  (D_FACTURA.ANULADO=0)  " +
+							"ORDER BY D_FACTURA.COREL DESC ";
 				} else {
 					dfi=dateini;if (dfi<fecha_menor) dfi=fecha_menor;
 					dff=datefin;if (dff<fecha_menor) dff=fecha_menor;
@@ -620,11 +619,14 @@ public class Anulacion extends PBase {
                 } else {
 		          	//#EJC20200712: Si la factura fue generada en contingencia no anular en FEL.
                 	if (uuid!=null) {
-						//msgAskFacturaSAT("La factura está anulada en portalSAT");
-						if (idfel.equalsIgnoreCase(gl.felInfile)) {
-							anulacionFEL();
-						} else if (idfel.equalsIgnoreCase(gl.felSal)) {
-							anulacionFELSal();
+						if (uuid.equalsIgnoreCase(" ")) {
+							anulFactura(itemid);
+						} else {
+							if (idfel.equalsIgnoreCase(gl.felInfile)) {
+								anulacionFEL();
+							} else if (idfel.equalsIgnoreCase(gl.felSal)) {
+								anulacionFELSal();
+							}
 						}
 					} else {
 						anulFactura(itemid);
