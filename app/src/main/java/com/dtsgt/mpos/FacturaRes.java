@@ -152,9 +152,7 @@ public class FacturaRes extends PBase {
                     setContentView(R.layout.activity_factura_res_ver);horiz=false;
                 }
             }
-        } catch (Exception e) {
-            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
+
 
 		super.InitBase();
 
@@ -336,7 +334,15 @@ public class FacturaRes extends PBase {
         //if (gl.mesero_precuenta) prnCuenta(null);
 
 		sn=gl.gNITCliente;
-    }
+
+		long aac=du.getyear(du.getActDate());
+		if (aac>2060) msgbox("Año incorrecto ( "+aac+" ), por favor informe a soporte.");
+
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
 
 	//region Events
 
