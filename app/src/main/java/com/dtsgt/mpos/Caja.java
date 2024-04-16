@@ -922,6 +922,8 @@ public class Caja extends PBase {
                 long fm=wso.openDTCursor.getInt(1);
                 long fy=wso.openDTCursor.getInt(2);
 
+                gl.servidor_anio=(int) fy;
+
                 fserv=du.cfecha(fy,fm,fd);
                 fa=du.getActDate();
 

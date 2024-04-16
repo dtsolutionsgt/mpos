@@ -336,7 +336,15 @@ public class FacturaRes extends PBase {
 			sn=gl.gNITCliente;
 
 			long aac=du.getyear(du.getActDate());
-			if (aac>2060) msgbox("Año incorrecto ( "+aac+" ), por favor informe a soporte.");
+			if (aac>2060) {
+				msgbox("Año incorrecto ( "+aac+" ), por favor informe a soporte.");
+			} else {
+				if (gl.servidor_anio>2020) {
+					if (aac>gl.servidor_anio+1) {
+						msgbox("Año incorrecto ( "+aac+" ), por favor informe a soporte.");
+					}
+				}
+			}
 
 
 		} catch (Exception e) {
