@@ -49,7 +49,7 @@ public class appGlobals extends Application {
                 comensales, cliente_dom, idclidir, idalm, idalm2, idalmpred,mesa_grupo,
 			    uidingrediente, idgrres, idgrsel, idgrpos, usuario_cortesia,bar_prod,cuenta_borrar,cuenta_pagar,
 				mesa_vend,mesa_codigo,invcent_cod,invcen_alm,sal_idneg,desc_tipo_apl,prcu_mesa,
-			    prcu_vend,precuenta_cuenta,combo_cuenta,dias_credito,precuenta_modo;
+			    prcu_vend,precuenta_cuenta,combo_cuenta,dias_credito,precuenta_modo,servidor_anio;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel,
                 corelmov, linea_sel="",mesa_alias,nummesapedido, nombre_cortesia,bar_um,bar_idbarril;
