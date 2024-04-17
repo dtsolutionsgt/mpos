@@ -63,6 +63,7 @@ public class Caja extends PBase {
     private double montoDifCred=0,montoCred=0,venta_total;
     private String cap;
     private int acc=1,msgAcc=0,cred=0,corelidx=0;
+    private boolean efflag=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -241,6 +242,9 @@ public class Caja extends PBase {
     }
 
     public void doEfectClick(View view) {
+        if (efflag) return;
+        efflag=true;
+
         inputValorEfect();
     }
 
@@ -1127,6 +1131,7 @@ public class Caja extends PBase {
             mdlg.setOnLeftClick(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    efflag=false;
                     mdlg.dismiss();
                 }
             });
@@ -1135,6 +1140,7 @@ public class Caja extends PBase {
                 @Override
                 public void onClick(View v) {
                     MontoFin.setText(mdlg.getInput());
+                    efflag=false;
                     mdlg.dismiss();
                 }
             });

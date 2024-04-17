@@ -104,7 +104,7 @@ public class clsFELClases {
 
         public void json() throws JSONException {
 
-            if (receptor) jshead.put("receptor",jsrec);
+            //if (receptor) jshead.put("receptor",jsrec);
             jshead.put("items",jsitems);
             jshead.put("adendas",jsad);
             if (contingencia) jshead.put("documento_firmado",llave_cont);

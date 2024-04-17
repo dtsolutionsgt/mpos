@@ -50,8 +50,11 @@ public class CliPosSVSel extends PBase {
 
         try {
             nit=txtNIT.getText().toString();
+            if (nit.isEmpty()) {
+                msgbox("Por favor, ingrese DUI");return;
+            }
 
-            if (testNIT()) {
+            if (testDUI()) {
                 buscaNIT();
 
                 gl.gNITCliente=nit;
@@ -63,7 +66,7 @@ public class CliPosSVSel extends PBase {
                 startActivity(new Intent(this,CliPosSVCons.class));
                 finish();
             } else {
-                msgbox("NIT incorrecto.");return;
+                msgbox("DUI incorrecto.");return;
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -73,7 +76,10 @@ public class CliPosSVSel extends PBase {
     public void doNRC(View view) {
 
         try {
-            nrc=txtNRC.getText().toString();
+            nrc=txtNIT.getText().toString();
+            if (nrc.isEmpty()) {
+                msgbox("Por favor, ingrese NRC");return;
+            }
 
             if (testNRC()) {
                 buscaNRC();
@@ -126,8 +132,10 @@ public class CliPosSVSel extends PBase {
     private void buscaNIT() {
         try {
             gl.sv_cli_nue=true;
-            P_clienteObj.fill("WHERE (NIT='"+nit+"')");
-            if (P_clienteObj.count>0) gl.sv_cli_nue=false;
+            if (!nit.isEmpty()) {
+                P_clienteObj.fill("WHERE (NIT='" + nit + "')");
+                if (P_clienteObj.count > 0) gl.sv_cli_nue = false;
+            }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -136,8 +144,8 @@ public class CliPosSVSel extends PBase {
     private void buscaNRC() {
         try {
             gl.sv_cli_nue=true;
-            P_clienteObj.fill("WHERE (NIT='"+nrc+"')");
-            if (P_clienteObj.count>0) gl.sv_cli_nue=false;
+            P_clienteObj.fill("WHERE (NIT='" + nrc + "')");
+            if (P_clienteObj.count > 0) gl.sv_cli_nue = false;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -169,6 +177,18 @@ public class CliPosSVSel extends PBase {
         try {
             if (nit.isEmpty()) return false;
             if (nit.length()!=14)  return false;
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean testDUI() {
+        try {
+            if (nit.isEmpty()) return false;
+            int ll=nit.length();
+            if (ll<3 | ll>9 )  return false;
             return true;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

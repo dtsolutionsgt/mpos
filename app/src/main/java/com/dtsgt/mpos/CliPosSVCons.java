@@ -216,6 +216,7 @@ public class CliPosSVCons extends PBase {
 
     private boolean validaDatos() {
         String ss;
+        boolean emflag=true;
 
         try {
             nom="";
@@ -227,6 +228,16 @@ public class CliPosSVCons extends PBase {
             nom=ss;
 
             email=txtEmail.getText().toString()+"";
+            if (email.isEmpty()) {
+                emflag=false;
+            } else {
+                if (email.length()<10) emflag=false;
+                if (email.indexOf("@")<3) emflag=false;
+                if (email.indexOf(".")<0) emflag=false;
+            }
+            if (!emflag) {
+                msgbox("Correo incorrecto");txtEmail.requestFocus();txtEmail.selectAll();return false;
+            }
 
             return true;
         } catch (Exception e) {
