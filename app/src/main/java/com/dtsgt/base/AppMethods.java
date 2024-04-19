@@ -2862,5 +2862,38 @@ public class AppMethods {
             out.close();
         }
     }
-    //endregion
+
+	public String purgeString(String ss) {
+		try {
+
+			ss=ss.trim();
+
+			ss=ss.replace("!","");
+			ss=ss.replace("#","");
+			ss=ss.replace("$","");
+			ss=ss.replace("%","");
+			ss=ss.replace("/","");
+			ss=ss.replace("(","");
+			ss=ss.replace(")","");
+			ss=ss.replace("=","");
+			ss=ss.replace("?","");
+			ss=ss.replace("'","");
+			ss=ss.replace("+","");
+			ss=ss.replace("*","");
+			ss=ss.replace(":","");
+			ss=ss.replace(";","");
+			ss=ss.replace(".","");
+			ss=ss.replace("@","");
+			ss=ss.replace("&","");
+			ss=ss.replace("_","");
+
+			return ss;
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			return "";
+		}
+	}
+
+
+	//endregion
 }

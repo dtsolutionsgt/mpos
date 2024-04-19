@@ -1527,7 +1527,9 @@ public class clsDocument {
                             P_fraseObj.fill("WHERE Codigo_Frase="+frISR);
                             if (P_fraseObj.count>0) {
                                 felISR=P_fraseObj.first().texto;
-                                if (frISR==4) felISR2="Sujeto a pagos trimestrales ISR";
+                                if (frISR==4) {
+                                    felISR2="Sujeto a pagos trimestrales ISR";
+                                }
                             } else felISR="";
                         } else felISR="";
 

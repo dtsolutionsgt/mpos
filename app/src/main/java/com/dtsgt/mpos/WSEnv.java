@@ -553,7 +553,7 @@ public class WSEnv extends PBase {
     private void processFactura() {
 
         clsClasses.clsD_facturad item;
-        String tipo_producto, vsql;
+        String tipo_producto, vsql,pss;
         int contingencia, uruta;
 
         if (ftot == 0) {
@@ -677,6 +677,10 @@ public class WSEnv extends PBase {
         CSQL = CSQL + ss + ";";
 
         if (P_clienteObj.count > 0) {
+
+            //pss=app.purgeString(P_clienteObj.first().nombre);
+            //P_clienteObj.first().nombre=pss;
+
             ss = P_clienteObj.addItemSql(P_clienteObj.first(), gl.emp);
             CSQL = CSQL + ss + ";";
         }

@@ -340,6 +340,9 @@ public class clsP_clienteObj {
 
         ins.add("EMPRESA",idemp);
         ins.add("CODIGO",item.codigo);
+
+
+
         ins.add("NOMBRE",item.nombre);
         ins.add("BLOQUEADO",item.bloqueado);
         ins.add("NIVELPRECIO",item.nivelprecio);
