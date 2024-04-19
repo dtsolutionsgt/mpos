@@ -188,7 +188,7 @@ public class CliPosSVSel extends PBase {
         try {
             if (nit.isEmpty()) return false;
             int ll=nit.length();
-            if (ll<3 | ll>9 )  return false;
+            if (ll!=9)  return false;
             return true;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
