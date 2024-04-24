@@ -136,7 +136,7 @@ public class FELFactura extends PBase {
             fel.fraseIVA=suc.codigo_escenario_iva;
             fel.fraseISR=suc.codigo_escenario_isr;
 
-            if(fel.fraseIVA==3) fel.fraseIVA=1;
+            //if(fel.fraseIVA==3) fel.fraseIVA=1;
 
             fel.fel_afiliacion_iva=suc.fel_afiliacion_iva;
             fel.fel_tipo_documento=app.felTipoDocumento(fel.fel_afiliacion_iva);
