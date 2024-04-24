@@ -97,7 +97,8 @@ public class clsFELInFile {
     private double imp,totmonto,totiva,monto_propina;
     private int linea;
     private boolean firmcomplete,certcomplete;
-
+    boolean factura_credito=false;
+    
     // Configuracion
 
     private double iva=12;
@@ -1370,9 +1371,28 @@ public class clsFELInFile {
         */
 
         if (idconting.isEmpty() || idconting.equalsIgnoreCase("0") ) { // sin contingencia
-            xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\""+tipodoc+"\"></dte:DatosGenerales>";
+            if (factura_credito) {
+                xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\"FCAM\"></dte:DatosGenerales>";
+            } else {
+
+                if (fel_afiliacion_iva.equals("PEQ")) {
+                    xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\"FPEQ\"></dte:DatosGenerales>";
+                } else {
+                    xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
+                }
+            }
         } else { // con contingencia
-            xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" NumeroAcceso=\""+idconting+"\" Tipo=\""+tipodoc+"\"></dte:DatosGenerales>";
+
+
+            if (factura_credito) {
+                xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" NumeroAcceso=\""+idconting+"\" Tipo=\"FCAM\"></dte:DatosGenerales>";
+            } else {
+                if (fel_afiliacion_iva.equals("PEQ")) {
+                    xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" NumeroAcceso=\""+idconting+"\" Tipo=\"FPEQ\"></dte:DatosGenerales>";
+                } else {
+                    xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" NumeroAcceso=\""+idconting+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
+                }
+            }
         }
 
     }
@@ -1527,12 +1547,10 @@ public class clsFELInFile {
 
             pNombreCliente=pNombreCliente.trim();
             if (pNombreCliente.isEmpty() | pNombreCliente.equalsIgnoreCase("\n") |
-                pNombreCliente.equalsIgnoreCase(" ") | pNombreCliente.equalsIgnoreCase("  "))  pNombreCliente="Consumidor final";
+                    pNombreCliente.equalsIgnoreCase(" ") | pNombreCliente.equalsIgnoreCase("  "))  pNombreCliente="Consumidor final";
 
             String characterFilter = "[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\s]";
             pDireccionCliente = pDireccionCliente.replaceAll(characterFilter,"");
-
-            //pNITCliente="2657742680108";
 
             if (tipoNIT.equalsIgnoreCase("C")) {
                 TE="CUI";
@@ -1562,12 +1580,18 @@ public class clsFELInFile {
             } else if (fraseISR==3) {
                 xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"3\"></dte:Frase>";
             } else {
-                if (fraseISR!=0) {
-                    xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"" + fraseISR +"\"></dte:Frase>";
+
+                if (fraseIVA==3) {
+                    xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"3\"></dte:Frase>";
+                } else {
+                    if (fraseISR!=0) {
+                        xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"" + fraseISR +"\"></dte:Frase>";
+                    }
+                    if (fraseIVA!=0) {
+                        xml+="<dte:Frase CodigoEscenario=\"2\" TipoFrase=\"" + fraseIVA +"\"></dte:Frase>";
+                    }
                 }
-                if (fraseIVA!=0) {
-                    xml+="<dte:Frase CodigoEscenario=\"2\" TipoFrase=\"" + fraseIVA +"\"></dte:Frase>";
-                }
+
             }
             xml+="</dte:Frases>";
             xml+="<dte:Items>";
@@ -1578,6 +1602,7 @@ public class clsFELInFile {
         }
 
     }
+
 
     public void detalle(String descrip,double cant,String unid,double precuni,double total,double desc,String lcombo) {
         double imp,impbase,tottot;
@@ -1645,70 +1670,6 @@ public class clsFELInFile {
     public void detalle_propina(double cant) {
         monto_propina=cant;
         str_propina= String.format("%.2f",monto_propina);
-    }
-
-    public void detalle_propina_old(double cant) {
-        double imp,impbase,tottot;
-
-        linea++;
-
-        String descrip="Propina";
-        String unid="UN";
-        double precuni=1;
-        double total=cant*precuni;
-        double desc=0;
-
-        desc=Math.round(desc*100);desc=desc/100;
-
-        double parametroiva1 =(iva/100);
-        double parametroiva2 = (1+parametroiva1);
-        impbase=total/parametroiva2;
-        imp=impbase*parametroiva1;
-
-        tottot=total+desc;
-
-        totmonto+=total;
-
-        String cantstr = String.format("%.2f",cant);
-        cantstr=cantstr.replaceAll(",",".");
-        String precunistr = String.format("%.2f",precuni);
-        precunistr=precunistr.replaceAll(",",".");
-        String tottotstr = String.format("%.2f",tottot);
-        tottotstr=tottotstr.replaceAll(",",".");
-        String descstr = String.format("%.2f",desc);
-        descstr=descstr.replaceAll(",",".");
-
-        xml+="<dte:Item BienOServicio=\"S\" NumeroLinea=\""+linea+"\">";
-
-        xml+="<dte:Cantidad>"+cantstr+"</dte:Cantidad>";
-        xml+="<dte:UnidadMedida>"+unid+"</dte:UnidadMedida>";
-        xml+="<dte:Descripcion>"+descrip+"</dte:Descripcion>";
-        xml+="<dte:PrecioUnitario>"+precunistr+"</dte:PrecioUnitario>";
-        xml+="<dte:Precio>"+tottotstr+"</dte:Precio>";
-        xml+="<dte:Descuento>"+descstr+"</dte:Descuento>";
-
-        String impbasestr = String.format("%.2f",impbase);
-        impbasestr=impbasestr.replaceAll(",",".");
-        String impstr = String.format("%.2f",imp);
-        impstr=impstr.replaceAll(",",".");
-
-        xml+="<dte:Impuestos>";
-        xml+="<dte:Impuesto>";
-        xml+="<dte:NombreCorto>IVA</dte:NombreCorto>";
-        xml+="<dte:CodigoUnidadGravable>1</dte:CodigoUnidadGravable>";
-        xml+="<dte:MontoGravable>"+impbasestr+"</dte:MontoGravable>";
-        xml+="<dte:MontoImpuesto>"+impstr+"</dte:MontoImpuesto>";
-        xml+="</dte:Impuesto>";
-        xml+="</dte:Impuestos>";
-
-        String totalstr = String.format("%.2f",total);
-        totalstr=totalstr.replaceAll(",",".");
-
-        xml+="<dte:Total>"+totalstr+"</dte:Total>";
-        xml+="</dte:Item>";
-
-        totiva+=Double.valueOf(impstr);
-
     }
 
     public void guardar(String filename) throws IOException {
