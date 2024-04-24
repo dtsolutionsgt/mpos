@@ -99,6 +99,7 @@ public class clsFELInFile {
     private double imp,totmonto,totiva,monto_propina;
     private int linea;
     private boolean firmcomplete,certcomplete;
+    boolean factura_credito=false;
 
     // Configuracion
 
@@ -1429,12 +1430,10 @@ public class clsFELInFile {
 
             pNombreCliente=pNombreCliente.trim();
             if (pNombreCliente.isEmpty() | pNombreCliente.equalsIgnoreCase("\n") |
-                pNombreCliente.equalsIgnoreCase(" ") | pNombreCliente.equalsIgnoreCase("  "))  pNombreCliente="Consumidor final";
+                    pNombreCliente.equalsIgnoreCase(" ") | pNombreCliente.equalsIgnoreCase("  "))  pNombreCliente="Consumidor final";
 
             String characterFilter = "[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\s]";
             pDireccionCliente = pDireccionCliente.replaceAll(characterFilter,"");
-
-            //pNITCliente="2657742680108";
 
             if (tipoNIT.equalsIgnoreCase("C")) {
                 TE="CUI";
@@ -1486,6 +1485,7 @@ public class clsFELInFile {
         }
 
     }
+
 
     public void detalle(String descrip,double cant,String unid,double precuni,double total,double desc,String lcombo) {
         double imp,impbase,tottot;
