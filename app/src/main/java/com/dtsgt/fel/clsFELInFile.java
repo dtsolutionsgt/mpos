@@ -99,7 +99,6 @@ public class clsFELInFile {
     private double imp,totmonto,totiva,monto_propina;
     private int linea;
     private boolean firmcomplete,certcomplete;
-    boolean factura_credito=false;
 
     // Configuracion
 
