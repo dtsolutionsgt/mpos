@@ -1542,6 +1542,7 @@ public class WSEnv extends PBase {
         for (int i = 0; i < T_costoObj.count; i++) {
             item = T_costoObj.items.get(i);
             CSQL = CSQL + addCostoItemSql(item) + ";";
+            CSQL = CSQL + addCostoUpdProdSql(item) + ";";
         }
 
         String ss = CSQL;
@@ -1919,6 +1920,12 @@ public class WSEnv extends PBase {
 
         return ins.sql();
 
+    }
+
+
+    public String addCostoUpdProdSql(clsClasses.clsT_costo item) {
+        String  fs="UPDATE P_PRODUCTO SET COSTO="+item.costo+" WHERE (CODIGO_PRODUCTO="+item.codigo_producto+")";
+        return fs;
     }
 
 
