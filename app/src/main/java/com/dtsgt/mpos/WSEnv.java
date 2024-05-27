@@ -1545,7 +1545,7 @@ public class WSEnv extends PBase {
             CSQL = CSQL + addCostoUpdProdSql(item) + ";";
         }
 
-        String ss = CSQL;
+        String ss=CSQL;
     }
 
     private void statusCosto() {
