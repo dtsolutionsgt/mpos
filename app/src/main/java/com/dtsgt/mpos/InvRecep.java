@@ -1491,8 +1491,7 @@ public class InvRecep extends PBase {
 
         } catch (Exception e) {
             String ss=e.getMessage();
-            msgbox(Objects.requireNonNull(new Object() {
-            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {}.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
 
         prodid=0;
