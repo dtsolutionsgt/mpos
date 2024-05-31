@@ -721,6 +721,7 @@ public class Menu extends PBase {
 			listdlg.add("Ajuste de inventario");
 			if (almacenes) {
 				listdlg.add("Traslado entre almacénes");
+				listdlg.add("Traslado de otro almacén");
 				//listdlg.add("Egreso de almacén");
 			}
 			//if (exp_stock) listdlg.add("Cambiar version de inventario");
@@ -749,6 +750,7 @@ public class Menu extends PBase {
 					if (mt.equalsIgnoreCase("Barril")) menuBarril();
 					if (mt.equalsIgnoreCase("Inventario centralizado")) msgAskInvCent();
 					if (mt.equalsIgnoreCase("Inicializar inventario")) msgAskAnulInv();
+					if (mt.equalsIgnoreCase("Traslado de otro almacén")) menuIngresoAlmacen();
 
 					listdlg.dismiss();
 				} catch (Exception e) {}
@@ -817,7 +819,14 @@ public class Menu extends PBase {
 		} catch (Exception e){}
     }
 
-    private void menuEgreso() {
+	private void menuIngresoAlmacen() {
+		try {
+			Intent intent = new Intent(Menu.this, InvTransAlm.class);
+			startActivity(intent);
+		} catch (Exception e){}
+	}
+
+	private void menuEgreso() {
 		try {
 
 			gl.tipo=6;

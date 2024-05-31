@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.MiscUtils;
+import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsBonifItem;
 
@@ -28,7 +29,7 @@ public class clsBonifGlobTipo {
 	private int tipo;
 	private double cant,monto,vmax;
 	
-	public clsBonifGlobTipo(Context context) {
+	public clsBonifGlobTipo(Context context, appGlobals gl) {
 		
 		cont=context;
 		active=0;

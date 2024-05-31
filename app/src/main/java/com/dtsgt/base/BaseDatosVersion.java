@@ -1839,6 +1839,59 @@ public class BaseDatosVersion {
             sql="CREATE INDEX T_fel_sv_error_idx2 ON T_fel_sv_error(BANDERA)";db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [D_traslado_almacen] ("+
+                    "CODIGO_TRASLADO_ALMACEN INTEGER NOT NULL,"+
+                    "COREL_D_MOV_ALMACEN TEXT NOT NULL,"+
+                    "REFERENCIA TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_TRASLADO_ALMACEN])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
+        try {
+
+            //db.execSQL("DROP TABLE T_mov_almacen");
+
+            sql="CREATE TABLE [T_mov_almacen] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "ALMACEN_ORIGEN INTEGER NOT NULL,"+
+                    "ALMACEN_DESTINO INTEGER NOT NULL,"+
+                    "REFERENCIA TEXT NOT NULL,"+
+                    "TOTAL REAL NOT NULL,"+
+                    "IDTRASALMACEN INTEGER NOT NULL,"+
+                    "ESTADO INTEGER NOT NULL,"+
+                    "FECHAINI INTEGER NOT NULL,"+
+                    "FECHAFIN INTEGER NOT NULL,"+
+                    "USRINI INTEGER NOT NULL,"+
+                    "USRFIN INTEGER NOT NULL,"+
+                    "IDALMTRANS INTEGER NOT NULL,"+
+                    "COMPLETO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+
+        } catch (Exception e) { }
+
+        try {
+            //db.execSQL("DROP TABLE T_movd_almacen");
+
+            sql="CREATE TABLE [T_movd_almacen] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "PRODUCTO INTEGER NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "UM TEXT NOT NULL,"+
+                    "CANTACT REAL NOT NULL,"+
+                    "ESTADO INTEGER NOT NULL,"+
+                    "PRECIO REAL NOT NULL,"+
+                    "PRIMARY KEY ([COREL],[PRODUCTO])"+
+                    ");";
+            db.execSQL(sql);
+
+
+        } catch (Exception e) { }
+
+
 
         try {
 

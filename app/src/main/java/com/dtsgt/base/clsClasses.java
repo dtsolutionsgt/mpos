@@ -535,6 +535,12 @@ public class clsClasses {
         public int  bandera;
     }
 
+    public class clsD_traslado_almacen {
+        public int  codigo_traslado_almacen;
+        public String corel_d_mov_almacen;
+        public String referencia;
+    }
+
     //endregion
 
     //region FB Clases
@@ -1919,6 +1925,34 @@ public class clsClasses {
         public long fechafin;
         public long fechault;
     }
+
+    public class clsT_mov_almacen {
+        public String corel;
+        public int  almacen_origen;
+        public int  almacen_destino;
+        public String referencia;
+        public double total;
+        public int  idtrasalmacen;
+        public int  estado;
+        public long fechaini;
+        public long fechafin;
+        public int  usrini;
+        public int  usrfin;
+        public int  idalmtrans;
+        public int  completo;
+    }
+
+    public class clsT_movd_almacen {
+        public String  corel;
+        public int  producto;
+        public double cant;
+        public String um;
+        public double cantact;
+        public int  estado;
+        public double precio;
+    }
+
+
 
     //endregion
 

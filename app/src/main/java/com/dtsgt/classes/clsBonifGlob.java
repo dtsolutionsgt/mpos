@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.MiscUtils;
+import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsBonifItem;
 
@@ -31,7 +32,7 @@ public class clsBonifGlob {
 	private String lineaid,slineaid,marcaid,grupoid;
 	private double total,vcnt,vmonto;
 	
-	public clsBonifGlob(Context context,double tot) {
+	public clsBonifGlob(Context context, double tot, appGlobals gl) {
 		
 		cont=context;
 		
@@ -43,7 +44,7 @@ public class clsBonifGlob {
 	    
 	    MU=new MiscUtils(context);
 	    
-	    bontipo=new clsBonifGlobTipo(context); 
+	    bontipo=new clsBonifGlobTipo(context,gl);
 		
 		lineaid="";slineaid="";marcaid="";grupoid="";
 		

@@ -5,6 +5,7 @@ import android.database.Cursor;
 
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.MiscUtils;
+import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsBonifItem;
 
@@ -34,7 +35,7 @@ public class clsDeGlob {
 	private double total,vcnt;	
 	
 	
-	public clsDeGlob(Context context,double tot) {
+	public clsDeGlob(Context context, double tot) {
 		
 		cont=context;
 		

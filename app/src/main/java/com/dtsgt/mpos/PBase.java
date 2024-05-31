@@ -1,8 +1,10 @@
 package com.dtsgt.mpos;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -154,14 +156,6 @@ public class PBase extends FragmentActivity {
         }
     }
 
-	protected void msgboxinfo(String msg){
-		try{
-			mu.msgboxinfo(msg);
-		}catch (Exception ex){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),"");
-		}
-	}
-
 	protected void msgmsg(String msg) {
 		try {
 			ExDialog dialog = new ExDialog(this);
@@ -177,6 +171,38 @@ public class PBase extends FragmentActivity {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 	}
+
+	public void msgask(int dialogid,String msg){
+		gl.dialogid=dialogid;
+		if (msg==null || msg.isEmpty()) return;
+
+		gl.dialogid=dialogid;
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+		dialog.setTitle(R.string.app_name);
+		dialog.setMessage(msg);
+
+		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				if (gl.dialogr!=null) {
+					gl.dialogr.run();
+				}
+			}
+		});
+
+		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {}
+		});
+
+		//dialog.show();
+
+		AlertDialog dlg=dialog.create();
+		dlg.show();
+
+		dlg.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+		dlg.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
+
+	}
+
 
 	protected void toast(String msg) {
 		toastcent(msg);

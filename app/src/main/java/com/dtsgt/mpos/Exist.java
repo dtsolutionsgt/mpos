@@ -273,11 +273,8 @@ public class Exist extends PBase {
             imgref.setVisibility(View.INVISIBLE);
             idle=false;
 
-            if (gl.idalm==gl.idalmpred) {
-                fbs.listExist(fbsucursal,gl.idalm,rnFbCallBack);
-            } else {
-                fbs.listExist(fbsucursal,gl.idalm,rnFbCallBack);
-            }
+            fbs.listExist(fbsucursal,gl.idalm,rnFbCallBack);
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

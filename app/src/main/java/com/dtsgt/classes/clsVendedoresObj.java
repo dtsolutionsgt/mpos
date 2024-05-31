@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.MiscUtils;
+import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
 
 public class clsVendedoresObj {

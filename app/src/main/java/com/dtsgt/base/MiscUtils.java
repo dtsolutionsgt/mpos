@@ -25,13 +25,13 @@ public class MiscUtils {
 		
 	private Context cCont;
 	private DecimalFormat ffrmdec,ffrmint,ffrmint2,ffrmdec2,ffrmgps;
-	public String curr;
+	public  String curr;
 
 	private PBase pB;
 	
 	public MiscUtils(Context context,String currsymb) {
 
-		cCont=context; 
+		cCont=context;
 		curr=currsymb;
 		
 		ffrmdec = new DecimalFormat("#,##0.00"); 
@@ -41,10 +41,10 @@ public class MiscUtils {
 		ffrmgps = new DecimalFormat("##0.0000000");
 
 	}
-	
-	public MiscUtils(Context context) {
 
-		cCont=context; 
+
+	public MiscUtils(Context context) {
+		cCont=context;
 		curr="";
 		
 		ffrmdec = new DecimalFormat("#,##0.00"); 

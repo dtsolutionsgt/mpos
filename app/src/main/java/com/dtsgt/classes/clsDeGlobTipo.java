@@ -5,6 +5,7 @@ import android.database.Cursor;
 
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.MiscUtils;
+import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsBonifItem;
 

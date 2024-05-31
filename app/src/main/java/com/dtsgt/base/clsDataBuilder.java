@@ -1,5 +1,6 @@
 package com.dtsgt.base;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -66,7 +67,8 @@ public class clsDataBuilder {
 		sendlog.add(si);
 	}
 	
-	public boolean insert(String tn,String ws){
+	@SuppressLint("Range")
+	public boolean insert(String tn, String ws){
 
 		Cursor PRG,DT;
 		String s,n,t,si;
