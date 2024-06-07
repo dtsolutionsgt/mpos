@@ -1415,6 +1415,13 @@ public class clsClasses {
         public int  orden;
     }
 
+    public class clsT_combo_cant {
+        public int  codigo_menuopc_det;
+        public int  codigo_producto;
+        public String nombre;
+        public int  cant;
+    }
+
     public class clsT_costo {
         public String corel;
         public int  codigo_costo;

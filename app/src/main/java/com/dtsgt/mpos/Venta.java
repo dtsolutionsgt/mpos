@@ -48,12 +48,15 @@ import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_orden_numeroObj;
 import com.dtsgt.classes.clsP_prodclasifmodifObj;
+import com.dtsgt.classes.clsP_prodmenuObj;
+import com.dtsgt.classes.clsP_prodmenuopcObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsP_vendedor_rolObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_lic_estadoObj;
+import com.dtsgt.classes.clsT_ordencomboadObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsT_venta_horaObj;
@@ -1168,8 +1171,34 @@ public class Venta extends PBase {
         gl.gstr=gl.pprodname;
         gl.retcant=1;
 
-        browse=7;
-        startActivity(new Intent(this,ProdMenu.class));
+        try {
+            browse=7;
+
+            clsP_prodmenuObj P_menuObj=new clsP_prodmenuObj(this,Con,db);
+            P_menuObj.fill("WHERE CODIGO_PRODUCTO="+gl.prodmenu);
+            if (P_menuObj.count==0) {
+                msgbox("El combo no existe.");return;
+            }
+            gl.idcombo=P_menuObj.first().codigo_menu;
+
+            clsP_prodmenuopcObj P_prodmenuopcObj=new clsP_prodmenuopcObj(this,Con,db);
+            P_prodmenuopcObj.fill("WHERE (CODIGO_MENU="+gl.idcombo+")");
+
+            if (P_prodmenuopcObj.count==0) {
+                msgbox("El combo está vacio.");return;
+            }
+
+            if (P_prodmenuopcObj.first().cant<0) {
+                startActivity(new Intent(this,ProdMenuCant.class));
+            } else {
+                startActivity(new Intent(this,ProdMenu.class));
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+
     }
 
     private void updateCant() {
@@ -5983,9 +6012,7 @@ public class Venta extends PBase {
 
     @Override
     protected void onResume() {
-
         try {
-
             super.onResume();
 
             gridViewOpciones.setEnabled(true);

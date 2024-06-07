@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#B0000000"
+        tools:context=".CantKeyb">
+
+    <RelativeLayout
+        android:layout_width="600dp"
+        android:layout_height="540dp"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentTop="false"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="0dp"
+        android:background="#FFFFFF">
+
+        <RelativeLayout
+            android:id="@+id/relEnter"
+            android:layout_width="355dp"
+            android:layout_height="320dp"
+            android:layout_above="@id/relbotpan"
+            android:layout_below="@+id/relRoad"
+            android:layout_alignParentRight="false"
+            android:layout_alignParentBottom="false"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp">
+
+            <RelativeLayout
+                android:id="@+id/rellaytot"
+                android:layout_width="1232dp"
+                android:layout_height="80dp"
+                android:layout_alignLeft="@id/relKeyb"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginBottom="5dp"
+                android:clickable="false">
+
+                <TextView
+                    android:id="@+id/lblPass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/frame_rect"
+                    android:gravity="center"
+                    android:minWidth="100dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:password="false"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textSize="48sp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/relKeyb"
+                android:layout_width="350dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="80dp">
+
+                <RelativeLayout
+                    android:id="@+id/relKeyBase"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="false"
+                    android:layout_alignParentTop="false"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true">
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/textView86"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_above="@id/textView92"
+                                android:layout_alignParentStart="true"
+                                android:layout_alignParentTop="true">
+
+                                <TextView
+                                    android:id="@+id/textView97"
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_centerVertical="true"
+                                    android:text="X"
+                                    android:visibility="invisible" />
+
+                                <TextView
+                                    android:id="@+id/textView98"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_above="@id/textView97"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_toLeftOf="@id/textView97"
+                                    android:background="@drawable/frame_key"
+                                    android:clickable="true"
+                                    android:gravity="center"
+                                    android:onClick="doKey"
+                                    android:tag="7"
+                                    android:text="7"
+                                    android:textColor="#000000"
+                                    android:textSize="34sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/textView99"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_above="@id/textView97"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_toRightOf="@id/textView97"
+                                    android:background="@drawable/frame_key"
+                                    android:clickable="true"
+                                    android:gravity="center"
+                                    android:onClick="doKey"
+                                    android:tag="8"
+                                    android:text="8"
+                                    android:textColor="#000000"
+                                    android:textSize="34sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/textView100"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_below="@id/textView97"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_toLeftOf="@id/textView97"
+                                    android:background="@drawable/frame_key"
+                                    android:clickable="true"
+                                    android:gravity="center"
+                                    android:onClick="doKey"
+                                    android:tag="4"
+                                    android:text="4"
+                                    android:textColor="#000000"
+                                    android:textSize="34sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/textView101"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_below="@id/textView97"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_toRightOf="@id/textView97"
+                                    android:background="@drawable/frame_key"
+                                    android:clickable="true"
+                                    android:gravity="center"
+                                    android:onClick="doKey"
+                                    android:tag="5"
+                                    android:text="5"
+                                    android:textColor="#000000"
+                                    android:textSize="34sp"
+                                    android:textStyle="bold" />
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_below="@id/textView92"
+                                android:layout_alignParentStart="true"
+                                android:layout_alignParentBottom="true">
+
+                                <TextView
+                                    android:id="@+id/textView111"
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_centerVertical="true"
+                                    android:text="X"
+                                    android:visibility="invisible" />
+
+                                <TextView
+                                    android:id="@+id/textView112"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_above="@id/textView111"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_toLeftOf="@id/textView111"
+                                    android:background="@drawable/frame_key"
+                                    android:clickable="true"
+                                    android:gravity="center"
+                                    android:onClick="doKey"
+                                    android:tag="1"
+                                    android:text="1"
+                                    android:textColor="#000000"
+                                    android:textSize="34sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/textView113"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_above="@id/textView111"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_toRightOf="@id/textView111"
+                                    android:background="@drawable/frame_key"
+                                    android:clickable="true"
+                                    android:gravity="center"
+                                    android:onClick="doKey"
+                                    android:tag="2"
+                                    android:text="2"
+                                    android:textColor="#000000"
+                                    android:textSize="34sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/textView114"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_below="@id/textView111"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentBottom="true"
+                                    android:background="@drawable/frame_key"
+                                    android:clickable="true"
+                                    android:gravity="center"
+                                    android:onClick="doKey"
+                                    android:tag="0"
+                                    android:text="0"
+                                    android:textColor="#000000"
+                                    android:textSize="34sp"
+                                    android:textStyle="bold" />
+
+                            </RelativeLayout>
+
+                            <TextView
+                                android:id="@+id/textView92"
+                                android:layout_width="10dp"
+                                android:layout_height="10dp"
+                                android:layout_centerInParent="true"
+                                android:text="X"
+                                android:visibility="invisible" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/textView86"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_above="@id/textView91"
+                                android:layout_alignParentStart="true"
+                                android:layout_alignParentTop="true">
+
+                                <ImageView
+                                    android:id="@+id/imageView24"
+                                    android:layout_width="64dp"
+                                    android:layout_height="64dp"
+                                    android:layout_alignLeft="@id/textView104"
+                                    android:layout_alignTop="@id/textView104"
+                                    android:layout_alignRight="@id/textView104"
+                                    android:layout_alignBottom="@id/textView104"
+                                    android:padding="6dp"
+                                    android:src="@drawable/key_bksp" />
+
+                                <TextView
+                                    android:id="@+id/textView102"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_above="@id/textView94"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_toLeftOf="@id/textView94"
+                                    android:background="@drawable/frame_key"
+                                    android:clickable="true"
+                                    android:gravity="center"
+                                    android:onClick="doKey"
+                                    android:tag="9"
+                                    android:text="9"
+                                    android:textColor="#000000"
+                                    android:textSize="34sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/textView105"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_below="@id/textView94"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_toLeftOf="@id/textView94"
+                                    android:background="@drawable/frame_key"
+                                    android:clickable="true"
+                                    android:gravity="center"
+                                    android:onClick="doKey"
+                                    android:tag="6"
+                                    android:text="6"
+                                    android:textColor="#000000"
+                                    android:textSize="34sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/textView106"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_above="@id/textView94"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentBottom="false"
+                                    android:layout_toRightOf="@id/textView94"
+                                    android:background="@drawable/frame_key"
+                                    android:clickable="true"
+                                    android:gravity="center"
+                                    android:onClick="doKey"
+                                    android:tag="C"
+                                    android:text="C"
+                                    android:textColor="#000000"
+                                    android:textSize="34sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/textView104"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_below="@id/textView94"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_toRightOf="@id/textView94"
+                                    android:background="@drawable/frame_key"
+                                    android:clickable="true"
+                                    android:gravity="center"
+                                    android:onClick="doKey"
+                                    android:padding="8dp"
+                                    android:tag="B"
+                                    android:textSize="34sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/textView94"
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:layout_centerInParent="true"
+                                    android:text="X"
+                                    android:visibility="invisible" />
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_below="@id/textView91"
+                                android:layout_alignParentStart="true"
+                                android:layout_alignParentBottom="true">
+
+                                <ImageView
+                                    android:id="@+id/imageView25"
+                                    android:layout_width="64dp"
+                                    android:layout_height="139dp"
+                                    android:layout_alignLeft="@id/textView108"
+                                    android:layout_alignTop="@id/textView108"
+                                    android:layout_alignRight="@id/textView108"
+                                    android:layout_alignBottom="@id/textView108"
+                                    android:clickable="true"
+                                    android:onClick="doKey"
+                                    android:padding="6dp"
+                                    android:src="@drawable/key_enter"
+                                    android:tag="E" />
+
+                                <TextView
+                                    android:id="@+id/textView108"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_toRightOf="@id/textView107"
+                                    android:background="@drawable/frame_key" />
+
+                                <TextView
+                                    android:id="@+id/textView107"
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_centerVertical="true"
+                                    android:text="X"
+                                    android:visibility="invisible" />
+
+                                <TextView
+                                    android:id="@+id/textView109"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_above="@id/textView107"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_toLeftOf="@id/textView107"
+                                    android:background="@drawable/frame_key"
+                                    android:clickable="true"
+                                    android:gravity="center"
+                                    android:onClick="doKey"
+                                    android:tag="3"
+                                    android:text="3"
+                                    android:textColor="#000000"
+                                    android:textSize="34sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/textView110"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_below="@id/textView107"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_toLeftOf="@id/textView107"
+                                    android:background="@drawable/frame_key"
+                                    android:clickable="true"
+                                    android:gravity="center"
+                                    android:onClick="doKey"
+                                    android:tag="."
+                                    android:text="."
+                                    android:textColor="#000000"
+                                    android:textSize="34sp"
+                                    android:textStyle="bold"
+                                    android:visibility="visible" />
+
+                            </RelativeLayout>
+
+                            <TextView
+                                android:id="@+id/textView91"
+                                android:layout_width="10dp"
+                                android:layout_height="10dp"
+                                android:layout_centerInParent="true"
+                                android:text="X"
+                                android:visibility="invisible" />
+                        </RelativeLayout>
+
+                        <TextView
+                            android:id="@+id/textView86"
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:text="X"
+                            android:visibility="invisible"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </RelativeLayout>
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relbotpan"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="false"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="1dp"
+            android:background="@drawable/blue_strip">
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:gravity="center_horizontal"
+                android:paddingRight="10dp"
+                android:text="DTSolutions"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relRoad"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="#FFFFFF">
+
+            <RelativeLayout
+                android:id="@+id/relRoadbar"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_centerVertical="true"
+                android:background="#9A999E"></RelativeLayout>
+
+            <ImageView
+                android:id="@+id/imgTitLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="5dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/logo_panel" />
+
+            <ImageView
+                android:id="@+id/imgRoadTit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/relRoadbar"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:adjustViewBounds="true"
+                android:padding="2dp"
+                android:src="@drawable/bot_desc" />
+
+            <TextView
+                android:id="@+id/lblTit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                android:gravity="center_horizontal"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="CANTIDAD MAXIMA"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#1A8AC6"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    </RelativeLayout>
