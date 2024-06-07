@@ -1545,6 +1545,15 @@ public class clsClasses {
 
     //region T Clases
 
+    public class clsT_almacen {
+        public int  codigo_almacen;
+        public int  codigo_sucursal;
+        public int  activo;
+        public String nombre;
+        public int  es_principal;
+        public int  es_de_transito;
+    }
+
     public class clsT_contingencia_sv {
         public String corel;
         public int  bandera;
@@ -1940,6 +1949,8 @@ public class clsClasses {
         public int  usrfin;
         public int  idalmtrans;
         public int  completo;
+
+        public String sestado,salmacen,sfechaini,sfechafin,scompleto;
     }
 
     public class clsT_movd_almacen {
@@ -1950,6 +1961,9 @@ public class clsClasses {
         public double cantact;
         public int  estado;
         public double precio;
+
+        public String sprod,scant,scantv;
+        public int flag;
     }
 
 

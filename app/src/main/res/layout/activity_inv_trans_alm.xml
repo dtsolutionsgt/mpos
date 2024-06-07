@@ -73,6 +73,164 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <RelativeLayout
+                    android:id="@+id/llFechas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/relRoad"
+                    android:layout_marginTop="0dp">
+
+                    <RelativeLayout
+                        android:id="@+id/llFechaIni"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp">
+
+                        <TextView
+                            android:id="@+id/textView338"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@+id/lblCFact30"
+                            android:layout_alignBottom="@id/lblCFact30"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_marginEnd="110dp"
+                            android:layout_toEndOf="@+id/lblCFact30"
+                            android:background="@drawable/spinner_style"
+                            android:clickable="true"
+                            android:maxWidth="200dp"
+                            android:onClick="doAlmDest"
+                            android:paddingStart="10dp"
+                            android:text="Seleccione un almacen . . ."
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <RelativeLayout
+                            android:id="@+id/relalm1"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp">
+
+                            <TextView
+                                android:id="@+id/textView268"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_alignParentEnd="true"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="110dp"
+                                android:layout_toEndOf="@+id/lblCFact72"
+                                android:background="@drawable/spinner_style"
+                                android:clickable="true"
+                                android:maxWidth="200dp"
+                                android:onClick="doAlmOrig"
+                                android:paddingStart="10dp"
+                                android:text="Seleccione un almacen . . ."
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/lblCFact72"
+                                android:layout_width="200dp"
+                                android:layout_height="40dp"
+                                android:layout_alignParentStart="true"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginTop="0dp"
+                                android:background="@drawable/blue_strip"
+                                android:gravity="left|center_vertical"
+                                android:paddingLeft="5dp"
+                                android:text="Almacen orígen :"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:textColor="#FFFFFF"
+                                android:textSize="21sp"
+                                android:textStyle="normal" />
+                        </RelativeLayout>
+
+                        <TextView
+                            android:id="@+id/lblCFact30"
+                            android:layout_width="200dp"
+                            android:layout_height="40dp"
+                            android:layout_below="@+id/relalm1"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@drawable/blue_strip"
+                            android:gravity="center_vertical"
+                            android:paddingStart="5dp"
+                            android:text="Almacen destino :"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFFFFF"
+                            android:textSize="21sp"
+                            android:textStyle="normal" />
+
+                        <TextView
+                            android:id="@+id/lblCFact87"
+                            android:layout_width="200dp"
+                            android:layout_height="40dp"
+                            android:layout_below="@+id/lblCFact30"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@drawable/blue_strip"
+                            android:gravity="center_vertical"
+                            android:paddingStart="5dp"
+                            android:text="Fecha inicio :"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFFFFF"
+                            android:textSize="21sp"
+                            android:textStyle="normal" />
+
+                        <TextView
+                            android:id="@+id/lblDateini2"
+                            android:layout_width="150dp"
+                            android:layout_height="40dp"
+                            android:layout_alignTop="@+id/lblCFact87"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_toEndOf="@+id/lblCFact30"
+                            android:background="@drawable/frame_btn"
+                            android:gravity="center"
+                            android:onClick="showDateDialog1"
+                            android:text="00/00/0000"
+                            android:textSize="21dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/lblCFact29"
+                            android:layout_width="200dp"
+                            android:layout_height="40dp"
+                            android:layout_below="@+id/lblCFact30"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_toEndOf="@+id/lblDateini2"
+                            android:background="@drawable/blue_strip"
+                            android:gravity="center_vertical"
+                            android:paddingStart="5dp"
+                            android:text="Fecha fin :    "
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFFFFF"
+                            android:textSize="21sp"
+                            android:textStyle="normal" />
+
+                        <TextView
+                            android:id="@+id/lblDatefin2"
+                            android:layout_width="150dp"
+                            android:layout_height="40dp"
+                            android:layout_alignTop="@+id/lblCFact29"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_toEndOf="@+id/lblCFact29"
+                            android:background="@drawable/frame_btn"
+                            android:gravity="center"
+                            android:onClick="showDateDialog2"
+                            android:text="00/00/0000"
+                            android:textSize="21dp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
                 <ListView
                     android:id="@+id/listView1"
                     android:layout_width="wrap_content"

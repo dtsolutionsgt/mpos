@@ -25,7 +25,7 @@ public class appGlobals extends Application {
 	public boolean bloqueo_venta;
 	public String rutanom,sucur,rutatipo, rutatipog,  vendnom, gstr, gstr2, prod, um, umpres, umstock, clitipo;
 	public String ubas, empnom,imgpath,umpeso,lotedf,impresora, tipoImpresora, codSupervisor, ayudante,
-			ayudanteID, vehiculo, vehiculoID;
+			ayudanteID, vehiculo, vehiculoID,idtrasalmacen;
 	public String bonprodid,bonbarid,bonbarprod,pprodname,contrib,ateninistr,tcorel,CodDev,tipoprodcod;
 	public int prodcod,prodmenu,itemid,gint,tipo,nivel,nivel_sucursal,rol,prodtipo,prw,boldep,vnivel,vnivprec,media;
 	public boolean EsVentaDelivery,EsNivelPrecioDelivery = false;

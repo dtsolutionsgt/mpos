@@ -1891,6 +1891,19 @@ public class BaseDatosVersion {
 
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [T_almacen] ("+
+                    "CODIGO_ALMACEN INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "ES_PRINCIPAL INTEGER NOT NULL,"+
+                    "ES_DE_TRANSITO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_ALMACEN])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
 
 
         try {
