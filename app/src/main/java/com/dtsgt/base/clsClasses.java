@@ -1419,6 +1419,7 @@ public class clsClasses {
         public int  codigo_menuopc_det;
         public int  codigo_producto;
         public String nombre;
+        public String um;
         public int  cant;
     }
 

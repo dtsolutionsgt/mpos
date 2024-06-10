@@ -816,7 +816,7 @@ public class Venta extends PBase {
 
             khand.enable();khand.focus();
 
-            prodPrecio();
+            prodPrecio();gl.preccombo=prec;
 
             gl.dval=prcant;
             gl.limcant=getDisp(prodid);

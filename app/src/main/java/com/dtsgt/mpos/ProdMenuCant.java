@@ -1,5 +1,7 @@
 package com.dtsgt.mpos;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsP_prodmenuopcObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsT_comboObj;
+import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.ladapt.LA_T_combo_cant;
 
 import java.util.ArrayList;
@@ -23,15 +26,17 @@ public class ProdMenuCant extends PBase {
 
     private clsT_comboObj T_comboObj;
     private clsP_productoObj P_productoObj;
+    private clsT_ordencomboprecioObj T_ordencomboprecioObj;
+    private Precio prc;
 
     private LA_T_combo_cant adapter;
 
     private ArrayList<clsClasses.clsT_combo_cant> citems= new ArrayList<clsClasses.clsT_combo_cant>();
     private clsClasses.clsT_combo_cant citem,selitem;
 
-    private int idcombo,cantlim,cantact,uitemid,idmenuopc;
+    private int idcombo,cantlim,cantact,uitemid,idmenuopc,cantfalt;
     private boolean newitem;
-
+    private double prec,cant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +53,16 @@ public class ProdMenuCant extends PBase {
 
             T_comboObj = new clsT_comboObj(this, Con, db);
             P_productoObj = new clsP_productoObj(this, Con, db);
+            T_ordencomboprecioObj=new clsT_ordencomboprecioObj(this,Con,db);
+
+            prc = new Precio(this, mu, 2,gl.peDescMax);
 
             idcombo=gl.idcombo;
 
             uitemid = Integer.parseInt(gl.menuitemid);
             newitem = gl.newmenuitem;
+            prec=gl.preccombo;
+            cant=1;
 
             loadItem();
             if (newitem) newItem(); else listItems();
@@ -66,7 +76,13 @@ public class ProdMenuCant extends PBase {
     //region Events
 
     public void doApply(View view) {
-
+        String ss;
+        if (cantfalt!=0) {
+            if (cantfalt==1) ss="1 articulo";else ss=cantfalt+" artículos.";
+            msgbox("Falta elegir "+ss);return;
+        } else {
+            msgAskSave("Guardar");
+        }
     }
 
     public void doDelete(View view) {
@@ -74,7 +90,7 @@ public class ProdMenuCant extends PBase {
     }
 
     public void doClose(View view) {
-        finish();
+        if (cantfalt==cantlim) finish();else msgAskExit("Salir sin aplicar");
     }
 
     private void setHandlers() {
@@ -87,7 +103,7 @@ public class ProdMenuCant extends PBase {
 
                 adapter.setSelectedIndex(position);selidx=position;
 
-                gl.set_cant_max=cantlim-cantact-selitem.cant;
+                gl.set_cant_max=cantlim-cantact+selitem.cant;
 
                 browse=1;
                 startActivity(new Intent(ProdMenuCant.this,CantKeyb.class));
@@ -112,6 +128,7 @@ public class ProdMenuCant extends PBase {
 
     private void newItem() {
         try {
+            calcTotal();
             listItems();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -130,7 +147,7 @@ public class ProdMenuCant extends PBase {
             cantlim=(int) Math.abs(P_prodmenuopcObj.first().cant);
             lbl2.setText("Total opciones : "+cantlim);
 
-            sql=" SELECT  P_PRODMENUOPC_DET.CODIGO_MENUOPC_DET, P_PRODMENUOPC_DET.CODIGO_PRODUCTO, P_PRODUCTO.DESCCORTA " +
+            sql=" SELECT  P_PRODMENUOPC_DET.CODIGO_MENUOPC_DET, P_PRODMENUOPC_DET.CODIGO_PRODUCTO, P_PRODUCTO.DESCCORTA, P_PRODUCTO.UNIDBAS " +
                 " FROM P_PRODMENUOPC_DET INNER JOIN P_PRODUCTO ON P_PRODMENUOPC_DET.CODIGO_PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO " +
                 " WHERE (P_PRODMENUOPC_DET.CODIGO_MENU_OPCION = "+idmenuopc+") ORDER BY P_PRODUCTO.DESCCORTA";
             Cursor dt=Con.OpenDT(sql);
@@ -144,6 +161,7 @@ public class ProdMenuCant extends PBase {
                     citem.codigo_menuopc_det=dt.getInt(0);
                     citem.codigo_producto=dt.getInt(1);
                     citem.nombre=dt.getString(2);
+                    citem.um=dt.getString(3);
                     citem.cant=0;
 
                     citems.add(citem);
@@ -171,6 +189,99 @@ public class ProdMenuCant extends PBase {
         }
     }
 
+    private void saveItem() {
+        clsClasses.clsT_combo item;
+
+        try {
+
+            String um=gl.um;
+
+            double prec = prc.precio(gl.prodid, cant, gl.nivel, um, gl.umpeso, gl.dpeso,um,gl.prodmenu);
+
+            double impval = prc.impval;
+            double desc=prc.desc;
+            double descmon = prc.descmon;
+            double tot = prc.tot;
+
+            tot=prec*cant;
+
+            db.beginTransaction();
+
+            if (!newitem){
+                db.execSQL("DELETE FROM T_COMBO WHERE IdCombo="+uitemid);
+                db.execSQL("DELETE FROM T_VENTA WHERE (PRODUCTO='"+gl.prodid+"') AND (EMPRESA='"+uitemid+"')");
+            } else {
+                guardaPrecios();
+            }
+
+            db.execSQL("UPDATE T_ordencomboprecio SET PRECTOTAL="+prec+" WHERE (COREL='VENTA') AND (IdCombo="+uitemid+")");
+
+            /*
+            for (int i = 0; i <items.size(); i++) {
+
+                item=clsCls.new clsT_combo();
+
+                //#EJC20200524: Revisar
+                item.codigo_menu=items.get(i).codigo_menu_opcion;
+                item.idcombo=uitemid;
+                item.cant=cant;
+                item.unid=items.get(i).unid;
+                item.idseleccion=items.get(i).cod;
+                item.orden=items.get(i).orden;
+
+                T_comboObj.add(item);
+            }
+            */
+
+            tot=cant*prec;tot=mu.round2(tot);
+
+            ins.init("T_VENTA");
+            ins.add("PRODUCTO",gl.prodid);
+            ins.add("EMPRESA",""+uitemid);
+            ins.add("UM","UNI");
+            ins.add("CANT",cant);
+            ins.add("UMSTOCK","UNI");
+            ins.add("FACTOR",1);
+            ins.add("PRECIO",prec);
+            ins.add("IMP",impval);
+            ins.add("DES",desc);
+            ins.add("DESMON",descmon);
+            ins.add("TOTAL",tot);
+            ins.add("PRECIODOC",prec);
+            ins.add("PESO",0);
+            ins.add("VAL1",0);
+            ins.add("VAL2",1);
+            ins.add("VAL3",0);
+            ins.add("VAL4",""+uitemid);
+            ins.add("PERCEP",0);
+
+            db.execSQL(ins.sql());
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            gl.retcant=1;
+            finish();
+
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox2(e.getMessage());
+        }
+    }
+
+    private void guardaPrecios() {
+        clsClasses.clsT_ordencomboprecio pitem = clsCls.new clsT_ordencomboprecio();
+
+        pitem.corel="VENTA";
+        pitem.idcombo=uitemid;
+        pitem.precorig=prec;
+        pitem.precitems=prec;
+        pitem.precdif=0;
+        pitem.prectotal=prec;
+
+        T_ordencomboprecioObj.add(pitem);
+    }
+
     //endregion
 
     //region Aux
@@ -180,13 +291,56 @@ public class ProdMenuCant extends PBase {
         for (int i = 0; i <citems.size(); i++) {
             cantact+=citems.get(i).cant;
         }
-        lbl3.setText("Falta elegir : "+(cantlim-cantact));
+        cantfalt=cantlim-cantact;
+        lbl3.setText("Falta elegir : "+cantfalt);
     }
 
     //endregion
 
     //region Dialogs
 
+    private void msgAskSave(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("MPos");
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                saveItem();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+    }
+
+    private void msgAskExit(String msg) {
+        try{
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle("MPos");
+
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    gl.retcant=-1;
+                    finish();
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
 
     //endregion
 
@@ -198,6 +352,7 @@ public class ProdMenuCant extends PBase {
         try {
             T_comboObj.reconnect(Con,db);
             P_productoObj.reconnect(Con,db);
+            T_ordencomboprecioObj.reconnect(Con,db);
 
             if (browse==1) {
                 browse=0;
@@ -208,6 +363,12 @@ public class ProdMenuCant extends PBase {
             msgbox2(e.getMessage());
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        msgAskExit("Salir sin aplicar");
+    }
+
 
     //endregion
 

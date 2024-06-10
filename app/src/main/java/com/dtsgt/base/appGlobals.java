@@ -43,7 +43,7 @@ public class appGlobals extends Application {
 			     caja_est_pago,caja_est_pago_cmd,caja_est_pago_cue,
 			     nom_alm,nom_alm2,mesa_area,nit_tipo,invcent_tipo;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,
-			      dom_total,bar_cant,descadd,monto_propina;
+			      dom_total,bar_cant,descadd,monto_propina,preccombo;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,paraentrega,
