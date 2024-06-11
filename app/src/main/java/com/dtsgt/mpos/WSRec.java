@@ -1425,12 +1425,11 @@ public class WSRec extends PBase {
                     FELsvmodo=wso.openDTCursor.getInt(1);
                     FELsvcrt=wso.openDTCursor.getString(2);
                 } catch (Exception e) {
-                    FELsvmodo=-1;FELsvcrt="";
+                    FELsvmodo=-1; FELsvcrt="";
                 }
 
                 sql="UPDATE P_SUCURSAL SET FECHA_CONTR="+fc+"  WHERE CODIGO_SUCURSAL="+gl.tienda;
                 db.execSQL(sql);
-
                 //validaFechaContrato();
 
                 if (cod_pais.equalsIgnoreCase("SV")) {
