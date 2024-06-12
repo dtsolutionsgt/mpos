@@ -582,21 +582,22 @@ public class clsDocFactura extends clsDocument {
 	}
 
 	private void detalleCombo(String idcombo ) {
-
         clsD_facturacObj D_facturacObj=new clsD_facturacObj(cont,Con,db);
         String nombre;
         itemData item;
+        int icant;
 
         D_facturacObj.fill("WHERE (COREL='"+ccorel+"') AND (IDCombo="+idcombo+")");
 
         for (int i = 0; i <D_facturacObj.count; i++) {
 
             nombre=D_facturacObj.items.get(i).nombre;
+            icant=D_facturacObj.items.get(i).cant;
 
             item = new itemData();
 
             item.cod = "";
-            item.nombre = nombre;
+            item.nombre = icant+" "+nombre;
             item.cant = 1;
             item.prec =0;
             item.imp = 0;

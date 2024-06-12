@@ -406,7 +406,6 @@ public class Venta extends PBase {
                                 gl.menuitemid=vitem.emp;
                                 browse=7;
                                 showVentaItemMenu(1);
-                                //startActivity(new Intent(Venta.this,ProdMenu.class));
                             }
                         }
                     } catch (Exception e) {
@@ -2404,7 +2403,25 @@ public class Venta extends PBase {
                                     browse=6;
                                     startActivity(new Intent(Venta.this,VentaEdit.class));
                                 } else {
-                                    startActivity(new Intent(Venta.this,ProdMenu.class));
+                                    //startActivity(new Intent(Venta.this,ProdMenu.class));
+
+                                    clsP_prodmenuObj P_menuObj=new clsP_prodmenuObj(Venta.this,Con,db);
+                                    P_menuObj.fill("WHERE CODIGO_PRODUCTO="+ gl.prodmenu);
+                                    if (P_menuObj.count==0) {
+                                        msgbox("El combo no existe.");return;
+                                    }
+                                    gl.idcombo=P_menuObj.first().codigo_menu;
+
+                                    clsP_prodmenuopcObj P_prodmenuopcObj=new clsP_prodmenuopcObj(Venta.this,Con,db);
+                                    P_prodmenuopcObj.fill("WHERE (CODIGO_MENU="+gl.idcombo+")");
+
+                                    if (P_prodmenuopcObj.first().cant<0) {
+                                        startActivity(new Intent(Venta.this,ProdMenuCant.class));
+                                    } else {
+                                        startActivity(new Intent(Venta.this,ProdMenu.class));
+                                    }
+
+
                                 }
                                 break;
                             case 1:

@@ -64,8 +64,8 @@ public class ProdMenuCant extends PBase {
             prec=gl.preccombo;
             cant=1;
 
-            loadItem();
-            if (newitem) newItem(); else listItems();
+            listOptions();
+            if (newitem) newItem(); else loadItems();
             setHandlers();
 
         } catch (Exception e) {
@@ -118,26 +118,42 @@ public class ProdMenuCant extends PBase {
     private void listItems() {
         try {
             calcTotal();
-
             adapter=new LA_T_combo_cant(this,this,citems);
             listView.setAdapter(adapter);
         } catch (Exception e) {
-            mu.msgbox(e.getMessage());
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
     private void newItem() {
         try {
-            calcTotal();
             listItems();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
-    private void loadItem() {
+    private void loadItems() {
+        int pid;
 
         try {
+
+            for (int i = 0; i <citems.size(); i++) {
+                pid=citems.get(i).codigo_producto;
+
+                T_comboObj.fill("WHERE (IdCombo="+ uitemid+") AND (idseleccion="+pid+")");
+                if (T_comboObj.count>0) citems.get(i).cant=(int) T_comboObj.first().cant;
+            }
+
+            listItems();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void listOptions() {
+        try {
+
             lbl1.setText(""+gl.gstr);
 
             clsP_prodmenuopcObj P_prodmenuopcObj=new clsP_prodmenuopcObj(this,Con,db);
@@ -148,8 +164,8 @@ public class ProdMenuCant extends PBase {
             lbl2.setText("Total opciones : "+cantlim);
 
             sql=" SELECT  P_PRODMENUOPC_DET.CODIGO_MENUOPC_DET, P_PRODMENUOPC_DET.CODIGO_PRODUCTO, P_PRODUCTO.DESCCORTA, P_PRODUCTO.UNIDBAS " +
-                " FROM P_PRODMENUOPC_DET INNER JOIN P_PRODUCTO ON P_PRODMENUOPC_DET.CODIGO_PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO " +
-                " WHERE (P_PRODMENUOPC_DET.CODIGO_MENU_OPCION = "+idmenuopc+") ORDER BY P_PRODUCTO.DESCCORTA";
+                    " FROM P_PRODMENUOPC_DET INNER JOIN P_PRODUCTO ON P_PRODMENUOPC_DET.CODIGO_PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO " +
+                    " WHERE (P_PRODMENUOPC_DET.CODIGO_MENU_OPCION = "+idmenuopc+") ORDER BY P_PRODUCTO.DESCCORTA";
             Cursor dt=Con.OpenDT(sql);
 
             citems.clear();
@@ -171,9 +187,8 @@ public class ProdMenuCant extends PBase {
 
             if (dt!=null) dt.close();
 
-
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            mu.msgbox(e.getMessage());
         }
     }
 
@@ -216,22 +231,22 @@ public class ProdMenuCant extends PBase {
 
             db.execSQL("UPDATE T_ordencomboprecio SET PRECTOTAL="+prec+" WHERE (COREL='VENTA') AND (IdCombo="+uitemid+")");
 
-            /*
-            for (int i = 0; i <items.size(); i++) {
+            for (int i = 0; i <citems.size(); i++) {
 
-                item=clsCls.new clsT_combo();
+                if (citems.get(i).cant>0) {
 
-                //#EJC20200524: Revisar
-                item.codigo_menu=items.get(i).codigo_menu_opcion;
-                item.idcombo=uitemid;
-                item.cant=cant;
-                item.unid=items.get(i).unid;
-                item.idseleccion=items.get(i).cod;
-                item.orden=items.get(i).orden;
+                    item = clsCls.new clsT_combo();
 
-                T_comboObj.add(item);
+                    item.codigo_menu = i;
+                    item.idcombo = uitemid;
+                    item.cant = citems.get(i).cant;
+                    item.unid = 1;
+                    item.idseleccion = citems.get(i).codigo_producto;
+                    item.orden = i;
+
+                    T_comboObj.add(item);
+                }
             }
-            */
 
             tot=cant*prec;tot=mu.round2(tot);
 
