@@ -376,7 +376,6 @@ public class ResMesero extends PBase {
         }
     }
 
-
     private boolean tienePrecuenta(String idord) {
         try {
             if (fboe.items.size()==0) return false;

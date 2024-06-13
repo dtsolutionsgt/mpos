@@ -653,7 +653,7 @@ public class clsRepBuilder {
 		}
 
 		sval=cursym+decfrm.format(val);
-		ts=ltrim(s1,prw-14)+"  "+rtrim(sval,size);
+		ts=ltrim(s1,prw-16)+"  "+rtrim(sval,size);
 		items.add(ts);
 	}
 

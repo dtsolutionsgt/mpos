@@ -528,7 +528,7 @@ public class Orden extends PBase {
                         adapterpl.setSelectedIndex(position);
                     }
 
-                    if(item.valor<=0) {
+                    if (item.valor<=0) {
                         msgbox("No se puede vender producto sin precio");return;
                     }
 
@@ -1609,9 +1609,8 @@ public class Orden extends PBase {
 
     private boolean updateItemUID(){
         clsClasses.clsT_orden sfitem;
-        double precdoc;
+        double precdoc,impvaltot;
         String suid;
-
 
         if (cant<=0) {
             gl.produid=Integer.parseInt(uid);
@@ -1624,26 +1623,11 @@ public class Orden extends PBase {
             prodtot=mu.round(prec*cant,2);
 
             if (sinimp) precdoc=precsin; else precdoc=prec;
-
-            /*
-            upd.init("T_ORDEN");
-            upd.add("CANT",cant);
-            upd.add("PRECIO",prec);
-            upd.add("IMP",impval);
-            upd.add("DES",desc);
-            upd.add("DESMON",descmon);
-            upd.add("TOTAL",prodtot);
-            upd.add("PRECIODOC",precdoc);
-
-            upd.Where("(COREL='"+idorden+"') AND (ID='"+uid+"')");
-
-            db.execSQL(upd.sql());
-
-             */
+            impvaltot=impval*cant;
 
             fbo.updateValue(uid,"cant",cant);
             fbo.updateValue(uid,"precio",prec);
-            fbo.updateValue(uid,"imp",imp);
+            fbo.updateValue(uid,"imp",impvaltot);
             fbo.updateValue(uid,"des",desc);
             fbo.updateValue(uid,"desmon",descmon);
             fbo.updateValue(uid,"total",prodtot);
@@ -1674,7 +1658,7 @@ public class Orden extends PBase {
 
                     upd.put("cant",cant);
                     upd.put("precio",prec);
-                    upd.put("imp",imp);
+                    upd.put("imp",impvaltot);
                     upd.put("des",desc);
                     upd.put("desmon",descmon);
                     upd.put("total",prodtot);
