@@ -3275,7 +3275,7 @@ public class Venta extends PBase {
         clsClasses.clsT_venta venta;
         clsClasses.clsT_combo combo;
 
-        int prid,idcombo,ln;
+        int prid,idcombo,ln,cic;
         String csi,nt;
 
         try {
@@ -3311,7 +3311,9 @@ public class Venta extends PBase {
                 rep.add(s);
 
                 try {
-                    if (!nt.isEmpty()) agreganota(nt+"");
+                    if (!nt.isEmpty()) {
+                        if (nt.length()>2) agreganota(nt+"");
+                    }
                 } catch (Exception e) { }
 
                 if (app.prodTipo(prid).equalsIgnoreCase("M")) {
@@ -3320,7 +3322,8 @@ public class Venta extends PBase {
                     for (int j = 0; j <T_comboObj.count; j++) {
                         if (j==0) rep.line();
                         csi=getProd(T_comboObj.items.get(j).idseleccion);
-                        if (!csi.equalsIgnoreCase("0")) s=" -  "+csi;
+                        cic=(int) T_comboObj.items.get(j).cant;
+                        if (!csi.equalsIgnoreCase("0")) s=" - "+cic+" "+csi;
                         rep.add(s);
                     }
                     rep.line();
