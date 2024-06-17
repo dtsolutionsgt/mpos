@@ -1622,7 +1622,15 @@ public class Orden extends PBase {
 
             prodtot=mu.round(prec*cant,2);
 
-            if (sinimp) precdoc=precsin; else precdoc=prec;
+            //if (sinimp) precdoc=precsin; else precdoc=prec;
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                precdoc=precsin;
+            } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                precdoc=precsin;
+            } else {
+                precdoc=prec;
+            }
+
             impvaltot=impval*cant;
 
             fbo.updateValue(uid,"cant",cant);
