@@ -49,12 +49,15 @@ import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_orden_numeroObj;
 import com.dtsgt.classes.clsP_prodclasifmodifObj;
+import com.dtsgt.classes.clsP_prodmenuObj;
+import com.dtsgt.classes.clsP_prodmenuopcObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsP_vendedor_rolObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_lic_estadoObj;
+import com.dtsgt.classes.clsT_ordencomboadObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsT_venta_horaObj;
@@ -424,7 +427,6 @@ public class Venta extends PBase {
                                 gl.menuitemid=vitem.emp;
                                 browse=7;
                                 showVentaItemMenu(1);
-                                //startActivity(new Intent(Venta.this,ProdMenu.class));
                             }
                         }
                     } catch (Exception e) {
@@ -835,7 +837,7 @@ public class Venta extends PBase {
 
             khand.enable();khand.focus();
 
-            prodPrecio();
+            prodPrecio();gl.preccombo=prec;
 
             gl.dval=prcant;
             tipo=prodTipo(gl.prodcod);
@@ -1072,8 +1074,34 @@ public class Venta extends PBase {
         gl.gstr=gl.pprodname;
         gl.retcant=1;
 
-        browse=7;
-        startActivity(new Intent(this,ProdMenu.class));
+        try {
+            browse=7;
+
+            clsP_prodmenuObj P_menuObj=new clsP_prodmenuObj(this,Con,db);
+            P_menuObj.fill("WHERE CODIGO_PRODUCTO="+gl.prodmenu);
+            if (P_menuObj.count==0) {
+                msgbox("El combo no existe.");return;
+            }
+            gl.idcombo=P_menuObj.first().codigo_menu;
+
+            clsP_prodmenuopcObj P_prodmenuopcObj=new clsP_prodmenuopcObj(this,Con,db);
+            P_prodmenuopcObj.fill("WHERE (CODIGO_MENU="+gl.idcombo+")");
+
+            if (P_prodmenuopcObj.count==0) {
+                msgbox("El combo está vacio.");return;
+            }
+
+            if (P_prodmenuopcObj.first().cant<0) {
+                startActivity(new Intent(this,ProdMenuCant.class));
+            } else {
+                startActivity(new Intent(this,ProdMenu.class));
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+
     }
 
     private void updateCant() {
@@ -2286,7 +2314,25 @@ public class Venta extends PBase {
                                     browse=6;
                                     startActivity(new Intent(Venta.this,VentaEdit.class));
                                 } else {
-                                    startActivity(new Intent(Venta.this,ProdMenu.class));
+                                    //startActivity(new Intent(Venta.this,ProdMenu.class));
+
+                                    clsP_prodmenuObj P_menuObj=new clsP_prodmenuObj(Venta.this,Con,db);
+                                    P_menuObj.fill("WHERE CODIGO_PRODUCTO="+ gl.prodmenu);
+                                    if (P_menuObj.count==0) {
+                                        msgbox("El combo no existe.");return;
+                                    }
+                                    gl.idcombo=P_menuObj.first().codigo_menu;
+
+                                    clsP_prodmenuopcObj P_prodmenuopcObj=new clsP_prodmenuopcObj(Venta.this,Con,db);
+                                    P_prodmenuopcObj.fill("WHERE (CODIGO_MENU="+gl.idcombo+")");
+
+                                    if (P_prodmenuopcObj.first().cant<0) {
+                                        startActivity(new Intent(Venta.this,ProdMenuCant.class));
+                                    } else {
+                                        startActivity(new Intent(Venta.this,ProdMenu.class));
+                                    }
+
+
                                 }
                                 break;
                             case 1:
@@ -3178,7 +3224,7 @@ public class Venta extends PBase {
         clsClasses.clsT_venta venta;
         clsClasses.clsT_combo combo;
 
-        int prid,idcombo,ln;
+        int prid,idcombo,ln,cic;
         String csi,nt;
 
         try {
@@ -3214,7 +3260,9 @@ public class Venta extends PBase {
                 rep.add(s);
 
                 try {
-                    if (!nt.isEmpty()) agreganota(nt+"");
+                    if (!nt.isEmpty()) {
+                        if (nt.length()>2) agreganota(nt+"");
+                    }
                 } catch (Exception e) { }
 
                 if (app.prodTipo(prid).equalsIgnoreCase("M")) {
@@ -3223,7 +3271,8 @@ public class Venta extends PBase {
                     for (int j = 0; j <T_comboObj.count; j++) {
                         if (j==0) rep.line();
                         csi=getProd(T_comboObj.items.get(j).idseleccion);
-                        if (!csi.equalsIgnoreCase("0")) s=" -  "+csi;
+                        cic=(int) T_comboObj.items.get(j).cant;
+                        if (!csi.equalsIgnoreCase("0")) s=" - "+cic+" "+csi;
                         rep.add(s);
                     }
                     rep.line();
@@ -6039,9 +6088,7 @@ public class Venta extends PBase {
 
     @Override
     protected void onResume() {
-
         try {
-
             super.onResume();
 
             gridViewOpciones.setEnabled(true);

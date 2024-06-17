@@ -57,7 +57,7 @@ public class appGlobals extends Application {
 	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir,sal_iddep,sal_idmun,sal_neg,sal_mun,sal_dep,
 			     prcu_corel,nom_alm,nom_alm2,mesa_area,nit_tipo,invcent_tipo,FEL_llave_cont;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,
-			      dom_total,bar_cant,descadd,monto_propina,limite_credito;
+			      dom_total,bar_cant,descadd,monto_propina,limite_credito,preccombo;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,paraentrega,
