@@ -3042,9 +3042,12 @@ public class Menu extends PBase {
 				msgbox("No existe respaldo del ultimo cierre");return;
 			}
 
+			/*
 			writer.write("   ");writer.write("\r\n");
 			writer.write(" REIMPRESION CIERRE DIA  ");writer.write("\r\n");
 			writer.write("   ");writer.write("\r\n");
+
+			 */
 
             for (int i = 0; i < D_cierreObj.count; i++) {
                 writer.write(D_cierreObj.items.get(i).text);writer.write("\r\n");
