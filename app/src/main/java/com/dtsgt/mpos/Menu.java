@@ -3236,8 +3236,6 @@ public class Menu extends PBase {
 			writer.write("   ");writer.write("\r\n");
 			*/
 
-			 */
-
             for (int i = 0; i < D_cierreObj.count; i++) {
                 writer.write(D_cierreObj.items.get(i).text);writer.write("\r\n");
             }

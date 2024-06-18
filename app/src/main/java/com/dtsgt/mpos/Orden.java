@@ -1140,18 +1140,13 @@ public class Orden extends PBase {
 
         try {
 
-            if (sinimp) {
-                precdoc=precsin;
-            } else {
-                precdoc=prec;
-            }
-
             if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                 precdoc=precsin;
+            } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                precdoc=precsin;
             } else {
                 precdoc=prec;
             }
-
 
             cui=app.cuentaActiva(idorden);
             if (existenCuentasPagadas()) {
@@ -1295,7 +1290,15 @@ public class Orden extends PBase {
 
         try {
 
-            if (sinimp) precdoc=precsin; else precdoc=prec;
+            //if (sinimp) precdoc=precsin; else precdoc=prec;
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                precdoc=precsin;
+            } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                precdoc=precsin;
+            } else {
+                precdoc=prec;
+            }
+
 
             ins.init("T_ORDEN");
 
@@ -1694,7 +1697,14 @@ public class Orden extends PBase {
         try {
 
             prodtot=mu.round(prec*cant,2);
-            if (sinimp) precdoc=precsin; else precdoc=prec;
+            //if (sinimp) precdoc=precsin; else precdoc=prec;
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                precdoc=precsin;
+            } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                precdoc=precsin;
+            } else {
+                precdoc=prec;
+            }
 
             upd.init("T_ORDEN");
             upd.add("CANT",cant);
