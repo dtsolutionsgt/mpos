@@ -79,7 +79,7 @@ public class FELFactura extends PBase {
     private ArrayList<String> factlist = new ArrayList<String>();
     private ArrayList<String> rutas= new ArrayList<String>();
 
-    private String felcorel,corel,ffcorel,scorel,CSQL,endstr,idfact;
+    private String felcorel,corel,ffcorel,scorel,CSQL,endstr,idfact,prod_BS;
     private boolean ddemomode,multiflag,factsend,contmode;
     private int ftot,ffail,fidx,cliid,felnivel;
 
@@ -604,7 +604,8 @@ public class FELFactura extends PBase {
                             factd.precio,
                             mu.round2(factd.total),
                             factd.desmon,
-                            lcombo);
+                            lcombo,
+                            prod_BS);
             }
 
             //if (propina>0) {
@@ -1174,6 +1175,7 @@ public class FELFactura extends PBase {
     private String prodName(int cod_prod) {
         try {
             prod.fill("WHERE codigo_producto="+cod_prod);
+            prod_BS=prod.first().um_salida;
             return prod.first().desclarga;
         } catch (Exception e) {
             return ""+cod_prod;

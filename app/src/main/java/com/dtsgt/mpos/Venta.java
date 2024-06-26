@@ -3283,7 +3283,6 @@ public class Venta extends PBase {
 
             if (gl.peImpFactLan) {
                 rep.add(" ");
-                //rep.add("IMPRESORA DE CAJA");
                 rep.add(gl.rutanom);
                 rep.add(gl.peImpFactIP);
             }

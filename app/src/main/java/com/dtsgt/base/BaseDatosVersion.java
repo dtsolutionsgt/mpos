@@ -1505,16 +1505,10 @@ public class BaseDatosVersion {
             db.execSQL("ALTER TABLE D_FACTURA ADD CODIGO_TIPO_FACTURA INT NULL;");
         } catch (Exception e) { }
 
-
-
         try {
             sql="DROP TABLE D_facturat";
             db.execSQL(sql);
-
-
         } catch (Exception e) { }
-
-
 
         try {
             sql="CREATE TABLE [D_factura_sv] ("+
@@ -1664,6 +1658,9 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
         } catch (Exception e) { }
+
+
+
 
         try {
 

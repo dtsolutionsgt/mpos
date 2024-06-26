@@ -346,7 +346,6 @@ public class clsFELInFile {
                         if (!vResultado.equalsIgnoreCase("") || !vDescripcion.equalsIgnoreCase("")){
                             error+=vDescripcion;
                         }else{
-                            //#EJC20200707: Obtener mensaje de error específico en respuesta.
                             JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
 
                             for (int i=0; i<ArrayError.length(); i++) {
@@ -381,134 +380,6 @@ public class clsFELInFile {
         }
         return errorflag;
     }
-
-//    private Boolean wsExecuteF(){
-//
-//        URL url;
-//        HttpURLConnection connection = null;
-//        JSONObject jObj = null;
-//        response=0;
-//        error = "";
-//        errfirma=false;
-//        errorflag = false;
-//        modoiduni=false;
-//
-//        try {
-//
-//            url = new URL(WSURL);
-//            connection = (HttpURLConnection)url.openConnection();
-//            connection.setConnectTimeout(timeout);
-//            connection.setReadTimeout(timeout);
-//            connection.setRequestMethod("POST");
-//            connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
-//            connection.setRequestProperty("Content-Length",""+ jsfirm.getBytes().length);
-//            connection.setRequestProperty("usuario",fel_usuario_certificacion);
-//            connection.setRequestProperty("llave", fel_llave_certificacion);
-//            connection.setRequestProperty("identificador", mpos_identificador_fact);
-//            connection.setUseCaches (false);
-//            connection.setDoInput(true);
-//            connection.setDoOutput(true);
-//
-//            try {
-//                connection.connect();
-//            } catch (IOException e) {
-//                error=e.getMessage();
-//                errorcon=true;errorflag=true;constat=false;
-//                return errorflag;
-//            }
-//
-//            DataOutputStream wr = null;
-//
-//            try {
-//                wr = new DataOutputStream(connection.getOutputStream ());
-//            } catch (IOException e) {
-//                error=e.getMessage();
-//                errorcon=true;errorflag=true;constat=false;
-//                return null;
-//            }
-//
-//            wr.writeBytes (jsfirm);
-//            wr.flush ();
-//            wr.close ();
-//
-//            InputStream is;
-//
-//            try {
-//                is= connection.getInputStream();
-//            } catch (IOException e) {
-//                is= connection.getInputStream();
-//            }
-//
-//            response=connection.getResponseCode();
-//
-//            if (response==200) {
-//
-//                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-//                String line;
-//                StringBuilder sb = new StringBuilder();
-//
-//                while((line = rd.readLine()) != null) {
-//                    sb.append(line + "\n");
-//                }
-//                rd.close();
-//
-//                String jstr=sb.toString();
-//                jObj = new JSONObject(jstr);
-//
-//                error= jObj.getString("descripcion");
-//
-//                if (jObj.getBoolean("resultado")) {
-//                    errorflag=false;
-//                    firma=jObj.getString("archivo");
-//                } else {
-//
-//                    errorflag=true;
-//
-//                    try {
-//
-//                        String vResultado="";
-//                        String vDescripcion="";
-//
-//                        try {
-//                            vResultado =jObj.getString("resultado");
-//                            vDescripcion =jObj.getString("descripcion");
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                        if (!vResultado.equalsIgnoreCase("") || !vDescripcion.equalsIgnoreCase("")){
-//                            error+=vDescripcion;
-//                        }else{
-//                            //#EJC20200707: Obtener mensaje de error específico en respuesta.
-//                            JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
-//
-//                            for (int i=0; i<ArrayError.length(); i++) {
-//                                JSONObject theJsonObject = ArrayError.getJSONObject(i);
-//                                String name = theJsonObject.getString("mensaje_error");
-//                                error = name;
-//                            }
-//
-//                        }
-//
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                }
-//
-//            } else {
-//                error=""+response;errorflag=true;errfirma=true;
-//                return errorflag;
-//            }
-//
-//        } catch (Exception e) {
-//            error=e.getMessage();errorflag=true;errfirma=true;
-//            return errorflag;
-//        } finally {
-//            //if (connection!=null) connection.disconnect();
-//        }
-//        return errorflag;
-//    }
 
     private void wsFinishedF() {
 
@@ -1604,7 +1475,7 @@ public class clsFELInFile {
     }
 
 
-    public void detalle(String descrip,double cant,String unid,double precuni,double total,double desc,String lcombo) {
+    public void detalle(String descrip,double cant,String unid,double precuni,double total,double desc,String lcombo,String prodBS) {
         double imp,impbase,tottot;
 
         linea++;
@@ -1620,6 +1491,7 @@ public class clsFELInFile {
         tottot=total+desc;
 
         totmonto+=total;
+        if (!prodBS.equalsIgnoreCase("S")) prodBS="B";
 
         String cantstr = String.format("%.2f",cant);
         cantstr=cantstr.replaceAll(",",".");
@@ -1630,7 +1502,13 @@ public class clsFELInFile {
         String descstr = String.format("%.2f",desc);
         descstr=descstr.replaceAll(",",".");
 
-        xml+="<dte:Item BienOServicio=\"B\" NumeroLinea=\""+linea+"\">";
+        //xml+="<dte:Item BienOServicio=\"B\" NumeroLinea=\""+linea+"\">";
+        if (prodBS.equalsIgnoreCase("S")) {
+            xml+="<dte:Item BienOServicio=\"S\" NumeroLinea=\""+linea+"\">";
+        } else {
+            xml+="<dte:Item BienOServicio=\"B\" NumeroLinea=\""+linea+"\">";
+        }
+
         xml+="<dte:Cantidad>"+cantstr+"</dte:Cantidad>";
         xml+="<dte:UnidadMedida>"+unid+"</dte:UnidadMedida>";
         xml+="<dte:Descripcion>"+descrip+"</dte:Descripcion>";
