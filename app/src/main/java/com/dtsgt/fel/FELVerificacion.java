@@ -139,9 +139,9 @@ public class FELVerificacion extends PBase {
                 if (ffel.items.size()>0) {
                     actualizaValidadas();
                 } else {
-                    if(!fel.errorflag && !fel.errcert){
+                    if (!fel.errorflag && !fel.errcert){
                         contingencia();
-                    }else{
+                    } else {
                         msgexit(fel.error);
                         return;
                     }
@@ -560,11 +560,13 @@ public class FELVerificacion extends PBase {
             D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0) " +
               "AND (FECHA>="+flim+") ORDER BY FEELCONTINGENCIA");
 
+            //D_facturaObj.fill("WHERE ((FEELUUID=' ') OR (FEELUUID='')) AND (ANULADO=0) ");
+
             facts.clear();
 
             for (int i = 0; i <D_facturaObj.count; i++) {
                 cor=D_facturaObj.items.get(i).corel;ffcorel=cor;
-                if (felcorel.isEmpty()) {
+                if (felcorel.isEmpty() || felcorel.equalsIgnoreCase(" ")) {
                     facts.add(cor);
                 } else {
                     if (cor.equalsIgnoreCase(felcorel)) {

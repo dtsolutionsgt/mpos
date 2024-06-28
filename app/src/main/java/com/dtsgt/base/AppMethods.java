@@ -1204,6 +1204,20 @@ public class AppMethods {
 			gl.pePrecu1015 = false;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=171";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peComandaVentaLAN = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peComandaVentaLAN = false;
+		}
+
+
 	}
 
 	//                  Params extra
@@ -1799,6 +1813,10 @@ public class AppMethods {
     public void doPrint(int prtipo) {
         doPrint(0,prtipo);
     }
+
+	public void doPrintLANMulti() {
+		print3nstarw();
+	}
 
     @SuppressLint("SuspiciousIndentation")
 	public void doPrint(int copies, int tipoimpr) {

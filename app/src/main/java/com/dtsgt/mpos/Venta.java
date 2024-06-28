@@ -44,7 +44,9 @@ import com.dtsgt.classes.clsDescuento;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_cajahoraObj;
+import com.dtsgt.classes.clsP_impresoraObj;
 import com.dtsgt.classes.clsP_lineaObj;
+import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_orden_numeroObj;
 import com.dtsgt.classes.clsP_prodclasifmodifObj;
@@ -54,8 +56,11 @@ import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsP_vendedor_rolObj;
 import com.dtsgt.classes.clsRepBuilder;
+import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_lic_estadoObj;
+import com.dtsgt.classes.clsT_ordenObj;
+import com.dtsgt.classes.clsT_ordencomboObj;
 import com.dtsgt.classes.clsT_ordencomboadObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ventaObj;
@@ -118,6 +123,7 @@ public class Venta extends PBase {
     private ArrayList<clsClasses.clsMenu> mvitems= new ArrayList<clsClasses.clsMenu>();
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
+    private ArrayList<String> tl = new ArrayList<String>();
     private ArrayList<String> peditems = new ArrayList<String>();
 
     private AppMethods app;
@@ -128,6 +134,10 @@ public class Venta extends PBase {
     private clsVendedoresObj MeserosObj;
     private clsT_ordencomboprecioObj T_ordencomboprecioObj;
     private clsT_venta_horaObj T_venta_horaObj;
+    private clsT_comandaObj T_comandaObj;
+    private clsT_ventaObj T_ventaObj;
+    private clsP_linea_impresoraObj P_linea_impresoraObj;
+    private clsP_impresoraObj P_impresoraObj;
 
     private wsCommit wscom;
     private wsOpenDT wso;
@@ -148,7 +158,7 @@ public class Venta extends PBase {
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
     private boolean horiz=true,porcentaje,domenvio,modoHN,modoSV,desclinmsg;
     private int codigo_cliente, emp,pedidoscant,cod_prod;
-    private String cliid,saveprodid,pedcorel;
+    private String cliid,saveprodid,pedcorel,prodlinea;
     private int famid = -1;
     public boolean DescPorProducto, DesPorLinea = false, DesPorMarca = false;
     public int pTipo = -1;
@@ -210,6 +220,10 @@ public class Venta extends PBase {
             MeserosObj =new clsVendedoresObj(this,Con,db);
             T_ordencomboprecioObj=new clsT_ordencomboprecioObj(this,Con,db);
             T_venta_horaObj=new clsT_venta_horaObj(this,Con,db);
+            T_ventaObj=new clsT_ventaObj(this,Con,db);
+            T_comandaObj=new clsT_comandaObj(this,Con,db);
+            P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
+            P_impresoraObj=new clsP_impresoraObj(this,Con,db);
 
             app = new AppMethods(this, gl, Con, db);
             app.parametrosExtra();
@@ -3438,6 +3452,186 @@ public class Venta extends PBase {
 
     //endregion
 
+    //region Comanda LAN
+
+    private void procesaComanda() {
+        try {
+            db.execSQL("DELETE FROM T_comanda");
+
+            if (!divideComanda()) return;
+            if (!generaArchivos()) return;
+            app.doPrintLANMulti();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private boolean divideComanda() {
+        clsT_comboObj T_comboObj=new clsT_comboObj(this,Con,db);
+        clsClasses.clsT_venta venta;
+        clsClasses.clsT_combo combo;
+        String nt,prname,csi;
+        int idprint,prodid,linea=1,cic;
+
+        try {
+
+            T_ventaObj.fill();
+
+            for (int i = 0; i <T_ventaObj.count; i++) {
+
+                venta=T_ventaObj.items.get(i);
+                prodid=codigoProducto(venta.producto);
+                nt=venta.val2;
+                prname=getProd(prodid);
+                s=mu.frmdecno(venta.cant)+"  "+prname;
+
+                P_linea_impresoraObj.fill("WHERE CODIGO_LINEA=" + prodlinea);
+                if (P_linea_impresoraObj.count > 0) {
+                    for (int k = 0; k < P_linea_impresoraObj.count; k++) {
+                        idprint = P_linea_impresoraObj.items.get(k).codigo_impresora;
+                        agregaComanda(linea, idprint, s);linea++;
+                        if (!nt.isEmpty()) {
+                            if (nt.length()>2) agregaComanda(linea, idprint, "   "+nt);linea++;
+                        }
+
+                        if (app.prodTipo(prodid).equalsIgnoreCase("M")) {
+                            T_comboObj.fill("WHERE (IdCombo=" + venta.val4+") AND (IdSeleccion<>0)");
+
+                            for (int j = 0; j <T_comboObj.count; j++) {
+                                csi=getProd(T_comboObj.items.get(j).idseleccion);
+                                cic=(int) T_comboObj.items.get(j).cant;
+                                if (!csi.equalsIgnoreCase("0")) s=" - "+cic+" "+csi;
+                                agregaComanda(linea, idprint,s);linea++;
+                            }
+                        }
+
+                    }
+                }
+
+            }
+
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean generaArchivos() {
+        clsRepBuilder rep;
+        int printid,ln;
+        String fname,ss,narea,prip;
+        File file;
+
+        try {
+
+            P_impresoraObj.fill();
+            for (int i = 0; i <P_impresoraObj.count; i++) {
+                fname = Environment.getExternalStorageDirectory()+"/comanda_"+P_impresoraObj.items.get(i).codigo_impresora+".txt";
+                file=new File(fname);
+                try {
+                    file.delete();
+                } catch (Exception e) { }
+            }
+        } catch (Exception e) { }
+
+        try {
+
+            clsViewObj ViewObj=new clsViewObj(this,Con,db);
+            ViewObj.fillSelect("SELECT DISTINCT ID, '','','','', '','','','' FROM T_comanda ORDER BY ID");
+
+            for (int i = 0; i <ViewObj.count; i++) {
+                printid=ViewObj.items.get(i).pk;
+
+                if (printid>0) {
+
+                    P_impresoraObj.fill("WHERE (CODIGO_IMPRESORA=" + printid + ")");
+
+                    if (P_impresoraObj.count>0) {
+                        rep = new clsRepBuilder(this, gl.prw, true, gl.peMon, gl.peDecImp, "comanda_" + printid + ".txt");
+
+                        rep.add(P_impresoraObj.first().tipo_impresora);
+                        rep.add(" ");
+                        prip=app.ipBypass(P_impresoraObj.first().ip);
+                        rep.add(prip);
+
+                        rep.empty();
+                        rep.empty();
+                        rep.add("NOMBRE : " + mesa);
+                        rep.add("Hora : " + du.shora(du.getActDateTime()));
+                        rep.line24();
+
+                        T_comandaObj.fill("WHERE ID=" + printid + " ORDER BY LINEA");
+
+                        for (int j = 0; j < T_comandaObj.count; j++) {
+                            ss = T_comandaObj.items.get(j).texto;
+                            rep.add(ss.toUpperCase());
+                        }
+
+                        rep.line24();
+                        rep.add("");
+                        rep.add("");
+                        rep.add("");
+
+                        ln = rep.items.size();
+                        if (ln < 20) {
+                            for (int ii = 0; ii < 20 - ln; ii++) {
+                                rep.empty();
+                            }
+                        }
+
+                        rep.save();
+                        rep.clear();
+                    }
+                }
+            }
+
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
+    public int codigoProducto(String cod) {
+        Cursor DT=null;
+        int umm;
+
+        try {
+            String sql = "SELECT CODIGO_PRODUCTO,LINEA FROM P_PRODUCTO WHERE CODIGO='" + cod+"'";
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            umm=DT.getInt(0);
+            prodlinea=DT.getString(1);
+
+            if (DT!=null) DT.close();
+            return  umm;
+        } catch (Exception e) {
+            //toast(e.getMessage());
+            return 0;
+        } finally {
+            if (DT!=null) DT.close();
+        }
+    }
+
+    private boolean agregaComanda(int linea,int prid,String texto) {
+        try {
+            clsClasses.clsT_comanda item = clsCls.new clsT_comanda();
+
+            item.linea=linea;
+            item.id=prid;
+            item.texto=texto;
+
+            T_comandaObj.add(item);
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
+    //endregion
+
     //region Pedidos
 
     private void crearPedido() {
@@ -5228,12 +5422,13 @@ public class Venta extends PBase {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
         alert.setTitle("Impresión de comanda");
-        alert.setMessage("MESA NUMERO: ");
+
+        alert.setMessage("MESA NUMERO / NOMBRE: ");
 
         final EditText input = new EditText(this);
         alert.setView(input);
 
-        input.setInputType(InputType.TYPE_CLASS_NUMBER );
+        //input.setInputType(InputType.TYPE_CLASS_NUMBER );
         input.setText("");
         input.requestFocus();
 
@@ -5241,7 +5436,11 @@ public class Venta extends PBase {
             public void onClick(DialogInterface dialog, int whichButton) {
                 try {
                     mesa=input.getText().toString();
-                    imprimeComanda();
+                    if (gl.peComandaVentaLAN) {
+                        procesaComanda();
+                    } else {
+                        imprimeComanda();
+                    }
                 } catch (Exception e) {
                     mu.msgbox("Valor incorrecto");return;
                 }
@@ -6042,6 +6241,10 @@ public class Venta extends PBase {
             MeserosObj.reconnect(Con,db);
             T_ordencomboprecioObj.reconnect(Con,db);
             T_venta_horaObj.reconnect(Con,db);
+            T_ventaObj.reconnect(Con,db);
+            T_comandaObj.reconnect(Con,db);
+            P_linea_impresoraObj.reconnect(Con,db);
+            P_impresoraObj.reconnect(Con,db);
 
             checkLock();
 
@@ -6177,7 +6380,6 @@ public class Venta extends PBase {
                 browse=0;listItems();
                 return;
             }
-
 
             if (browse==10) {
                 browse=0;

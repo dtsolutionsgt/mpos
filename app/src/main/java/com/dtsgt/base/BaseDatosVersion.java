@@ -1660,8 +1660,6 @@ public class BaseDatosVersion {
         } catch (Exception e) { }
 
 
-
-
         try {
 
         } catch (Exception e) { }
@@ -1669,7 +1667,6 @@ public class BaseDatosVersion {
         try {
 
         } catch (Exception e) { }
-
 
     }
 
