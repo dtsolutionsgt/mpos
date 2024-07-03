@@ -16,6 +16,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.StatFs;
 import android.os.StrictMode;
+import android.os.SystemClock;
 import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
@@ -94,7 +95,7 @@ public class Menu extends PBase {
     private clsP_paramextObj P_paramextObj;
 	private clsD_facturaObj D_facturaObj;
 
-    private int selId,selIdx,menuid,iicon,idalm,idalmdpred,idcierre,modo_invcent,modo_supervis;
+    private int selId,selIdx,menuid,iicon,idalm,idalmdpred,idcierre,modo_invcent,modo_supervis,ci;
 	private String rutatipo,sdoc;
 	private boolean rutapos,horizpos,porcentaje,modo_emerg;
 	private boolean listo=true,almacenes,cortesias;
@@ -1791,6 +1792,43 @@ public class Menu extends PBase {
 			msgbox("Número de orden reiniciado");
 		} else {
 			msgbox(wscom.error);
+		}
+	}
+
+	public void doSendUID(View view) {
+		msgAskUID("UID ?");
+	}
+
+	public void sendUID() {
+		String tss,ss,UID,FSer,FNum,cor;
+		wsCommit wsc;
+
+		try {
+			System.setProperty("line.separator","\r\n");
+
+
+			tss="";
+			D_facturaObj.fill();
+
+			for (int i = 0; i <D_facturaObj.count; i++) {
+
+				cor=D_facturaObj.items.get(i).corel;
+				UID=D_facturaObj.items.get(i).feeluuid;
+				FSer=D_facturaObj.items.get(i).feelserie;
+				FNum=D_facturaObj.items.get(i).feelnumero;
+
+				ss="UPDATE D_FACTURA SET FEELSERIE='"+FSer+"', FEELNUMERO='"+FNum+"', " +
+						"FEELUUID='"+UID+"' WHERE (COREL='"+cor+"') ;\n";
+				tss+=ss+"";
+			}
+
+			wsc =new wsCommit(gl.wsurl);
+			wsc.execute(tss,null);
+
+			msgbox("Done");
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
 	}
 
@@ -3763,6 +3801,16 @@ public class Menu extends PBase {
 		dialog.setCancelable(false);
 		dialog.setPositiveButton("Continuar", (dialog1, which) -> validaSuperAnulInv());
 		dialog.setNegativeButton("Regresar", (dialog12, which) -> {});
+		dialog.show();
+	}
+
+
+	private void msgAskUID(String msg) {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage(msg);
+		dialog.setCancelable(false);
+		dialog.setPositiveButton("Si", (dialog1, which) -> sendUID());
+		dialog.setNegativeButton("No", (dialog12, which) -> {});
 		dialog.show();
 	}
 

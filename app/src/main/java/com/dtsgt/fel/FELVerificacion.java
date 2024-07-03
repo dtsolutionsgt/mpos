@@ -60,7 +60,7 @@ public class FELVerificacion extends PBase {
 
     private ArrayList<String> facts = new ArrayList<String>();
 
-    private String felcorel,corel,ffcorel,scorel,CSQL,endstr,idfact,lcombo;
+    private String felcorel,corel,ffcorel,scorel,CSQL,endstr,idfact,lcombo,prod_BS;
     private boolean conerrflag,ddemomode,multiflag,factsend,contmode;
     private int ftot,ffail,fidx,cliid,felnivel;
 
@@ -139,9 +139,9 @@ public class FELVerificacion extends PBase {
                 if (ffel.items.size()>0) {
                     actualizaValidadas();
                 } else {
-                    if(!fel.errorflag && !fel.errcert){
+                    if (!fel.errorflag && !fel.errcert){
                         contingencia();
-                    }else{
+                    } else {
                         msgexit(fel.error);
                         return;
                     }
@@ -414,7 +414,8 @@ public class FELVerificacion extends PBase {
                             factd.precio,
                             mu.round2(factd.total),
                             factd.desmon,
-                            lcombo);
+                            lcombo,
+                            prod_BS);
             }
 
             if (propina>0) {
@@ -559,11 +560,13 @@ public class FELVerificacion extends PBase {
             D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0) " +
               "AND (FECHA>="+flim+") ORDER BY FEELCONTINGENCIA");
 
+            //D_facturaObj.fill("WHERE ((FEELUUID=' ') OR (FEELUUID='')) AND (ANULADO=0) ");
+
             facts.clear();
 
             for (int i = 0; i <D_facturaObj.count; i++) {
                 cor=D_facturaObj.items.get(i).corel;ffcorel=cor;
-                if (felcorel.isEmpty()) {
+                if (felcorel.isEmpty() || felcorel.equalsIgnoreCase(" ")) {
                     facts.add(cor);
                 } else {
                     if (cor.equalsIgnoreCase(felcorel)) {
@@ -590,6 +593,7 @@ public class FELVerificacion extends PBase {
     private String prodName(int cod_prod) {
         try {
             prod.fill("WHERE codigo_producto="+cod_prod);
+            prod_BS=prod.first().um_salida;
             return prod.first().desclarga;
         } catch (Exception e) {
             return ""+cod_prod;

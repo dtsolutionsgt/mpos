@@ -353,7 +353,6 @@ public class clsFELInFile {
                         if (!vResultado.equalsIgnoreCase("") || !vDescripcion.equalsIgnoreCase("")){
                             error+=vDescripcion;
                         }else{
-                            //#EJC20200707: Obtener mensaje de error específico en respuesta.
                             JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
 
                             for (int i=0; i<ArrayError.length(); i++) {
@@ -1486,7 +1485,7 @@ public class clsFELInFile {
     }
 
 
-    public void detalle(String descrip,double cant,String unid,double precuni,double total,double desc,String lcombo) {
+    public void detalle(String descrip,double cant,String unid,double precuni,double total,double desc,String lcombo,String prodBS) {
         double imp,impbase,tottot;
 
         linea++;
@@ -1502,6 +1501,7 @@ public class clsFELInFile {
         tottot=total+desc;
 
         totmonto+=total;
+        if (!prodBS.equalsIgnoreCase("S")) prodBS="B";
 
         String cantstr = String.format("%.2f",cant);
         cantstr=cantstr.replaceAll(",",".");
@@ -1512,7 +1512,13 @@ public class clsFELInFile {
         String descstr = String.format("%.2f",desc);
         descstr=descstr.replaceAll(",",".");
 
-        xml+="<dte:Item BienOServicio=\"B\" NumeroLinea=\""+linea+"\">";
+        //xml+="<dte:Item BienOServicio=\"B\" NumeroLinea=\""+linea+"\">";
+        if (prodBS.equalsIgnoreCase("S")) {
+            xml+="<dte:Item BienOServicio=\"S\" NumeroLinea=\""+linea+"\">";
+        } else {
+            xml+="<dte:Item BienOServicio=\"B\" NumeroLinea=\""+linea+"\">";
+        }
+
         xml+="<dte:Cantidad>"+cantstr+"</dte:Cantidad>";
         xml+="<dte:UnidadMedida>"+unid+"</dte:UnidadMedida>";
         xml+="<dte:Descripcion>"+descrip+"</dte:Descripcion>";

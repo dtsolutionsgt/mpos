@@ -1644,6 +1644,7 @@ public class BaseDatosVersion {
             db.execSQL(sql);
         } catch (Exception e) { }
 
+
         try {
             sql="CREATE TABLE [T_stock] ("+
                     "ID INTEGER NOT NULL,"+

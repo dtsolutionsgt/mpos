@@ -1905,6 +1905,10 @@ public class AppMethods {
         doPrint(0,prtipo);
     }
 
+	public void doPrintLANMulti() {
+		print3nstarw();
+	}
+
     @SuppressLint("SuspiciousIndentation")
 	public void doPrint(int copies, int tipoimpr) {
 		try {

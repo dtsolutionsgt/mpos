@@ -88,7 +88,6 @@ import com.dtsgt.classes.clsT_ipbypassObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classesws.*;
-import com.dtsgt.fel.FELFactura;
 import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -1143,6 +1142,8 @@ public class WSRec extends PBase {
         app.getURL();
         ws = new WebServiceHandler(WSRec.this, gl.wsurl, gl.timeout);
         xobj = new XMLObject(ws);
+
+        asignaValoresProductoBS();
 
         execws(1);
     }
@@ -4504,6 +4505,15 @@ public class WSRec extends PBase {
                 }
             });
 
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void asignaValoresProductoBS() {
+        try {
+            sql="UPDATE P_PRODUCTO SET UM_SALIDA=TIPO_PRODUCTO_FEL WHERE EMPRESA="+gl.emp;
+            wscom.execute(sql,null);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
