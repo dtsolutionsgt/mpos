@@ -81,7 +81,8 @@ public class ProdMenuCant extends PBase {
             if (cantfalt==1) ss="1 articulo";else ss=cantfalt+" artículos.";
             msgbox("Falta elegir "+ss);return;
         } else {
-            msgAskSave("Guardar");
+            //msgAskSave("Guardar");
+            saveItem();
         }
     }
 
