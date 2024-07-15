@@ -142,6 +142,7 @@ public class InvTransAlm extends PBase {
                 corel=item.corel;
 
                 if (item.estado==1) menuItem();else msgask(1,"¿Imprimir documento?");
+
             };
         });
     }
@@ -157,7 +158,8 @@ public class InvTransAlm extends PBase {
         try {
             fi=du.ffecha00(fechaini);ff=du.ffecha24(fechafin);
 
-            sql="WHERE (estado>0) AND (fechaini>="+fi+") AND (fechaini<="+ff+") ";
+            //sql="WHERE (estado>0) AND (fechaini>="+fi+") AND (fechaini<="+ff+") ";
+            sql="WHERE (1=1) ";
             if (idalmorig!=0) sql+=" AND (ALMACEN_ORIGEN="+idalmorig+") ";
             if (idalmdest!=0) sql+=" AND (ALMACEN_DESTINO="+idalmdest+") ";
 
@@ -617,7 +619,7 @@ public class InvTransAlm extends PBase {
             }
 
             cyear = (int) du.getyear(ff);
-            cmonth = (int) du.getmonth(ff)-1;
+            cmonth = (int) du.getmonth(ff);
             cday = (int) du.getday(ff);
 
             DatePickerDialog recogerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {

@@ -17,6 +17,7 @@ public class fbStock extends fbBase {
 
     public clsClasses.clsFbStock item,litem;
     public ArrayList<clsClasses.clsFbStock> items= new ArrayList<clsClasses.clsFbStock>();
+    public ArrayList<clsClasses.clsFbStock> bitems= new ArrayList<clsClasses.clsFbStock>();
     public ArrayList<clsClasses.clsT_stock> sitems= new ArrayList<clsClasses.clsT_stock>();
     public ArrayList<clsClasses.clsT_stockalm> saitems= new ArrayList<clsClasses.clsT_stockalm>();
 
@@ -377,6 +378,43 @@ public class fbStock extends fbBase {
 
                 public void onComplete(DatabaseError databaseError, boolean complete, DataSnapshot dataSnapshot) {
                     if (complete) transstatus=1;else transstatus=0;
+                    callBack=rnCallback;
+                    runCallBack();
+                }
+            });
+
+            return transresult;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean transStockUpdate(Runnable rnCallback) {
+
+        try {
+            transerr="";transresult=false;transstatus=-1;
+
+            fdt.runTransaction(new Transaction.Handler() {
+                public Transaction.Result doTransaction(MutableData mutableData) {
+
+                    try {
+                        for (int i = 0; i <bitems.size(); i++) {
+                            addItem("/"+idsuc+"/",bitems.get(i));
+                        }
+                        transresult=true;
+                    } catch (Exception e) {
+                        transerr=e.getMessage();transresult=false;
+                    }
+
+                    return Transaction.success(mutableData);
+                }
+
+                public void onComplete(DatabaseError databaseError, boolean complete, DataSnapshot dataSnapshot) {
+                    if (complete) {
+                        transstatus=1;
+                    } else {
+                        transstatus=0;
+                    }
                     callBack=rnCallback;
                     runCallBack();
                 }

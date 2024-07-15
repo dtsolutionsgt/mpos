@@ -12,12 +12,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.clsP_almacenObj;
+import com.dtsgt.classes.clsD_mov_almacenObj;
+import com.dtsgt.classes.clsD_movd_almacenObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsT_almacenObj;
 import com.dtsgt.classes.clsT_mov_almacenObj;
 import com.dtsgt.classes.clsT_movd_almacenObj;
+import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.LA_T_movd_almacen;
+import com.dtsgt.webservice.wsCommit;
 
 public class InvTransAlmDet extends PBase {
 
@@ -33,8 +36,11 @@ public class InvTransAlmDet extends PBase {
 
     private LA_T_movd_almacen adapter;
 
+    private fbStock fbs;
+    private wsCommit wscom;
+
     private String corel;
-    private int idtrasalmacen,savepos=-1;
+    private int idtrasalm,iddestalm,savepos=-1,idtrasalmacen;
     private boolean completo;
     private double cant1,cant2;
 
@@ -60,6 +66,9 @@ public class InvTransAlmDet extends PBase {
 
             corel=gl.idtrasalmacen;
 
+            fbs =new fbStock("Stock",gl.tienda);
+            wscom =new wsCommit(gl.wsurl);
+
             loadItem();
             listItems();
 
@@ -77,6 +86,11 @@ public class InvTransAlmDet extends PBase {
     }
 
     public void doSave(View view) {
+
+        if (idtrasalm==0) {
+            msgbox("No está definido almacen de transito, no se puede procedeer.");return;
+        }
+
         if (completo) {
             msgask(1,"¿Completar traslado?");
         } else {
@@ -160,11 +174,20 @@ public class InvTransAlmDet extends PBase {
             T_mov_almacenObj.fill("WHERE (COREL='"+corel+"')");
             mitem=T_mov_almacenObj.first();
 
+            T_almacenObj.fill("WHERE ES_DE_TRANSITO=1");
+            if (T_almacenObj.count>0) {
+                idtrasalm = T_almacenObj.first().codigo_almacen;
+            } else {
+                msgbox("No está definido almacen de transito, no se puede procedeer.");
+                idtrasalm = 0;return;
+            }
+
             T_almacenObj.fill("WHERE ACTIVO=1 ORDER BY NOMBRE");
             lblalmorig.setText(nombreAlmacen(mitem.almacen_origen));
             lblalmdest.setText(nombreAlmacen(mitem.almacen_destino));
             lblref.setText(""+mitem.referencia);
 
+            iddestalm = mitem.almacen_destino;
             idtrasalmacen=mitem.idtrasalmacen;
 
             T_movd_almacenObj.fill("WHERE (COREL='"+corel+"')");
@@ -236,7 +259,153 @@ public class InvTransAlmDet extends PBase {
 
     private void save() {
         try {
+            if (!saveDocTrans()) {
+                return;
+            }
+            if (!saveStock()) {
+                try {
+                    db.execSQL("DELETE FROM T_mov_almacen WHERE (COREL='"+corel+"')");
+                    db.execSQL("DELETE FROM T_movd_almacen WHERE (COREL='"+corel+"')");
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+                msgbox("Ocurrio error.");
+            }
 
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private boolean saveDocTrans() {
+        clsClasses.clsD_mov_almacen item;
+        clsClasses.clsD_movd_almacen ditem;
+        clsClasses.clsT_movd_almacen mditem;
+        double tot,total=0;
+
+        try {
+
+            String mcorel=gl.ruta+"_"+mu.getCorelBase();
+
+            db.beginTransaction();
+
+            clsD_mov_almacenObj D_mov_almacenObj=new clsD_mov_almacenObj(this,Con,db);
+            clsD_movd_almacenObj D_movd_almacenObj=new clsD_movd_almacenObj(this,Con,db);
+
+            db.execSQL("UPDATE T_mov_almacen SET estado=2,completo=1 WHERE (COREL='"+corel+"')");
+
+            T_movd_almacenObj.fill("WHERE (COREL='"+corel+"')");
+
+            for (int i = 0; i <T_movd_almacenObj.count; i++) {
+
+                mditem=T_movd_almacenObj.items.get(i);
+
+                ditem = clsCls.new clsD_movd_almacen();
+
+                ditem.corel=mcorel;
+                ditem.producto=mditem.producto;
+                ditem.cant=mditem.cant;
+                ditem.cantm=0;
+                ditem.peso=0;
+                ditem.pesom=0;
+                ditem.lote=" ";
+                ditem.codigoliquidacion=0;
+                ditem.unidadmedida=mditem.um;
+                ditem.coreldet=i;
+                ditem.precio=mditem.precio;
+                ditem.motivo_ajuste=0;
+
+                D_movd_almacenObj.add(ditem);
+
+                tot=ditem.cant*ditem.precio;
+                total+=tot;
+            }
+
+
+            item = clsCls.new clsD_mov_almacen();
+
+            item.corel=mcorel;
+            item.codigo_sucursal=gl.tienda;
+            item.almacen_origen=mitem.almacen_origen;
+            item.almacen_destino=mitem.almacen_destino;
+            item.anulado=0;
+            item.fecha=du.getActDateTime();
+            item.tipo="T";
+            item.usuario=gl.codigo_vendedor;
+            item.referencia=" ";
+            item.statcom="N";
+            item.impres=0;
+            item.codigoliquidacion=0;
+            item.codigo_proveedor=gl.codigo_proveedor;
+            item.total=total;
+
+            D_mov_almacenObj.add(item);
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            enviaEstado();
+
+            return true;
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean saveStock() {
+        clsClasses.clsFbStock bitem;
+        clsClasses.clsT_movd_almacen item;
+
+        try {
+
+            T_movd_almacenObj.fill("WHERE (COREL='"+corel+"')");
+
+            fbs.bitems.clear();
+            for (int i = 0; i <T_movd_almacenObj.count; i++) {
+                item=T_movd_almacenObj.items.get(i);
+
+                bitem=clsCls.new clsFbStock();
+
+                bitem.idprod=item.producto;
+                bitem.idalm=iddestalm;
+                bitem.cant=item.cant;
+                bitem.um=item.um;
+                bitem.bandera=0;
+
+                fbs.bitems.add(bitem);
+
+                bitem=clsCls.new clsFbStock();
+
+                bitem.idprod=item.producto;
+                bitem.idalm=idtrasalm;
+                bitem.cant=-item.cant;
+                bitem.um=item.um;
+                bitem.bandera=0;
+
+                fbs.bitems.add(bitem);
+
+            }
+
+            fbs.transStockUpdate(null);
+
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
+    private void enviaEstado() {
+        String sff= du.univfechahora(du.getActDateTime());
+
+        try {
+            sql="UPDATE D_TRASLADO_ALMACEN SET " +
+                    "CODIGO_ESTADO_TRANSACCION=3," +
+                    "FECHA_PROCESADO='"+sff+"'," +
+                    "USR_PROCESADO=" +gl.codigo_vendedor+" " +
+                    "WHERE (CODIGO_TRASLADO_ALMACEN="+ idtrasalmacen +")";
+            wscom.execute(sql,null);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -349,8 +518,6 @@ public class InvTransAlmDet extends PBase {
 
         alert.show();
     }
-
-
 
     //endregion
 
