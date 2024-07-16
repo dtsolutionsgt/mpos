@@ -11,10 +11,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsD_MovObj;
+import com.dtsgt.classes.clsD_mov_almacenObj;
 import com.dtsgt.classes.clsP_almacenObj;
+import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_almacenObj;
 import com.dtsgt.classes.clsT_mov_almacenObj;
 import com.dtsgt.classes.clsT_movd_almacenObj;
+import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extWaitDlg;
 import com.dtsgt.ladapt.LA_T_mov_almacen;
@@ -42,11 +46,14 @@ public class InvTransAlm extends PBase {
 
     private extWaitDlg waitdlg;
 
+    private clsRepBuilder rep;
+
     private boolean idle=true, es_fechafin;
     private String idmov,nomalmorig,nomalmdest,corel;
     private int idtrasalmacen,idalmtransito,idalmorig=0,idalmdest=0,modo_alm;
     private int cyear,cmonth,cday;
     private long fechaini, fechafin;
+    private double htot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +77,8 @@ public class InvTransAlm extends PBase {
             app.getURL();
             wst=new wsOpenDT(gl.wsurl);
             wscom =new wsCommit(gl.wsurl);
+
+            rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
 
             rnAlmTrans  = () -> {cbAlmTrans();};
             rnTrasLista = () -> {cbTrasLista();};
@@ -518,11 +527,92 @@ public class InvTransAlm extends PBase {
         }
     }
 
+    //endregion
+
+    //region Impresion
+
     private void impresion() {
+
+        //idtrasalmacen=item.idtrasalmacen;
+        //corel=item.corel;
+
         try {
+
+            rep.clear();
+
+            impresionEncabezado();
+            //impresionDetalle();
+
+            rep.line();
+            rep.empty();
+            rep.addtote("Valor total: ",mu.frmcur(htot));
+            rep.empty();
+            rep.empty();
+            rep.empty();
+
+            rep.save();
+
+            //app.printView();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void impresionEncabezado() {
+        long iffi,ifff;
+        int icoreltras,iest,iidao,iidad,iuseri,iuserf;
+        String tn="";
+
+        try {
+
+            T_mov_almacenObj.fill("WHERE (COREL='"+corel+"')");
+
+            icoreltras=T_mov_almacenObj.first().idtrasalmacen;
+            iidao=T_mov_almacenObj.first().almacen_origen;
+            iidad=T_mov_almacenObj.first().almacen_destino;
+            htot=T_mov_almacenObj.first().total;
+            iest=T_mov_almacenObj.first().estado;
+            iffi=T_mov_almacenObj.first().fechaini;
+            ifff=T_mov_almacenObj.first().fechafin;
+            iuseri=T_mov_almacenObj.first().usrini;
+            iuserf=T_mov_almacenObj.first().usrfin;
+
+            tn="TRASLADO ENTRE ALMACENES";
+
+            rep.empty();
+            rep.empty();
+            rep.addc(gl.empnom);
+            rep.addc(gl.tiendanom);
+            rep.empty();
+            rep.addc(tn);
+            rep.empty();
+            rep.add("Numero: "+icoreltras+" "+((iest==4)?"ANULADO":""));
+            rep.add("Almacen origen: "+nombreAlmacen(iidao));
+            rep.add("Almacen destino: "+nombreAlmacen(iidad));
+            rep.add("Fecha ingreso: "+du.sfecha(iffi)+" "+du.shora(iffi));
+            rep.add("Operador ingreso: ");
+            rep.add(nombreOperador(iuseri));
+            if (iest!=4 && ifff>0 ) {
+                rep.add("Fecha procesado: "+du.sfecha(ifff)+" "+du.shora(ifff));
+                rep.add("Operador proceso: ");
+                rep.add(nombreOperador(iuserf));
+            }
+            rep.empty();
+            rep.add3lrr("Cantidad","Costo  ","Valor");
+            rep.line();
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private String nombreOperador(int idoper) {
+        try {
+            clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+            VendedoresObj.fill("WHERE (CODIGO_VENDEDOR="+idoper+")");
+            return VendedoresObj.first().nombre;
+        } catch (Exception e) {
+            return " ";
         }
     }
 

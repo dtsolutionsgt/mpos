@@ -21,6 +21,7 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_res_mesaObj;
 import com.dtsgt.classes.clsT_comboObj;
+import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencomboObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ventaObj;
@@ -51,6 +52,7 @@ public class ResCaja extends PBase {
     private clsT_ordencomboprecioObj T_ordencomboprecioObj;
     private clsT_ventaObj T_ventaObj;
     private clsT_comboObj T_comboObj;
+    private clsT_ordenObj T_ordenObj;
 
     private clsClasses.clsT_orden oitem;
 
@@ -66,7 +68,7 @@ public class ResCaja extends PBase {
     private clsClasses.clsfbResSesion rsitem;
 
     private String corel,mesa,numpedido,idorden,actidorden;
-    private int cuenta,idmesero,actmesa;
+    private int cuenta,idmesero,actmesa,counter;
     private boolean idle=true,horiz,espedido,actorden;
 
 
@@ -90,6 +92,7 @@ public class ResCaja extends PBase {
             T_ordencomboprecioObj=new clsT_ordencomboprecioObj(this,Con,db);
             T_ventaObj=new clsT_ventaObj(this,Con,db);
             T_comboObj = new clsT_comboObj(this, Con, db);
+            T_ordenObj=new clsT_ordenObj(this,Con,db);
 
             actorden=gl.peActOrdenMesas;
 
@@ -288,15 +291,19 @@ public class ResCaja extends PBase {
     }
 
     private void cargaOrden() {
+        double tot;
+
         try {
             if (fbo.errflag) throw new Exception(fbo.error);
             if (!fbo.listresult) {
                 msgSync();return;
             }
 
+            tot=0;
             for (int i = 0; i <fbo.items.size(); i++) {
                 oitem=fbo.items.get(i);
                 if (oitem.cuenta==cuenta) {
+                    tot+=oitem.total;
                     addItem();
                 }
             }
@@ -790,7 +797,7 @@ public class ResCaja extends PBase {
                                     if (app.isOnWifi()!=0) {
                                         menuVenta();
                                     } else {
-                                        msgAskSync("La cuenta no esta actualizada.");
+                                        msgbox("La cuenta no esta actualizada.");
                                     }
                                 } else {
                                     msgbox("Antes de pagar la cuenta debe terminar la venta actual");
@@ -942,6 +949,7 @@ public class ResCaja extends PBase {
             T_ventaObj.reconnect(Con,db);
             T_comboObj.reconnect(Con,db);
             T_ordencomboprecioObj.reconnect(Con,db);
+            T_ordenObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }
