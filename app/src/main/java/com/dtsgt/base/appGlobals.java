@@ -78,7 +78,7 @@ public class appGlobals extends Application {
     public String dvcorreld,dvcorrelnc,dvestado,dvactuald,dvactualnc;
 
 	// Parametros por Pais
-	public double ventaMaxCFGuate=25;
+	public double ventaMaxCFGuate=2500;
 
 
 	// Parametros Extra
