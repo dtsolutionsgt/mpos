@@ -361,6 +361,7 @@ public class ResCaja extends PBase {
     }
 
     private void buildVenta() {
+        double tot;
 
         try {
 
@@ -377,9 +378,13 @@ public class ResCaja extends PBase {
             T_ordenObj.fill("WHERE COREL='"+corel+"'");
             counter=0;
 
+            tot=0;
             for (int i = 0; i <T_ordenObj.count; i++) {
                 oitem=T_ordenObj.items.get(i);
-                if (oitem.cuenta==cuenta) addItem();
+                if (oitem.cuenta==cuenta) {
+                    tot+=oitem.total;
+                    addItem();
+                }
             }
 
             gl.cuenta_borrar=cuenta;
@@ -388,6 +393,15 @@ public class ResCaja extends PBase {
             gl.caja_est_pago_cue="DELETE FROM T_ORDENCUENTA WHERE ((COREL=<>"+corel+"<>) AND (ID="+cuenta+"))";
 
             cargaCliente();
+
+            if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                if (gl.codigo_cliente==gl.emp*10) {
+                    if (tot>gl.ventaMaxCFGuate) {
+                        msgbox("Total de venta mayor a venta maxima permitida para CF (Q"+mu.frmint(gl.ventaMaxCFGuate)+").");
+                        return;
+                    }
+                }
+            }
 
             gl.ventalock=true;
 
@@ -1069,249 +1083,6 @@ public class ResCaja extends PBase {
 
     //endregion
 
-    /*
-    //region Recepcion Vieja
-
-    //region Recepcion orig
-
-    private void recibeOrdenes() {
-        int pp;
-        String fname;
-
-        if (loading) return;
-
-        loading=true;
-
-        try {
-            String path = Environment.getExternalStorageDirectory().getPath() + "/mposordcaja";
-            File directory = new File(path);
-            File[] files = directory.listFiles();
-
-            for (int i = 0; i < files.length; i++) {
-                fname=files[i].getName();
-                pp=fname.indexOf(".txt");
-                if (pp>0){
-                    if (!agregaOrden(path+"/"+fname)) {
-                        msgbox2("Ocurrio error en la recepción de requerimiento :\n"+app.errstr);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            msgbox2("recibeOrdenes : "+e.getMessage());
-        }
-
-        loading=false;
-        listItems();
-
-    }
-
-    public boolean agregaOrden(String fname) {
-        File file=null;
-        BufferedReader br=null;
-        ArrayList<String> items=new ArrayList<String>();
-        String sql;int lim;
-        boolean flag=true;
-
-        app.errstr="";
-
-        try {
-            file=new File(fname);
-            br = new BufferedReader(new FileReader(file));
-        } catch (Exception e) {
-            app.errstr=e.getMessage();return false;
-        }
-
-        if (flag) {
-            try {
-                db.beginTransaction();
-
-                while ((sql=br.readLine())!= null) {
-                    items.add(sql);
-                    db.execSQL(sql);
-                }
-
-                db.setTransactionSuccessful();
-                db.endTransaction();
-
-            } catch (Exception e) {
-                db.endTransaction();app.errstr=e.getMessage();
-                return false;
-            }
-        }
-
-        try {
-            br.close();
-        } catch (Exception e) {
-            app.errstr=e.getMessage();
-        }
-
-        file.delete();
-
-        return true;
-    }
-
-    private void iniciaOrdenes() {
-        if (!gl.pelCajaRecep) return;
-
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(ptask=new TimerTask() {
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public synchronized void run() {
-                        recibeOrdenes();
-                    }
-                });
-            }
-        }, delay, period);
-    }
-
-    private void cancelaOrdenes() {
-        if (!gl.pelCajaRecep) return;
-
-        try {
-            ptask.cancel();
-        } catch (Exception e) {}
-    }
-
-    //endregion
-
-    //region Recepcion de ordenes - recall
-
-    private void listaOrdenes() {
-        try {
-            //wsor =new wsOrdenRecall(gl.wsurl,gl.emp,idmesero);
-            //wsor.execute(rnOrdenesNuevos);
-            //("Actualizando, espere por favor . . .");
-        } catch (Exception e) {
-            app.addToOrdenLog(du.getActDateTime(),
-                    "ResCaja."+new Object(){}.getClass().getEnclosingMethod().getName(),
-                    e.getMessage(),gl.wsurl+"::"+gl.emp+"::"+idmesero);
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void procesaOrdenes() {
-        FileWriter wfile=null;
-        BufferedWriter writer=null;
-        File file;
-        String s="",corel="",fname;
-        int pp,ppe;
-        boolean flag=false;
-
-        if (wsor.errflag) {
-            toastlong("wsCallBack " + wsor.error);
-            app.addToOrdenLog(du.getActDateTime(),
-                    "ResCaja." + new Object() {}.getClass().getEnclosingMethod().getName(),
-                    wsor.error, gl.wsurl + "::" + gl.emp + "::" + idmesero);
-        }
-
-        if (wsor.items.size()==0) {
-            return;
-        }
-
-        try {
-
-            for (int i = 0; i < wsor.items.size(); i++) {
-
-                s= wsor.items.get(i);
-                pp=s.indexOf("FILE");ppe=s.indexOf("ENDFILE");
-
-                if (pp == 0) {
-                    corel = s.substring(4);fname = orddir + "/" + corel + ".txt";
-                    file = new File(fname);flag = !file.exists();
-
-                    if (flag) {
-
-                        try {
-                            wfile = new FileWriter(fname, false);
-                            writer = new BufferedWriter(wfile);
-
-                            s="DELETE FROM P_RES_SESION WHERE ID='"+corel+"'";
-                            writer.write(s);writer.write("\r\n");
-                            s="DELETE FROM T_ORDEN WHERE COREL='"+corel+"'";
-                            writer.write(s);writer.write("\r\n");
-                            s="DELETE FROM T_ORDENCUENTA WHERE COREL='"+corel+"'";
-                            writer.write(s);writer.write("\r\n");
-
-                        } catch (IOException e) {
-                            msgbox("MPos recall error : "+e.getMessage());flag=false;
-                        }
-                    } else {
-                        //items.add(corel);
-                    }
-                } else if (ppe == 0) {
-                    if (flag) {
-                        try {
-                            writer.close();writer = null;wfile = null;
-                            //items.add(corel);
-                        } catch (IOException e) {
-                             msgbox("MPos recall error : "+e.getMessage());
-                        }
-                    }
-                } else {
-                    if (flag) {
-                        try {
-                            writer.write(s);writer.write("\r\n");
-                        } catch (IOException e) {
-                            msgbox("MPos recall error : "+e.getMessage());flag=false;
-                        }
-                    }
-                }
-
-            }
-
-            msgbox("Lista de ordenes actualizada");
-        } catch (Exception e) {
-            msgbox("MPos recall error : "+e.getMessage());
-        }
-
-
-    }
-
-    public void listaMeseros() {
-        try {
-            extListDlg listdlg = new extListDlg();
-            listdlg.buildDialog(ResCaja.this,"Mesero");
-
-            clsVendedoresObj VendedoresObj = new clsVendedoresObj(this, Con, db);
-            sql = "WHERE (RUTA IN (SELECT CODIGO_RUTA FROM P_RUTA WHERE SUCURSAL="+gl.tienda+")) AND " +
-                    "(NIVEL=4) AND (ACTIVO=1) ORDER BY NOMBRE";
-            VendedoresObj.fill(sql);
-
-            for (int i = 0; i <VendedoresObj.count; i++) {
-                listdlg.add(VendedoresObj.items.get(i).nombre);
-            }
-
-            listdlg.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                    try {
-                        idmesero=VendedoresObj.items.get(position).codigo_vendedor;
-                        listaOrdenes();
-                        listdlg.dismiss();
-                    } catch (Exception e) {}
-                };
-            });
-
-            listdlg.setOnLeftClick(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listdlg.dismiss();
-                }
-            });
-
-            listdlg.show();
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-    }
-
-    //endregion
-
-    //endregion
-    */
 
     //region Aux
 
@@ -1539,6 +1310,7 @@ public class ResCaja extends PBase {
         }
 
     }
+
 
     private void msgAskPagar(String msg) {
         try {
