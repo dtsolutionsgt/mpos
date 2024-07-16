@@ -254,6 +254,7 @@ public class ResCaja extends PBase {
     }
 
     private void buildVenta() {
+        double tot;
 
         try {
 
@@ -263,7 +264,19 @@ public class ResCaja extends PBase {
             gl.mesero_venta=idmesero;
             gl.numero_orden=corel+"_"+cuenta;
             gl.nummesapedido=numpedido;
-            gl.cuenta_pagar=cuenta;
+
+            T_ordenObj.fill("WHERE COREL='"+corel+"'");
+            counter=0;
+
+            tot=0;
+            for (int i = 0; i <T_ordenObj.count; i++) {
+                oitem=T_ordenObj.items.get(i);
+                if (oitem.cuenta==cuenta) {
+                    tot+=oitem.total;
+                    addItem();
+                }
+            }
+
             gl.cuenta_borrar=cuenta;
 
             fbo=new fbOrden("Orden",gl.tienda,corel);
@@ -289,6 +302,19 @@ public class ResCaja extends PBase {
             }
 
             cargaCliente();
+
+            if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                if (gl.codigo_cliente==gl.emp*10) {
+                    if (tot>gl.ventaMaxCFGuate) {
+                        msgbox("Total de venta mayor a venta maxima permitida para CF (Q"+mu.frmint(gl.ventaMaxCFGuate)+").");
+                        return;
+                    }
+                }
+            }
+
+            gl.ventalock=true;
+
+            finish();
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -801,8 +827,8 @@ public class ResCaja extends PBase {
         }
     }
 
-    private void msgAskSync(String msg) {
-        try{
+    private void msgAskPagar(String msg) {
+        try {
 
             ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg);

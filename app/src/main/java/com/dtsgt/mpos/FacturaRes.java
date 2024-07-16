@@ -430,7 +430,8 @@ public class FacturaRes extends PBase {
 	}
 
 	public void paySelect(View view) {
-		pendiente=false;
+		if (!validaMontoMaximo()) return;
+        pendiente=false;
 		try{
 
 			if (fcorel==0) {
@@ -452,7 +453,10 @@ public class FacturaRes extends PBase {
 	}
 
 	public void payCash(View view) {
-		pendiente=false;
+
+		if (!validaMontoMaximo()) return;
+
+        pendiente=false;
 		try{
 
 			if (fcorel==0) {
@@ -468,8 +472,10 @@ public class FacturaRes extends PBase {
 		}
 	}
 
-	public void payCard(View view) {
-		pendiente=false;
+    public void payCard(View view) {
+		if (!validaMontoMaximo()) return;
+
+        pendiente=false;
 		gl.modo_cortesia=false;
 
 		if (tot<=0) {
@@ -496,8 +502,9 @@ public class FacturaRes extends PBase {
 		}
 	}
 
-	public void payCred(View view) {
-		pendiente=false;
+    public void payCred(View view) {
+		if (!validaMontoMaximo()) return;
+        pendiente=false;
 		try{
 
 			if (fcorel==0) {
@@ -519,12 +526,12 @@ public class FacturaRes extends PBase {
 		}
 	}
 
-	public void pendientePago(View view){
-		if (fcorel==0) {
-			msgbox("No existe un correlativo disponible, no se puede emitir factura");return;
-		}
-		askPendientePago();
-	}
+    public void pendientePago(View view){
+        if (fcorel==0) {
+            msgbox("No existe un correlativo disponible, no se puede emitir factura");return;
+        }
+        askPendientePago();
+    }
 
 	public void delPay(View view) {
 		askDelPago();
@@ -578,7 +585,8 @@ public class FacturaRes extends PBase {
 		ingresaPropina();
 	}
 
-	public void pago100(View view){
+    public void pago100(View view){
+		if (!validaMontoMaximo()) return;
 		if (tot<=0) {
 			msgbox("Total incorrecto");return;
 		}
@@ -586,7 +594,8 @@ public class FacturaRes extends PBase {
 		validaPagoEfectivo();
 	}
 
-	public void pago50(View view){
+    public void pago50(View view){
+		if (!validaMontoMaximo()) return;
 		if (tot<=0) {
 			msgbox("Total incorrecto");return;
 		}
@@ -594,7 +603,8 @@ public class FacturaRes extends PBase {
 		validaPagoEfectivo();
 	}
 
-	public void pago20(View view){
+    public void pago20(View view){
+		if (!validaMontoMaximo()) return;
 		if (tot<=0) {
 			msgbox("Total incorrecto");return;
 		}
@@ -602,7 +612,8 @@ public class FacturaRes extends PBase {
 		validaPagoEfectivo();
 	}
 
-	public void pago10(View view){
+    public void pago10(View view){
+		if (!validaMontoMaximo()) return;
 		if (tot<=0) {
 			msgbox("Total incorrecto");return;
 		}
@@ -610,7 +621,8 @@ public class FacturaRes extends PBase {
 		validaPagoEfectivo();
 	}
 
-	public void pago5(View view){
+    public void pago5(View view){
+		if (!validaMontoMaximo()) return;
 		if (tot<=0) {
 			msgbox("Total incorrecto");return;
 		}
@@ -624,9 +636,10 @@ public class FacturaRes extends PBase {
 			if (tot<=0) {
 				msgbox("Total incorrecto");return;
 			}
-			validaPagoEfectivo();
-		}
-	}
+			if (!validaMontoMaximo()) return;
+            validaPagoEfectivo();
+        }
+    }
 
 	private void setHandlers(){
 
@@ -709,6 +722,25 @@ public class FacturaRes extends PBase {
 
 		} catch (Exception e){
 			mu.msgbox("processFinalPromo: " + e.getMessage());
+		}
+
+	}
+
+	private void showPromo(){
+
+		try {
+
+			browse=1;
+			gl.promprod="";
+			gl.promcant=0;
+			gl.promdesc=descg;
+
+			Intent intent = new Intent(this,DescBon.class);
+			startActivity(intent);
+
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+			mu.msgbox( e.getMessage());
 		}
 
 	}
@@ -3626,6 +3658,18 @@ public class FacturaRes extends PBase {
 		}
 
 		return uniqueID;
+	}
+
+	private boolean validaMontoMaximo() {
+		if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+			if (gl.codigo_cliente==gl.emp*10) {
+				if (tot>gl.ventaMaxCFGuate) {
+					msgbox("Total de venta mayor a venta maxima permitida para CF (Q"+mu.frmint(gl.ventaMaxCFGuate)+").");
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	//endregion

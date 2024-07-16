@@ -1703,6 +1703,16 @@ public class Venta extends PBase {
                 return;
             }
 
+
+            if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                if (gl.codigo_cliente==gl.emp*10) {
+                    if (tot>gl.ventaMaxCFGuate) {
+                        msgbox("Total de venta mayor a venta maxima permitida para CF (Q"+mu.frmint(gl.ventaMaxCFGuate)+").");
+                        return;
+                    }
+                }
+            }
+
             gl.gstr="";
             browse=1;
 

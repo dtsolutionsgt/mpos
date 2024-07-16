@@ -97,6 +97,10 @@ public class appGlobals extends Application {
     public double dvdispventa;
     public String dvcorreld,dvcorrelnc,dvestado,dvactuald,dvactualnc;
 
+	// Parametros por Pais
+	public double ventaMaxCFGuate=25;
+
+
 	// Parametros Extra
 	public String peModal,peMon,peFormatoFactura,peMMod,peFEL,peComNoAplic,peTextoPie;
 	public String peFraseIVA,peFraseISR,peImpFactIP;
