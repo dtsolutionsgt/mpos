@@ -494,7 +494,6 @@ public class InvTransAlm extends PBase {
     private void anularTraslado() {
         String sff= du.univfechahora(du.getActDateTime());
 
-
         try {
             sql="UPDATE D_TRASLADO_ALMACEN SET " +
                 "CODIGO_ESTADO_TRANSACCION=4," +

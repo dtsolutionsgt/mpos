@@ -141,7 +141,7 @@ public class FacturaRes extends PBase {
 	private long fecha,fechae;
 	private int fcorel,clidia, Nivel_Media_Pago,idtransbar,hora;
 	private boolean EsNivelPrecioDelivery =false,esorden;
-	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,osql;
+	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,osql,sprodlinea;
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres,recid,ordennum,prodlinea,modo_super;
 
 	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,propina,propinaperc,propinaext;
@@ -3807,7 +3807,6 @@ public class FacturaRes extends PBase {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
 		}
 	}
-
 
     /*
     private boolean divideComandaOld() {
