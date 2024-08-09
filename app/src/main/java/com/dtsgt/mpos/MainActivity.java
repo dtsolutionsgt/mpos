@@ -86,7 +86,7 @@ public class MainActivity extends PBase {
             super.onCreate(savedInstanceState);
 
             if (pantallaHorizontal()) {
-                if (scrdim > 8) {
+                if (scrdim > 6) {
                     setContentView(R.layout.activity_main);
                     modopantalla = 1;
                 } else {
