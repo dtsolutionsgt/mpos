@@ -1570,7 +1570,7 @@ public class clsDocFactura extends clsDocument {
         sst=fh_grav+fh_exent;
         if (Math.abs(sst-sv_subt)<0.02) sst=sv_subt;
 
-        if (desc>=0.01) rep.addtotsp("Subtotal: ", sst);
+        if (desc>=0.01 | propina>=0.01) rep.addtotsp("Subtotal: ", sst);
         //rep.addtotsp("Subtotal: ", stot);
         //rep.addtotsp("Total gravado: ", fh_grav);
         //rep.addtotsp("Subtotal: ", fh_grav+fh_exent+fh_imp1);
@@ -1579,14 +1579,16 @@ public class clsDocFactura extends clsDocument {
         //rep.addtotsp("Venta no sujeta: ", fh_exent);
         //rep.addtotsp("Importe exonerado: ", fh_exon);
         if (desc>=0.01) rep.addtotsp("Descuento: ", -desc);
+        if (propina>=0.01) rep.addtotsp("Propina: ", propina);
+
         rep.addtotsp("Total a pagar: ", tot);
 
         // montoLetra();
 
 
         if (modorest) {
-            rep.add("");
-            rep.add("Le atendio: "+nommesero);
+            //rep.add("");
+            //rep.add("Le atendio: "+nommesero);
         }
 
         if (parallevar){

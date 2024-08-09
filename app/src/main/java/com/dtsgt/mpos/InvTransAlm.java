@@ -11,8 +11,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_mov_almacenObj;
+import com.dtsgt.classes.clsD_movd_almacenObj;
 import com.dtsgt.classes.clsP_almacenObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_almacenObj;
@@ -33,6 +35,7 @@ public class InvTransAlm extends PBase {
     private TextView lblalmorig,lblalmdest,lblfechaini,lblfechafin;
 
     private clsT_mov_almacenObj T_mov_almacenObj;
+    private clsT_movd_almacenObj T_movd_almacenObj;
     private clsT_almacenObj T_almacenObj;
 
     public ArrayList<clsClasses.clsD_traslado_almacen> tras= new ArrayList<clsClasses.clsD_traslado_almacen>();
@@ -70,6 +73,7 @@ public class InvTransAlm extends PBase {
             lblfechafin = findViewById(R.id.lblDatefin2);
 
             T_mov_almacenObj=new clsT_mov_almacenObj(this,Con,db);
+            T_movd_almacenObj=new clsT_movd_almacenObj(this,Con,db);
             T_almacenObj=new clsT_almacenObj(this,Con,db);
 
             waitdlg= new extWaitDlg();
@@ -375,7 +379,7 @@ public class InvTransAlm extends PBase {
             item.estado=0;
             item.fechaini=du.getActDateTime();
             item.fechafin=0;
-            item.usrini=0;
+            item.usrini=gl.codigo_vendedor;
             item.usrfin=0;
             item.idalmtrans=idalmtransito;
             item.completo=0;
@@ -533,15 +537,12 @@ public class InvTransAlm extends PBase {
 
     private void impresion() {
 
-        //idtrasalmacen=item.idtrasalmacen;
-        //corel=item.corel;
-
         try {
 
             rep.clear();
 
             impresionEncabezado();
-            //impresionDetalle();
+            impresionDetalle();
 
             rep.line();
             rep.empty();
@@ -552,7 +553,7 @@ public class InvTransAlm extends PBase {
 
             rep.save();
 
-            //app.printView();
+            app.printView();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -590,17 +591,37 @@ public class InvTransAlm extends PBase {
             rep.add("Almacen origen: "+nombreAlmacen(iidao));
             rep.add("Almacen destino: "+nombreAlmacen(iidad));
             rep.add("Fecha ingreso: "+du.sfecha(iffi)+" "+du.shora(iffi));
-            rep.add("Operador ingreso: ");
-            rep.add(nombreOperador(iuseri));
-            if (iest!=4 && ifff>0 ) {
+            rep.add("Operador ingreso: "+nombreOperador(iuseri));
+            if (ifff>0 ) {
                 rep.add("Fecha procesado: "+du.sfecha(ifff)+" "+du.shora(ifff));
-                rep.add("Operador proceso: ");
-                rep.add(nombreOperador(iuserf));
+                rep.add("Operador proceso: "+nombreOperador(iuserf));
             }
             rep.empty();
-            rep.add3lrr("Cantidad","Costo  ","Valor");
+            rep.add3lrres("Cantidad","Costo","Valor ");
             rep.line();
 
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void impresionDetalle() {
+        String dum;
+        double dcant,dprec,dtot;
+
+        try {
+
+            T_movd_almacenObj.fill("WHERE (COREL='"+corel+"')");
+
+            for (int i = 0; i <T_movd_almacenObj.count; i++) {
+                dum=T_movd_almacenObj.items.get(i).um;
+                dcant=T_movd_almacenObj.items.get(i).cant;
+                dprec=T_movd_almacenObj.items.get(i).precio;
+                dtot=Math.abs(dcant*dprec);
+
+                rep.add(app.prodNombre(T_movd_almacenObj.items.get(i).producto));
+                rep.add3lrre(mu.frmdecno(dcant)+" "+dum,dprec,dtot);
+            }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -693,6 +714,8 @@ public class InvTransAlm extends PBase {
                 sr="En proceso";break;
             case 3:
                 sr="Completo";break;
+            case 4:
+                sr="Anulado";break;
         }
 
         return sr;
@@ -802,6 +825,7 @@ public class InvTransAlm extends PBase {
                 try {
                     if (position==0) {
                         gl.idtrasalmacen=corel;
+                        browse=1;
                         startActivity(new Intent(this,InvTransAlmDet.class));
                     } else {
                         msgask(2,"¿Anular traslado?");
@@ -831,7 +855,13 @@ public class InvTransAlm extends PBase {
             gl.dialogr = () -> {dialogswitch();};
 
             T_mov_almacenObj.reconnect(Con,db);
+            T_movd_almacenObj.reconnect(Con,db);
             T_almacenObj.reconnect(Con,db);
+
+            if (browse==1) {
+                browse=0;
+                listItems();return;
+            }
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

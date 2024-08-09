@@ -513,6 +513,11 @@ public class clsRepBuilder {
 		items.add(ts);
 	}
 
+	public void add3lrres(String s1, String s2, String s3) {
+		ts=ltrim(s1,prwt-4)+rtrim(s2,prwt+2)+rtrim(s3,prwt+4);
+		items.add(ts);
+	}
+
     public void add3sss(String s1,String s2,String s3) {
         ts=ltrim(s1,prwt)+rtrim(s2,prwt)+rtrim(s3,prwt);
         items.add(ts);

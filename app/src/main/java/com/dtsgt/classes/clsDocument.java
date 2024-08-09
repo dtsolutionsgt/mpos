@@ -793,8 +793,8 @@ public class clsDocument {
 
         rep.addc(tiendanom);
         rep.add("");
-        rep.add("NIT: " + tiendanit);
-        rep.add("");
+        //rep.add("NIT: " + tiendanit);
+        //rep.add("");
         rep.add("Fecha: " + fsfecha);
         rep.add("");
 

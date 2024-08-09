@@ -259,13 +259,17 @@ public class InvTransAlmDet extends PBase {
 
     private void save() {
         try {
-            if (!saveDocTrans()) {
-                return;
-            }
-            if (!saveStock()) {
+            if (!saveDocTrans())  return;
+
+            if (saveStock()) {
+                toastcent("Transacción completa");
+                finish();
+            } else {
                 try {
                     db.execSQL("DELETE FROM T_mov_almacen WHERE (COREL='"+corel+"')");
                     db.execSQL("DELETE FROM T_movd_almacen WHERE (COREL='"+corel+"')");
+                    db.execSQL("DELETE FROM D_mov_almacen WHERE (COREL='"+corel+"')");
+                    db.execSQL("DELETE FROM D_movd_almacen WHERE (COREL='"+corel+"')");
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }
@@ -282,6 +286,7 @@ public class InvTransAlmDet extends PBase {
         clsClasses.clsD_movd_almacen ditem;
         clsClasses.clsT_movd_almacen mditem;
         double tot,total=0;
+        int dmonvcor;
 
         try {
 
@@ -292,8 +297,11 @@ public class InvTransAlmDet extends PBase {
             clsD_mov_almacenObj D_mov_almacenObj=new clsD_mov_almacenObj(this,Con,db);
             clsD_movd_almacenObj D_movd_almacenObj=new clsD_movd_almacenObj(this,Con,db);
 
-            db.execSQL("UPDATE T_mov_almacen SET estado=2,completo=1 WHERE (COREL='"+corel+"')");
+            db.execSQL("UPDATE T_mov_almacen " +
+                    "SET estado=3,completo=1,usrfin="+gl.codigo_vendedor+",fechafin="+du.getActDateTime()+" " +
+                    "WHERE (COREL='"+corel+"')");
 
+            dmonvcor=D_movd_almacenObj.newID("SELECT MAX(coreldet) FROM D_movd_almacen")+1;
             T_movd_almacenObj.fill("WHERE (COREL='"+corel+"')");
 
             for (int i = 0; i <T_movd_almacenObj.count; i++) {
@@ -311,7 +319,7 @@ public class InvTransAlmDet extends PBase {
                 ditem.lote=" ";
                 ditem.codigoliquidacion=0;
                 ditem.unidadmedida=mditem.um;
-                ditem.coreldet=i;
+                ditem.coreldet=dmonvcor+i;
                 ditem.precio=mditem.precio;
                 ditem.motivo_ajuste=0;
 
@@ -370,7 +378,7 @@ public class InvTransAlmDet extends PBase {
 
                 bitem.idprod=item.producto;
                 bitem.idalm=iddestalm;
-                bitem.cant=item.cant;
+                bitem.cant=item.cantact;
                 bitem.um=item.um;
                 bitem.bandera=0;
 
@@ -380,7 +388,7 @@ public class InvTransAlmDet extends PBase {
 
                 bitem.idprod=item.producto;
                 bitem.idalm=idtrasalm;
-                bitem.cant=-item.cant;
+                bitem.cant=-item.cantact;
                 bitem.um=item.um;
                 bitem.bandera=0;
 

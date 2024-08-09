@@ -488,16 +488,6 @@ public class OrdenMenu extends PBase {
 
             db.beginTransaction();
 
-            /*
-            if (!newitem){
-                db.execSQL("DELETE FROM T_ORDENCOMBO WHERE (COREL='"+idorden+"') AND (IdCombo="+uitemid+")");
-                db.execSQL("DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")");
-            } else {
-                guardaPrecios();
-            }
-            db.execSQL("UPDATE T_ordencomboprecio SET PRECTOTAL="+precnuevo+" WHERE (COREL='"+idorden+"') AND (IdCombo="+uitemid+")");
-            */
-
             newid=du.getOrdenCorel(gl.codigo_ruta);
 
             guardaPrecios();

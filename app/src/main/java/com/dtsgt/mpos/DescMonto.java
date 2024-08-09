@@ -57,7 +57,7 @@ public class DescMonto extends PBase {
                     }
 
                     if (gl.peDescPerc) {
-                        if (khand.value >= 100) {
+                        if (khand.value > 100) {
                             msgbox("Porcentaje de descuento incorrecto.");
                         } else {
                             gl.desc_monto = khand.value;
