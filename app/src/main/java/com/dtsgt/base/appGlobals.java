@@ -1,5 +1,6 @@
 package com.dtsgt.base;
 
+import android.app.Activity;
 import android.app.Application;
 
 import com.dtsgt.base.clsClasses.clsBonifItem;
@@ -140,4 +141,5 @@ public class appGlobals extends Application {
 	//todos los clientes.
 	public Boolean Sincronizar_Clientes = false;
 	public double auxCantVenta = 0;
+
 }

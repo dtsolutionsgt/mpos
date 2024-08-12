@@ -180,7 +180,8 @@ public class Orden extends PBase {
         if (pantallaHorizontal()) {
             setContentView(R.layout.activity_orden);horiz=true;
         } else {
-            setContentView(R.layout.activity_orden_ver);horiz=false;
+            setContentView(R.layout.activity_orden);horiz=true;
+            //setContentView(R.layout.activity_orden_ver);horiz=false;
         }
 
         super.InitBase();

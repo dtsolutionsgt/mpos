@@ -90,6 +90,7 @@ public class CierreX extends PBase {
         }
 
         super.InitBase();
+
         addlog("Cierres",""+du.getActDateTime(),String.valueOf(gl.vend));
 
         TextView lblTit = findViewById(R.id.lblTit);

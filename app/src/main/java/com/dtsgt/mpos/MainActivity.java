@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -73,7 +74,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
 
-    private String  parVer = "4.9.3.0";
+    private String  parVer = "4.9.4.0";
     private boolean bloqueo_venta=false;
 
     private Typeface typeface;
@@ -603,6 +604,8 @@ public class MainActivity extends PBase {
         */
 
         //ubicacion();
+
+
     }
 
     private void processLogIn() {

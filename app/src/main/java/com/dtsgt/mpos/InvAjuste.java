@@ -83,6 +83,7 @@ public class InvAjuste extends PBase {
         } else {
             setContentView(R.layout.activity_inv_salida_ver);
         }
+
         super.InitBase();
 
         listView = findViewById(R.id.listView1);
