@@ -4815,7 +4815,6 @@ public class Venta extends PBase {
              Cursor DT=Con.OpenDT(sql);
              int i=DT.getCount();
 
-
              if (DT.getCount()>0) {
                  DT.moveToFirst();
                  while (!DT.isAfterLast()) {

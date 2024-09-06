@@ -937,7 +937,14 @@ public class CierreX extends PBase {
 
                     rep.line();
                     rep.add4lrrTotZ(tot,totF,totSinImp);
-
+                    rep.add("");
+                    rep.add("");
+                    rep.line();
+                    rep.add("");
+                    rep.add("Facturas no certificadas: "+gl.fact_sin_cert);
+                    rep.add("");
+                    rep.line();
+                    rep.add("");
                     tot=0;totF=0;totSinImp=0;
                     rep.empty();
                 }

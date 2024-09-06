@@ -148,11 +148,15 @@ public class FELVerificacion extends PBase {
                 }
             };
 
-            if (facts.size()>0) {
-                procesaValidacion();
+            if (app.isOnWifi()==0) {
+                showMsgExit("NO HAY CONEXIÓN A INTERNET");
             } else {
-                toastcentlong("No existen facturas pendientes de certificación");
-                finish();
+                if (facts.size()>0) {
+                    procesaValidacion();
+                } else {
+                    toastcentlong("No existen facturas pendientes de certificación");
+                    finish();
+                }
             }
 
         } catch (Exception e) {
@@ -669,6 +673,7 @@ public class FELVerificacion extends PBase {
         try {
 
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle("Certificación FEL");
             dialog.setMessage(msg);
             dialog.setCancelable(false);
             dialog.setNeutralButton("OK", (dialog1, which) -> {

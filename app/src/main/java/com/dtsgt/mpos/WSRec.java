@@ -4022,7 +4022,7 @@ public class WSRec extends PBase {
 
         validaFechaContrato();
     }
-
+man
     private void validaFechaContrato() {
         try {
             sql="SELECT dbo.AndrDate(FEL_FECHA_VENCE_CONTRATO) FROM P_SUCURSAL WHERE (CODIGO_SUCURSAL="+gl.tienda+")";

@@ -265,7 +265,8 @@ public class clsFELInFile {
                 errorcon=true;errorflag=true;constat=false;
                 return errorflag;
             } catch (IOException e) {
-                error=e.getMessage();
+                //error=e.getMessage();
+                error="SIN CONEXIÓN A INTERNET\n\n"+e.getMessage();
                 errorcon=true;errorflag=true;constat=false;
                 return errorflag;
             }
