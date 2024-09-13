@@ -6,104 +6,6 @@
     android:clickable="true"
     tools:context=".MainActivity">
 
-    <RelativeLayout
-        android:id="@+id/rellayup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/textView127"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="-60dp">
-
-        <ImageView
-            android:id="@+id/imgNext"
-            android:layout_width="400dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/relstrip"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="10dp"
-            android:clickable="true"
-            android:maxWidth="610dp"
-            android:onClick="doLoginScreen"
-            android:src="@drawable/logo"
-            tools:ignore="SpeakableTextPresentCheck" />
-
-        <RelativeLayout
-            android:id="@+id/relstrip"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/top_strip"
-            android:paddingBottom="5dp">
-
-            <TextView
-                android:id="@+id/lblCDisp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/textView82"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="0dp"
-                android:ellipsize="end"
-                android:gravity="clip_vertical|center_horizontal"
-                android:maxLines="1"
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp"
-                android:text="@string/nombre_caja"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/textView82"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:ellipsize="end"
-                android:gravity="center_horizontal"
-                android:maxLines="1"
-                android:text="@string/nombre_empresa"
-                android:textColor="#FFFFFF"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/lblCUsed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="10dp"
-                android:gravity="center_horizontal|center_vertical"
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp"
-                android:text="@string/tienda"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#000000"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:visibility="invisible" />
-
-            <ImageView
-                android:id="@+id/imageView134"
-                android:layout_width="128dp"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/lblCDisp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="0dp"
-                android:src="@drawable/mpos_blanco" />
-        </RelativeLayout>
-
-    </RelativeLayout>
-
     <TextView
         android:id="@+id/textView127"
         android:layout_width="wrap_content"
@@ -121,6 +23,103 @@
         android:id="@+id/rellaydn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/rellayup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/relEnter"
+            android:layout_marginBottom="10dp">
+
+            <ImageView
+                android:id="@+id/imgNext"
+                android:layout_width="400dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/relstrip"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp"
+                android:clickable="true"
+                android:maxWidth="610dp"
+                android:onClick="doLoginScreen"
+                android:src="@drawable/logo"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <RelativeLayout
+                android:id="@+id/relstrip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/top_strip"
+                android:paddingBottom="5dp">
+
+                <TextView
+                    android:id="@+id/lblCDisp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textView82"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="0dp"
+                    android:ellipsize="end"
+                    android:gravity="clip_vertical|center_horizontal"
+                    android:maxLines="1"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:text="@string/nombre_caja"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView82"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:ellipsize="end"
+                    android:gravity="center_horizontal"
+                    android:maxLines="1"
+                    android:text="@string/nombre_empresa"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/lblCUsed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:text="@string/tienda"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="#000000"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:id="@+id/imageView134"
+                    android:layout_width="128dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/lblCDisp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="0dp"
+                    android:src="@drawable/mpos_blanco" />
+            </RelativeLayout>
+
+        </RelativeLayout>
 
         <Spinner
             android:id="@+id/spinner22"

@@ -47,7 +47,7 @@ import org.json.JSONObject;
 public class CliPos extends PBase {
 
 	private EditText txtNIT,txtNom,txtRef,txtCorreo,txtTel;
-	private TextView lblPed,lblDom,lblDir,btnNIT,btnCF;
+	private TextView lblPed,lblDom,lblDir,btnNIT,btnCF,lblmuni;
     private RelativeLayout relped,relcli;
 	private ProgressBar pbar;
 	private CheckBox cbllevar,cbdomicilio;
@@ -90,6 +90,7 @@ public class CliPos extends PBase {
         lblPed = (TextView) findViewById(R.id.textView177);lblPed.setText("");
         lblDom = (TextView) findViewById(R.id.textView237);
         lblDir= (TextView) findViewById(R.id.textView238);
+        lblmuni= (TextView) findViewById(R.id.textView317);lblmuni.setText("");
         relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
         relcli = (RelativeLayout) findViewById(R.id.relclipos);
         pbar = (ProgressBar) findViewById(R.id.progressBar4);pbar.setVisibility(View.INVISIBLE);
@@ -334,8 +335,8 @@ public class CliPos extends PBase {
         }
     }
 
-    public void doWspnError(View view) {
-        toast(wspnerror);
+    public void doMuni(View view) {
+        startActivity(new Intent(this,Municipio.class));
     }
 
     private void setHandlers() {
@@ -1574,6 +1575,22 @@ public class CliPos extends PBase {
         }
     }
 
+    private void municipio() {
+        String nmuni="";
+
+        try {
+            sql = "SELECT nombre FROM P_municipio WHERE CODIGO='" + gl.cli_muni + "'";
+            Cursor DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+            nmuni=DT.getString(0);
+        } catch (Exception e) {
+            nmuni="";
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        lblmuni.setText(nmuni);
+    }
+
     //endregion
 
     //region Dialogos
@@ -1660,6 +1677,8 @@ public class CliPos extends PBase {
     protected void onResume() {
         try{
             super.onResume();
+
+            municipio();
 
             if (gl.pePedidos) iniciaPedidos();
 

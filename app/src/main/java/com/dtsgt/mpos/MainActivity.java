@@ -74,7 +74,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
 
-    private String  parVer = "4.9.5.0";
+    private String  parVer = "4.9.6.2";
     private boolean bloqueo_venta=false;
 
     private Typeface typeface;
@@ -1011,12 +1011,25 @@ public class MainActivity extends PBase {
 
             if (gl.tienda != 0) {
                 try {
-                    sql = "SELECT DESCRIPCION, FEL_USUARIO_CERTIFICACION, FEL_LLAVE_CERTIFICACION FROM P_SUCURSAL WHERE CODIGO_SUCURSAL='" + gl.tienda + "'";
+                    sql = "SELECT DESCRIPCION, FEL_USUARIO_CERTIFICACION, FEL_LLAVE_CERTIFICACION,CODIGO_MUNICIPIO FROM P_SUCURSAL WHERE CODIGO_SUCURSAL='" + gl.tienda + "'";
                     DT = Con.OpenDT(sql);
                     DT.moveToFirst();
                     gl.tiendanom = DT.getString(0);
                     gl.felUsuarioCertificacion = DT.getString(1);
                     gl.felLlaveCertificacion = DT.getString(2);
+
+                    try {
+                        gl.cli_muni_suc= DT.getString(3);
+
+                        sql = "SELECT codigo_departamento FROM P_municipio WHERE CODIGO='" + gl.cli_muni_suc + "'";
+                        DT = Con.OpenDT(sql);
+                        DT.moveToFirst();
+                        gl.cli_depto_suc=DT.getString(0);
+                    } catch (Exception e) {
+                        gl.cli_muni_suc="";gl.cli_depto_suc="";
+                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . Muni: "+e.getMessage());
+                    }
+
                 } catch (Exception e) {
                     gl.tiendanom = "";
                 }

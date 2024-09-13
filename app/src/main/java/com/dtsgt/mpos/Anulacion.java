@@ -274,6 +274,7 @@ public class Anulacion extends PBase {
 				mu.msgbox("Debe seleccionar un documento.");return;
 			}
 
+			/*
 			if (tipo==3) {
 				clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
 				D_facturaObj.fill("WHERE COREL='"+itemid+"'");
@@ -282,6 +283,7 @@ public class Anulacion extends PBase {
 					msgAnul("La factura se puede anular únicamente en el transcurso de mes de la emisión");return;
 				}
 			}
+			*/
 
 			boolean flag=gl.peAnulSuper;
 			if ((gl.rol==2 || gl.rol==3)) {
@@ -393,8 +395,8 @@ public class Anulacion extends PBase {
 							"WHERE (D_FACTURA.FEELUUID=' ') AND  (D_FACTURA.ANULADO=0)  " +
 							"ORDER BY D_FACTURA.COREL DESC ";
 				} else {
-					dfi=dateini;if (dfi<fecha_menor) dfi=fecha_menor;
-					dff=datefin;if (dff<fecha_menor) dff=fecha_menor;
+					dfi=dateini;//if (dfi<fecha_menor) dfi=fecha_menor;
+					dff=datefin;//if (dff<fecha_menor) dff=fecha_menor;
 
 					sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
 							"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
@@ -1720,16 +1722,17 @@ public class Anulacion extends PBase {
 
 				if(dateTxt) {
 					datefin = du.cfechaRep(cyear, cmonth, cday, false);
-					if (datefin<fecha_menor) datefin=fecha_menor;
+					//if (datefin<fecha_menor) datefin=fecha_menor;
 				}
 
 				if(!dateTxt){
 					dateini  = du.cfechaRep(cyear, cmonth, cday, true);
-					if (dateini<fecha_menor) dateini=fecha_menor;
+					//if (dateini<fecha_menor) dateini=fecha_menor;
 				}
 
 				long fechaSel=du.cfechaSinHora(cyear, cmonth, cday)*10000;
 
+				/*
 				if (tipo==3){
 					if (fechaSel<fecha_menor){
 						msgbox("La fecha permitida de anulación es 5 días atras");
@@ -1737,6 +1740,7 @@ public class Anulacion extends PBase {
 						//return;
 					}
 				}
+				*/
 
 				//listar nuevamente los documentos
 				listItems();

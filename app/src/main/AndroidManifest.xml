@@ -5,7 +5,7 @@
     android:installLocation="preferExternal"
     android:largeHeap="true"
     android:versionCode="5"
-    android:versionName="4.9.5.0">
+    android:versionName="4.9.6.2">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -585,8 +585,8 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".InvRecep"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".InvVista"
@@ -786,8 +786,11 @@
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
-
+        <activity
+            android:name=".Municipio"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:exported="false" />
     </application>
 
 </manifest>

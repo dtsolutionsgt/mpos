@@ -1446,6 +1446,10 @@ public class clsFELInFile {
 
             xml+="<dte:Frases>";
 
+            int frisr=fraseISR;
+            int friva=fraseIVA;
+
+
             if (fraseISR==4) {
                 xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"1\"></dte:Frase>";
                 xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"2\"></dte:Frase>";

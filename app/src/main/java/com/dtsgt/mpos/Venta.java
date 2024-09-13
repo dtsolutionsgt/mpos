@@ -5325,6 +5325,7 @@ public class Venta extends PBase {
         return true;
     }
 
+
     //endregion
 
     //region Dialogs
@@ -6328,7 +6329,10 @@ public class Venta extends PBase {
                     mtimerc.postDelayed(mrunnerc,1000);
                 }
 
+                gl.cli_muni=gl.cli_muni_suc;
+                gl.cli_depto=gl.cli_depto_suc;
                 iniciaMasVendidos();
+
             } else {}
 
             if (browse==7) {

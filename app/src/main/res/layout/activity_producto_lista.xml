@@ -91,20 +91,20 @@
 
         <ImageView
             android:id="@+id/imageView146"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_below="@+id/relRoad"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="false"
             android:layout_alignParentBottom="false"
-            android:layout_marginStart="-10dp"
-            android:layout_marginTop="-10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:adjustViewBounds="true"
             android:clickable="true"
             android:onClick="doExit"
-            android:padding="10dp"
+            android:padding="5dp"
             android:src="@drawable/key_bksp"
             android:visibility="visible" />
 
