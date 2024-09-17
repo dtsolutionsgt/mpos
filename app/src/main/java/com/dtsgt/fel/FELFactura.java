@@ -637,7 +637,7 @@ public class FELFactura extends PBase {
             String sxml=fel.xml;
             sxml=sxml+"";
 
-            //guardarXMLComoArchivo(sxml,corel);
+            guardarXMLComoArchivo(sxml,corel);
 
         } catch (Exception e) {
             msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -646,7 +646,7 @@ public class FELFactura extends PBase {
 
     public void guardarXMLComoArchivo(String sxml, String corel) {
         // Formato de la fecha para el nombre del archivo
-        String fileName = "dte_fact" + corel + ".txt";
+        String fileName = "dte_fact.txt";
 
         // Directorio en almacenamiento externo
         File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
