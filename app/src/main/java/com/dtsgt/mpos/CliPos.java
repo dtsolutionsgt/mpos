@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -47,8 +48,8 @@ import org.json.JSONObject;
 public class CliPos extends PBase {
 
 	private EditText txtNIT,txtNom,txtRef,txtCorreo,txtTel;
-	private TextView lblPed,lblDom,lblNIT,lblDir,btnNIT,btnCF;
-	private TextView lblPed,lblDom,lblDir,btnNIT,btnCF,lblmuni;
+	private TextView lblPed,lblDom,lblNIT,lblDir,btnNIT,btnCF,lblMuni;
+    private ImageView imgmuni;
     private RelativeLayout relped,relcli;
 	private ProgressBar pbar;
 	private CheckBox cbllevar,cbdomicilio;
@@ -88,10 +89,16 @@ public class CliPos extends PBase {
 		txtRef = (EditText) findViewById(R.id.editText1);txtRef.setText("Ciudad");
         txtCorreo= (EditText) findViewById(R.id.txtCorreo);txtCorreo.setText("");
         txtTel= (EditText) findViewById(R.id.editTextNumber4);txtTel.setText("");
+        lblMuni = (TextView) findViewById(R.id.textView317);lblMuni.setText("");
         lblPed = (TextView) findViewById(R.id.textView177);lblPed.setText("");
         lblDom = (TextView) findViewById(R.id.textView237);
         lblDir= (TextView) findViewById(R.id.textView238);
         lblNIT = (TextView) findViewById(R.id.textView1);lblNIT.setText("NIT");
+
+        try {
+            imgmuni= findViewById(R.id.imageView148);imgmuni.setVisibility(View.INVISIBLE);
+        } catch (Exception e) {}
+
 
         relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
         relcli = (RelativeLayout) findViewById(R.id.relclipos);
@@ -124,6 +131,9 @@ public class CliPos extends PBase {
         btnCF.setText("Consumidor Final");
         if (gl.codigo_pais.equalsIgnoreCase("GT")) {
             btnNIT.setText("Cliente con NIT");
+            try {
+                imgmuni.setVisibility(View.VISIBLE);
+            } catch (Exception e) {}
         } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
             btnNIT.setText("Cliente con RTN");
         } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
@@ -1536,10 +1546,13 @@ public class CliPos extends PBase {
             nmuni=DT.getString(0);
         } catch (Exception e) {
             nmuni="";
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-        lblmuni.setText(nmuni);
+        try {
+            lblMuni.setText(nmuni);
+        } catch (Exception e) {  }
+
     }
 
     //endregion

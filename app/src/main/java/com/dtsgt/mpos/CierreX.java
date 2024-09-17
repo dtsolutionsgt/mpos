@@ -946,6 +946,7 @@ public class CierreX extends PBase {
                     rep.add("Facturas no certificadas: "+gl.fact_sin_cert);
                     rep.add("");
                     rep.line();
+                    totalesHonduras();
                     rep.add("");
                     tot=0;totF=0;totSinImp=0;
                     rep.empty();
@@ -1529,6 +1530,24 @@ public class CierreX extends PBase {
                 return false;
             }
 
+        }
+
+        private void totalesHonduras() {
+            if (!gl.codigo_pais.equalsIgnoreCase("HN")) return;
+
+            try {
+
+                rep.add("");
+                rep.add("Facturas: "+gl.fd_hn_exen);
+                rep.add("Facturas: "+gl.fd_hn_grav);
+                rep.add("Facturas: "+gl.fd_hn_imp);
+                rep.add("Facturas: "+gl.fd_hn_cori+" a "+gl.fd_hn_corf );
+                rep.add("");
+                rep.line();
+                rep.add("");
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
         }
 
     }

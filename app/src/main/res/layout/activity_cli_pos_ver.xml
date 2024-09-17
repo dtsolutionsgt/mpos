@@ -390,6 +390,22 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true" />
 
+        <TextView
+            android:id="@+id/textView349"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/editTextNumber4"
+            android:layout_alignTop="@+id/editText1"
+            android:layout_marginStart="213dp"
+            android:layout_marginTop="109dp"
+            android:layout_marginEnd="20dp"
+            android:layout_toStartOf="@+id/imageView148"
+            android:text="TextView"
+            android:textColor="#202020"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="invisible" />
+
         <CheckBox
             android:id="@+id/chkPickup"
             android:layout_width="130dp"

@@ -573,6 +573,8 @@ public class Caja extends PBase {
 
                 if (dt.getCount()!=0){
 
+                    factTotHonduras();
+
                     dt.moveToFirst();
 
                     while(!dt.isAfterLast()){
@@ -597,44 +599,6 @@ public class Caja extends PBase {
                                 }
                             }
                         }
-
-                        /*
-                        if (cred==1) {
-
-                            if(dt.getInt(3)==4){ //#CKFK 20200623 Cuando la forma de pago es Crédito
-
-                                corelidx++;
-
-                                try {
-                                    sql="DROP INDEX IX_P_CAJACIERRE ";
-                                    db.execSQL(sql);
-                                } catch (Exception e) {
-                                    String ss=e.getMessage();
-                                    ss=ss+"";
-                                }
-
-                                sql="SELECT EMPRESA FROM P_cajacierre";
-                                dt2=Con.OpenDT(sql);
-                                if (dt2.getCount()>0) {
-                                    sql="SELECT MAX(EMPRESA) FROM P_cajacierre";
-                                    dt2=Con.OpenDT(sql);
-                                    ecor=dt2.getInt(0)+1;
-                                } else {
-                                    ecor=1;
-                                }
-
-                                itemC.empresa=ecor;
-                                itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase()+"C"+corelidx;
-                                montoIni = mu.round2(dt.getDouble(2));
-                                itemC.montoini = montoIni;
-                                itemC.montofin = montoCred;
-                                itemC.montodif = mu.round2(montoCred - montoIni);
-                                itemC.estado=1;
-
-                                caja.add(itemC);
-                            }
-                        }
-                        */
 
                         dt.moveToNext();
                     }
@@ -747,6 +711,7 @@ public class Caja extends PBase {
                 gl.reportid=10;
                 gl.FinMonto=montoFin;
                 gl.fact_sin_cert=pendienteFELHoy();
+
 
                 startActivity(new Intent(this, CierreX.class));
 
@@ -901,6 +866,42 @@ public class Caja extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
+    private void factTotHonduras() {
+        Cursor dt;
+
+        try {
+
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+
+                sql="SELECT SUM(P.EXENTO), SUM(P.GRAVADO), SUM(P.IMP1),SUM(P.IMP2) " +
+                    "FROM  D_facturahn P INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
+                    "WHERE F.KILOMETRAJE=0 AND F.ANULADO=0 AND F.FECHA>="+gl.lastDate;
+                dt=Con.OpenDT(sql);
+
+                if (dt.getCount()>0) {
+                    dt.moveToFirst();
+                    gl.fd_hn_exen=dt.getDouble(0);
+                    gl.fd_hn_grav=dt.getDouble(1);
+                    gl.fd_hn_imp=dt.getDouble(2)+dt.getDouble(3);
+                }
+
+                sql="SELECT MIN(CORELATIVO), MAX(CORELATIVO) FROM  D_FACTURA F " +
+                    "WHERE KILOMETRAJE=0 AND FECHA>="+gl.lastDate;
+                dt=Con.OpenDT(sql);
+
+                if (dt.getCount()>0) {
+                    dt.moveToFirst();
+                    gl.fd_hn_cori=dt.getInt(0);
+                    gl.fd_hn_corf=dt.getInt(1);
+                }
+
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
 
     //endregion
 

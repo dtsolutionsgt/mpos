@@ -1850,14 +1850,17 @@ public class FacturaRes extends PBase {
 
 			//region D_FACTURAMUNI
 
-			clsD_facturamuniObj D_facturamuniObj=new clsD_facturamuniObj(this,Con,db);
-			clsClasses.clsD_facturamuni fmuni=clsCls.new clsD_facturamuni();
+			if ( gl.codigo_pais.equalsIgnoreCase("GT")) {
 
-			fmuni.corel=corel;
-			fmuni.idmuni=gl.cli_muni;
-			fmuni.iddepto=gl.cli_depto;
+				clsD_facturamuniObj D_facturamuniObj = new clsD_facturamuniObj(this, Con, db);
+				clsClasses.clsD_facturamuni fmuni = clsCls.new clsD_facturamuni();
 
-			D_facturamuniObj.add(fmuni);
+				fmuni.corel = corel;
+				fmuni.idmuni = gl.cli_muni;
+				fmuni.iddepto = gl.cli_depto;
+
+				D_facturamuniObj.add(fmuni);
+			}
 
 			//endregion
 

@@ -51,14 +51,16 @@ public class appGlobals extends Application {
 			    uidingrediente, idgrres, idgrsel, idgrpos, usuario_cortesia,bar_prod,cuenta_borrar,cuenta_pagar,
 				mesa_vend,mesa_codigo,invcent_cod,invcen_alm,sal_idneg,desc_tipo_apl,prcu_mesa,
 			    prcu_vend,precuenta_cuenta,combo_cuenta,dias_credito,precuenta_modo,
-			    servidor_anio,dialogid,idcombo,set_cant,set_cant_max;
+			    servidor_anio,dialogid,idcombo,set_cant,set_cant_max,fact_sin_cert,fd_hn_cori,fd_hn_corf;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel,
                 corelmov, linea_sel="",mesa_alias,nummesapedido, nombre_cortesia,bar_um,bar_idbarril;
 	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir,sal_iddep,sal_idmun,sal_neg,sal_mun,sal_dep,
-			     prcu_corel,nom_alm,nom_alm2,mesa_area,nit_tipo,invcent_tipo,FEL_llave_cont;
+			     prcu_corel,nom_alm,nom_alm2,mesa_area,nit_tipo,invcent_tipo,FEL_llave_cont,
+  	             cli_muni,cli_muni_suc,cli_depto,cli_depto_suc;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,
-			      dom_total,bar_cant,descadd,monto_propina,limite_credito,preccombo;
+			      dom_total,bar_cant,descadd,monto_propina,limite_credito,preccombo,
+				  fd_hn_imp,fd_hn_exen,fd_hn_grav;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,paraentrega,
