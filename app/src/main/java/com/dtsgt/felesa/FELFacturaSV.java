@@ -271,9 +271,9 @@ public class FELFacturaSV extends PBase {
             lbl1.setText("Certificando documento ...");
 
             if (!tipodoc.equalsIgnoreCase("C")) {
-                FactESA.Certifica(felcorel, jfact.json);
+                FactESA.Certifica(felcorel, jfact.json,fel.fel_usuario_certificacion,fel.fel_llave_certificacion);
             } else {
-                FactESA.Certifica(felcorel, jcred.json);
+                FactESA.Certifica(felcorel, jcred.json,fel.fel_usuario_certificacion,fel.fel_llave_certificacion);
             }
         } catch (Exception e) {
             msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());

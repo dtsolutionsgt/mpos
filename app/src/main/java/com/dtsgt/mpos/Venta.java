@@ -1265,7 +1265,6 @@ public class Venta extends PBase {
         impval=mu.round6dec(impval); //JP20230911
         impval=impval*cant;
 
-
         try {
 
             if (sinimp) {

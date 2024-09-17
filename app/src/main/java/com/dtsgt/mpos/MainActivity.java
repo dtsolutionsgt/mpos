@@ -92,7 +92,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
 
-    private String parVer = "5.4.3.4";
+    private String parVer = "5.4.4.3";
     private boolean bloqueo_venta=false;
 
     private Typeface typeface;
@@ -106,7 +106,7 @@ public class MainActivity extends PBase {
             super.onCreate(savedInstanceState);
 
             if (pantallaHorizontal()) {
-                if (scrdim > 7) {
+                if (scrdim > 6) {
                     setContentView(R.layout.activity_main);
                     modopantalla = 1;
                 } else {
@@ -141,7 +141,7 @@ public class MainActivity extends PBase {
         }
 
         if (pantallaHorizontal()) {
-            if (scrdim > 8) {
+            if (scrdim >7) {
                 setContentView(R.layout.activity_main);
                 modopantalla = 1;
             } else {
@@ -1047,8 +1047,7 @@ public class MainActivity extends PBase {
 
             if (gl.tienda != 0) {
                 try {
-                    sql = "SELECT DESCRIPCION, FEL_USUARIO_CERTIFICACION, FEL_LLAVE_CERTIFICACION, NIT " +
-                          "FROM P_SUCURSAL WHERE CODIGO_SUCURSAL='" + gl.tienda + "'";
+                    sql ="SELECT DESCRIPCION, FEL_USUARIO_CERTIFICACION, FEL_LLAVE_CERTIFICACION, NIT " + "FROM P_SUCURSAL WHERE CODIGO_SUCURSAL='" + gl.tienda + "'";
                     DT = Con.OpenDT(sql);
                     DT.moveToFirst();
                     gl.tiendanom = DT.getString(0);

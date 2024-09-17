@@ -131,9 +131,9 @@ public class FELESATest extends PBase {
 
             callbackmode=1;
             if (esFactura) {
-                if (JSOND_Factura()) FactESA.Certifica("100004001",jfact.json);
+                //if (JSOND_Factura()) FactESA.Certifica("100004001",jfact.json,fel.fel_usuario_certificacion,fel.fel_llave_certificacion);
             } else {
-                if (JSOND_Credito()) FactESA.Certifica(dnum, jcred.json);
+                //if (JSOND_Credito()) FactESA.Certifica(dnum, jcred.json,fel.fel_usuario_certificacion,fel.fel_llave_certificacion);
             }
 
         } catch (Exception e) {
@@ -168,7 +168,8 @@ public class FELESATest extends PBase {
     public void doFactura(View view) {
         try {
             callbackmode=1;
-            if (creaJSONFijoFactura()) FactESA.Certifica("100002005",jfact.json);
+            //if (creaJSONFijoFactura()) FactESA.Certifica("100002005",jfact.json);
+
             //if (creaJSONCredito()) FactESA.Certifica(jfact.json);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -489,7 +490,7 @@ public class FELESATest extends PBase {
             if (!cllave.isEmpty()) {
                 msgbox("Certificado en mode de contingencia");
                 certFacturaCont(cllave);
-                FactESA.Certifica("100004051",jfact.json);
+               // FactESA.Certifica("100004051",jfact.json);
                 return true;
             } else {
                 msgbox("No se logro certificar:\n "+jcont.conterr);

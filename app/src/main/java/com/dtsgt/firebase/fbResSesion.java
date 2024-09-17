@@ -190,7 +190,6 @@ public class fbResSesion extends fbBase {
                                             error = e.getMessage();errflag = true;break;
                                         }
 
-
                                     } // if
                                 }
 

@@ -3,10 +3,8 @@ package com.dtsgt.felesa;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.dtsgt.base.clsClasses;
 import com.dtsgt.mpos.PBase;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -34,7 +32,7 @@ public class clsFactESA {
     private PBase parent;
     private Context cont;
 
-    private String jsfirm,corel;
+    private String jsfirm,corel, usrcert, llavecert;
 
     private int responsecode,timeout=45000;
 
@@ -51,9 +49,11 @@ public class clsFactESA {
         WSURL=URL;
     }
 
-    public void Certifica(String Corel,String json)  {
+    public void Certifica(String Corel,String json,String usr_cert,String llave_cert)  {
         corel=Corel;
         jsfirm=json;jsonsave=json;
+        usrcert =usr_cert;
+        llavecert =llave_cert;
 
         AsyncCallWS wstask = new AsyncCallWS();
         wstask.execute();
@@ -77,8 +77,10 @@ public class clsFactESA {
             connection.setReadTimeout(timeout);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json");
-            connection.setRequestProperty("usuario","06141106141147");
-            connection.setRequestProperty("llave","df3b5497c338a7e78d659a468e72a670");
+            //connection.setRequestProperty("usuario","06141106141147");
+            //connection.setRequestProperty("llave","3f9e4c2014c4e05e036c17b45c028605");
+            connection.setRequestProperty("usuario", usrcert);
+            connection.setRequestProperty("llave", llavecert);
             connection.setRequestProperty("identificador",corel);
             connection.setUseCaches (false);
             connection.setDoInput(true);

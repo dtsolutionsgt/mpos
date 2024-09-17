@@ -780,9 +780,10 @@ public class ResCaja extends PBase {
             extListDlg listdlg = new extListDlg();
             listdlg.buildDialog(ResCaja.this,"Mesa "+mesa+" , Cuenta #"+cuenta);
 
-            listdlg.add("Datos cliente");
             listdlg.add("Pagar");
             listdlg.add("Borrar de la lista");
+            if (gl.codigo_pais.equalsIgnoreCase("GT"))  listdlg.add("Datos cliente");
+
             //listdlg.add("Precuenta");
 
             listdlg.setOnItemClickListener(new OnItemClickListener() {
@@ -790,9 +791,8 @@ public class ResCaja extends PBase {
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
                     try {
                         switch (position) {
+
                             case 0:
-                                datosCuenta();break;
-                            case 1:
                                 if (ventaVacia()) {
                                     if (app.isOnWifi()!=0) {
                                         menuVenta();
@@ -803,12 +803,14 @@ public class ResCaja extends PBase {
                                     msgbox("Antes de pagar la cuenta debe terminar la venta actual");
                                 }
                                 break;
-                            case 2:
+                            case 1:
                                 msgAskReset("Esta opción no borra la cuenta y los articulos,\n" +
                                              "solo la elimina de la lista. Despues de imprimir\n" +
                                              "la precuenta va a aparecer de nuevo.\n" +
                                              "¿Borrar la cuenta de la lista?");
                                 break;
+                            case 2:
+                                datosCuenta();break;
                             case 3:
                                 if (ventaVacia()) {
                                     crearVenta();

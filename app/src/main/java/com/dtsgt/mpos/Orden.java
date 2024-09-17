@@ -5365,9 +5365,9 @@ public class Orden extends PBase {
 
             listdlg.add(R.drawable.cambio_usuario,"Cambiar cuenta");//imagen , texto - si imagen=0 no se despliega
             listdlg.add(R.drawable.recibir_archivos,"Dividir");
-            listdlg.add(R.drawable.avanzar,"Mover cuenta a otra mesa");
             listdlg.add(R.drawable.avanzar,"Borrar");
             if (escombo) listdlg.add(R.drawable.avanzar,"Ver detalle combo");
+            //listdlg.add(R.drawable.avanzar,"Mover cuenta a otra mesa");
 
 
             listdlg.setOnItemClickListener(new OnItemClickListener() {
@@ -5385,15 +5385,15 @@ public class Orden extends PBase {
                                 }
                                 break;
                             case 2:
-                                listaMesasParaMover();
-                                break;
-                            case 3:
                                 valsupermodo=1;
                                 validaSupervisor();
                                 break;
-                            case 4:
+                            case 3:
                                 gl.combo_edit=false;
                                 startActivity(new Intent(Orden.this,OrdenMenu.class));
+                                break;
+                            case 4:
+                                listaMesasParaMover();
                                 break;
                         }
 

@@ -335,6 +335,8 @@ public class Precio {
 		double pr, stot, pprec, tsimp;
 		String sprec = "";
 
+		codprod=cprod;
+
 		try {
 
 			sql = "SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO=" + cprod + ") AND (NIVEL=" + nnivel + ") ";

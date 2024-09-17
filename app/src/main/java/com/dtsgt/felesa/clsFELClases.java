@@ -111,6 +111,7 @@ public class clsFELClases {
             jsdoc.put("documento",jshead);
 
             json = jsdoc.toString();
+            json+="";
         }
 
     }
@@ -216,6 +217,7 @@ public class clsFELClases {
             jsdoc.put("documento",jshead);
 
             json = jsdoc.toString();
+            json+="";
         }
 
     }
