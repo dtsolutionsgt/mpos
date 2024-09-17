@@ -223,6 +223,12 @@ public class clsClasses {
         public double val2;
     }
 
+    public class clsD_facturamuni {
+        public String corel;
+        public String idmuni;
+        public String iddepto;
+    }
+
     public class clsD_facturap {
         public int  empresa;
         public String corel;
@@ -1980,18 +1986,6 @@ public class clsClasses {
 
     //region Varias Clases
 
-	public class clsLista {
-		public int  pk;
-		public String f1;
-		public String f2;
-		public String f3;
-		public String f4;
-		public String f5;
-		public String f6;
-		public String f7;
-		public String f8;
-	}
-
 	//region Aux
 
 	public class clsCD {
@@ -2146,6 +2140,18 @@ public class clsClasses {
     }
 
     //endregion
+
+    public class clsLista {
+        public int  pk;
+        public String f1;
+        public String f2;
+        public String f3;
+        public String f4;
+        public String f5;
+        public String f6;
+        public String f7;
+        public String f8;
+    }
 
     public class clsView {
         public int  pk;

@@ -19,6 +19,7 @@ import com.dtsgt.classes.clsD_factura_felObj;
 import com.dtsgt.classes.clsD_facturacObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturafObj;
+import com.dtsgt.classes.clsD_facturamuniObj;
 import com.dtsgt.classes.clsD_facturapObj;
 import com.dtsgt.classes.clsD_facturaprObj;
 import com.dtsgt.classes.clsD_facturarObj;
@@ -38,6 +39,8 @@ import com.dtsgt.mpos.WSEnv;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -136,7 +139,7 @@ public class FELFactura extends PBase {
             fel.fraseIVA=suc.codigo_escenario_iva;
             fel.fraseISR=suc.codigo_escenario_isr;
 
-            //if(fel.fraseIVA==3) fel.fraseIVA=1;
+            if(fel.fraseIVA==3) fel.fraseIVA=1;
 
             fel.fel_afiliacion_iva=suc.fel_afiliacion_iva;
             fel.fel_tipo_documento=app.felTipoDocumento(fel.fel_afiliacion_iva);
@@ -490,6 +493,7 @@ public class FELFactura extends PBase {
                 gl.feluuid="";
                 gl.FELmsg="Ocurrió error en FEL :\n\n"+"Factura: "+fel.mpos_identificador_fact+"\n"+ fel.error;
                 startActivity(new Intent(this,FELmsgbox.class));
+                toastlong(gl.FELmsg);
                 finish();
             }
 
@@ -575,11 +579,24 @@ public class FELFactura extends PBase {
 
                 clsP_departamentoObj P_departamentoObj=new clsP_departamentoObj(this,Con,db);
                 P_departamentoObj.fill("WHERE CODIGO='"+iddep+"'");
-
                 if (P_departamentoObj.count>0) dep=P_departamentoObj.first().nombre;else dep=" ";
 
             } else {
                 muni=" ";dep=" ";
+            }
+
+            clsD_facturamuniObj D_facturamuniObj=new clsD_facturamuniObj(this,Con,db);
+            D_facturamuniObj.fill("WHERE Corel='"+corel+"'");
+            if (D_facturamuniObj.count>0) {
+                idmuni=D_facturamuniObj.first().idmuni;
+                iddep=D_facturamuniObj.first().iddepto;
+
+                P_municipioObj.fill("WHERE CODIGO='"+idmuni+"'");
+                muni=P_municipioObj.first().nombre;
+
+                clsP_departamentoObj P_departamentoObj=new clsP_departamentoObj(this,Con,db);
+                P_departamentoObj.fill("WHERE CODIGO='"+iddep+"'");
+                if (P_departamentoObj.count>0) dep=P_departamentoObj.first().nombre;else dep=" ";
             }
 
             fel.emisorDireccion(dir,fel.codigo_postal,muni,dep,gl.codigo_pais);
@@ -590,6 +607,11 @@ public class FELFactura extends PBase {
             factf.nit=factf.nit.replace(".","");
             factf.nit=factf.nit.replace(" ","");
             factf.nit=factf.nit.toUpperCase();
+
+            //#EJC20211222: Chapusería de navidad, Jaros por favor corregir esto.
+            if(fel.fraseIVA==3) {
+                fel.fraseIVA=1;
+            }
 
             fel.receptor(factf.nit,
                          factf.nombre,
@@ -634,10 +656,33 @@ public class FELFactura extends PBase {
 
             fel.completar(fact.serie,fact.corelativo);
 
+            String sxml=fel.xml;
+            sxml=sxml+"";
+
+            guardarXMLComoArchivo(sxml,corel);
+
         } catch (Exception e) {
             msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
+    public void guardarXMLComoArchivo(String sxml, String corel) {
+        // Formato de la fecha para el nombre del archivo
+        String fileName = "dte_fact.txt";
+
+        // Directorio en almacenamiento externo
+        File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File file = new File(directory, fileName);
+
+        // Escritura del contenido XML al archivo
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(sxml.getBytes());
+            fos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void marcaFactura() {
 

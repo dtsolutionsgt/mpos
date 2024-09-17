@@ -14,14 +14,22 @@ public class FELmsgbox extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_f_e_lmsgbox);
+        try {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_f_e_lmsgbox);
 
-        super.InitBase();
+            super.InitBase();
 
-        lbl1 = (TextView) findViewById(R.id.textView169);
-        lbl1.setText(gl.FELmsg);
+            lbl1 = (TextView) findViewById(R.id.textView169);
 
+            String fm=gl.FELmsg;
+            if (fm.length()>150) fm=fm.substring(0,149)+"...";
+
+            lbl1.setText(fm);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     public void doExit(View view) {

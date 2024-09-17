@@ -44,6 +44,7 @@ import com.dtsgt.classes.clsD_factura_felObj;
 import com.dtsgt.classes.clsD_factura_svObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturahnObj;
+import com.dtsgt.classes.clsD_facturamuniObj;
 import com.dtsgt.classes.clsD_facturaprObj;
 import com.dtsgt.classes.clsD_facturarObj;
 import com.dtsgt.classes.clsD_facturasObj;
@@ -1844,6 +1845,19 @@ public class FacturaRes extends PBase {
 				D_factura_svObj.add(itemt);
 
 			}
+
+			//endregion
+
+			//region D_FACTURAMUNI
+
+			clsD_facturamuniObj D_facturamuniObj=new clsD_facturamuniObj(this,Con,db);
+			clsClasses.clsD_facturamuni fmuni=clsCls.new clsD_facturamuni();
+
+			fmuni.corel=corel;
+			fmuni.idmuni=gl.cli_muni;
+			fmuni.iddepto=gl.cli_depto;
+
+			D_facturamuniObj.add(fmuni);
 
 			//endregion
 

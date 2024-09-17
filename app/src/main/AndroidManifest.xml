@@ -605,6 +605,7 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".InvRecep"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -882,8 +883,11 @@
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
-
+        <activity
+            android:name=".Municipio"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:exported="false" />
     </application>
 
 </manifest>

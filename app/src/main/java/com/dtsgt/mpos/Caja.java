@@ -27,6 +27,7 @@ import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_cierre_credObj;
 import com.dtsgt.classes.extMontoDlg;
+import com.dtsgt.fel.FELVerificacion;
 import com.dtsgt.ladapt.LA_T_cierre_cred;
 import com.dtsgt.webservice.wsOpenDT;
 
@@ -206,6 +207,17 @@ public class Caja extends PBase {
 
         app.getURL();
         wso=new wsOpenDT(gl.wsurl);
+
+
+        if (pendienteFEL()>0) {
+            gl.felcorel="";gl.feluuid="";
+
+            if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
+                startActivity(new Intent(Caja.this, FELVerificacion.class));
+            } else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
+                startActivity(new Intent(Caja.this, FELVerificacion.class));
+            }
+        }
 
     }
 
@@ -734,6 +746,7 @@ public class Caja extends PBase {
 
                 gl.reportid=10;
                 gl.FinMonto=montoFin;
+                gl.fact_sin_cert=pendienteFELHoy();
 
                 startActivity(new Intent(this, CierreX.class));
 
@@ -1386,6 +1399,47 @@ public class Caja extends PBase {
 
         return 1;
     }
+
+    private int pendienteFEL() {
+        long flim,f1;
+
+        try {
+            flim=du.addDays(du.getActDate(),-5);
+
+            sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0) AND (FECHA>="+flim+")";
+            Cursor DT=Con.OpenDT(sql);
+            int i=DT.getCount();
+
+            if (DT.getCount()>0) {
+                DT.moveToFirst();
+                while (!DT.isAfterLast()) {
+                    String ss=DT.getString(0);
+                    DT.moveToNext();
+                }
+            }
+
+            if (DT!=null) DT.close();
+            return i;
+
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private int pendienteFELHoy() {
+        try {
+            sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND  (KILOMETRAJE=0) ";
+            Cursor DT=Con.OpenDT(sql);
+            int i=DT.getCount();
+
+            if (DT!=null) DT.close();
+            return i;
+
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
 
     //endregion
 

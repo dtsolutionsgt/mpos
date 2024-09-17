@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -639,6 +640,8 @@ public class MainActivity extends PBase {
         */
 
         //ubicacion();
+
+
     }
 
     private void processLogIn() {

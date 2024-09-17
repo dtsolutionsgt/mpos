@@ -3378,7 +3378,33 @@ public class Menu extends PBase {
         }
     }
 
-    //endregion
+	private int pendienteFEL() {
+		long flim,f1;
+
+		try {
+			flim=du.addDays(du.getActDate(),-5);
+
+			sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0) AND (FECHA>="+flim+")";
+			Cursor DT=Con.OpenDT(sql);
+			int i=DT.getCount();
+
+			if (DT.getCount()>0) {
+				DT.moveToFirst();
+				while (!DT.isAfterLast()) {
+					String ss=DT.getString(0);
+					DT.moveToNext();
+				}
+			}
+
+			if (DT!=null) DT.close();
+			return i;
+
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+
+	//endregion
 
     //region Dialogs
 
@@ -3732,6 +3758,8 @@ public class Menu extends PBase {
 
 		dialog.setPositiveButton("Si", (dialog1, which) -> {
 			try {
+				if (pendienteFEL()==0) toastcent("No existen facturas pendientes");
+
 				gl.felcorel="";gl.feluuid="";
 
 				if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {

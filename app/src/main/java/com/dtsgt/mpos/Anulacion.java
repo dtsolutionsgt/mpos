@@ -458,8 +458,8 @@ public class Anulacion extends PBase {
 							"WHERE (D_FACTURA.FEELUUID=' ') AND  (D_FACTURA.ANULADO=0)  " +
 							"ORDER BY D_FACTURA.COREL DESC ";
 				} else {
-					dfi=dateini;if (dfi<fecha_menor) dfi=fecha_menor;
-					dff=datefin;if (dff<fecha_menor) dff=fecha_menor;
+					dfi=dateini;//if (dfi<fecha_menor) dfi=fecha_menor;
+					dff=datefin;//if (dff<fecha_menor) dff=fecha_menor;
 
 					sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
 							"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR, D_FACTURA.AYUDANTE,D_FACTURA.FEELCONTINGENCIA "+
@@ -1939,6 +1939,7 @@ public class Anulacion extends PBase {
 
 				long fechaSel=du.cfechaSinHora(cyear, cmonth, cday)*10000;
 
+				/*
 				if (tipo==3){
 					if (modo_gt) {
 						if (fechaSel < fecha_menor) {
@@ -1950,6 +1951,7 @@ public class Anulacion extends PBase {
 						}
 					}
 				}
+				*/
 
 				//listar nuevamente los documentos
 				listItems();

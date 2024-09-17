@@ -1644,6 +1644,16 @@ public class BaseDatosVersion {
             db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [D_facturamuni] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "IDMUNI TEXT NOT NULL,"+
+                    "IDDEPTO TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
 
         try {
             sql="CREATE TABLE [T_stock] ("+
@@ -1914,6 +1924,7 @@ public class BaseDatosVersion {
         try {
 
         } catch (Exception e) { }
+
 
     }
 

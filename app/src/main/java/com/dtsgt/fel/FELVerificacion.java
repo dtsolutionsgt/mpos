@@ -16,6 +16,7 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturacObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturafObj;
+import com.dtsgt.classes.clsD_facturamuniObj;
 import com.dtsgt.classes.clsD_facturapObj;
 import com.dtsgt.classes.clsD_facturaprObj;
 import com.dtsgt.classes.clsP_corelObj;
@@ -32,8 +33,12 @@ import com.dtsgt.webservice.wsFacturasFEL;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class FELVerificacion extends PBase {
 
@@ -148,12 +153,17 @@ public class FELVerificacion extends PBase {
                 }
             };
 
-            if (facts.size()>0) {
-                procesaValidacion();
-            } else {
-                toastcentlong("No existen facturas pendientes de certificación");
-                finish();
-            }
+
+            //if (app.isOnWifi()==0) {
+            //    showMsgExit("NO HAY CONEXIÓN A INTERNET");
+            //} else {
+                if (facts.size()>0) {
+                    procesaValidacion();
+                } else {
+                    toastcentlong("No existen facturas pendientes de certificación");
+                    finish();
+                }
+            //}
 
         } catch (Exception e) {
             msgexit(e.getMessage());
@@ -345,6 +355,21 @@ public class FELVerificacion extends PBase {
                 muni=" ";dep=" ";
             }
 
+            clsD_facturamuniObj D_facturamuniObj=new clsD_facturamuniObj(this,Con,db);
+            D_facturamuniObj.fill("WHERE Corel='"+corel+"'");
+            if (D_facturamuniObj.count>0) {
+                idmuni=D_facturamuniObj.first().idmuni;
+                iddep=D_facturamuniObj.first().iddepto;
+
+                P_municipioObj.fill("WHERE CODIGO='"+idmuni+"'");
+                muni=P_municipioObj.first().nombre;
+
+                clsP_departamentoObj P_departamentoObj=new clsP_departamentoObj(this,Con,db);
+                P_departamentoObj.fill("WHERE CODIGO='"+iddep+"'");
+                if (P_departamentoObj.count>0) dep=P_departamentoObj.first().nombre;else dep=" ";
+            }
+
+
             fel.emisorDireccion(dir,
                                 fel.codigo_postal,
                                 muni,
@@ -428,8 +453,27 @@ public class FELVerificacion extends PBase {
             String sxml=fel.xml;
             sxml=sxml+"";
 
+            guardarXMLComoArchivo(sxml,corel);
+
         } catch (Exception e) {
             msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public void guardarXMLComoArchivo(String sxml, String corel) {
+        // Formato de la fecha para el nombre del archivo
+        String fileName = "dte_veri.txt";
+
+        // Directorio en almacenamiento externo
+        File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File file = new File(directory, fileName);
+
+        // Escritura del contenido XML al archivo
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(sxml.getBytes());
+            fos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -669,6 +713,7 @@ public class FELVerificacion extends PBase {
         try {
 
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle("Certificación FEL");
             dialog.setMessage(msg);
             dialog.setCancelable(false);
             dialog.setNeutralButton("OK", (dialog1, which) -> {

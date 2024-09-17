@@ -184,6 +184,8 @@ public class Venta extends PBase {
 
             super.InitBase();
 
+            app = new AppMethods(this, gl, Con, db);
+
             setControls();
 
             P_nivelprecioObj=new clsP_nivelprecioObj(this,Con,db);
@@ -232,7 +234,6 @@ public class Venta extends PBase {
             P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
             P_impresoraObj=new clsP_impresoraObj(this,Con,db);
 
-            app = new AppMethods(this, gl, Con, db);
             app.parametrosExtra();
 
             rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
@@ -4844,7 +4845,6 @@ public class Venta extends PBase {
              Cursor DT=Con.OpenDT(sql);
              int i=DT.getCount();
 
-
              if (DT.getCount()>0) {
                  DT.moveToFirst();
                  while (!DT.isAfterLast()) {
@@ -5380,6 +5380,7 @@ public class Venta extends PBase {
 
         return true;
     }
+
 
     //endregion
 
@@ -6390,7 +6391,10 @@ public class Venta extends PBase {
                     mtimerc.postDelayed(mrunnerc,1000);
                 }
 
+                gl.cli_muni=gl.cli_muni_suc;
+                gl.cli_depto=gl.cli_depto_suc;
                 iniciaMasVendidos();
+
             } else {}
 
             if (browse==7) {

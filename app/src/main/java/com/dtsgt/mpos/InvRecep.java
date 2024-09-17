@@ -89,11 +89,12 @@ public class InvRecep extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         if (pantallaHorizontal()) {
             setContentView(R.layout.activity_inv_recep);
         } else {
-            setContentView(R.layout.activity_inv_recep_ver);
+            setContentView(R.layout.activity_inv_recep);
+            //setContentView(R.layout.activity_inv_recep_ver);
         }
 
         super.InitBase();
@@ -115,6 +116,8 @@ public class InvRecep extends PBase {
         lblDisp =  findViewById(R.id.textView265);
         lblDoc =  findViewById(R.id.textView267);lblDoc.setText("");
         relprod = findViewById(R.id.relprod);relprod.setVisibility(View.INVISIBLE);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         prodid=0;
         ingreso=gl.invregular;

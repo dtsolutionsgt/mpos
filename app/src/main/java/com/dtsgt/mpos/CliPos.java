@@ -48,6 +48,7 @@ public class CliPos extends PBase {
 
 	private EditText txtNIT,txtNom,txtRef,txtCorreo,txtTel;
 	private TextView lblPed,lblDom,lblNIT,lblDir,btnNIT,btnCF;
+	private TextView lblPed,lblDom,lblDir,btnNIT,btnCF,lblmuni;
     private RelativeLayout relped,relcli;
 	private ProgressBar pbar;
 	private CheckBox cbllevar,cbdomicilio;
@@ -349,8 +350,8 @@ public class CliPos extends PBase {
         }
     }
 
-    public void doWspnError(View view) {
-        toast(wspnerror);
+    public void doMuni(View view) {
+        startActivity(new Intent(this,Municipio.class));
     }
 
     private void setHandlers() {
@@ -1525,6 +1526,22 @@ public class CliPos extends PBase {
         }
     }
 
+    private void municipio() {
+        String nmuni="";
+
+        try {
+            sql = "SELECT nombre FROM P_municipio WHERE CODIGO='" + gl.cli_muni + "'";
+            Cursor DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+            nmuni=DT.getString(0);
+        } catch (Exception e) {
+            nmuni="";
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        lblmuni.setText(nmuni);
+    }
+
     //endregion
 
     //region Dialogos
@@ -1620,6 +1637,8 @@ public class CliPos extends PBase {
     protected void onResume() {
         try{
             super.onResume();
+
+            municipio();
 
             if (gl.pePedidos) iniciaPedidos();
 
