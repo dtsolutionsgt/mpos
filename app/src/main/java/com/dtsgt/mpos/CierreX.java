@@ -1538,10 +1538,10 @@ public class CierreX extends PBase {
             try {
 
                 rep.add("");
-                rep.add("Facturas: "+gl.fd_hn_exen);
-                rep.add("Facturas: "+gl.fd_hn_grav);
-                rep.add("Facturas: "+gl.fd_hn_imp);
-                rep.add("Facturas: "+gl.fd_hn_cori+" a "+gl.fd_hn_corf );
+                rep.addtot("Total exentos: ",gl.fd_hn_exen);
+                rep.addtot("Total gravado: ",gl.fd_hn_grav);
+                rep.addtot("Total impuestos: ",gl.fd_hn_imp);
+                rep.add("Correlativos: "+gl.fd_hn_cori+" a "+gl.fd_hn_corf );
                 rep.add("");
                 rep.line();
                 rep.add("");
