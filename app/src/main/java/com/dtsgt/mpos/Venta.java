@@ -5508,7 +5508,8 @@ public class Venta extends PBase {
                         imprimeComanda();
                     }
                 } catch (Exception e) {
-                    mu.msgbox("Valor incorrecto");return;
+                    String se=e.getMessage();
+                    mu.msgbox("Valor incorrecto "+e.getMessage());return;
                 }
             }
         });

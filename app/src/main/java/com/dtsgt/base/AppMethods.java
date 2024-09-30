@@ -1311,6 +1311,22 @@ public class AppMethods {
 			gl.peESAComprobante = false;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=171";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peComandaVentaLAN = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peComandaVentaLAN = false;
+		}
+
+
+
+
 	}
 
 	//                  Params extra
