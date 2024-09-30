@@ -761,7 +761,8 @@ public class ProdMenu extends PBase {
                 if (precio<precorig) precio=precorig;
             }
 
-            precnuevo=precio;
+            precnuevo=mu.round2dec(precio);
+
             lbl3.setText(mu.frmcur(precnuevo));
 
             if (precorig==precnuevo) {
