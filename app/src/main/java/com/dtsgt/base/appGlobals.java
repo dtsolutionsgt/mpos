@@ -50,8 +50,8 @@ public class appGlobals extends Application {
                 comensales, cliente_dom, idclidir, idalm, idalm2, idalmpred,mesa_grupo,
 			    uidingrediente, idgrres, idgrsel, idgrpos, usuario_cortesia,bar_prod,cuenta_borrar,cuenta_pagar,
 				mesa_vend,mesa_codigo,invcent_cod,invcen_alm,sal_idneg,desc_tipo_apl,prcu_mesa,
-			    prcu_vend,precuenta_cuenta,combo_cuenta,dias_credito,precuenta_modo,
-			    servidor_anio,dialogid,idcombo,set_cant,set_cant_max,fact_sin_cert,fd_hn_cori,fd_hn_corf;
+			    prcu_vend,precuenta_cuenta,combo_cuenta,dias_credito,precuenta_modo,domicilio_notif,
+			    servidor_anio,idcombo,set_cant,set_cant_max,fact_sin_cert,fd_hn_cori,fd_hn_corf;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel,
                 corelmov, linea_sel="",mesa_alias,nummesapedido, nombre_cortesia,bar_um,bar_idbarril;
@@ -68,8 +68,6 @@ public class appGlobals extends Application {
                    ingreso_mesero,after_login,modo_prec,mesero_precuenta,sin_propina,modo_upd_venta,
 			       modo_cortesia,modo_apertura,imp_inventario,sal_NIT,sal_NRC,sal_PER,nueva_mesa,
 				   combo_edit,cliente_credito=false;
-
-	public Runnable dialogr;
 
 	//FEL Identificacion
 	public String felSIN="SIN FEL";
@@ -164,5 +162,8 @@ public class appGlobals extends Application {
 	//todos los clientes.
 	public Boolean Sincronizar_Clientes = false;
 	public double auxCantVenta = 0;
+
+	public Runnable dialogr;
+	public int dialogid;
 
 }

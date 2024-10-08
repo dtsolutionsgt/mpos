@@ -613,7 +613,7 @@ public class CliPos extends PBase {
     //region Pedidos Nube
 
     private void iniciaPedidos() {
-
+        /*
         if (gl.pePedidos) {
 
             lblPed.setText("-");
@@ -631,7 +631,7 @@ public class CliPos extends PBase {
                 }
             }, delay, period);
         }
-
+        */
     }
 
     private void cancelaPedidos() {
@@ -937,6 +937,7 @@ public class CliPos extends PBase {
 
     public void menuPedidos() {
         try {
+            /*
             if (gl.peDomEntEnvio | gl.pePedidos) {
                 gl.pedid=pedcorel;
                 startActivity(new Intent(this, PedidoEnviar.class));
@@ -944,6 +945,8 @@ public class CliPos extends PBase {
                 gl.closePedido = false;
                 startActivity(new Intent(this, Pedidos.class));
             }
+
+             */
         } catch (Exception e) {
         }
     }
@@ -1653,7 +1656,7 @@ public class CliPos extends PBase {
 
             municipio();
 
-            if (gl.pePedidos) iniciaPedidos();
+            //if (gl.pePedidos) iniciaPedidos();
 
             if (browse==1) {
                 browse=0;
@@ -1702,7 +1705,7 @@ public class CliPos extends PBase {
 
     @Override
     protected void onPause() {
-        if (gl.pePedidos) cancelaPedidos();
+        //if (gl.pePedidos) cancelaPedidos();
         super.onPause();
     }
 

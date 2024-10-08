@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.FragmentActivity;
 
 import com.dtsgt.base.AppMethods;
@@ -55,9 +56,12 @@ public class PBase extends FragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_plist_base);
 		try {
+			AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+			super.onCreate(savedInstanceState);
+			setContentView(R.layout.activity_plist_base);
+
 			FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 			// Alternativa   appGlobals.OnCreate
 		} catch (Exception e) {

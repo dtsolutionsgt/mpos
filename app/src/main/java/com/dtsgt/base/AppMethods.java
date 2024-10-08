@@ -2315,7 +2315,30 @@ public class AppMethods {
 		*/
 	}
 
-    //endregion
+	public String estadoNombre(int idest) {
+		String se="";
+
+		switch (idest) {
+			case 1:
+				se="RECIBIDO";break;
+			case 2:
+				se="NUEVO";break;
+			case 3:
+				se="EN PROCESO";break;
+			case 4:
+				se="ANULADO";break;
+			case 5:
+				se="COMPLETO";break;
+			case 6:
+				se="EN TRANSITO";break;
+			case 7:
+				se="ENTREGADO";break;
+		}
+
+		return se;
+	}
+
+	//endregion
 
     //region Caja
 
@@ -3103,6 +3126,14 @@ public class AppMethods {
 
 		return activo;
 
+	}
+
+	public boolean sinInternet() {
+		if (isOnWifi()==0) {
+			toast("SIN CONEXION A INTERNET");return true;
+		} else {
+			return false;
+		}
 	}
 
     public void zip(String file, String zipFile) throws IOException {

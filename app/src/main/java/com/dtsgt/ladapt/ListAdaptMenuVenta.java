@@ -53,11 +53,8 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 	@SuppressLint("SuspiciousIndentation")
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder;
-		int iconid;
 
 		if (convertView == null) {
-			convertView = l_Inflater.inflate(R.layout.activity_list_view_menuventa, null);
-
             convertView = l_Inflater.inflate(R.layout.activity_list_view_menuventa, null);
 
 			holder = new ViewHolder();
@@ -70,7 +67,7 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
-			
+
 		holder.lblName.setText(items.get(position).Name);
 
 		if (items.get(position).cant>0) {
@@ -78,12 +75,10 @@ public class ListAdaptMenuVenta extends BaseAdapter {
             holder.lblCant.setText(""+items.get(position).cant);
         } else {
             holder.lblCant.setVisibility(View.INVISIBLE);
-        }
+		}
 			
 		holder.imgEst.setImageResource(R.drawable.blank256);
 
-
-		
 		if (items.get(position).Icon==1) holder.imgEst.setImageResource(R.drawable.pedidos_3);
 		if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.pedidos_3);
 		if (items.get(position).Icon==102) holder.imgEst.setImageResource(R.drawable.pedidos_2);
@@ -102,6 +97,7 @@ public class ListAdaptMenuVenta extends BaseAdapter {
         if (items.get(position).Icon==14) holder.imgEst.setImageResource(R.drawable.recibir_rapido);
         if (items.get(position).Icon==15) holder.imgEst.setImageResource(R.drawable.fel);
         if (items.get(position).Icon==16) holder.imgEst.setImageResource(R.drawable.dom);
+		if (items.get(position).Icon==17) holder.imgEst.setImageResource(R.drawable.dom_add);
 
         if (items.get(position).Icon==50) holder.imgEst.setImageResource(R.drawable.btn_search);
         if (items.get(position).Icon==51) holder.imgEst.setImageResource(R.drawable.barcode_btn);

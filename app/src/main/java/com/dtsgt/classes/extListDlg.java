@@ -27,22 +27,8 @@ import com.dtsgt.mpos.R;
 
 public class extListDlg {
 
-    /*
-
-        public void buildDialog(Activity activity,String titletext,String buttontext)
-        public void buildDialog(Activity activity,String titletext)  buttontext="Salir"
-        public void dismiss()
-        public void add(int idresource,String text)  idresource=0  sin imagen
-        public void clear()
-        public void setWidth(int pWidth)   min 100
-        public void setHeight(int pHeight) min 100
-        public void setLines(int pLines)   min 1
-        public void show()
-
-        public void setOnExitListener(@Nullable View.OnClickListener l)
-        public void setOnItemClickListener(@Nullable OnItemClickListener l)
-
-     */
+    public int selidx=-1,selcodint=0;
+    public String selcod="",text="", stext="";
 
     private ListView mList;
     private TextView mTitleLabel,mBtnLeft,mBtnMid,mBtnRight;
@@ -52,6 +38,7 @@ public class extListDlg {
     private Dialog dialog;
     private Context cont;
     private Adapter adapter;
+
 
     public ArrayList<clsListDialogItem> items=new ArrayList<clsListDialogItem>();
 
@@ -268,6 +255,10 @@ public class extListDlg {
         }
     }
 
+    public void setSelectedIndex(int sidx) {
+        adapter.setSelectedIndex(sidx);
+    }
+
     public void show() {
         int fwidth,fheight,icount,rlcount;
         int itemHeight,headerHeight,footerHeight;
@@ -328,7 +319,6 @@ public class extListDlg {
 
         dialog.show();
     }
-
 
     //endregion
 
@@ -408,7 +398,8 @@ public class extListDlg {
             }
 
             if (selectedIndex != -1 && position == selectedIndex) {
-                convertView.setBackgroundColor(Color.parseColor("#CCE6F3"));
+                //convertView.setBackgroundColor(Color.parseColor("#CCE6F3"));
+                convertView.setBackgroundResource(R.drawable.frame_rect_blue_orig);
             } else {
                 convertView.setBackgroundColor(Color.TRANSPARENT);
             }

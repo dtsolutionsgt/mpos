@@ -44,4 +44,8 @@ public class fbBase {
 
     }
 
+    public String key() {
+        return fdt.push().getKey();
+    }
+
 }

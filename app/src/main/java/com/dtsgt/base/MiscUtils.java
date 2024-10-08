@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -258,6 +259,7 @@ public class MiscUtils {
 			});
 
 			dialog.show();
+
 		} catch (Exception e){ }
 	}
 

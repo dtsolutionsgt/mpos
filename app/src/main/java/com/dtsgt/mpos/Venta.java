@@ -2,8 +2,11 @@ package com.dtsgt.mpos;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -60,9 +63,6 @@ import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_lic_estadoObj;
-import com.dtsgt.classes.clsT_ordenObj;
-import com.dtsgt.classes.clsT_ordencomboObj;
-import com.dtsgt.classes.clsT_ordencomboadObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsT_venta_horaObj;
@@ -72,6 +72,8 @@ import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.fel.FELVerificacion;
 import com.dtsgt.felesa.FELContingenciaSV;
+import com.dtsgt.firebase.fbPedidoEnc;
+import com.dtsgt.firebase.fbPedidoLog;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
@@ -147,6 +149,12 @@ public class Venta extends PBase {
     private Runnable rnOrdenInsert,rnOrdenQuery,rnOrdenDel,rnlicSuscursal;
 
     private fbStock fbs;
+    private fbPedidoEnc fbpe;
+    private fbPedidoLog fblog;
+
+    public recPedidoRecibido rcPedido = new recPedidoRecibido();
+
+
     private Runnable rnFbCallBack;
     private int fbprodid,fbcallmode=0;
 
@@ -252,6 +260,9 @@ public class Venta extends PBase {
                 }
             };
             fbs =new fbStock("Stock",gl.tienda);
+
+            fbpe = new fbPedidoEnc("Domicilio/"+gl.emp+"/"+gl.tienda+"/"+du.actDate()+"/");
+            fblog = new fbPedidoLog("DomicilioLog/"+gl.emp+"/"+gl.tienda+"/"+du.actDate()+"/");
 
             modoMeseros();
 
@@ -2534,12 +2545,6 @@ public class Venta extends PBase {
                     mmitems.add(item);
                 }
 
-                if (pedidos | gl.peDomEntEnvio) {
-                    item = clsCls.new clsMenu();
-                    item.ID=61;item.Name="Para llevar";item.Icon=61;
-                    //mmitems.add(item);
-                }
-
                 if (gl.peBotComanda) {
                     item = clsCls.new clsMenu();
                     item.ID=62;item.Name="Comanda";item.Icon=62;
@@ -2705,10 +2710,22 @@ public class Venta extends PBase {
             item.ID=1;item.Name="Pago";item.Icon=58;
             mitems.add(item);
 
-            item = clsCls.new clsMenu();
-            item.ID=99;item.Name="Sin conexión";item.Icon=99;
-            mitems.add(item);
+            if (gl.pePedidos) {
 
+                item = clsCls.new clsMenu();
+                item.ID=16;item.Name="Domicilio";item.Icon=16;
+                item.cant=pedidoscant;
+                mitems.add(item);
+
+                item = clsCls.new clsMenu();
+                item.ID=17;item.Name="Cargar pedidos";item.Icon=17;
+                mitems.add(item);
+
+                item = clsCls.new clsMenu();
+                item.ID=18;item.Name="Crear pedidos";item.Icon=56;
+                mitems.add(item);
+
+            }
 
             if (app.usaFEL()) {
                 int pendfel=pendienteFEL();
@@ -2720,15 +2737,11 @@ public class Venta extends PBase {
                 }
             }
 
-            /*
-            if (pedidos | domenvio) {
+            if (gl.peRest) {
                 item = clsCls.new clsMenu();
-                item.ID=16;item.Name="Para llevar";item.Icon=16;
-                item.cant=pedidoscant;
-                //if (!gl.peDomEntEnvio) mitems.add(item);
+                item.ID = 99;item.Name = "Sin conexión";item.Icon = 99;
                 mitems.add(item);
             }
-            */
 
             item = clsCls.new clsMenu();
             item.ID=3;item.Name="Reimpresión";item.Icon=3;
@@ -2756,15 +2769,6 @@ public class Venta extends PBase {
             item.ID=24;item.Name="Salir";item.Icon=57;
             mitems.add(item);
 
-            /*
-            item = clsCls.new clsMenu();
-            item.ID=7;item.Name="Existencias";item.Icon=7;
-            mitems.add(item);
-
-            item = clsCls.new clsMenu();
-            item.ID=101;item.Name="Baktún";item.Icon=101;
-            mitems.add(item);
-            */
 
             adaptergrid=new ListAdaptMenuVenta(this, mitems);
             gridViewOpciones.setAdapter(adaptergrid);
@@ -2805,6 +2809,10 @@ public class Venta extends PBase {
                     showReportMenu();break;
                 case 16:
                     menuPedidos();break;
+                case 17:
+                    menuCargarPedidos();break;
+                case 18:
+                    crearFbPedido();break;
                 case 24:
                     exitBtn();break;
                 case 99:
@@ -3073,15 +3081,19 @@ public class Venta extends PBase {
         try{
             gl.closePedido=false;
             browse=9;
-            if (pedidos) {
-                startActivity(new Intent(this,Pedidos.class));
-            } else {
-                if (domenvio) {
-                    startActivity(new Intent(this, PedidosEnv.class));
-                }
-            }
+            startActivity(new Intent(this,PedidosDom.class));
         } catch (Exception e){
-            //addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public void menuCargarPedidos() {
+        try{
+            if (app.sinInternet()) return;
+            browse=9;
+            startActivity(new Intent(this,DomImport.class));
+        } catch (Exception e){
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -3652,7 +3664,7 @@ public class Venta extends PBase {
         return true;
     }
 
-    private void  crearPedidoDetalle() {
+    private void crearPedidoDetalle() {
         clsT_ventaObj T_ventaObj=new clsT_ventaObj(this,Con,db);
         clsD_pedidodObj D_pedidodObj=new clsD_pedidodObj(this,Con,db);
         clsD_pedidocomboObj D_pedidocomboObj=new clsD_pedidocomboObj(this,Con,db);
@@ -3714,8 +3726,10 @@ public class Venta extends PBase {
 
         tact=du.getActDateTime();tlim=tact+100;tbot=du.getActDate();
 
+
         try {
-            //D_pedidoObj.fill("WHERE (ANULADO=0) AND (CODIGO_USUARIO_CREO=0) ");
+
+             /*
             String fsql="WHERE (ANULADO=0) AND (FECHA_ENTREGA=0) AND (FECHA_PEDIDO<="+tlim+") AND (FECHA_PEDIDO>="+tbot+")  AND (FECHA_SALIDA_SUC=0) ";
             D_pedidoObj.fill(fsql);
             int peds=D_pedidoObj.count;
@@ -3727,6 +3741,89 @@ public class Venta extends PBase {
                     break;
                 }
             }
+            */
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //endregion
+
+    //region Domicilio
+
+    private void estadoDomicilio(boolean silent) {
+        try {
+            fbpe.listPending(() -> { cantDomicilio(silent) ;});
+        } catch (Exception e) {
+            if (!silent) msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void cantDomicilio(boolean silent) {
+        try {
+            int pedpend=fbpe.doms.size();
+
+            for (int i = 0; i <mitems.size(); i++) {
+                if (mitems.get(i).ID==17) {
+                    mitems.get(i).cant=pedpend;
+                    adaptergrid.notifyDataSetChanged();
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            if (!silent) msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public class recPedidoRecibido extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if (action != null && action.equals("com.dtsgt.PEDIDO_RECIBIDO")) {
+                estadoDomicilio(true);
+                //toast("Custom broadcast received!");
+            }
+        }
+    }
+
+    private void crearFbPedido() {
+        clsClasses.clsD_domicilio_enc pitem;
+        clsClasses.clsD_domicilio_log litem;
+        String key;
+
+        try {
+
+            key=fbpe.key();
+
+            pitem = clsCls.new clsD_domicilio_enc();
+
+            pitem.corel=key;
+            pitem.empresa=gl.emp;
+            pitem.codigo_sucursal=gl.tienda;
+            pitem.fecha_hora=du.getActDateTime();
+            pitem.vendedor=gl.codigo_vendedor;
+            pitem.codigo_cliente=1;
+            pitem.cliente_nombre="Desarrollo";
+            pitem.direccion_text="Avenida Reforma, Zona 9, Guatemala";
+            pitem.texto="Nivel 9";
+            pitem.telefono="12345678";
+            pitem.cambio=200;
+            pitem.forma_pago=1;
+            pitem.nit="1234567-8";
+            pitem.iddireccion=1;
+            pitem.importado=0;
+            pitem.estado=2;
+            pitem.idorden=0;
+
+            fbpe.setItem(pitem);
+
+
+            litem = clsCls.new clsD_domicilio_log();
+            litem.corel=key;
+
+            fblog.setItem(litem);
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -5537,7 +5634,7 @@ public class Venta extends PBase {
 
     //endregion
 
-    //region Para descuentos
+    //region Descuentos
 
     public void setTipoDescuento() {
         clsClasses.clsPDescuento item;
@@ -6331,7 +6428,7 @@ public class Venta extends PBase {
             gl.climode=true;
             menuTools();
 
-            if (pedidos) estadoPedidos();
+            if (gl.pePedidos) estadoDomicilio(false);
 
             try {
                 txtBarra.requestFocus();
@@ -6506,6 +6603,19 @@ public class Venta extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter filter = new IntentFilter("com.dtsgt.PEDIDO_RECIBIDO");
+        registerReceiver(rcPedido, filter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(rcPedido);
     }
 
     //endregion

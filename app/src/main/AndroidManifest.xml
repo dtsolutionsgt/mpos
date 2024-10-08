@@ -73,6 +73,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+
         <receiver
             android:name=".PedidoDet"
             android:exported="true">
@@ -80,6 +81,8 @@
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
             </intent-filter>
         </receiver>
+
+
         <receiver android:name="com.dtsgt.firebase.fbNetworkState">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -885,9 +888,19 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".Municipio"
+            android:exported="false"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:exported="false" />
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".PedidosDom"
+            android:exported="false"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".DomImport"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden" />
     </application>
 
 </manifest>

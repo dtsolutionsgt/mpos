@@ -2,15 +2,12 @@ package com.dtsgt.base;
 
 import java.util.ArrayList;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.widget.Toast;
 
 import com.dtsgt.classes.ExDialog;
-import com.dtsgt.mpos.R;
 
 public class BaseDatosVersion {
 
@@ -34,9 +31,77 @@ public class BaseDatosVersion {
     public void update(){
         update01();
         update02();
+        update00();
 
-        update99();
+        update_ver_5_5();
     }
+
+    private void update_ver_5_5() {
+
+
+        try {
+            sql="CREATE TABLE [D_domicilio_enc] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "FECHA_HORA INTEGER NOT NULL,"+
+                    "VENDEDOR INTEGER NOT NULL,"+
+                    "CODIGO_CLIENTE INTEGER NOT NULL,"+
+                    "CLIENTE_NOMBRE TEXT NOT NULL,"+
+                    "DIRECCION_TEXT TEXT NOT NULL,"+
+                    "TEXTO TEXT NOT NULL,"+
+                    "TELEFONO TEXT NOT NULL,"+
+                    "CAMBIO INTEGER NOT NULL,"+
+                    "FORMA_PAGO INTEGER NOT NULL,"+
+                    "NIT TEXT NOT NULL,"+
+                    "IDDIRECCION INTEGER NOT NULL,"+
+                    "IMPORTADO INTEGER NOT NULL,"+
+                    "ESTADO INTEGER NOT NULL,"+
+                    "IDORDEN INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX D_domicilio_enc_idx1 ON D_domicilio_enc(FECHA_HORA)";db.execSQL(sql);
+            sql="CREATE INDEX D_domicilio_enc_idx2 ON D_domicilio_enc(ESTADO)";db.execSQL(sql);
+            sql="CREATE INDEX D_domicilio_enc_idx3 ON D_domicilio_enc(IDORDEN)";db.execSQL(sql);
+
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [D_domicilio_det] ("+
+                    "CODIGO INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "PRECIO REAL NOT NULL,"+
+                    "UM TEXT NOT NULL,"+
+                    "IMP REAL NOT NULL,"+
+                    "DES REAL NOT NULL,"+
+                    "DESMON REAL NOT NULL,"+
+                    "TOTAL REAL NOT NULL,"+
+                    "NOTA TEXT NOT NULL,"+
+                    "TIPO_PRODUCTO TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX D_domicilio_det_idx1 ON D_domicilio_det(COREL)";db.execSQL(sql);
+        } catch (Exception e) { }
+
+
+        try {
+
+        } catch (Exception e) { }
+
+        try {
+
+        } catch (Exception e) { }
+
+
+    }
+
 
     private void update02() {
 
@@ -1487,7 +1552,7 @@ public class BaseDatosVersion {
         } catch (Exception e) { }
 
         try {
-            db.execSQL("ALTER TABLE D_FACTURA ADD CODIGO_TIPO_FACTURA INT NULL;");
+            db.execSQL("ALTER TABLE D_FACTURA ADD CODIGO_TIPO_FACTURA INT;");
         } catch (Exception e) { }
 
         try {
@@ -1915,17 +1980,6 @@ public class BaseDatosVersion {
             db.execSQL(sql);
         } catch (Exception e) { }
 
-
-
-        try {
-
-        } catch (Exception e) { }
-
-        try {
-
-        } catch (Exception e) { }
-
-
     }
 
 	private boolean update01() {
@@ -2049,7 +2103,7 @@ public class BaseDatosVersion {
 		
 	}
 
-    private void update99() {
+    private void update00() {
 
         try {
 

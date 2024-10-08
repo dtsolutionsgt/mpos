@@ -3,7 +3,11 @@ package com.dtsgt.mpos;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,12 +43,14 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RemoteViews;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatosVersion;
@@ -58,15 +64,24 @@ import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.felesa.FELESATest;
+import com.dtsgt.firebase.fbBase;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.LA_Login;
+import com.dtsgt.webservice.srvBase;
 import com.dtsgt.webservice.startMainTimer;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -80,7 +95,14 @@ public class MainActivity extends PBase {
 
     private BaseDatosVersion dbVers;
     private LA_Login adapter;
+
     private fbStock fbs;
+
+    private fbBase fbdom;
+    private DatabaseReference fbdomref;
+    private ValueEventListener pedidoEventListener;
+
+    private NotificationManager notificationManager;
 
     private ArrayList<clsClasses.clsMenu> mitems = new ArrayList<>();
     private ArrayList<String> spincode = new ArrayList<>();
@@ -603,8 +625,6 @@ public class MainActivity extends PBase {
 
             mu.curr = gl.peMon;
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             msgbox(e.getMessage());
         }
 
@@ -620,12 +640,17 @@ public class MainActivity extends PBase {
 
         llenaUsuarios();
 
-        if (gl.pePedidos | gl.pelCajaRecep) {
+        if (gl.pePedidos) iniciaDomicilio();
+
+
+
+        /*
+
+         if (gl.pePedidos | gl.pelCajaRecep) {
             String params = gl.wsurl + "#" + gl.emp + "#" + gl.tienda;
             startMainTimer.startService(this, params);
         }
 
-        /*
         if (gl.pePedidos) {
             String params = gl.wsurl + "#" + gl.emp + "#" + gl.tienda;
             startPedidosImport.startService(this, params);
@@ -639,7 +664,7 @@ public class MainActivity extends PBase {
         }
         */
 
-        //ubicacion();
+
 
 
     }
@@ -863,6 +888,91 @@ public class MainActivity extends PBase {
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
+    }
+
+    //endregion
+
+    //region Domicilio
+
+    private void iniciaDomicilio() {
+        try {
+            gl.domicilio_notif=-1;
+
+            fbdom= new fbBase("DomicilioLog");
+            fbdomref= fbdom.fdb.getReference("DomicilioLog/"+gl.emp+"/"+gl.tienda+"/"+du.actDate()+"/");
+            notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+            registerEventListener();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void registerEventListener() {
+        try {
+
+            pedidoEventListener=fbdomref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (gl.domicilio_notif>0) notifyMsg();
+                    gl.domicilio_notif++;
+
+                    Intent intent = new Intent("com.dtsgt.PEDIDO_RECIBIDO");
+                    sendBroadcast(intent);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    toastlong("Error leer pedidos ");
+                }
+            });
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public void notifyMsg() {
+        int notificationId = createID();
+        String channelId = "channel-id",channelName = "Channel Name";
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(mChannel);
+        }
+
+        Intent fullScreenIntent = new Intent(this, srvBase.class);
+        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(this, 0,
+                fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        RemoteViews notificationLayout = new RemoteViews(getPackageName(), R.layout.notification_dom);
+
+        notificationLayout.setTextViewText(R.id.title, "Nuevo pedidio a domicilio");
+
+        Bitmap bm=Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.icono));
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.drawable.blank48)
+                .setLargeIcon(bm)
+                .setContentTitle("MPos")
+                .setVibrate(new long[]{100, 250})
+                .setAutoCancel(true)
+                .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                .setContent(notificationLayout)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_CALL)
+                .setFullScreenIntent(fullScreenPendingIntent, true)
+                .setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.sonarsub))
+                .setColor(Color.parseColor("#6200EE"));
+
+        notificationManager.notify(notificationId, mBuilder.build());
+
+    }
+
+    private int createID() {
+        Date now = new Date();
+        int id = Integer.parseInt(new SimpleDateFormat("ddHHmmss", Locale.ENGLISH).format(now));
+        return id;
     }
 
     //endregion
@@ -1317,61 +1427,6 @@ public class MainActivity extends PBase {
 
     }
 
-    //endregion
-
-    //region Dialogs
-
-    private void msgAskLic(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        dialog.setTitle(R.string.app_name);
-        dialog.setMessage(msg);
-        dialog.setIcon(R.drawable.ic_quest);
-
-        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-
-        dialog.show();
-    }
-
-    private void showOrientMenu() {
-        /*
-        final AlertDialog Dialog;
-        final String[] xselitems = {"Tableta","Telefono"};
-
-        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-        menudlg.setTitle("Calibracion de pantalla");
-
-        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                switch (item) {
-                    case 0:
-                        guardaPantalla(true);break;
-                    case 1:
-                        guardaPantalla(false);break;
-                }
-
-                dialog.cancel();
-            }
-        });
-
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        Dialog = menudlg.create();
-        Dialog.show();
-        */
-    }
-
-    //endregion
-
     private void dodwn() {
 
         String fbname,fname,bckfile;
@@ -1429,6 +1484,61 @@ public class MainActivity extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
+    //endregion
+
+    //region Dialogs
+
+    private void msgAskLic(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle(R.string.app_name);
+        dialog.setMessage(msg);
+        dialog.setIcon(R.drawable.ic_quest);
+
+        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void showOrientMenu() {
+        /*
+        final AlertDialog Dialog;
+        final String[] xselitems = {"Tableta","Telefono"};
+
+        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+        menudlg.setTitle("Calibracion de pantalla");
+
+        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0:
+                        guardaPantalla(true);break;
+                    case 1:
+                        guardaPantalla(false);break;
+                }
+
+                dialog.cancel();
+            }
+        });
+
+        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        Dialog = menudlg.create();
+        Dialog.show();
+        */
+    }
+
+    //endregion
 
     //region Custom dialog
 
@@ -1665,8 +1775,6 @@ public class MainActivity extends PBase {
 
     //endregion
 
-    //endregion
-
     //region Activity Events
 
     protected void onResume() {
@@ -1691,6 +1799,13 @@ public class MainActivity extends PBase {
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
+    }
+
+    protected void onDestroy() {
+        try {
+            fbdomref.removeEventListener(pedidoEventListener);
+        } catch (Exception e) {  }
+        super.onDestroy();
     }
 
     //endregion

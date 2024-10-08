@@ -520,7 +520,26 @@ public class DateUtils {
 		return dif;
 		
 	}
-	
+
+	public String sTimeDiff(long v1,long v2) {
+		String st;
+		long h1,m1,h2,m2,vm1,vm2,dif;
+
+		h1=v1 % 10000;m1=h1 % 100;h1=(int) h1/100;
+		vm1=h1*60+m1;
+
+		h2=v2 % 10000;m2=h2 % 100;h2=(int) h2/100;
+		vm2=h2*60+m2;
+
+		dif=vm1-vm2;
+		if (dif<0) dif=-dif;
+
+		h1=dif / 60; m1=dif % 60;
+		st=h1+":";if (m1<10) st=st+"0";st=st+m1;
+
+		return st;
+	}
+
 	public int dayofweek(long f) {
 
 		int y,m,d,dw;
@@ -782,6 +801,20 @@ public class DateUtils {
 
 		return oc;
 	}
+
+	public int actDate()  {
+		int cyear,cmonth,cday,f;
+
+		Calendar c = Calendar.getInstance();
+		cyear = c.get(Calendar.YEAR);
+		cyear = cyear % 100;
+		cmonth = c.get(Calendar.MONTH) + 1;
+		cday = c.get(Calendar.DAY_OF_MONTH);
+
+		f = cyear*10000 + cmonth * 100 + cday;
+		return f;
+	}
+
 
 
 	//region Fecha larga
