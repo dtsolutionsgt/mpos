@@ -493,7 +493,7 @@ public class clsDocFactura extends clsDocument {
 	protected boolean loadDocData(String corel) {
 		Cursor DT;
 		itemData item,bon,pag;
-		String corNota,idcombo;
+		String corNota,idcombo,dls;
 		int corrl;
 
 		ccorel=corel;
@@ -502,8 +502,6 @@ public class clsDocFactura extends clsDocument {
 		items.clear();bons.clear();pagos.clear();totalsinimp=0;
 
 		try {
-
-           //#CKFK 20200520 quité la consulta que buscaba en las notas de crédito porque aquí no existe esa tabla
 
 			sql="SELECT D_FACTURAD.PRODUCTO,P_PRODUCTO.DESCLARGA,D_FACTURAD.CANT,D_FACTURAD.PRECIODOC,D_FACTURAD.IMP, " +
 				"D_FACTURAD.DES,D_FACTURAD.DESMON, D_FACTURAD.TOTAL, D_FACTURAD.UMVENTA, D_FACTURAD.UMPESO, " +
@@ -546,7 +544,6 @@ public class clsDocFactura extends clsDocument {
             }
 
 			try {
-				//#CKFK 20200520 Quité el union con D_BONIFBARRA porque esa tabla no existe en el MPOS
 				sql = "SELECT D_BONIF.PRODUCTO,P_PRODUCTO.DESCLARGA AS NOMBRE,D_BONIF.CANT, D_BONIF.UMVENTA, " +
 					  "D_BONIF.CANT*D_BONIF.FACTOR AS TPESO " +
 					  "FROM D_BONIF INNER JOIN P_PRODUCTO ON D_BONIF.PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO " +
@@ -596,6 +593,24 @@ public class clsDocFactura extends clsDocument {
 
             } catch (Exception e) {
                 Toast.makeText(cont,"Impresion pagos : "+e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+
+            // Direccion de domicilio
+            try {
+                domlines.clear();
+
+                sql="SELECT TEXTO FROM D_factura_dom WHERE (COREL='"+ccorel+"') ORDER BY LINEA";
+                DT=Con.OpenDT(sql);
+                if (DT.getCount()>0) DT.moveToFirst();
+
+                while (!DT.isAfterLast()) {
+                    dls = DT.getString(0);
+                    domlines.add(dls);
+                    DT.moveToNext();
+                }
+
+            } catch (Exception e) {
+                Toast.makeText(cont,"Direccion de domicilio : "+e.getMessage(), Toast.LENGTH_LONG).show();
             }
 
         } catch (Exception e) {
@@ -1010,41 +1025,6 @@ public class clsDocFactura extends clsDocument {
         }
 	}
 
-    private void agregaDomicilio() {
-        if (!domicilio) return;
-
-        rep.add("");
-        rep.addc("D O M I C I L I O");
-        rep.add("");
-        rep.add(nombre_cliente);
-
-        if (!emptystr(clidir)) {
-            //clidir="Dir.: "+clidir;
-            if (clidir.length()>prw) {
-
-                String nuevaCadena = "", cadena = "";
-
-                cadena = clidir;
-                nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
-                cadena = cadena.substring(prw);
-                if (cadena.length() > prw) {
-                    nuevaCadena =cadena.substring(0, prw);rep.add(nuevaCadena);
-                    cadena = cadena.substring(prw);
-                    if (cadena.length() > prw) {
-                        nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
-                    } if (cadena.length()>0) rep.add(cadena);
-                } else {
-                    if (cadena.length()>0) rep.add(cadena);
-                }
-            } else rep.add(clidir);
-        }
-
-        try {
-            if (!clitel.isEmpty()) rep.add("Tel.: "+clitel);
-        } catch (Exception e) {}
-
-    }
-
     //region Guatemala
 
     private boolean footerBaseGUATicket() {
@@ -1249,6 +1229,7 @@ public class clsDocFactura extends clsDocument {
         }
 
         agregaDomicilio();
+        direccionDomicilio();
 
         rep.add("");
         rep.add("");
@@ -1386,6 +1367,7 @@ public class clsDocFactura extends clsDocument {
         }
 
         agregaDomicilio();
+        direccionDomicilio();
 
         rep.add("");
         rep.add("");
@@ -1483,6 +1465,8 @@ public class clsDocFactura extends clsDocument {
         rep.add("");
         rep.add("");
 
+        direccionDomicilio();
+
         return super.buildFooter();
     }
 
@@ -1557,6 +1541,8 @@ public class clsDocFactura extends clsDocument {
         rep.add("");
         rep.add("");
 
+        direccionDomicilio();
+
         return super.buildFooter();
     }
 
@@ -1613,6 +1599,8 @@ public class clsDocFactura extends clsDocument {
         rep.add("");
         rep.add("");
         rep.add("");
+
+        direccionDomicilio();
 
         return super.buildFooter();
 
@@ -1738,6 +1726,7 @@ public class clsDocFactura extends clsDocument {
         */
 
         agregaDomicilio();
+        direccionDomicilio();
 
         rep.add("");
         rep.add("");
@@ -1748,6 +1737,67 @@ public class clsDocFactura extends clsDocument {
     }
 
     //endregion
+
+    private void direccionDomicilio() {
+        String sd;
+
+        try {
+            if (domlines.size()==0) return;
+
+            rep.add("");
+            rep.add("");
+            rep.line();
+            rep.add("");
+
+            for (int i = 0; i <domlines.size(); i++) {
+                sd=domlines.get(i);
+                rep.add(sd);
+            }
+
+            rep.add("");
+            rep.line();
+            rep.add("");
+            rep.add("");
+
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void agregaDomicilio() {
+        if (!domicilio) return;
+
+        rep.add("");
+        rep.addc("D O M I C I L I O");
+        rep.add("");
+        rep.add(nombre_cliente);
+
+        if (!emptystr(clidir)) {
+            //clidir="Dir.: "+clidir;
+            if (clidir.length()>prw) {
+
+                String nuevaCadena = "", cadena = "";
+
+                cadena = clidir;
+                nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
+                cadena = cadena.substring(prw);
+                if (cadena.length() > prw) {
+                    nuevaCadena =cadena.substring(0, prw);rep.add(nuevaCadena);
+                    cadena = cadena.substring(prw);
+                    if (cadena.length() > prw) {
+                        nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
+                    } if (cadena.length()>0) rep.add(cadena);
+                } else {
+                    if (cadena.length()>0) rep.add(cadena);
+                }
+            } else rep.add(clidir);
+        }
+
+        try {
+            if (!clitel.isEmpty()) rep.add("Tel.: "+clitel);
+        } catch (Exception e) {}
+
+    }
 
     private void montoLetra() {
         clsNumALetra NLet=new clsNumALetra();

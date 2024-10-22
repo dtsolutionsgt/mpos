@@ -76,7 +76,7 @@ public class clsClasses {
         public int  codigo;
         public String corel;
         public int  empresa;
-        public int  codigo_producto;
+        public String  codigo_producto;
         public double cant;
         public double precio;
         public String um;
@@ -111,6 +111,7 @@ public class clsClasses {
         public String shora;
         public String smin;
         public String sorden;
+        public boolean timeflag;
     }
 
     public class clsD_domicilio_log {
@@ -156,6 +157,12 @@ public class clsClasses {
         public long feelfechaprocesado;
         public String feelcontingencia;
         public int codigo_tipo_factura;
+    }
+
+    public class clsD_factura_dom {
+        public String corel;
+        public int  linea;
+        public String texto;
     }
 
     public class clsD_factura_fel {
@@ -918,6 +925,11 @@ public class clsClasses {
         public int cod_cant_emp;
         public int cantidad_puntos_venta;
         public String clave;
+    }
+
+    public class clsP_empresa_trans {
+        public int  codigo;
+        public String nombre;
     }
 
     public class clsP_encabezado_reporteshh {

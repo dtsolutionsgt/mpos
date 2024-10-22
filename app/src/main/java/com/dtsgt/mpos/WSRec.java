@@ -39,6 +39,7 @@ import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_departamentoObj;
 import com.dtsgt.classes.clsP_descuentoObj;
 import com.dtsgt.classes.clsP_empresaObj;
+import com.dtsgt.classes.clsP_empresa_transObj;
 import com.dtsgt.classes.clsP_encabezado_reporteshhObj;
 import com.dtsgt.classes.clsP_factorconvObj;
 import com.dtsgt.classes.clsP_fel_sv_ambObj;
@@ -159,7 +160,6 @@ public class WSRec extends PBase {
             wso=new wsOpenDT(gl.wsurl);
 
             rnTipoContrib = () -> { tipoContrib();};
-            rnFechaContrato = () -> { fechaContrato();};
 
             setHandlers();
 
@@ -1170,7 +1170,7 @@ public class WSRec extends PBase {
 
     }
 
-    private boolean processData() {
+    private void processData() {
 
         try {
 
@@ -1184,17 +1184,35 @@ public class WSRec extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
+        } catch (Exception e) {
+            db.endTransaction();
+            String ss=e.getMessage() + "---" + sql;
+            msgboxwait("DB Commit Error\n" + e.getMessage() + "\n" + sql);
+            return ;
+        }
+
+        try {
             if (validaParametros()) {
                 app.setDateRecep(du.getActDate());
-                msgboxwait("Recepción completa");
+
 
                 fechaActualizacion();
-                llenaTipoContrib();
+
+                iniciaStream();
             } else {
                 msgboxexit("Configuración de tienda o caja incorrecta");
-                //finish();
             }
+        } catch (Exception e) {
+            msgboxwait("Error\n" + e.getMessage());
 
+        }
+    }
+
+    private void processDataFinal() {
+        try {
+            msgboxwait("Recepción completa");
+
+            validaFEL();
             validaCombos();
             printBypass();
             productoPropinaServicio();
@@ -1202,15 +1220,8 @@ public class WSRec extends PBase {
 
             if (app.citems.size()>0) mostrarLista();
 
-            return true;
-
         } catch (Exception e) {
-            db.endTransaction();
-            String ss=e.getMessage() + "---" + sql;
-            //toastlong(ss);
-            //toastlong(ss);
-            msgboxwait("DB Commit Error\n" + e.getMessage() + "\n" + sql);
-            return false;
+            msgboxwait("Error\n" + e.getMessage() );
         }
     }
 
@@ -1473,6 +1484,36 @@ public class WSRec extends PBase {
             if (FELsvmodo>=0) {
                 validaFELESA_archivo(FELsvcrt);
             }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void validaFEL() {
+        boolean flagFEL=false;
+        long fact,f14;
+
+        if (gl.tienda==0) return;
+
+        try {
+
+            if (ffel!=0) {
+                fact=du.getActDate();f14=du.addDays(fact,14);
+                if (f14>=ffel)  msgbox("Validéz de Facturación electronica está próxima a expirar.\nAvize a supervisor.");
+            }
+
+            app.parametrosExtra();
+
+            if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
+                flagFEL=true;
+            } else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
+                flagFEL=true;
+            }
+
+            clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
+            P_sucursalObj.fill("WHERE (CODIGO_SUCURSAL="+gl.tienda+")");
+            if (P_sucursalObj.count==0) return;
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -4085,7 +4126,15 @@ public class WSRec extends PBase {
 
     //endregion
 
-    //region Web Service calls
+    //region Web Service Stream
+
+    private void iniciaStream() {
+        llenaTipoContrib();
+    }
+
+    private void terminaStream() {
+        processDataFinal();
+    }
 
     private void llenaTipoContrib() {
         try {
@@ -4098,10 +4147,11 @@ public class WSRec extends PBase {
 
                 sql="SELECT CODIGO_TIPO_CONTRIBUYENTE,TIPO_CONTRIBUYENTE, TIPO_DOCUMENTO " +
                     "FROM P_TIPO_CONTRIBUYENTE WHERE (COD_PAIS='"+cpais+"') AND (ACTIVO=1)";
-                wso.execute(sql,rnTipoContrib);
+                wso.execute(sql,() -> { tipoContrib(); });
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            terminaStream();
         }
     }
 
@@ -4122,7 +4172,7 @@ public class WSRec extends PBase {
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            return;
+            terminaStream();return;
         }
 
         try {
@@ -4151,21 +4201,19 @@ public class WSRec extends PBase {
         } catch (Exception e) {
             db.endTransaction();
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            terminaStream();
         }
 
-        validaFechaContrato();
+        try {
+            sql="SELECT dbo.AndrDate(FEL_FECHA_VENCE_CONTRATO),FEL_ESA_modo_sandbox,FEL_ESA_Archivo FROM P_SUCURSAL WHERE (CODIGO_SUCURSAL="+gl.tienda+")";
+            wso.execute(sql,() -> { validaFechaContrato(); });
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            terminaStream();
+        }
     }
 
     private void validaFechaContrato() {
-        try {
-            sql="SELECT dbo.AndrDate(FEL_FECHA_VENCE_CONTRATO),FEL_ESA_modo_sandbox,FEL_ESA_Archivo FROM P_SUCURSAL WHERE (CODIGO_SUCURSAL="+gl.tienda+")";
-            wso.execute(sql,rnFechaContrato);
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void fechaContrato() {
         int i=2;
 
         try {
@@ -4179,45 +4227,69 @@ public class WSRec extends PBase {
             try {
                 dt.moveToFirst();
                 ffel=dt.getLong(0);
-
             } catch (Exception e) {
                 ffel=0;
             }
+
+            plabel = "EMPRESA TRANSPORTE";updateLabel();
+
+            sql="SELECT CODIGO_EMP_TRANSPORTE, NOMBRE FROM P_EMPRESA_TRANSPORTE " +
+                "WHERE (CODIGO_EMP_TRANSPORTE=1) OR ((EMPRESA="+gl.emp+") AND (ACTIVO=1))";
+            wso.execute(sql,() -> { empresaTransporte(); });
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-        validaFEL();
     }
 
-    private void validaFEL() {
-        boolean flagFEL=false;
-        long fact,f14;
-
-        if (gl.tienda==0) return;
+    private void empresaTransporte() {
+        clsClasses.clsP_empresa_trans item;
 
         try {
+            if (wso.errflag) throw new Exception(wso.error);
 
-            if (ffel!=0) {
-                fact=du.getActDate();f14=du.addDays(fact,14);
-                if (f14>=ffel)  msgbox("Validéz de Facturación electronica está próxima a expirar.\nAvize a supervisor.");
+            if (!db.isOpen()) {
+                browse=0;onResume();
             }
 
-            app.parametrosExtra();
+            Cursor dt=wso.openDTCursor;
 
-            if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
-                flagFEL=true;
-            } else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
-                flagFEL=true;
+            try {
+                db.beginTransaction();
+
+                db.execSQL("DELETE FROM P_empresa_trans");
+
+                if (dt.getCount()>0) {
+
+                    clsP_empresa_transObj P_empresa_transObj=new clsP_empresa_transObj(this,Con,db);
+
+                    dt.moveToFirst();
+                    while (!dt.isAfterLast()) {
+
+                        item = clsCls.new clsP_empresa_trans();
+
+                        item.codigo=dt.getInt(0);
+                        item.nombre=dt.getString(1);
+
+                        P_empresa_transObj.add(item);
+
+                        dt.moveToNext();
+                    }
+                }
+
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (Exception e) {
+                db.endTransaction();
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                terminaStream();
             }
-
-            clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
-            P_sucursalObj.fill("WHERE (CODIGO_SUCURSAL="+gl.tienda+")");
-            if (P_sucursalObj.count==0) return;
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
+        terminaStream();
     }
 
     //endregion
@@ -4231,7 +4303,7 @@ public class WSRec extends PBase {
                 handler.post(new Runnable() {
                     public void run() {
                         if (plabel != null)
-                            lbl1.setText(plabel);
+                            lbl1.setText(plabel.toUpperCase());
                     }
                 });
             }

@@ -46,8 +46,9 @@ public class clsDocument {
 	protected String sql;
 	
 	protected ArrayList<String> lines= new ArrayList<String>();
-	
-	protected Context cont;
+    protected ArrayList<String> domlines= new ArrayList<String>();
+
+    protected Context cont;
 	protected DateUtils DU;
 	protected DecimalFormat decfrm;
 	

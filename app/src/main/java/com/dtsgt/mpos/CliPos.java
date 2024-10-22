@@ -118,11 +118,10 @@ public class CliPos extends PBase {
         gl.pedcorel="";gl.parallevar=false;gl.cf_domicilio=false;
         gl.mododocesa=-1;
 
-
         bloqueado=false;
 
-        //domicilio=gl.modo_domicilio;
         domicilio=gl.peVentaDomicilio;
+
         cbllevar.setEnabled(true); cbllevar.setChecked(false);
         cbdomicilio.setEnabled(true); cbdomicilio.setChecked(false);
 

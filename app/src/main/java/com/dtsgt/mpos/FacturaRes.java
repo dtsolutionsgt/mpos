@@ -40,6 +40,7 @@ import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_cxcObj;
 import com.dtsgt.classes.clsD_facturaObj;
+import com.dtsgt.classes.clsD_factura_domObj;
 import com.dtsgt.classes.clsD_factura_felObj;
 import com.dtsgt.classes.clsD_factura_svObj;
 import com.dtsgt.classes.clsD_facturadObj;
@@ -100,7 +101,7 @@ public class FacturaRes extends PBase {
 	private EditText txtVuelto;
 	private RelativeLayout rl_facturares;
 
-	private List<String> spname = new ArrayList<String>();
+	private ArrayList<String> ltext = new ArrayList<String>();
 	private ArrayList<clsClasses.clsCDB> items= new ArrayList<clsClasses.clsCDB>();
 	private ListAdaptTotals adapter;
 
@@ -324,6 +325,7 @@ public class FacturaRes extends PBase {
 			rncreditoDisp = () -> creditoDisp();
 
 			clsDesc=new clsDescGlob(this);
+
 
 			descpmon=totalDescProd(); //descpmon=0;
 			dmax=clsDesc.dmax;
@@ -1198,6 +1200,7 @@ public class FacturaRes extends PBase {
         clsClasses.clsD_facturas fsitem;
 
 		Cursor dt,dtc;
+
 		String vprod,vumstock,vumventa,vbarra,ssq,svnit,llevdom;
 		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec,adescmon,adescv1,valp,vvimp;
 		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend,
@@ -1750,7 +1753,7 @@ public class FacturaRes extends PBase {
 
             //endregion
 
-            //region D_FACTURAPR Propina por factura - solo modulo restaurante
+            //region D_FACTURAPR
 
 			if (propina>0) {
 				//if (gl.peRest) {
@@ -1852,7 +1855,7 @@ public class FacturaRes extends PBase {
 
 			//region D_FACTURAMUNI
 
-			if ( gl.codigo_pais.equalsIgnoreCase("GT")) {
+			if ( gl.codigo_pais.equalsIgnoreCase("SV")) {
 
 				clsD_facturamuniObj D_facturamuniObj = new clsD_facturamuniObj(this, Con, db);
 				clsClasses.clsD_facturamuni fmuni = clsCls.new clsD_facturamuni();
@@ -1862,6 +1865,28 @@ public class FacturaRes extends PBase {
 				fmuni.iddepto = gl.cli_depto;
 
 				D_facturamuniObj.add(fmuni);
+			}
+
+			//endregion
+
+			//region D_FACTURA_DOM
+
+			if (gl.pedido_dom_import) {
+
+				creaTextoDomicilio();
+
+				clsD_factura_domObj D_factura_domObj=new clsD_factura_domObj(this,Con,db);
+				clsClasses.clsD_factura_dom domitem;
+
+				for (int i = 0; i <ltext.size(); i++) {
+					domitem = clsCls.new clsD_factura_dom();
+
+					domitem.corel=corel;
+					domitem.linea=i+1;
+					domitem.texto=ltext.get(i);
+
+					D_factura_domObj.add(domitem);
+				}
 			}
 
 			//endregion
@@ -1905,6 +1930,18 @@ public class FacturaRes extends PBase {
 
 			db.setTransactionSuccessful();
 			db.endTransaction();
+
+			//region Reinicio valores domicilio
+
+			gl.pedido_dom_import=false;
+			gl.ped_dom_cliente="";
+			gl.ped_dom_dir="";
+			gl.ped_dom_texto="";
+			gl.ped_dom_tel="";
+			gl.ped_dom_cambio="";
+			gl.ped_dom_orden="";
+
+			//endregion
 
 			if (gl.dvbrowse!=0) {
 				gl.dvbrowse =0;
@@ -1953,6 +1990,31 @@ public class FacturaRes extends PBase {
 			}
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void creaTextoDomicilio() {
+		try {
+			ltext.clear();
+
+			splitText("Nombre: "+gl.ped_dom_cliente);
+			splitText("Dir: "+gl.ped_dom_dir);
+			splitText(gl.ped_dom_texto);
+			ltext.add("");
+			ltext.add("Telefono: "+gl.ped_dom_tel);
+			ltext.add("Cambio a: "+gl.ped_dom_cambio);
+			ltext.add("Orden: "+gl.ped_dom_orden);
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void splitText(String txt) {
+		if (txt.isEmpty()) return;
+
+		List<String> result = app.splitString(txt, prn.prw);
+		for (String chunk : result) {
+			ltext.add(chunk);
 		}
 	}
 

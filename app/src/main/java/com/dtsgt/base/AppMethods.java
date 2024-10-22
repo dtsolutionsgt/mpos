@@ -57,6 +57,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
@@ -894,6 +895,8 @@ public class AppMethods {
 			gl.peVentaDomicilio = false;
 		}
 
+		if (gl.pePedidos) gl.peVentaDomicilio=false;
+
 		try {
 
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=139";
@@ -908,6 +911,8 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peVentaEntrega = false;
 		}
+
+		if (gl.pePedidos) gl.peVentaEntrega=false;
 
 		try {
 
@@ -1325,13 +1330,20 @@ public class AppMethods {
 		}
 
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=172";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
 
+			val=dt.getString(0);
+			ival=Integer.parseInt(val);
+
+			gl.peDomTiempo = ival;
+		} catch (Exception e) {
+			gl.peDomTiempo = 15;
+		}
 
 	}
-
-	//                  Params extra
-	// *****************************************************
-
 
     public boolean paramCierre(int pid) {
         Cursor dt;
@@ -2315,29 +2327,6 @@ public class AppMethods {
 		*/
 	}
 
-	public String estadoNombre(int idest) {
-		String se="";
-
-		switch (idest) {
-			case 1:
-				se="RECIBIDO";break;
-			case 2:
-				se="NUEVO";break;
-			case 3:
-				se="EN PROCESO";break;
-			case 4:
-				se="ANULADO";break;
-			case 5:
-				se="COMPLETO";break;
-			case 6:
-				se="EN TRANSITO";break;
-			case 7:
-				se="ENTREGADO";break;
-		}
-
-		return se;
-	}
-
 	//endregion
 
     //region Caja
@@ -3054,6 +3043,40 @@ public class AppMethods {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 			return ss;
 		}
+	}
+
+	public String estadoNombre(int idest) {
+		String se="";
+
+		switch (idest) {
+			case 1:
+				se="RECIBIDO";break;
+			case 2:
+				se="NUEVO";break;
+			case 3:
+				se="EN PROCESO";break;
+			case 4:
+				se="ANULADO";break;
+			case 5:
+				se="COMPLETO";break;
+			case 6:
+				se="EN TRANSITO";break;
+			case 7:
+				se="ENTREGADO";break;
+		}
+
+		return se;
+	}
+
+	public static List<String> splitString(String str, int chunkSize) {
+		List<String> chunks = new ArrayList<>();
+		int length = str.length();
+
+		for (int i = 0; i < length; i += chunkSize) {
+			chunks.add(str.substring(i, Math.min(length, i + chunkSize)));
+		}
+
+		return chunks;
 	}
 
 	//endregion

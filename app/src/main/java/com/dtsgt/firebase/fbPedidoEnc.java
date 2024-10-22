@@ -24,8 +24,12 @@ public class fbPedidoEnc extends fbBase {
         fdt.setValue(item);
     }
 
-    public void updateItem(String node) {
+    public void updateStatCom(String node) {
         fdb.getReference(root+node).child("importado").setValue(1);
+    }
+
+    public void updateState(String node,int value) {
+        fdb.getReference(root+node).child("estado").setValue(value);
     }
 
     public void listPending( Runnable rnCallback ) {
@@ -69,27 +73,33 @@ public class fbPedidoEnc extends fbBase {
                 if (task.isSuccessful()) {
                     DataSnapshot res=task.getResult();
 
-                    item=clsCls.new clsD_domicilio_enc();
+                    try {
+                        item=clsCls.new clsD_domicilio_enc();
 
-                    item.corel=res.child("corel").getValue(String.class);
-                    item.empresa=res.child("empresa").getValue(Integer.class);
-                    item.codigo_sucursal=res.child("codigo_sucursal").getValue(Integer.class);
-                    item.fecha_hora=res.child("fecha_hora").getValue(Long.class);
-                    item.vendedor=res.child("vendedor").getValue(Integer.class);
-                    item.codigo_cliente=res.child("codigo_cliente").getValue(Integer.class);
-                    item.cliente_nombre=res.child("cliente_nombre").getValue(String.class);
-                    item.direccion_text=res.child("direccion_text").getValue(String.class);
-                    item.texto=res.child("texto").getValue(String.class);
-                    item.telefono=res.child("telefono").getValue(String.class);
-                    item.cambio=res.child("cambio").getValue(Integer.class);
-                    item.forma_pago=res.child("forma_pago").getValue(Integer.class);
-                    item.nit=res.child("nit").getValue(String.class);
-                    item.iddireccion=res.child("iddireccion").getValue(Integer.class);
-                    item.importado=res.child("importado").getValue(Integer.class);
-                    item.estado=2;
-                    item.idorden=0;
+                        item.corel=res.child("corel").getValue(String.class);
+                        item.empresa=res.child("empresa").getValue(Integer.class);
+                        item.codigo_sucursal=res.child("codigo_sucursal").getValue(Integer.class);
+                        item.fecha_hora=res.child("fecha_hora").getValue(Long.class);
+                        item.vendedor=res.child("vendedor").getValue(Integer.class);
+                        item.codigo_cliente=res.child("codigo_cliente").getValue(Integer.class);
+                        item.cliente_nombre=res.child("cliente_nombre").getValue(String.class);
+                        item.direccion_text=res.child("direccion_text").getValue(String.class);
+                        item.texto=res.child("texto").getValue(String.class);
+                        item.telefono=res.child("telefono").getValue(String.class);
+                        item.cambio=res.child("cambio").getValue(Integer.class);
+                        item.forma_pago=res.child("forma_pago").getValue(Integer.class);
+                        item.nit=res.child("nit").getValue(String.class);
+                        item.iddireccion=res.child("iddireccion").getValue(Integer.class);
+                        item.importado=res.child("importado").getValue(Integer.class);
+                        item.estado=2;
+                        item.idorden=0;
 
-                    errflag=false;
+                        errflag=false;
+                    } catch (Exception e) {
+                        errflag=true;
+                        error=e.getMessage();
+                    }
+
                 } else {
                     errflag=true;
                     error=task.getException().getMessage();

@@ -69,11 +69,12 @@ public class BaseDatosVersion {
         } catch (Exception e) { }
 
         try {
+
             sql="CREATE TABLE [D_domicilio_det] ("+
                     "CODIGO INTEGER NOT NULL,"+
                     "COREL TEXT NOT NULL,"+
                     "EMPRESA INTEGER NOT NULL,"+
-                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO TEXT NOT NULL,"+
                     "CANT REAL NOT NULL,"+
                     "PRECIO REAL NOT NULL,"+
                     "UM TEXT NOT NULL,"+
@@ -90,6 +91,26 @@ public class BaseDatosVersion {
             sql="CREATE INDEX D_domicilio_det_idx1 ON D_domicilio_det(COREL)";db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [D_factura_dom] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "LINEA INTEGER NOT NULL,"+
+                    "TEXTO TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL],[LINEA])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [P_empresa_trans] ("+
+                    "CODIGO INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
+
 
         try {
 
@@ -98,7 +119,6 @@ public class BaseDatosVersion {
         try {
 
         } catch (Exception e) { }
-
 
     }
 

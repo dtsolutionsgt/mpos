@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -72,6 +73,7 @@ import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.fel.FELVerificacion;
 import com.dtsgt.felesa.FELContingenciaSV;
+import com.dtsgt.firebase.fbPedidoDet;
 import com.dtsgt.firebase.fbPedidoEnc;
 import com.dtsgt.firebase.fbPedidoLog;
 import com.dtsgt.firebase.fbStock;
@@ -131,6 +133,9 @@ public class Venta extends PBase {
     private ArrayList<String> tl = new ArrayList<String>();
     private ArrayList<String> peditems = new ArrayList<String>();
 
+    private clsClasses.clsD_domicilio_enc pdeitem;
+    private ArrayList<clsClasses.clsD_domicilio_det> pdditems= new ArrayList<clsClasses.clsD_domicilio_det>();
+
     private AppMethods app;
 
     private clsD_pedidoObj D_pedidoObj;
@@ -150,6 +155,7 @@ public class Venta extends PBase {
 
     private fbStock fbs;
     private fbPedidoEnc fbpe;
+    private fbPedidoDet fbpd;
     private fbPedidoLog fblog;
 
     public recPedidoRecibido rcPedido = new recPedidoRecibido();
@@ -228,7 +234,6 @@ public class Venta extends PBase {
             rnOrdenDel = () -> {ordenDel();};
             rnlicSuscursal= () -> { licSucursal();};
 
-
             pedidos=gl.pePedidos;
             domenvio=gl.peDomEntEnvio;
 
@@ -255,9 +260,7 @@ public class Venta extends PBase {
             khand=new clsKeybHandler(this,lblCant,lblKeyDP);
 
             rnFbCallBack = new Runnable() {
-                public void run() {
-                    runFbCallBack();
-                }
+                public void run() { runFbCallBack(); }
             };
             fbs =new fbStock("Stock",gl.tienda);
 
@@ -2718,6 +2721,11 @@ public class Venta extends PBase {
                 mitems.add(item);
 
                 item = clsCls.new clsMenu();
+                item.ID=19;item.Name="Entrega";item.Icon=18;
+                item.cant=pedidoscant;
+                mitems.add(item);
+
+                item = clsCls.new clsMenu();
                 item.ID=17;item.Name="Cargar pedidos";item.Icon=17;
                 mitems.add(item);
 
@@ -2772,6 +2780,7 @@ public class Venta extends PBase {
 
             adaptergrid=new ListAdaptMenuVenta(this, mitems);
             gridViewOpciones.setAdapter(adaptergrid);
+
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -2813,6 +2822,8 @@ public class Venta extends PBase {
                     menuCargarPedidos();break;
                 case 18:
                     crearFbPedido();break;
+                case 19:
+                    menuEntrega();break;
                 case 24:
                     exitBtn();break;
                 case 99:
@@ -3080,8 +3091,19 @@ public class Venta extends PBase {
     public void menuPedidos() {
         try{
             gl.closePedido=false;
+            gl.pedido_dom_import=false;
             browse=9;
-            startActivity(new Intent(this,PedidosDom.class));
+
+            startActivity(new Intent(this, DomPedidos.class));
+        } catch (Exception e){
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public void menuEntrega() {
+        try{
+            browse=14;
+            startActivity(new Intent(this, DomEntrega.class));
         } catch (Exception e){
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -3090,7 +3112,9 @@ public class Venta extends PBase {
     public void menuCargarPedidos() {
         try{
             if (app.sinInternet()) return;
-            browse=9;
+            gl.pedido_dom_import=false;
+            browse=0;
+
             startActivity(new Intent(this,DomImport.class));
         } catch (Exception e){
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -3788,42 +3812,101 @@ public class Venta extends PBase {
     }
 
     private void crearFbPedido() {
-        clsClasses.clsD_domicilio_enc pitem;
         clsClasses.clsD_domicilio_log litem;
         String key;
 
         try {
 
             key=fbpe.key();
+            fbpd = new fbPedidoDet("DomicilioDet/"+gl.emp+"/"+gl.tienda+"/"+du.actDate()+"/"+key+"/");
 
-            pitem = clsCls.new clsD_domicilio_enc();
+            pdeitem = clsCls.new clsD_domicilio_enc();
 
-            pitem.corel=key;
-            pitem.empresa=gl.emp;
-            pitem.codigo_sucursal=gl.tienda;
-            pitem.fecha_hora=du.getActDateTime();
-            pitem.vendedor=gl.codigo_vendedor;
-            pitem.codigo_cliente=1;
-            pitem.cliente_nombre="Desarrollo";
-            pitem.direccion_text="Avenida Reforma, Zona 9, Guatemala";
-            pitem.texto="Nivel 9";
-            pitem.telefono="12345678";
-            pitem.cambio=200;
-            pitem.forma_pago=1;
-            pitem.nit="1234567-8";
-            pitem.iddireccion=1;
-            pitem.importado=0;
-            pitem.estado=2;
-            pitem.idorden=0;
+            pdeitem.corel=key;
+            pdeitem.empresa=gl.emp;
+            pdeitem.codigo_sucursal=gl.tienda;
+            pdeitem.fecha_hora=du.getActDateTime();
+            pdeitem.vendedor=gl.codigo_vendedor;
+            pdeitem.codigo_cliente=1;
+            pdeitem.cliente_nombre="Desarrollo";
+            pdeitem.direccion_text="Avenida Reforma, Zona 9, Guatemala";
+            pdeitem.texto="Nivel 9";
+            pdeitem.telefono="12345678";
+            pdeitem.cambio=200;
+            pdeitem.forma_pago=1;
+            pdeitem.nit="4092117-4";
+            pdeitem.iddireccion=1;
+            pdeitem.importado=0;
+            pdeitem.estado=2;
+            pdeitem.idorden=0;
 
-            fbpe.setItem(pitem);
+            crearFbPedidoDetalle();
 
+            fbpe.setItem(pdeitem);
+
+            for (clsClasses.clsD_domicilio_det itm : pdditems) {
+                fbpd.setItem(itm);
+            }
 
             litem = clsCls.new clsD_domicilio_log();
             litem.corel=key;
-
             fblog.setItem(litem);
 
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void crearFbPedidoDetalle() {
+        Cursor DT;
+        clsClasses.clsD_domicilio_det item;
+        int ii=0;
+
+        sql="SELECT T_VENTA.PRODUCTO, T_VENTA.TOTAL, T_VENTA.PRECIO, T_VENTA.CANT, T_VENTA.DES, " +
+            "T_VENTA.IMP, T_VENTA.UM, T_VENTA.DESMON FROM T_VENTA  ";
+        DT=Con.OpenDT(sql);
+
+        if (DT.getCount()>0) {
+
+            DT.moveToFirst();
+            while (!DT.isAfterLast()) {
+
+                item = clsCls.new clsD_domicilio_det();ii++;
+
+                item.codigo=ii;
+                item.corel="";
+                item.empresa=0;
+                item.codigo_producto=DT.getString(0);
+                item.cant=DT.getDouble(3);
+                item.precio=DT.getDouble(2);
+                item.um=DT.getString(6);
+                item.imp=DT.getDouble(5);
+                item.des=DT.getDouble(4);
+                item.desmon=DT.getDouble(7);
+                item.total=DT.getDouble(1);
+                item.nota=" ";
+                item.tipo_producto="S";
+
+                pdditems.add(item);
+
+                DT.moveToNext();
+            }
+        }
+
+        if (DT!=null) DT.close();
+
+    }
+
+    private void capturaPedido() {
+        if (!gl.pedido_dom_import) return;
+        if (gl.ped_dom_orden.isEmpty()) return;
+
+        try {
+            gl.numero_orden=" ";
+            gl.ref1=gl.ped_dom_orden;
+            lblAlm.setText(gl.ref1);
+
+            inputMesaDom();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -5591,8 +5674,46 @@ public class Venta extends PBase {
         final EditText input = new EditText(this);
         alert.setView(input);
 
-        //input.setInputType(InputType.TYPE_CLASS_NUMBER );
+        input.setTextSize(48);input.setTypeface(null, Typeface.BOLD);
         input.setText("");
+        input.requestFocus();
+
+        alert.setPositiveButton("Imprimir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                try {
+                    mesa=input.getText().toString();
+                    if (gl.peComandaVentaLAN) {
+                        procesaComanda();
+                    } else {
+                        imprimeComanda();
+                    }
+                } catch (Exception e) {
+                    String se=e.getMessage();
+                    mu.msgbox("Valor incorrecto "+e.getMessage());return;
+                }
+            }
+        });
+
+        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {}
+        });
+
+        alert.show();
+    }
+
+    private void inputMesaDom() {
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Impresión de comanda");
+
+        alert.setMessage("PEDIDO NUMERO: ");
+
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        input.setTextSize(48);input.setTypeface(null, Typeface.BOLD);
+        input.setText(""+gl.ref1);
         input.requestFocus();
 
         alert.setPositiveButton("Imprimir", new DialogInterface.OnClickListener() {
@@ -6551,6 +6672,7 @@ public class Venta extends PBase {
 
             if (browse==9) {
                 browse=0;listItems();
+                capturaPedido();
                 return;
             }
 
@@ -6588,6 +6710,11 @@ public class Venta extends PBase {
                     gl.promdesc=gl.desc_monto;
                     updDescMonto();
                 }
+                return;
+            }
+
+            if (browse==14) {
+                browse=0;listItems();
                 return;
             }
 

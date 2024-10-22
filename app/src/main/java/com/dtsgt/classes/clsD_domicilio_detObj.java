@@ -144,7 +144,7 @@ public class clsD_domicilio_detObj {
             item.codigo=dt.getInt(0);
             item.corel=dt.getString(1);
             item.empresa=dt.getInt(2);
-            item.codigo_producto=dt.getInt(3);
+            item.codigo_producto=dt.getString(3);
             item.cant=dt.getDouble(4);
             item.precio=dt.getDouble(5);
             item.um=dt.getString(6);
@@ -229,4 +229,3 @@ public class clsD_domicilio_detObj {
 
     //endregion
 }
-

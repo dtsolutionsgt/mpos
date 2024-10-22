@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.dtsgt.base.AppMethods;
@@ -61,6 +62,7 @@ public class LA_D_domicilio_enc  extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         int estado;
+        boolean flag;
 
         if (convertView == null) {
 
@@ -72,7 +74,8 @@ public class LA_D_domicilio_enc  extends BaseAdapter {
             holder.lbl3 =   convertView.findViewById(R.id.lblV3);
             holder.lbl4 =   convertView.findViewById(R.id.lblV4);
             holder.lbl7 =   convertView.findViewById(R.id.lblV7);
-            holder.relest = convertView.findViewById(R.id.relest);
+            holder.relest  = convertView.findViewById(R.id.relest);
+            holder.imgflag = convertView.findViewById(R.id.imageView165);
 
             convertView.setTag(holder);
         } else {
@@ -103,13 +106,22 @@ public class LA_D_domicilio_enc  extends BaseAdapter {
                 holder.relest.setBackgroundResource(R.drawable.blank48);break;
             case 3:
                 holder.relest.setBackgroundResource(R.drawable.color_ocra_grad);break;
+            case 4:
+                holder.relest.setBackgroundResource(R.drawable.blank48);break;
             case 5:
                 holder.relest.setBackgroundResource(R.drawable.color_green_grad);break;
             case 6:
                 holder.relest.setBackgroundResource(R.drawable.color_gray_grad);break;
+            case 7:
+                holder.relest.setBackgroundResource(R.drawable.blank48);break;
         }
 
-
+        flag=items.get(position).timeflag;if (estado==6 || estado==4) flag=false;
+        if (flag) {
+            holder.imgflag.setVisibility(View.VISIBLE);
+        } else {
+            holder.imgflag.setVisibility(View.INVISIBLE);
+        }
 
         return convertView;
     }
@@ -117,6 +129,7 @@ public class LA_D_domicilio_enc  extends BaseAdapter {
     static class ViewHolder {
         TextView lbl1,lbl2,lbl3,lbl4,lbl7;
         RelativeLayout relest;
+        ImageView imgflag;
     }
 
 }

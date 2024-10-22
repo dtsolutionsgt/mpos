@@ -1,23 +1,19 @@
 package com.dtsgt.mpos;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsD_domicilio_detObj;
 import com.dtsgt.classes.clsD_domicilio_encObj;
 import com.dtsgt.classes.clsP_orden_numeroObj;
-import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extTextDlg;
+import com.dtsgt.firebase.fbPedidoDet;
 import com.dtsgt.firebase.fbPedidoEnc;
-import com.dtsgt.mant.MantBarril;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -28,17 +24,19 @@ public class DomImport extends PBase {
     private ProgressBar pbar;
 
     private fbPedidoEnc fbpe;
+    private fbPedidoDet fbpd;
 
     private Stack<String> pedidos = new Stack<>();
 
     private clsD_domicilio_encObj D_domicilio_encObj;
+    private clsD_domicilio_detObj D_domicilio_detObj;
     private clsP_orden_numeroObj P_orden_numeroObj;
 
     private clsClasses.clsD_domicilio_enc eitem;
     private ArrayList<clsClasses.clsD_domicilio_det> ditems= new ArrayList<clsClasses.clsD_domicilio_det>();
 
     private int pcant,pedimp,pedpos;
-    private boolean idle = false;
+    private boolean idle = false, has_error=false;
     private String corel;
 
     @Override
@@ -54,9 +52,10 @@ public class DomImport extends PBase {
             pbar = findViewById(R.id.progressBar10);
 
             D_domicilio_encObj=new clsD_domicilio_encObj(this,Con,db);
+            D_domicilio_detObj=new clsD_domicilio_detObj(this,Con,db);
             P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
 
-            fbpe = new fbPedidoEnc("Domicilio/" + gl.emp + "/" + gl.tienda + "/" + du.actDate() + "/");
+            fbpe = new fbPedidoEnc("Domicilio/"+gl.emp+"/"+gl.tienda+"/"+du.actDate()+"/");
 
             Handler handler = new Handler(Looper.getMainLooper());
             handler.postDelayed(() -> { listItems(); }, 200);
@@ -135,23 +134,25 @@ public class DomImport extends PBase {
 
     private void llenaEncabezado() {
         try {
-            if (fbpe.errflag) throw new Exception(fbpe.error);
+            if (fbpe.errflag) {
+                throw new Exception(fbpe.error);
+            }
 
             eitem= fbpe.item;
             eitem.idorden=numeroOrdenLocal();
 
             cargaDetalle();
         } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            has_error=true;
+            msgexit(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             proximoPedido();
         }
     }
 
     private void cargaDetalle() {
         try {
-            //fbpe.getItem(corel,() -> { guardaPedido(); });
-
-            guardaPedido();
+            fbpd = new fbPedidoDet("DomicilioDet/"+gl.emp+"/"+gl.tienda+"/"+du.actDate()+"/"+corel+"/");
+            fbpd.listItems(corel,()->{ guardaPedido(); });
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             proximoPedido();
@@ -159,8 +160,10 @@ public class DomImport extends PBase {
     }
 
     private void guardaPedido() {
+        int detid;
+
         try {
-            if (fbpe.errflag) throw new Exception(fbpe.error);
+            if (fbpd.errflag) throw new Exception(fbpd.error);
 
             try {
                 db.beginTransaction();
@@ -168,15 +171,23 @@ public class DomImport extends PBase {
                 db.execSQL("DELETE FROM D_domicilio_enc WHERE (COREL='"+corel+"')");
                 db.execSQL("DELETE FROM D_domicilio_det WHERE (COREL='"+corel+"')");
 
+                detid=D_domicilio_detObj.newID("SELECT MAX(Codigo) FROM D_domicilio_det");
+
                 D_domicilio_encObj.add(eitem);
 
+                for (clsClasses.clsD_domicilio_det itm : fbpd.items) {
+                    clsClasses.clsD_domicilio_det citm=itm;
+                    citm.codigo=detid;
+                    D_domicilio_detObj.add(citm);
+                    detid++;
+                }
 
                 db.setTransactionSuccessful();
                 db.endTransaction();
 
                 pedimp++;
 
-                fbpe.updateItem(eitem.corel);
+                fbpe.updateStatCom(eitem.corel);
             } catch (Exception e) {
                 db.endTransaction();
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -203,7 +214,7 @@ public class DomImport extends PBase {
     //region Dialogs
 
     private void msgexit(String msg) {
-          try {
+        try {
             extTextDlg txtdlg = new extTextDlg();
             txtdlg.buildDialog(DomImport.this,"Pedidos","OK");
 
@@ -234,19 +245,19 @@ public class DomImport extends PBase {
             case 1:
                 ss="Creado 1 nuevo pedido .";break;
             default :
-                ss="Creado "+pedimp+" pedidos nuevos.";break;
+                ss="Creados "+pedimp+" pedidos nuevos.";break;
         }
         finok(ss);
     }
 
     private void finok(String msg) {
         idle=false;pbar.setVisibility(View.INVISIBLE);lbl1.setText("");
-        msgexit(msg);
+        if (!has_error) msgexit(msg);
     }
 
     private void finerr(String msg) {
         idle=false;pbar.setVisibility(View.INVISIBLE);lbl1.setText("");
-        msgexit("Ocurrió error : \n"+msg);
+        if (!has_error) msgexit("Ocurrió error : \n"+msg);
     }
 
     private int numeroOrdenLocal() {
@@ -285,6 +296,7 @@ public class DomImport extends PBase {
         super.onResume();
         try {
             D_domicilio_encObj.reconnect(Con,db);
+            D_domicilio_detObj.reconnect(Con,db);
             P_orden_numeroObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());

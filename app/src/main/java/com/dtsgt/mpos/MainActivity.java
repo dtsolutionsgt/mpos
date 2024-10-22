@@ -246,6 +246,7 @@ public class MainActivity extends PBase {
             super.InitBase();
 
             gl.bloqueo_venta=bloqueo_venta;
+            gl.pedido_dom_import=false;
 
             this.setTitle("MPos");
             gl.parVer = parVer;

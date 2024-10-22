@@ -12,6 +12,7 @@ import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.view.Gravity;
+import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ import com.dtsgt.base.MiscUtils;
 import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.extTextDlg;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.BufferedWriter;
@@ -180,6 +182,37 @@ public class PBase extends FragmentActivity {
 		gl.dialogid=dialogid;
 		if (msg==null || msg.isEmpty()) return;
 
+		try {
+			extTextDlg txtdlg = new extTextDlg();
+			txtdlg.buildDialog(PBase.this,"mPos","No","Si");
+
+			txtdlg.setText(msg);
+
+			txtdlg.setOnLeftClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					txtdlg.dismiss();
+				}
+			});
+
+			txtdlg.setOnMiddleClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (gl.dialogr!=null) gl.dialogr.run();
+					txtdlg.dismiss();
+				}
+			});
+
+			txtdlg.show();
+
+		} catch (Exception e){ }
+
+	}
+
+	public void msgaskold(int dialogid,String msg){
+		gl.dialogid=dialogid;
+		if (msg==null || msg.isEmpty()) return;
+
 		gl.dialogid=dialogid;
 		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 		dialog.setTitle(R.string.app_name);
@@ -206,7 +239,6 @@ public class PBase extends FragmentActivity {
 		dlg.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
 
 	}
-
 
 	protected void toast(String msg) {
 		toastcent(msg);
