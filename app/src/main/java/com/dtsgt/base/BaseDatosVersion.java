@@ -197,7 +197,6 @@ public class BaseDatosVersion {
         }
 
         try {
-
             sql="CREATE TABLE [P_res_turno] ("+
                     "FECHA INTEGER NOT NULL,"+
                     "VENDEDOR INTEGER NOT NULL,"+
@@ -1998,6 +1997,34 @@ public class BaseDatosVersion {
                     "PRIMARY KEY ([CODIGO_ALMACEN])"+
                     ");";
             db.execSQL(sql);
+        } catch (Exception e) { }
+
+        try {
+
+            sql="CREATE TABLE [D_orden_borrado] ("+
+                    "CODIGO_BORRADO INTEGER NOT NULL,"+
+                    "CODIGO_ORDEN TEXT NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "CANTIDAD REAL NOT NULL,"+
+                    "CODIGO_USUARIO INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_BORRADO])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX D_orden_borrado_idx1 ON D_orden_borrado(FECHA)";db.execSQL(sql);
+
+
+        } catch (Exception e) { }
+
+
+
+        try {
+
+        } catch (Exception e) { }
+
+        try {
+
         } catch (Exception e) { }
 
     }
