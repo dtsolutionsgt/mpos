@@ -422,6 +422,15 @@ public class clsClasses {
         public String nota;
     }
 
+    public class clsD_orden_borrado {
+        public int  codigo_borrado;
+        public String  codigo_orden;
+        public int  codigo_producto;
+        public double cantidad;
+        public int  codigo_usuario;
+        public long fecha;
+    }
+
     public class clsD_orden_compra_detalle {
         public String codigo_compra;
         public int  codigo_producto;

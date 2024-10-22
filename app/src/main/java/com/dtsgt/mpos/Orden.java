@@ -31,6 +31,7 @@ import com.dtsgt.classes.clsBonif;
 import com.dtsgt.classes.clsBonifGlob;
 import com.dtsgt.classes.clsD_barrilObj;
 import com.dtsgt.classes.clsD_barril_transObj;
+import com.dtsgt.classes.clsD_orden_borradoObj;
 import com.dtsgt.classes.clsDeGlob;
 import com.dtsgt.classes.clsDescFiltro;
 import com.dtsgt.classes.clsDescuento;
@@ -184,7 +185,7 @@ public class Orden extends PBase {
     private double px,py,cpx,cpy,cdist,savetot,saveprec;
 
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname,cbui;
-    private int nivel,dweek,clidia,counter,prodlinea,cuenta, IdcuentamovDestino,lineaingred;
+    private int nivel,dweek,clidia,counter,prodlinea,cuenta, IdcuentamovDestino,lineaingred,idsuper;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,descflag;
     private boolean enviarorden,actorden,modo_emerg,exit_mode,close_flag,rheader=false;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,ordencentral;
@@ -258,6 +259,7 @@ public class Orden extends PBase {
 
             app = new AppMethods(this, gl, Con, db);
             app.parametrosExtra();
+
             modo_emerg=app.modoSinInternet();
 
             setPrintWidth();
@@ -1758,12 +1760,40 @@ public class Orden extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
+            if (gl.peComandaBorrarPass) registraBorrado();
+
             listItems();
         } catch (Exception e) {
             db.endTransaction();
             msgbox(e.getMessage());
         }
 
+    }
+
+    private void registraBorrado() {
+        long fa=du.getActDateTime();
+
+        try {
+            clsD_orden_borradoObj D_orden_borradoObj=new clsD_orden_borradoObj(this,Con,db);
+
+            int newid=D_orden_borradoObj.newID("SELECT MAX(CODIGO_BORRADO) FROM D_orden_borrado");
+
+            clsClasses.clsD_orden_borrado item = clsCls.new clsD_orden_borrado();
+
+            item.codigo_borrado=newid;
+            item.codigo_orden=idorden;
+            item.codigo_producto=gl.produid;
+            item.cantidad=gl.retcant;
+            item.codigo_usuario=idsuper;
+            item.fecha=fa;
+
+            D_orden_borradoObj.add(item);
+
+            long ff=du.addDays(fa,-30);
+            db.execSQL("DELETE FROM D_orden_borrado WHERE (FECHA<"+ff+")");
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     private void delItemIng(){
@@ -4343,6 +4373,7 @@ public class Orden extends PBase {
         String contrib;
 
         app.parametrosExtra();
+
         if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
 
         usarbio=gl.peMMod.equalsIgnoreCase("1");
@@ -5311,7 +5342,7 @@ public class Orden extends PBase {
                                 if (statenv==1) {
                                     msgbox("El artículo es parte de una cuenta enviada a pagar, no se puede borrar");
                                 } else {
-                                    msgAskDel("Está seguro de borrar");
+                                    msgAskDelCom("Borrar artículo");
                                 }
                                 break;
                             case 4:
@@ -5385,8 +5416,12 @@ public class Orden extends PBase {
                                 }
                                 break;
                             case 2:
-                                valsupermodo=1;
-                                validaSupervisor();
+                                if (gl.peComandaBorrarPass) {
+                                    valsupermodo=1;
+                                    validaSupervisor();
+                                } else {
+                                    msgAskDel("Está seguro de borrar");
+                                }
                                 break;
                             case 3:
                                 gl.combo_edit=false;
@@ -5642,6 +5677,9 @@ public class Orden extends PBase {
                     if (listdlg.getInput().isEmpty()) return;
 
                     if (listdlg.validPassword()) {
+
+                        idsuper=listdlg.validUserId();
+
                         if (valsupermodo==0) {
                             msgBorrarOrden("Cerrar todas las cuentas de la órden");
                         } else if (valsupermodo==1) {
