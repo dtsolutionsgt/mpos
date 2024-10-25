@@ -39,6 +39,7 @@ import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_cxcObj;
+import com.dtsgt.classes.clsD_domicilio_entregaObj;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_factura_domObj;
 import com.dtsgt.classes.clsD_factura_felObj;
@@ -1205,7 +1206,7 @@ public class FacturaRes extends PBase {
 		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec,adescmon,adescv1,valp,vvimp;
 		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend,
 			intcod,itemuid,cuid,tipo_factura=1;
-		boolean flag,pagocarta=false;
+		boolean flag,pagocarta=false,pagopendiente=false;
 
         corel=gl.codigo_ruta+"_"+mu.getCorelBase();
 		hora=du.getActHour();
@@ -1326,7 +1327,9 @@ public class FacturaRes extends PBase {
 
 			ins.add("DEPOS",false);
 			ins.add("PEDCOREL",gl.pedcorel+"");
-			ins.add("REFERENCIA","");
+
+			if (gl.pedido_dom_import) ins.add("REFERENCIA",""+gl.ped_dom_corel); else ins.add("REFERENCIA","");
+
 			if (gl.dvbrowse!=0)	ins.add("ASIGNACION",gl.dvcorreld); else ins.add("ASIGNACION","");
 
 			ins.add("SUPERVISOR",""+fpend);
@@ -1581,6 +1584,8 @@ public class FacturaRes extends PBase {
             dt = Con.OpenDT(sql);
 
             dt.moveToFirst();
+
+			if (dt.getCount()==1) pagopendiente=dt.getInt(1)==0;
 
             while (!dt.isAfterLast()) {
 
@@ -1869,9 +1874,11 @@ public class FacturaRes extends PBase {
 
 			//endregion
 
-			//region D_FACTURA_DOM
+			//region D_FACTURA_DOM , D_DOMICILIO_ENTREGA
 
 			if (gl.pedido_dom_import) {
+
+				// D_FACTURA_DOM
 
 				creaTextoDomicilio();
 
@@ -1887,6 +1894,41 @@ public class FacturaRes extends PBase {
 
 					D_factura_domObj.add(domitem);
 				}
+
+				// D_DOMICILIO_ENTREGA
+
+				clsD_domicilio_entregaObj D_domicilio_entregaObj=new clsD_domicilio_entregaObj(this,Con,db);
+				clsClasses.clsD_domicilio_entrega dentritem;
+
+				dentritem = clsCls.new clsD_domicilio_entrega();
+
+				dentritem.corel=corel;
+				dentritem.corel_orden=gl.ped_dom_corel;
+				dentritem.estado=0;
+				dentritem.idrepar=0;
+				dentritem.nombre=" ";
+				dentritem.placa=" ";
+				dentritem.idempresa=0;
+
+				if (pagopendiente) {
+					dentritem.total=tot;
+					dentritem.pago=-0;
+					dentritem.vuelto=gl.ped_dom_monto;
+				} else {
+					dentritem.total=tot;
+					dentritem.pago=tot;
+					dentritem.vuelto=0;
+				}
+
+				dentritem.fechaini=0;
+				dentritem.fechafin=0;
+				dentritem.param1=" ";
+				dentritem.param2=" ";
+				dentritem.param3=0;
+				dentritem.param4=0;
+
+				D_domicilio_entregaObj.add(dentritem);
+
 			}
 
 			//endregion
@@ -3358,9 +3400,12 @@ public class FacturaRes extends PBase {
             ins.init("T_PAGO");
 
             ins.add("ITEM",item);
-            ins.add("CODPAGO",codpago);
-            ins.add("TIPO","E");
-            ins.add("VALOR",0);
+            //ins.add("CODPAGO",codpago);
+            //ins.add("TIPO","E");
+            //ins.add("VALOR",0);
+			ins.add("CODPAGO",0);
+			ins.add("TIPO","P");
+			ins.add("VALOR",tot);
             ins.add("DESC1","");
             ins.add("DESC2","");
             ins.add("DESC3","");
@@ -3544,7 +3589,6 @@ public class FacturaRes extends PBase {
 	}
 
 	private void checkPago() {
-
 		Cursor DT;
 		double tpago;
 
@@ -3674,7 +3718,7 @@ public class FacturaRes extends PBase {
 
     private void pagoPendiente() {
         Cursor DT;
-        double tpago,pef,pcard;
+        double tpago,pef,pcard,ppend;
 
         try {
 
@@ -3697,6 +3741,16 @@ public class FacturaRes extends PBase {
             } else  {
                 pcard=0;
             }
+
+			sql="SELECT SUM(VALOR) FROM T_PAGO WHERE TIPO='P'";
+			DT=Con.OpenDT(sql);
+
+			if (DT.getCount()>0) {
+				DT.moveToFirst();
+				ppend=DT.getDouble(0);
+			} else  {
+				ppend=0;
+			}
 
         } catch (Exception e) {
             pef=0;pcard=0;
@@ -4736,9 +4790,7 @@ public class FacturaRes extends PBase {
     }
 
     private void askPendientePago() {
-
         try{
-
             ExDialog dialog = new ExDialog(this);
 
             dialog.setMessage("¿Dejar factura pendiente de pago?.");
@@ -4751,11 +4803,9 @@ public class FacturaRes extends PBase {
             dialog.setCancelable(false);
             dialog.show();
 
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
-
     }
 
     private void askPrint() {

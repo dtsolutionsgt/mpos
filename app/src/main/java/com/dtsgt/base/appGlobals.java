@@ -50,24 +50,24 @@ public class appGlobals extends Application {
 				mesa_vend,mesa_codigo,invcent_cod,invcen_alm,sal_idneg,desc_tipo_apl,prcu_mesa,
 			    prcu_vend,precuenta_cuenta,combo_cuenta,dias_credito,precuenta_modo,domicilio_notif,
 			    servidor_anio,idcombo,set_cant,set_cant_max,fact_sin_cert,fd_hn_cori,fd_hn_corf,
-				dom_est_val;
+				dom_est_val,repartidor_codigo,ped_dom_empresa;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel,
                 corelmov, linea_sel="",mesa_alias,nummesapedido, nombre_cortesia,bar_um,bar_idbarril;
 	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir,sal_iddep,sal_idmun,sal_neg,sal_mun,sal_dep,
 			     prcu_corel,nom_alm,nom_alm2,mesa_area,nit_tipo,invcent_tipo,FEL_llave_cont,
   	             cli_muni,cli_muni_suc,cli_depto,cli_depto_suc,dom_det_cod,
-			     ped_dom_orden,ped_dom_cliente,ped_dom_dir,ped_dom_texto,ped_dom_tel,ped_dom_cambio;
+			     ped_dom_corel,ped_dom_orden,ped_dom_cliente,ped_dom_dir,ped_dom_texto,ped_dom_tel,ped_dom_cambio;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,
 			      dom_total,bar_cant,descadd,monto_propina,limite_credito,preccombo,
-				  fd_hn_imp,fd_hn_exen,fd_hn_grav;
+				  fd_hn_imp,fd_hn_exen,fd_hn_grav,ped_dom_monto;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,paraentrega,
                    impresion_comanda, modo_domicilio, cf_domicilio, cierra_clave, mesero_lista ,
                    ingreso_mesero,after_login,modo_prec,mesero_precuenta,sin_propina,modo_upd_venta,
 			       modo_cortesia,modo_apertura,imp_inventario,sal_NIT,sal_NRC,sal_PER,nueva_mesa,
-				   combo_edit,cliente_credito=false,pedido_dom_import;
+				   combo_edit,cliente_credito=false,pedido_dom_import,repartidor_select;
 
 	//FEL Identificacion
 	public String felSIN="SIN FEL";
@@ -158,6 +158,8 @@ public class appGlobals extends Application {
 	public String felUsuarioCertificacion, felLlaveCertificacion;
 
 	public ArrayList<String> peditems = new ArrayList<String>();
+	public ArrayList<clsClasses.clsP_empresa_trans> emptrans= new ArrayList<clsClasses.clsP_empresa_trans>();
+
 
 	//#EJC202301020908AM: Parámetro para saber si se sincronizan o no
 	//todos los clientes.

@@ -252,14 +252,44 @@
                 android:id="@+id/textView194"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="4dp"
-                android:layout_marginEnd="20dp"
+                android:layout_toEndOf="@+id/relPed"
                 android:gravity="center_vertical"
                 android:text="00:00"
                 android:textColor="#FFFFFF"
                 android:textSize="64sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView369"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/imageView168"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:gravity="center_horizontal"
+                android:paddingBottom="2dp"
+                android:text="Repartidores"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/imageView168"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:onClick="doAdd"
+                android:paddingStart="10dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="20dp"
+                android:src="@drawable/repatidor_frame" />
 
         </RelativeLayout>
 

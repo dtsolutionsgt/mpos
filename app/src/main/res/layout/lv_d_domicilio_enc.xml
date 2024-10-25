@@ -35,7 +35,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
-                android:text="Medium Text"
+                android:text="#9999"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000"
                 android:textSize="48sp"
@@ -116,6 +116,18 @@
                 android:layout_toStartOf="@+id/lblV2"
                 android:adjustViewBounds="true"
                 android:src="@drawable/warning" />
+
+            <ImageView
+                android:id="@+id/imageView170"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:layout_alignBottom="@+id/lblV2"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:paddingTop="5dp"
+                android:src="@drawable/entr_pago_pendiente" />
 
         </RelativeLayout>
     </RelativeLayout>

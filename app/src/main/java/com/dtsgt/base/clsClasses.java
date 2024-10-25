@@ -112,6 +112,27 @@ public class clsClasses {
         public String smin;
         public String sorden;
         public boolean timeflag;
+        public long fecha_entrega=0;
+        public int  estadopago=0;
+    }
+
+    public class clsD_domicilio_entrega {
+        public String corel;
+        public String corel_orden;
+        public int  estado;
+        public int  idrepar;
+        public String nombre;
+        public String placa;
+        public int  idempresa;
+        public double total;
+        public double pago;
+        public double vuelto;
+        public long fechaini;
+        public long fechafin;
+        public String param2;
+        public String param1;
+        public int  param3;
+        public long param4;
     }
 
     public class clsD_domicilio_log {
@@ -1328,12 +1349,14 @@ public class clsClasses {
         public int dias;
     }
 
-    public class clsP_ruta {
-        public String codigo;
-        public String sucursal;
+    public class clsP_repartidor {
+        public int  codigo;
+        public int  activo;
         public String nombre;
-        public int codigo_ruta;
-        public boolean activo;
+        public String placa;
+        public int  codigo_empresa;
+
+        public String pempresa;
     }
 
     public class clsP_res_grupo {
@@ -1372,6 +1395,26 @@ public class clsClasses {
         public long fecha;
         public int vendedor;
         public int codigo_grupo;
+    }
+
+    public class clsP_res_sesion {
+        public String id;
+        public int codigo_mesa;
+        public int vendedor;
+        public int estado;
+        public int cantp;
+        public int cantc;
+        public long fechaini;
+        public long fechafin;
+        public long fechault;
+    }
+
+    public class clsP_ruta {
+        public String codigo;
+        public String sucursal;
+        public String nombre;
+        public int codigo_ruta;
+        public boolean activo;
     }
 
     public class clsP_stock {
@@ -1583,18 +1626,6 @@ public class clsClasses {
         public long fechaini;
         public String nom_vendedor;
 
-    }
-
-    public class clsP_res_sesion {
-        public String id;
-        public int codigo_mesa;
-        public int vendedor;
-        public int estado;
-        public int cantp;
-        public int cantc;
-        public long fechaini;
-        public long fechafin;
-        public long fechault;
     }
 
     public class clsVendedores {

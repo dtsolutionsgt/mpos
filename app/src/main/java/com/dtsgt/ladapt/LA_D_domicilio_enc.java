@@ -61,7 +61,7 @@ public class LA_D_domicilio_enc  extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        int estado;
+        int estado,estadopago;
         boolean flag;
 
         if (convertView == null) {
@@ -76,6 +76,7 @@ public class LA_D_domicilio_enc  extends BaseAdapter {
             holder.lbl7 =   convertView.findViewById(R.id.lblV7);
             holder.relest  = convertView.findViewById(R.id.relest);
             holder.imgflag = convertView.findViewById(R.id.imageView165);
+            holder.imgpago = convertView.findViewById(R.id.imageView170);
 
             convertView.setTag(holder);
         } else {
@@ -111,9 +112,20 @@ public class LA_D_domicilio_enc  extends BaseAdapter {
             case 5:
                 holder.relest.setBackgroundResource(R.drawable.color_green_grad);break;
             case 6:
-                holder.relest.setBackgroundResource(R.drawable.color_gray_grad);break;
+                holder.relest.setBackgroundResource(R.drawable.color_blue_grad);break;
             case 7:
                 holder.relest.setBackgroundResource(R.drawable.blank48);break;
+        }
+
+        estadopago=items.get(position).estadopago;
+        holder.imgpago.setVisibility(View.VISIBLE);
+        switch (estadopago) {
+            case 0:
+                holder.imgpago.setVisibility(View.INVISIBLE);break;
+            case 1:
+                holder.imgpago.setImageResource(R.drawable.entr_pago_pendiente);break;
+            case 2:
+                holder.imgpago.setImageResource(R.drawable.entr_pago_completo);break;
         }
 
         flag=items.get(position).timeflag;if (estado==6 || estado==4) flag=false;
@@ -129,7 +141,7 @@ public class LA_D_domicilio_enc  extends BaseAdapter {
     static class ViewHolder {
         TextView lbl1,lbl2,lbl3,lbl4,lbl7;
         RelativeLayout relest;
-        ImageView imgflag;
+        ImageView imgflag,imgpago;
     }
 
 }

@@ -110,11 +110,70 @@ public class BaseDatosVersion {
             db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [D_orden_borrado] ("+
+                    "CODIGO_BORRADO INTEGER NOT NULL,"+
+                    "CODIGO_ORDEN TEXT NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "CANTIDAD REAL NOT NULL,"+
+                    "CODIGO_USUARIO INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_BORRADO])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX D_orden_borrado_idx1 ON D_orden_borrado(FECHA)";db.execSQL(sql);
+
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [P_repartidor] ("+
+                    "CODIGO INTEGER NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "PLACA TEXT NOT NULL,"+
+                    "CODIGO_EMPRESA INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX P_repartidor_idx1 ON P_repartidor(ACTIVO)";db.execSQL(sql);
+            sql="CREATE INDEX P_repartidor_idx2 ON P_repartidor(NOMBRE)";db.execSQL(sql);
+            sql="CREATE INDEX P_repartidor_idx3 ON P_repartidor(PLACA)";db.execSQL(sql);
+            sql="CREATE INDEX P_repartidor_idx4 ON P_repartidor(CODIGO_EMPRESA)";db.execSQL(sql);
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [D_domicilio_entrega] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "COREL_ORDEN TEXT NOT NULL,"+
+                    "ESTADO INTEGER NOT NULL,"+
+                    "IDREPAR INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "PLACA TEXT NOT NULL,"+
+                    "IDEMPRESA INTEGER NOT NULL,"+
+                    "TOTAL REAL NOT NULL,"+
+                    "PAGO REAL NOT NULL,"+
+                    "VUELTO REAL NOT NULL,"+
+                    "FECHAINI INTEGER NOT NULL,"+
+                    "FECHAFIN INTEGER NOT NULL,"+
+                    "PARAM2 TEXT NOT NULL,"+
+                    "PARAM1 TEXT NOT NULL,"+
+                    "PARAM3 INTEGER NOT NULL,"+
+                    "PARAM4 INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX D_domicilio_entrega_idx1 ON D_domicilio_entrega(COREL_ORDEN)";db.execSQL(sql);
+
+        } catch (Exception e) { }
 
 
         try {
 
         } catch (Exception e) { }
+
 
         try {
 
@@ -2001,18 +2060,6 @@ public class BaseDatosVersion {
 
         try {
 
-            sql="CREATE TABLE [D_orden_borrado] ("+
-                    "CODIGO_BORRADO INTEGER NOT NULL,"+
-                    "CODIGO_ORDEN TEXT NOT NULL,"+
-                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
-                    "CANTIDAD REAL NOT NULL,"+
-                    "CODIGO_USUARIO INTEGER NOT NULL,"+
-                    "FECHA INTEGER NOT NULL,"+
-                    "PRIMARY KEY ([CODIGO_BORRADO])"+
-                    ");";
-            db.execSQL(sql);
-
-            sql="CREATE INDEX D_orden_borrado_idx1 ON D_orden_borrado(FECHA)";db.execSQL(sql);
 
 
         } catch (Exception e) { }

@@ -148,7 +148,7 @@ public class DomPedidos extends PBase {
                 items.add(itm);
             }
 
-            D_domicilio_encObj.fill("WHERE (fecha_hora>="+ fechahoy +") AND (estado in (3,5,6)) ORDER BY estado,idorden");
+            D_domicilio_encObj.fill("WHERE (fecha_hora>="+ fechahoy +") AND (estado in (3,5)) ORDER BY estado,idorden");
             for (clsClasses.clsD_domicilio_enc itm : D_domicilio_encObj.items) {
                 items.add(itm);
             }
@@ -225,6 +225,10 @@ public class DomPedidos extends PBase {
             listItems();
 
             if (nestado==3) crearVenta();
+            if (nestado==6) {
+                startActivity(new Intent(this,DomEntrega.class));
+                finish();
+            }
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -263,8 +267,6 @@ public class DomPedidos extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
-
-
 
     //endregion
 
@@ -317,10 +319,13 @@ public class DomPedidos extends PBase {
 
             cargaCliente();
 
+            gl.ped_dom_corel=selitem.corel;
+
             gl.ped_dom_cliente=selitem.cliente_nombre;
             gl.ped_dom_dir=selitem.direccion_text;
             gl.ped_dom_texto=selitem.texto;
             gl.ped_dom_tel=selitem.telefono;
+            gl.ped_dom_monto=selitem.cambio;
             gl.ped_dom_cambio=mu.frmcur(selitem.cambio);
             gl.ped_dom_orden="#"+selitem.idorden % 1000;
 
