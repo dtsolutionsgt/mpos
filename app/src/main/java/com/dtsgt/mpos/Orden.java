@@ -473,6 +473,8 @@ public class Orden extends PBase {
                     clsOrden item = (clsOrden)lvObj;selitem=item;
                     prodid=item.Cod;gl.produid=item.id;
 
+                    if (gl.emp==55) return true;
+
                     if (items.get(position).estado==0) {
                         msgAskState("Agregar a la comanda",1,position);
                     } else {
