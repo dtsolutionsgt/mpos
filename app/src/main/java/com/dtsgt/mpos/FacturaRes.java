@@ -1850,7 +1850,7 @@ public class FacturaRes extends PBase {
 
 			//region D_FACTURAMUNI
 
-			if ( gl.codigo_pais.equalsIgnoreCase("GT")) {
+			if ( gl.codigo_pais.equalsIgnoreCase("SV")) {
 
 				clsD_facturamuniObj D_facturamuniObj = new clsD_facturamuniObj(this, Con, db);
 				clsClasses.clsD_facturamuni fmuni = clsCls.new clsD_facturamuni();
