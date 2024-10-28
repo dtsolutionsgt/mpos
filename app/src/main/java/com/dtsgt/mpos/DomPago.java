@@ -214,9 +214,9 @@ public class DomPago extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
-            enviaEstado(7);
+            enviaEstadoCompleto();
 
-            //finish();
+            finish();
         } catch (Exception e) {
             db.endTransaction();
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -224,37 +224,32 @@ public class DomPago extends PBase {
 
     }
 
-    private void enviaEstado(int estado) {
-        String ss="";
+    private void enviaEstadoCompleto() {
+        String ss="",ssl="";
         String sf=du.univfechahora(du.getActDateTime());
+        long ff=du.getActDateTime();
+        int trprop=0;
 
         try {
-            switch (estado) {
-                case 3: // PROCESANDO
-                    ss="UPDATE D_DOMICILIO_ENC SET estado="+estado+",fecha_inicio='"+sf+"' WHERE (corel='"+selitem.corel+"')";
-                    break;
-                case 4: // ANULADO
-                    ss="UPDATE D_DOMICILIO_ENC SET estado="+estado+" WHERE (corel='"+selitem.corel+"')";
-                    break;
-                case 5: // COMPLETO
-                    ss="UPDATE D_DOMICILIO_ENC SET estado="+estado+",fecha_completo='"+sf+"' WHERE (corel='"+selitem.corel+"')";
-                    break;
-                case 6: // EN TRANSITO
-                    ss="UPDATE D_DOMICILIO_ENC SET estado="+estado+" WHERE (corel='"+selitem.corel+"')";
-                    break;
-                case 7: // ENTREGADO
-                    ss="UPDATE D_DOMICILIO_ENC SET estado="+estado+",fecha_entrega='"+sf+"' WHERE (corel='"+selitem.corel+"')";
-                    break;
-            }
 
-            db.execSQL(ss);
+            ssl="UPDATE D_DOMICILIO_ENC SET estado=7 WHERE (corel='"+selitem.corel_orden+"')";
+            db.execSQL(ssl);
 
+            ssl="UPDATE D_domicilio_entrega SET estado=7,FECHAFIN="+ff+" WHERE (corel='"+selitem.corel_orden+"')";
+            db.execSQL(ssl);
+
+            fbpe.updateState(selitem.corel_orden,7);
+
+            if (selitem.idempresa==1) trprop=1;
+
+            ss="UPDATE D_DOMICILIO_ENC SET estado=7,fecha_entrega='"+sf+"'," +
+               "codigo_empresa_trans="+selitem.idempresa+",transporte_propio="+trprop+
+               " WHERE (corel='"+selitem.corel_orden+"')";
             Intent intent = new Intent(DomPago.this, srvCommit.class);
             intent.putExtra("URL",gl.wsurl);
             intent.putExtra("command",ss);
             startService(intent);
 
-            fbpe.updateState(selitem.corel_orden,estado);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

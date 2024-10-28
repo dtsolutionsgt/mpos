@@ -277,7 +277,6 @@ public class DomEntrega extends PBase {
                     break;
             }
 
-
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -285,12 +284,46 @@ public class DomEntrega extends PBase {
 
     private void completarOrden() {
         try {
-            aplicarEstado(7);
+            enviaEstadoCompleto();
             listItems();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
+    private void enviaEstadoCompleto() {
+        String ss="",ssl="";
+        String sf=du.univfechahora(du.getActDateTime());
+        long ff=du.getActDateTime();
+        int trprop=0;
+
+        try {
+            D_domicilio_entregaObj.fill("WHERE (COREL_ORDEN='"+selitem.corel+"') ORDER BY COREL DESC");
+            eitem=D_domicilio_entregaObj.first();
+
+            ssl="UPDATE D_DOMICILIO_ENC SET estado=7 WHERE (corel='"+selitem.corel+"')";
+            db.execSQL(ssl);
+
+            ssl="UPDATE D_domicilio_entrega SET estado=7,FECHAFIN="+ff+" WHERE (corel='"+selitem.corel+"')";
+            db.execSQL(ssl);
+
+            fbpe.updateState(eitem.corel_orden,7);
+
+            if (eitem.idempresa==1) trprop=1;
+
+            ss="UPDATE D_DOMICILIO_ENC SET estado=7,fecha_entrega='"+sf+"'," +
+                    "codigo_empresa_trans="+eitem.idempresa+",transporte_propio="+trprop+
+                    " WHERE (corel='"+selitem.corel+"')";
+            Intent intent = new Intent(DomEntrega.this, srvCommit.class);
+            intent.putExtra("URL",gl.wsurl);
+            intent.putExtra("command",ss);
+            startService(intent);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
 
     //endregion
 
@@ -331,7 +364,7 @@ public class DomEntrega extends PBase {
             }
             adapter.notifyDataSetChanged();
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }

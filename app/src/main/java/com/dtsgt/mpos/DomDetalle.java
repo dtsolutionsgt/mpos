@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsD_domicilio_encObj;
+import com.dtsgt.classes.clsD_domicilio_entregaObj;
 import com.dtsgt.classes.extTextDlg;
 
 public class DomDetalle extends PBase {
@@ -67,6 +68,19 @@ public class DomDetalle extends PBase {
     }
 
     public void doProx(View view) {
+
+        if (nuevoest==5) {
+            clsD_domicilio_entregaObj D_domicilio_entregaObj=new clsD_domicilio_entregaObj(this,Con,db);
+            D_domicilio_entregaObj.fill("WHERE (COREL_ORDEN='"+selitem.corel+"') ORDER BY COREL DESC");
+
+            if (D_domicilio_entregaObj.count==0) {
+                msgbox("Para la orden no existe factura. No se puede continuar con la entrega.");
+                return;
+            }
+        }
+
+
+
         gl.dom_est_val=nuevoest;
         finish();
     }
