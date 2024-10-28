@@ -3797,7 +3797,7 @@ public class FacturaRes extends PBase {
 
 						rep.empty();
 						rep.empty();
-						rep.add("ORDEN : "+gl.ref1.toUpperCase()+plev);
+						if (!gl.peNumOrdCommandaVenta) rep.add("ORDEN : "+gl.ref1.toUpperCase());
 						rep.add("Hora : " + du.shora(du.getActDateTime()));
 						rep.line24();
 
@@ -3810,8 +3810,20 @@ public class FacturaRes extends PBase {
 
 						rep.line24();
 						rep.add("");
+						if (gl.peNumOrdCommandaVenta) {
+							rep.add("");
+							rep.addc("************************");
+							rep.addc("ORDEN # "+gl.ref1.toUpperCase());
+							rep.addc("************************");
+						}
 						rep.add("");
-						rep.add("");
+
+						if ( gl.parallevar) {
+							rep.addc(" P A R A   L L E V A R ");rep.add("");
+							if (!gl.dom_nom.isEmpty()) {
+								rep.addc(gl.dom_nom);rep.add("");
+							}
+						}
 
 						ln = rep.items.size();
 						if (ln < 20) {
