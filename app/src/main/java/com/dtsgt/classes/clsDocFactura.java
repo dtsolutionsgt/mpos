@@ -1278,6 +1278,12 @@ public class clsDocFactura extends clsDocument {
 
         vimp1=round2(fh_imp1);vimp2=round2(fh_imp2);
 
+        if (vimp1>0) {
+            double vimphn=tot/(1+0.01*fh_val1);
+            vimphn=vimphn*0.01*fh_val1;
+            vimphn=vimphn-vimp2;
+        }
+
         rep.addtotsph("Subtotal: ", stot);
         rep.addtotsph("Descuento y rebajas: ", -desc);
         rep.addtotsph("Importe exonerado: ", fh_exon);
