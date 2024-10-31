@@ -1692,7 +1692,7 @@ public class WSEnv extends PBase {
     private void preparaEnvio() {
 
         int ccant, total_enviar = 0;
-        String uuid;
+        String uuid,fCorel;
 
         ferr = "";
         movErr = "";
@@ -1722,14 +1722,14 @@ public class WSEnv extends PBase {
             String idfel = gl.peFEL;
 
             if (app.usaFEL()) {
-                D_facturaObj.fill("WHERE (STATCOM='N') AND ((ANULADO=1) OR (FEELUUID<>' ')) AND (FECHA>2200000000) ");
+                D_facturaObj.fill("WHERE (STATCOM='N') AND ((ANULADO=1) OR (FEELUUID<>' ')) AND (FECHA>2200000000) ORDER BY COREL");
             } else {
-                D_facturaObj.fill("WHERE (STATCOM='N') AND (FECHA>2200000000) ");
+                D_facturaObj.fill("WHERE (STATCOM='N') AND (FECHA>2200000000) ORDER BY COREL");
             }
 
-            ftot = 0;
-            fsend = 0;
+            if (D_facturaObj.count>0) fCorel=D_facturaObj.first().corel;else fCorel="";
 
+            ftot = 0;fsend = 0;
             fact.clear();
 
             for (int i = 0; i < D_facturaObj.count; i++) {
@@ -1749,13 +1749,28 @@ public class WSEnv extends PBase {
                 }
             }
 
+            if (fact.size()>0) {
+                D_facturapObj.fill("WHERE (COREL>='"+fCorel+"') AND (TIPO='P')");
+                if  (D_facturapObj.count>0) {
+                    for (clsClasses.clsD_facturap itm:D_facturapObj.items) {
+                        fCorel=itm.corel;
+                        if (fact.contains(fCorel)) {
+                            fact.remove(fCorel);ftot--;
+                        }
+                    }
+                }
+
+            }
+
             if (ftot > 0) fidx = -1;
             else fidx = 0;
-            total_enviar += ftot;
+            //total_enviar += ftot;
 
-            long fan = du.addDays(du.getActDate(), -5);
-            D_facturaObj.fill("WHERE (ANULADO=1) AND (FECHA>" + fan + ") ");
-            total_enviar += D_facturaObj.count;
+            //long fan = du.addDays(du.getActDate(), -5);
+            //D_facturaObj.fill("WHERE (ANULADO=1) AND (FECHA>" + fan + ") ");
+            //total_enviar += D_facturaObj.count;
+            total_enviar += fact.size();
+            ftot=fact.size();
 
             clsD_MovObj D_MovObj = new clsD_MovObj(this, Con, db);
             D_MovObj.fill("WHERE STATCOM = 'N'");

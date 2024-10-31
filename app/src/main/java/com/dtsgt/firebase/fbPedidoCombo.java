@@ -9,17 +9,17 @@ import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
 
-public class fbPedidoDet extends fbBase {
+public class fbPedidoCombo extends fbBase {
 
-    public clsClasses.clsD_domicilio_det item;
-    public ArrayList<clsClasses.clsD_domicilio_det> items= new ArrayList<clsClasses.clsD_domicilio_det>();
+    public clsClasses.clsD_domicilio_combo item;
+    public ArrayList<clsClasses.clsD_domicilio_combo> items= new ArrayList<clsClasses.clsD_domicilio_combo>();
     public ArrayList<String> doms= new ArrayList<String>();
 
-    public fbPedidoDet(String troot) {
+    public fbPedidoCombo(String troot) {
         super(troot);
     }
 
-    public void setItem(clsClasses.clsD_domicilio_det item) {
+    public void setItem(clsClasses.clsD_domicilio_combo item) {
         fdt=fdb.getReference(root+item.codigo);
         fdt.setValue(item);
     }
@@ -40,21 +40,13 @@ public class fbPedidoDet extends fbBase {
 
                                     for (DataSnapshot snap : res.getChildren()) {
 
-                                        item=clsCls.new clsD_domicilio_det();
+                                        item=clsCls.new clsD_domicilio_combo();
 
                                         item.codigo=snap.child("codigo").getValue(Integer.class);
                                         item.corel=corel;
-                                        item.empresa=snap.child("codigo").getValue(Integer.class);
-                                        item.codigo_producto=snap.child("codigo_producto").getValue(String.class);
+                                        item.codigo_detalle=snap.child("codigo_detalle").getValue(Integer.class);
+                                        item.codigo_producto=snap.child("codigo_producto").getValue(Integer.class);
                                         item.cant=snap.child("cant").getValue(Double.class);
-                                        item.precio=snap.child("precio").getValue(Double.class);
-                                        item.um=""+snap.child("um").getValue(String.class);
-                                        item.imp=snap.child("imp").getValue(Double.class);
-                                        item.des=snap.child("des").getValue(Double.class);
-                                        item.desmon=snap.child("desmon").getValue(Double.class);
-                                        item.total=snap.child("total").getValue(Double.class);
-                                        item.nota=""+snap.child("nota").getValue(String.class);
-                                        item.tipo_producto=""+snap.child("tipo_producto").getValue(String.class);
 
                                         items.add(item);
                                     }

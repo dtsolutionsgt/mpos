@@ -169,11 +169,25 @@ public class BaseDatosVersion {
 
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [D_domicilio_combo] ("+
+                    "CODIGO INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "CODIGO_DETALLE INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX D_domicilio_combo_idx1 ON D_domicilio_combo(COREL)";db.execSQL(sql);
+
+        } catch (Exception e) { }
+
 
         try {
 
         } catch (Exception e) { }
-
 
         try {
 

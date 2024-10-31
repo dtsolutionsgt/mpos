@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsD_domicilio_comboObj;
 import com.dtsgt.classes.clsD_domicilio_detObj;
 import com.dtsgt.classes.clsD_domicilio_encObj;
 import com.dtsgt.classes.clsP_sucursalObj;
@@ -40,6 +41,7 @@ public class DomPedidos extends PBase {
 
     private clsD_domicilio_encObj D_domicilio_encObj;
     private clsD_domicilio_detObj D_domicilio_detObj;
+    private clsD_domicilio_comboObj D_domicilio_comboObj;
 
     public recPedidoRecibido rcPedido = new recPedidoRecibido();
 
@@ -78,6 +80,7 @@ public class DomPedidos extends PBase {
 
             D_domicilio_encObj=new clsD_domicilio_encObj(this,Con,db);
             D_domicilio_detObj=new clsD_domicilio_detObj(this,Con,db);
+            D_domicilio_comboObj=new clsD_domicilio_comboObj(this,Con,db);
 
             app.getURL();
             fechahoy =du.getActDate();
@@ -275,16 +278,16 @@ public class DomPedidos extends PBase {
     private void crearVenta() {
         clsClasses.clsT_venta venta;
         clsClasses.clsT_combo combo;
+        int ccb=1;
 
         try {
             db.beginTransaction();
 
-            db.execSQL("DELETE FROM T_COMBO");
             db.execSQL("DELETE FROM T_VENTA");
+            db.execSQL("DELETE FROM T_COMBO");
 
-            clsT_comboObj T_comboObj = new clsT_comboObj(this, Con, db);
             clsT_ventaObj T_ventaObj=new clsT_ventaObj(this,Con,db);
-            int itemid=T_ventaObj.newID("SELECT MAX(EMPRESA) FROM T_VENTA");
+            clsT_comboObj T_comboObj = new clsT_comboObj(this, Con, db);
 
             D_domicilio_detObj.fill("WHERE (corel='"+selitem.corel+"')");
             for (clsClasses.clsD_domicilio_det ditem:D_domicilio_detObj.items) {
@@ -292,7 +295,7 @@ public class DomPedidos extends PBase {
                 venta=clsCls.new clsT_venta();
 
                 venta.producto=ditem.codigo_producto;
-                venta.empresa=""+itemid;
+                venta.empresa=""+ditem.empresa;
                 venta.um=ditem.um;
                 venta.cant=ditem.cant;
                 venta.umstock=ditem.um;
@@ -307,11 +310,25 @@ public class DomPedidos extends PBase {
                 venta.val1=0;
                 venta.val2="";
                 venta.val3=0;
-                venta.val4="0";
+                if (ditem.tipo_producto.equalsIgnoreCase("M")) venta.val4=venta.empresa; else venta.val4="0";
                 venta.percep=0;
 
                 T_ventaObj.add(venta);
+            }
 
+            D_domicilio_comboObj.fill("WHERE (corel='"+selitem.corel+"')");
+            for (clsClasses.clsD_domicilio_combo citem:D_domicilio_comboObj.items) {
+
+                combo=clsCls.new clsT_combo();
+
+                combo.codigo_menu=ccb;
+                combo.idcombo=citem.codigo_detalle;
+                combo.unid=1;
+                combo.cant=(int) citem.cant;
+                combo.idseleccion=citem.codigo_producto;
+                combo.orden=ccb;
+
+                T_comboObj.add(combo);ccb++;
             }
 
             db.setTransactionSuccessful();
@@ -452,6 +469,7 @@ public class DomPedidos extends PBase {
 
             D_domicilio_encObj.reconnect(Con,db);
             D_domicilio_detObj.reconnect(Con,db);
+            D_domicilio_comboObj.reconnect(Con,db);
 
             initTimer();
 

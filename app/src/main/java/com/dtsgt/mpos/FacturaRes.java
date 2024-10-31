@@ -280,11 +280,9 @@ public class FacturaRes extends PBase {
 			imgCred.setVisibility(View.INVISIBLE);lblCred.setVisibility(View.INVISIBLE);
 			imgMPago.setVisibility(View.INVISIBLE);lblMPago.setVisibility(View.INVISIBLE);
 
-			/*
-			if (!gl.pePedidos) {
+			if (!gl.pedido_dom_import) {
 				imgPend.setVisibility(View.INVISIBLE);lblPend.setVisibility(View.INVISIBLE);
 			}
-			*/
 
 			if (gl.cred_lim<=0 || gl.facturaVen != 0) {
 				imgCred.setVisibility(View.INVISIBLE);lblCred.setVisibility(View.INVISIBLE);

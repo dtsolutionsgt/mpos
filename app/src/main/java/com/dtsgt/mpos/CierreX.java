@@ -471,23 +471,35 @@ public class CierreX extends PBase {
                                 condition+
                                 " GROUP BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA "+
                                 " ORDER BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA ";
+
                         break;
 
                     case 4:
                         if(gl.reportid==9){
-                            //condition =" WHERE ANULADO=0 AND KILOMETRAJE = 0 ";
                             condition =" AND D_FACTURA.KILOMETRAJE = 0 ";
                         } else if(gl.reportid==10){
-                            //condition=" WHERE ANULADO=0 AND KILOMETRAJE = "+gl.corelZ+" ";
                             condition =" AND KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
-                        sql="SELECT '', '', 0, '', P_MEDIAPAGO.NOMBRE, '', COUNT(DISTINCT D_FACTURA.COREL), 0,SUM(D_FACTURAP.VALOR), 0 " +
+                        /*  sql="SELECT '', '', 0, '', P_MEDIAPAGO.NOMBRE, '', COUNT(DISTINCT D_FACTURA.COREL), 0,SUM(D_FACTURAP.VALOR), 0 " +
                                 "FROM D_FACTURA INNER JOIN " +
                                 "D_FACTURAP ON D_FACTURA.COREL = D_FACTURAP.COREL INNER JOIN " +
                                 "P_MEDIAPAGO ON D_FACTURAP.CODPAGO = P_MEDIAPAGO.CODIGO " +
                                 "WHERE D_FACTURA.ANULADO=0  "+condition+" " +
-                                "GROUP BY P_MEDIAPAGO.NOMBRE";
+                                "GROUP BY P_MEDIAPAGO.NOMBRE";   */
+
+                        sql="SELECT '', '', 0, '', P_MEDIAPAGO.NOMBRE AS NOM, '', COUNT(DISTINCT D_FACTURA.COREL), 0,SUM(D_FACTURAP.VALOR), 0 " +
+                                "FROM D_FACTURA INNER JOIN " +
+                                "D_FACTURAP ON D_FACTURA.COREL = D_FACTURAP.COREL INNER JOIN " +
+                                "P_MEDIAPAGO ON D_FACTURAP.CODPAGO = P_MEDIAPAGO.CODIGO " +
+                                "WHERE (D_FACTURA.ANULADO=0) AND (D_FACTURAP.TIPO<>'P')  "+condition+" " +
+                                "GROUP BY NOM";
+                        sql+=" UNION ";
+                        sql+="SELECT '', '', 0, '', 'PENDIENTE PAGO' AS NOM, '', COUNT(DISTINCT D_FACTURA.COREL), 0,SUM(D_FACTURAP.VALOR), 0 " +
+                                "FROM D_FACTURA INNER JOIN " +
+                                "D_FACTURAP ON D_FACTURA.COREL = D_FACTURAP.COREL  " +
+                                "WHERE (D_FACTURA.ANULADO=0) AND (D_FACTURAP.TIPO='P')  "+condition+" " +
+                                "GROUP BY NOM ";
 
                         break;
 
@@ -1260,7 +1272,7 @@ public class CierreX extends PBase {
                             rep.empty();
                         }
 
-                    }else if(itemR.get(i).tipo==5){
+                    } else if(itemR.get(i).tipo==5){
 
                         test = "Reporte 5";
                         if(acc5==1){

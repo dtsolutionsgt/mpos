@@ -83,7 +83,8 @@ public class FELFactura extends PBase {
     private ArrayList<String> rutas= new ArrayList<String>();
 
     private String felcorel,corel,ffcorel,scorel,CSQL,endstr,idfact,prod_BS;
-    private boolean ddemomode,multiflag,factsend,contmode;
+    private boolean ddemomode,multiflag,factsend,contmode,pendflag=false;
+    ;
     private int ftot,ffail,fidx,cliid,felnivel;
 
     @Override
@@ -836,6 +837,9 @@ public class FELFactura extends PBase {
             }
 
             for (int i = 0; i < D_facturapObj.count; i++) {
+                if (D_facturapObj.items.get(i).tipo.equalsIgnoreCase("P")) {
+                    pendflag=true;return;
+                }
                 CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
             }
 
@@ -983,7 +987,7 @@ public class FELFactura extends PBase {
 
             try {
                 sql="UPDATE D_Factura SET STATCOM='S' WHERE COREL='"+corel+"'";
-                db.execSQL(sql);
+                if (!pendflag) db.execSQL(sql);
             } catch (SQLException e) {
             }
 
@@ -1134,7 +1138,7 @@ public class FELFactura extends PBase {
                 switch (ws.callback) {
                     case 1:
                         processFactura();
-                        callMethod("Commit", "SQL", CSQL);
+                        if (!pendflag) callMethod("Commit", "SQL", CSQL);
                         break;
                     case 2:
                         processMultiFactura();

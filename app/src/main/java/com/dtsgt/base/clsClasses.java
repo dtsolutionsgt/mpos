@@ -72,6 +72,14 @@ public class clsClasses {
         public int diascredito;
     }
 
+    public class clsD_domicilio_combo {
+        public int  codigo;
+        public String corel;
+        public int  codigo_detalle;
+        public int  codigo_producto;
+        public double cant;
+    }
+
     public class clsD_domicilio_det {
         public int  codigo;
         public String corel;

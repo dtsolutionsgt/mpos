@@ -8,10 +8,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsD_domicilio_comboObj;
 import com.dtsgt.classes.clsD_domicilio_detObj;
 import com.dtsgt.classes.clsD_domicilio_encObj;
 import com.dtsgt.classes.clsP_orden_numeroObj;
 import com.dtsgt.classes.extTextDlg;
+import com.dtsgt.firebase.fbPedidoCombo;
 import com.dtsgt.firebase.fbPedidoDet;
 import com.dtsgt.firebase.fbPedidoEnc;
 
@@ -23,13 +25,15 @@ public class DomImport extends PBase {
     private TextView lbl1;
     private ProgressBar pbar;
 
-    private fbPedidoEnc fbpe;
-    private fbPedidoDet fbpd;
+    private fbPedidoEnc   fbpe;
+    private fbPedidoDet   fbpd;
+    private fbPedidoCombo fbpc;
 
     private Stack<String> pedidos = new Stack<>();
 
     private clsD_domicilio_encObj D_domicilio_encObj;
     private clsD_domicilio_detObj D_domicilio_detObj;
+    private clsD_domicilio_comboObj D_domicilio_comboObj;
     private clsP_orden_numeroObj P_orden_numeroObj;
 
     private clsClasses.clsD_domicilio_enc eitem;
@@ -53,6 +57,8 @@ public class DomImport extends PBase {
 
             D_domicilio_encObj=new clsD_domicilio_encObj(this,Con,db);
             D_domicilio_detObj=new clsD_domicilio_detObj(this,Con,db);
+            D_domicilio_comboObj=new clsD_domicilio_comboObj(this,Con,db);
+
             P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
 
             fbpe = new fbPedidoEnc("Domicilio/"+gl.emp+"/"+gl.tienda+"/"+du.actDate()+"/");
@@ -152,7 +158,17 @@ public class DomImport extends PBase {
     private void cargaDetalle() {
         try {
             fbpd = new fbPedidoDet("DomicilioDet/"+gl.emp+"/"+gl.tienda+"/"+du.actDate()+"/"+corel+"/");
-            fbpd.listItems(corel,()->{ guardaPedido(); });
+            fbpd.listItems(corel,()->{ cargaCombos(); });
+        } catch (Exception e) {
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            proximoPedido();
+        }
+    }
+
+    private void cargaCombos() {
+        try {
+            fbpc = new fbPedidoCombo("DomicilioCombo/"+gl.emp+"/"+gl.tienda+"/"+du.actDate()+"/"+corel+"/");
+            fbpc.listItems(corel,()->{ guardaPedido(); });
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             proximoPedido();
@@ -160,7 +176,7 @@ public class DomImport extends PBase {
     }
 
     private void guardaPedido() {
-        int detid;
+        int detid,combid;
 
         try {
             if (fbpd.errflag) throw new Exception(fbpd.error);
@@ -170,8 +186,10 @@ public class DomImport extends PBase {
 
                 db.execSQL("DELETE FROM D_domicilio_enc WHERE (COREL='"+corel+"')");
                 db.execSQL("DELETE FROM D_domicilio_det WHERE (COREL='"+corel+"')");
+                db.execSQL("DELETE FROM D_domicilio_combo WHERE (COREL='"+corel+"')");
 
                 detid=D_domicilio_detObj.newID("SELECT MAX(Codigo) FROM D_domicilio_det");
+                combid=D_domicilio_comboObj.newID("SELECT MAX(Codigo) FROM D_domicilio_combo");
 
                 D_domicilio_encObj.add(eitem);
 
@@ -180,6 +198,13 @@ public class DomImport extends PBase {
                     citm.codigo=detid;
                     D_domicilio_detObj.add(citm);
                     detid++;
+                }
+
+                for (clsClasses.clsD_domicilio_combo itm : fbpc.items) {
+                    clsClasses.clsD_domicilio_combo citm=itm;
+                    citm.codigo=combid;
+                    D_domicilio_comboObj.add(citm);
+                    combid++;
                 }
 
                 db.setTransactionSuccessful();
@@ -297,6 +322,7 @@ public class DomImport extends PBase {
         try {
             D_domicilio_encObj.reconnect(Con,db);
             D_domicilio_detObj.reconnect(Con,db);
+            D_domicilio_comboObj.reconnect(Con,db);
             P_orden_numeroObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());

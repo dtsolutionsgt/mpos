@@ -73,6 +73,7 @@ import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.fel.FELVerificacion;
 import com.dtsgt.felesa.FELContingenciaSV;
+import com.dtsgt.firebase.fbPedidoCombo;
 import com.dtsgt.firebase.fbPedidoDet;
 import com.dtsgt.firebase.fbPedidoEnc;
 import com.dtsgt.firebase.fbPedidoLog;
@@ -135,6 +136,7 @@ public class Venta extends PBase {
 
     private clsClasses.clsD_domicilio_enc pdeitem;
     private ArrayList<clsClasses.clsD_domicilio_det> pdditems= new ArrayList<clsClasses.clsD_domicilio_det>();
+    private ArrayList<clsClasses.clsD_domicilio_combo> pdcitems= new ArrayList<clsClasses.clsD_domicilio_combo>();
 
     private AppMethods app;
 
@@ -156,10 +158,10 @@ public class Venta extends PBase {
     private fbStock fbs;
     private fbPedidoEnc fbpe;
     private fbPedidoDet fbpd;
+    private fbPedidoCombo fbpc;
     private fbPedidoLog fblog;
 
     public recPedidoRecibido rcPedido = new recPedidoRecibido();
-
 
     private Runnable rnFbCallBack;
     private int fbprodid,fbcallmode=0;
@@ -3715,7 +3717,8 @@ public class Venta extends PBase {
             item.cant=venta.cant;
             item.total=venta.total;
             item.nota="";
-            item.codigo_tipo_producto=app.prodTipo(item.codigo_producto);pt=item.codigo_tipo_producto;
+            item.codigo_tipo_producto=app.prodTipo(item.codigo_producto);
+            pt=item.codigo_tipo_producto;
 
             ss=D_pedidodObj.addItemSql(item);
             peditems.add(ss);
@@ -3818,7 +3821,9 @@ public class Venta extends PBase {
         try {
 
             key=fbpe.key();
+
             fbpd = new fbPedidoDet("DomicilioDet/"+gl.emp+"/"+gl.tienda+"/"+du.actDate()+"/"+key+"/");
+            fbpc = new fbPedidoCombo("DomicilioCombo/"+gl.emp+"/"+gl.tienda+"/"+du.actDate()+"/"+key+"/");
 
             pdeitem = clsCls.new clsD_domicilio_enc();
 
@@ -3848,6 +3853,10 @@ public class Venta extends PBase {
                 fbpd.setItem(itm);
             }
 
+            for (clsClasses.clsD_domicilio_combo itm : pdcitems) {
+                fbpc.setItem(itm);
+            }
+
             litem = clsCls.new clsD_domicilio_log();
             litem.corel=key;
             fblog.setItem(litem);
@@ -3860,10 +3869,12 @@ public class Venta extends PBase {
     private void crearFbPedidoDetalle() {
         Cursor DT;
         clsClasses.clsD_domicilio_det item;
+        clsClasses.clsD_domicilio_combo citem;
         int ii=0;
 
-        sql="SELECT T_VENTA.PRODUCTO, T_VENTA.TOTAL, T_VENTA.PRECIO, T_VENTA.CANT, T_VENTA.DES, " +
-            "T_VENTA.IMP, T_VENTA.UM, T_VENTA.DESMON FROM T_VENTA  ";
+        pdditems.clear();pdcitems.clear();
+
+        sql="SELECT PRODUCTO, TOTAL, PRECIO, CANT, DES, IMP, UM, DESMON, EMPRESA FROM T_VENTA  ";
         DT=Con.OpenDT(sql);
 
         if (DT.getCount()>0) {
@@ -3873,9 +3884,9 @@ public class Venta extends PBase {
 
                 item = clsCls.new clsD_domicilio_det();ii++;
 
-                item.codigo=ii;
+                item.codigo=DT.getInt(8);
                 item.corel="";
-                item.empresa=0;
+                item.empresa=DT.getInt(8);
                 item.codigo_producto=DT.getString(0);
                 item.cant=DT.getDouble(3);
                 item.precio=DT.getDouble(2);
@@ -3885,12 +3896,29 @@ public class Venta extends PBase {
                 item.desmon=DT.getDouble(7);
                 item.total=DT.getDouble(1);
                 item.nota=" ";
-                item.tipo_producto="S";
+                item.tipo_producto=app.prodTipo(item.codigo_producto);
 
                 pdditems.add(item);
 
                 DT.moveToNext();
             }
+        }
+
+        clsT_comboObj T_comboObj=new clsT_comboObj(this,Con,db);
+        T_comboObj.fill();
+
+        for (clsClasses.clsT_combo itm:T_comboObj.items) {
+
+            citem = clsCls.new clsD_domicilio_combo();
+
+            citem.codigo=itm.codigo_menu+1;
+            citem.corel="";
+            citem.codigo_detalle=itm.idcombo;
+            citem.codigo_producto=itm.idseleccion;
+            citem.cant=itm.cant;
+
+            pdcitems.add(citem);
+
         }
 
         if (DT!=null) DT.close();

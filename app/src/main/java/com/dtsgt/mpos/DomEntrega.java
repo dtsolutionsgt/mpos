@@ -412,11 +412,14 @@ public class DomEntrega extends PBase {
                                 startActivity(new Intent(DomEntrega.this,DomRepartidor.class));
                                 break;
                             case 1:
-                                browse=1;
                                 if (selitem.estadopago==1) {
+                                    browse=3;
                                     startActivity(new Intent(DomEntrega.this,DomPago.class));
                                 }
-                                if (selitem.estadopago==2) msgask(0,"¿Completar orden?");
+                                if (selitem.estadopago==2) {
+                                    browse=1;
+                                    msgask(0,"¿Completar orden?");
+                                }
                                 break;
                             case 2:
                                 break;
@@ -465,6 +468,11 @@ public class DomEntrega extends PBase {
             if (browse==2) {
                 browse=0;
                 asignaRepartidor();return;
+            }
+
+            if (browse==3) {
+                browse=0;
+                listItems();return;
             }
 
         } catch (Exception e) {
