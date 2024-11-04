@@ -2731,9 +2731,12 @@ public class Venta extends PBase {
                 item.ID=17;item.Name="Cargar pedidos";item.Icon=17;
                 mitems.add(item);
 
+                // Habilitado temporalmente
+                //  /*
                 item = clsCls.new clsMenu();
                 item.ID=18;item.Name="Crear pedidos";item.Icon=56;
                 mitems.add(item);
+                //  */
 
             }
 
@@ -3905,19 +3908,19 @@ public class Venta extends PBase {
         }
 
         clsT_comboObj T_comboObj=new clsT_comboObj(this,Con,db);
-        T_comboObj.fill();
+        T_comboObj.fill();ii=1;
 
         for (clsClasses.clsT_combo itm:T_comboObj.items) {
 
             citem = clsCls.new clsD_domicilio_combo();
 
-            citem.codigo=itm.codigo_menu+1;
+            citem.codigo=ii;
             citem.corel="";
             citem.codigo_detalle=itm.idcombo;
             citem.codigo_producto=itm.idseleccion;
             citem.cant=itm.cant;
 
-            pdcitems.add(citem);
+            pdcitems.add(citem);ii++;
 
         }
 

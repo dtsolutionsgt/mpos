@@ -47,6 +47,7 @@
         android:layout_width="6dp"
         android:layout_height="10dp"
         android:layout_centerInParent="true"
+        android:layout_marginStart="0dp"
         android:text="TextView"
         android:visibility="invisible" />
 
@@ -209,7 +210,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_below="@id/relRoad"
-        android:layout_marginLeft="0dp"
+        android:layout_marginStart="0dp"
         android:layout_marginTop="-1dp"
         android:layout_marginRight="10dp"
         android:layout_toLeftOf="@id/gridView2"
