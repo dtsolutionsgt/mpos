@@ -7,6 +7,14 @@
     android:background="#FFFFFF"
     tools:context=".FacturaRes">
 
+    <TextView
+        android:id="@+id/textView320"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="TextView"
+        android:visibility="invisible" />
+
     <ImageView
         android:id="@+id/imgPFoto"
         android:layout_width="wrap_content"
@@ -40,7 +48,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="-25dp"
         android:layout_toStartOf="@+id/textView136">
 
         <RelativeLayout
@@ -147,6 +155,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="false"
         android:layout_alignParentBottom="true"
+        android:layout_marginLeft="0dp"
         android:layout_marginTop="0dp"
         android:layout_marginEnd="0dp"
         android:layout_marginBottom="0dp"
@@ -238,10 +247,10 @@
             android:id="@+id/imageView3"
             android:layout_width="128dp"
             android:layout_height="74dp"
+            android:layout_below="@+id/textView4"
             android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
+            android:layout_marginTop="139dp"
             android:layout_marginRight="30dp"
-            android:layout_marginBottom="40dp"
             android:clickable="true"
             android:onClick="payCred"
             android:src="@drawable/tarjeta"
@@ -317,12 +326,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/imageView3"
+            android:layout_alignTop="@+id/imageView3"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="false"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginStart="-2dp"
+            android:layout_marginTop="78dp"
+            android:layout_marginEnd="33dp"
+            android:layout_marginBottom="-2dp"
             android:clickable="true"
             android:gravity="center"
             android:onClick="payCred"
@@ -333,7 +344,7 @@
             android:textSize="12sp" />
 
         <RelativeLayout
-            android:layout_width="150dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentBottom="false"
@@ -347,7 +358,7 @@
                 android:layout_below="@+id/textView175"
                 android:layout_alignParentStart="false"
                 android:layout_alignParentBottom="false"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/frame_key"
                 android:clickable="true"
                 android:gravity="center"
@@ -355,7 +366,7 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:text="5"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/textView175"
@@ -364,7 +375,7 @@
                 android:layout_below="@+id/textView174"
                 android:layout_alignParentStart="false"
                 android:layout_alignParentBottom="false"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/frame_key"
                 android:clickable="true"
                 android:gravity="center"
@@ -372,7 +383,7 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="5dp"
                 android:text="10"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/textView173"
@@ -381,7 +392,7 @@
                 android:layout_below="@+id/textView172"
                 android:layout_alignParentStart="false"
                 android:layout_alignParentBottom="false"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/frame_key"
                 android:clickable="true"
                 android:gravity="center"
@@ -389,7 +400,7 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:text="50"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/textView172"
@@ -397,6 +408,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="false"
                 android:layout_alignParentBottom="false"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/frame_key"
                 android:clickable="true"
                 android:gravity="center"
@@ -404,7 +416,7 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:text="100"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/textView174"
@@ -413,7 +425,7 @@
                 android:layout_below="@+id/textView173"
                 android:layout_alignParentStart="false"
                 android:layout_alignParentBottom="false"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/frame_key"
                 android:clickable="true"
                 android:gravity="center"
@@ -421,16 +433,17 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:text="20"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
         </RelativeLayout>
 
         <ImageView
             android:id="@+id/imageView84"
             android:layout_width="128dp"
             android:layout_height="100dp"
+            android:layout_below="@+id/textView4"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="false"
-            android:layout_centerVertical="true"
+            android:layout_marginTop="15dp"
             android:layout_marginEnd="30dp"
             android:clickable="true"
             android:onClick="pendientePago"
@@ -464,7 +477,7 @@
         android:layout_marginStart="0dp"
         android:layout_marginTop="58dp"
         android:layout_marginEnd="0dp"
-        android:layout_marginBottom="0dp"
+        android:layout_marginBottom="-30dp"
         android:layout_toEndOf="@+id/textView136">
 
         <TextView
@@ -485,7 +498,7 @@
             android:text="0 000,000.00"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF"
-            android:textSize="80sp"
+            android:textSize="60sp"
             android:textStyle="bold" />
 
         <TextView
@@ -525,7 +538,7 @@
             android:paddingRight="10dp"
             android:text="000"
             android:textColor="#000000"
-            android:textSize="60sp"
+            android:textSize="48sp"
             android:textStyle="bold" />
 
         <TextView
@@ -554,11 +567,10 @@
         android:layout_below="@id/textView137"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_toEndOf="@+id/relativeLayout1"
         android:layout_toRightOf="@id/textView136">
 
@@ -620,7 +632,7 @@
                             android:tag="7"
                             android:text="7"
                             android:textColor="#000000"
-                            android:textSize="36sp"
+                            android:textSize="30dp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -638,7 +650,7 @@
                             android:tag="8"
                             android:text="8"
                             android:textColor="#000000"
-                            android:textSize="36sp"
+                            android:textSize="30dp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -656,7 +668,7 @@
                             android:tag="4"
                             android:text="4"
                             android:textColor="#000000"
-                            android:textSize="36sp"
+                            android:textSize="30dp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -674,7 +686,7 @@
                             android:tag="5"
                             android:text="5"
                             android:textColor="#000000"
-                            android:textSize="36sp"
+                            android:textSize="30dp"
                             android:textStyle="bold" />
 
                     </RelativeLayout>
@@ -710,7 +722,7 @@
                             android:tag="1"
                             android:text="1"
                             android:textColor="#000000"
-                            android:textSize="36sp"
+                            android:textSize="30dp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -728,7 +740,7 @@
                             android:tag="2"
                             android:text="2"
                             android:textColor="#000000"
-                            android:textSize="36sp"
+                            android:textSize="30dp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -746,7 +758,7 @@
                             android:tag="0"
                             android:text="0"
                             android:textColor="#000000"
-                            android:textSize="36sp"
+                            android:textSize="30dp"
                             android:textStyle="bold" />
 
                     </RelativeLayout>
@@ -801,7 +813,7 @@
                             android:tag="9"
                             android:text="9"
                             android:textColor="#000000"
-                            android:textSize="36sp"
+                            android:textSize="30dp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -819,7 +831,7 @@
                             android:tag="6"
                             android:text="6"
                             android:textColor="#000000"
-                            android:textSize="36sp"
+                            android:textSize="30dp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -838,7 +850,7 @@
                             android:tag="C"
                             android:text="C"
                             android:textColor="#000000"
-                            android:textSize="36sp"
+                            android:textSize="30dp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -855,7 +867,7 @@
                             android:onClick="doKey"
                             android:padding="8dp"
                             android:tag="B"
-                            android:textSize="36sp"
+                            android:textSize="30dp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -923,7 +935,7 @@
                             android:tag="3"
                             android:text="3"
                             android:textColor="#000000"
-                            android:textSize="36sp"
+                            android:textSize="30dp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -938,6 +950,7 @@
                             android:clickable="true"
                             android:gravity="center"
                             android:onClick="doKey"
+                            android:paddingBottom="15dp"
                             android:tag="."
                             android:text="."
                             android:textColor="#000000"
@@ -1006,10 +1019,12 @@
         android:id="@+id/textView137"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
+        android:layout_below="@id/textView320"
         android:layout_alignParentStart="false"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
+        android:layout_centerVertical="false"
+        android:layout_marginTop="30dp"
         android:background="@drawable/blue_strip" />
 
     <RelativeLayout
