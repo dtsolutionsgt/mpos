@@ -25,7 +25,7 @@
     <RelativeLayout
         android:id="@+id/relFilters"
         android:layout_width="wrap_content"
-        android:layout_height="300dp"
+        android:layout_height="260dp"
         android:layout_below="@+id/relRoad"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
@@ -42,7 +42,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_marginTop="10dp"
-            android:layout_marginRight="50dp"
+            android:layout_marginRight="20dp"
             android:clickable="true"
             android:onClick="GeneratePrintCierre"
             android:padding="5dp"
@@ -57,7 +57,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="0dp"
-            android:layout_marginRight="50dp"
+            android:layout_marginRight="20dp"
             android:clickable="true"
             android:onClick="EnviarCierre"
             android:padding="5dp"
@@ -73,7 +73,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginStart="0dp"
             android:layout_marginTop="2dp"
-            android:layout_marginEnd="42dp"
+            android:layout_marginEnd="12dp"
             android:gravity="center"
             android:text="TextView"
             android:textSize="24sp" />
@@ -87,19 +87,19 @@
             android:layout_alignParentEnd="true"
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
-            android:layout_marginEnd="42dp"
+            android:layout_marginEnd="12dp"
             android:gravity="center"
             android:text="ENVIAR"
             android:textSize="24sp"
             android:visibility="gone" />
 
         <RadioGroup
-            android:layout_width="509dp"
+            android:layout_width="400dp"
             android:layout_height="170dp"
             android:layout_below="@+id/textView129"
             android:layout_marginStart="159dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="23dp"
+            android:layout_marginEnd="5dp"
             android:layout_toStartOf="@+id/btnImp">
 
             <CheckBox
@@ -107,44 +107,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Reporte Ventas por Vendedor"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <CheckBox
                 android:id="@+id/checkBox19"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Reporte Ventas por Cliente Consolidado"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <CheckBox
                 android:id="@+id/checkBox20"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Reporte Ventas por Cliente Detalle"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <CheckBox
                 android:id="@+id/checkBox17"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Margen y Beneficio por Productos"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <CheckBox
                 android:id="@+id/checkBox18"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Margen y Beneficio por Familia"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
         </RadioGroup>
 
         <RadioGroup
-            android:layout_width="428dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView129"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="65dp"
+            android:layout_marginStart="15dp"
             android:layout_marginTop="7dp"
             android:layout_marginEnd="385dp">
 
@@ -153,42 +153,42 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Reporte de Facturas por Día"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <CheckBox
                 android:id="@+id/checkBox12"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Reporte Venta por Día"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <CheckBox
                 android:id="@+id/checkBox13"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Reporte Venta por Producto"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <CheckBox
                 android:id="@+id/checkBox14"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Reporte por Forma de Pago"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <CheckBox
                 android:id="@+id/checkBox15"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Reporte por Familia"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <CheckBox
                 android:id="@+id/checkBox25"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Reporte Facturas Anuladas"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
         </RadioGroup>
 

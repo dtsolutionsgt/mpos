@@ -238,8 +238,8 @@
 
         <RelativeLayout
             android:id="@+id/relEnter"
-            android:layout_width="540dp"
-            android:layout_height="340dp"
+            android:layout_width="350dp"
+            android:layout_height="300dp"
             android:layout_above="@id/relbotpan"
             android:layout_alignParentTop="false"
             android:layout_alignParentRight="false"
