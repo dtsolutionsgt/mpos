@@ -9,7 +9,7 @@
     <TextView
         android:id="@+id/lblTrat"
         android:layout_width="match_parent"
-        android:layout_height="73dp"
+        android:layout_height="55dp"
         android:layout_alignParentStart="false"
         android:layout_alignParentTop="false"
         android:layout_alignParentEnd="false"
@@ -24,7 +24,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#575757"
         android:textSize="24sp"
-        android:textStyle="normal" />
+        android:textStyle="normal|bold" />
 
     <ImageView
         android:id="@+id/imageView36"
