@@ -1265,13 +1265,24 @@ public class clsDocFactura extends clsDocument {
             vimphn=vimphn-vimp2;
         }
 
+        //JP20241106 Correcion de totales
+
+        double totsinex=tot-fh_exon-fh_exent;
+        double stotsinex=totsinex/1.15;
+        double impsinext=stotsinex*0.15;
+
+        fh_grav=stotsinex;
+        vimp1=impsinext;
+        stot=fh_grav+fh_exon+fh_exent;
+
         rep.addtotsph("Subtotal: ", stot);
         rep.addtotsph("Descuento y rebajas: ", -desc);
         rep.addtotsph("Importe exonerado: ", fh_exon);
         rep.addtotsph("Importe exento: ", fh_exent);
         rep.addtotsph("Importe gravado: ", fh_grav);
-        rep.addtotsph("Impuesto "+frmdecimal(fh_val1,2)+" %", vimp1);
-        rep.addtotsph("Impuesto "+frmdecimal(fh_val2,2)+" %", vimp2);
+        rep.addtotsph("Impuesto 15 %", vimp1);
+        //rep.addtotsph("Impuesto "+frmdecimal(fh_val1,2)+" %", vimp1);
+        //rep.addtotsph("Impuesto "+frmdecimal(fh_val2,2)+" %", vimp2);
         rep.addtotsph("TOTAL : ", tot);
 
         montoLetra();
