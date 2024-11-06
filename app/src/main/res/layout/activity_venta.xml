@@ -933,7 +933,7 @@
         android:layout_alignParentStart="false"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="0dp"
-        android:layout_marginRight="140dp"
+        android:layout_marginRight="0dp"
         android:layout_toStartOf="@+id/textView72"
         android:background="@drawable/frame_rect">
 
