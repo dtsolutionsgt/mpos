@@ -1266,14 +1266,13 @@ public class clsDocFactura extends clsDocument {
         }
 
         //JP20241106 Correcion de totales
-
         double totsinex=tot-fh_exon-fh_exent;
         double stotsinex=totsinex/1.15;
         double impsinext=stotsinex*0.15;
-
         fh_grav=stotsinex;
         vimp1=impsinext;
         stot=fh_grav+fh_exon+fh_exent;
+        //
 
         rep.addtotsph("Subtotal: ", stot);
         rep.addtotsph("Descuento y rebajas: ", -desc);
