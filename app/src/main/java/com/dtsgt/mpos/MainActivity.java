@@ -195,7 +195,8 @@ public class MainActivity extends PBase {
                         && checkCallingOrSelfPermission(Manifest.permission.WAKE_LOCK) == PackageManager.PERMISSION_GRANTED
                         && checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
                         && checkSelfPermission(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
-                        && checkSelfPermission("android.permission.BLUETOOTH_CONNECT") == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission("android.permission.BLUETOOTH_CONNECT") == PackageManager.PERMISSION_GRANTED
                         && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
                         startApplication();
                     } else {
@@ -206,6 +207,7 @@ public class MainActivity extends PBase {
                                 Manifest.permission.CAMERA,
                                 Manifest.permission.WAKE_LOCK,
                                 Manifest.permission.BLUETOOTH,
+                                Manifest.permission.POST_NOTIFICATIONS,
                                 "android.permission.BLUETOOTH_CONNECT",
                                 Manifest.permission.READ_PHONE_STATE
                         }, 1);
@@ -214,12 +216,13 @@ public class MainActivity extends PBase {
                 } else {
 
                     if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                        && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                        && checkSelfPermission(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
-                        && checkCallingOrSelfPermission(Manifest.permission.WAKE_LOCK) == PackageManager.PERMISSION_GRANTED
-                        && checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-                        && checkSelfPermission(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
-                        && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                            && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
+                            && checkCallingOrSelfPermission(Manifest.permission.WAKE_LOCK) == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
                         startApplication();
                     } else {
                         ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -228,6 +231,7 @@ public class MainActivity extends PBase {
                                 Manifest.permission.CAMERA,
                                 Manifest.permission.WAKE_LOCK,
                                 Manifest.permission.BLUETOOTH,
+                                Manifest.permission.POST_NOTIFICATIONS,
                                 Manifest.permission.READ_PHONE_STATE
                         }, 1);
                     }
@@ -915,7 +919,9 @@ public class MainActivity extends PBase {
             pedidoEventListener=fbdomref.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (gl.domicilio_notif>0) notifyMsg();
+                    if (gl.domicilio_notif>0) {
+                        notifyMsg();
+                    }
                     gl.domicilio_notif++;
 
                     Intent intent = new Intent("com.dtsgt.PEDIDO_RECIBIDO");

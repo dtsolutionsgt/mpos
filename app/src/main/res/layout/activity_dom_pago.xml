@@ -19,7 +19,6 @@
         android:id="@+id/relclipossvcons"
         android:layout_width="890dp"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/textView373"
         android:layout_alignParentTop="false"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="2dp"
