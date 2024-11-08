@@ -508,7 +508,6 @@ public class MainActivity extends PBase {
     private void initSession() {
         Cursor DT;
         String s, rn = "";
-        String vCellCom = "";
 
         if (dbVacia()) {
             gl.emp = 3;
@@ -539,7 +538,6 @@ public class MainActivity extends PBase {
                 gl.sucur = DT.getString(2);
                 gl.codigo_ruta = DT.getInt(3);
 
-                vCellCom = "";
                 gl.CellCom = false;
 
                 rutapos = true;

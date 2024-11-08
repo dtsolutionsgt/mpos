@@ -2731,12 +2731,12 @@ public class Venta extends PBase {
                 item.ID=17;item.Name="Cargar pedidos";item.Icon=17;
                 mitems.add(item);
 
-                // Habilitado temporalmente
-                //  /*
+                // Habilitado temporalmente  Boton para generar pedidos
+                /*
                 item = clsCls.new clsMenu();
                 item.ID=18;item.Name="Crear pedidos";item.Icon=56;
                 mitems.add(item);
-                //  */
+                */
 
             }
 

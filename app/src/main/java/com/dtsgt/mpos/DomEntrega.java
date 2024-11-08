@@ -312,8 +312,8 @@ public class DomEntrega extends PBase {
             if (eitem.idempresa==1) trprop=1;
 
             ss="UPDATE D_DOMICILIO_ENC SET estado=7,fecha_entrega='"+sf+"'," +
-                    "codigo_empresa_trans="+eitem.idempresa+",transporte_propio="+trprop+
-                    " WHERE (corel='"+selitem.corel+"')";
+               "codigo_empresa_trans="+eitem.idempresa+",transporte_propio="+trprop+
+               " WHERE (corel='"+selitem.corel+"')";
             Intent intent = new Intent(DomEntrega.this, srvCommit.class);
             intent.putExtra("URL",gl.wsurl);
             intent.putExtra("command",ss);

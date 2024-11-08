@@ -9,12 +9,11 @@
     <ImageView
         android:id="@+id/imgImg2"
         android:layout_width="64dp"
-        android:layout_height="48dp"
+        android:layout_height="64dp"
         android:layout_below="@+id/relRoad"
         android:layout_alignParentRight="true"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="478dp"
         android:clickable="true"
         android:onClick="doSave"
         android:src="@drawable/icok" />
@@ -81,7 +80,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginStart="5dp"
         android:layout_marginLeft="0dp"
-        android:layout_marginTop="127dp"
+        android:layout_marginTop="160dp"
         android:layout_marginEnd="5dp"
         android:layout_marginRight="0dp"
         android:layout_marginBottom="5dp">
@@ -136,10 +135,10 @@
             android:id="@+id/spinner10"
             android:layout_width="match_parent"
             android:layout_height="42dp"
+            android:layout_alignParentEnd="true"
             android:layout_marginStart="10dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="10dp"
-            android:layout_alignParentEnd="true"
             android:layout_toEndOf="@+id/textView2"
             android:background="@drawable/spinner_style" />
 
@@ -177,7 +176,7 @@
     <ImageView
         android:id="@+id/imageView30"
         android:layout_width="64dp"
-        android:layout_height="48dp"
+        android:layout_height="64dp"
         android:layout_below="@id/relRoad"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="10dp"

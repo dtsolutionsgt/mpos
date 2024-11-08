@@ -244,7 +244,6 @@ public class DomImport extends PBase {
             txtdlg.buildDialog(DomImport.this,"Pedidos","OK");
 
             txtdlg.setText(msg);
-
             txtdlg.setOnLeftClick(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
