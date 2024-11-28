@@ -322,8 +322,27 @@ public class DomEntrega extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
+        cantidadOrdenes();
     }
 
+    private void cantidadOrdenes() {
+        try {
+            long fechahoy =du.getActDate();
+            D_domicilio_encObj.fill("WHERE (fecha_hora>="+ fechahoy +") AND (estado<7) AND (estado<>5) ");
+            int nr=D_domicilio_encObj.count;
+
+            String ss="UPDATE P_SUCURSAL SET DOMICILIO_CANT_ORDENES="+nr+" WHERE (CODIGO_SUCURSAL="+gl.tienda+") ";
+
+            Intent intent = new Intent(DomEntrega.this, srvCommit.class);
+            intent.putExtra("URL",gl.wsurl);
+            intent.putExtra("command",ss);
+            startService(intent);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     //endregion
 

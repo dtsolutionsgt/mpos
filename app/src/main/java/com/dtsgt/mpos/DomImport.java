@@ -1,5 +1,6 @@
 package com.dtsgt.mpos;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -16,6 +17,7 @@ import com.dtsgt.classes.extTextDlg;
 import com.dtsgt.firebase.fbPedidoCombo;
 import com.dtsgt.firebase.fbPedidoDet;
 import com.dtsgt.firebase.fbPedidoEnc;
+import com.dtsgt.webservice.srvCommit;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -60,6 +62,8 @@ public class DomImport extends PBase {
             D_domicilio_comboObj=new clsD_domicilio_comboObj(this,Con,db);
 
             P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
+
+            app.getURL();
 
             fbpe = new fbPedidoEnc("Domicilio/"+gl.emp+"/"+gl.tienda+"/"+du.actDate()+"/");
 
@@ -239,6 +243,8 @@ public class DomImport extends PBase {
     //region Dialogs
 
     private void msgexit(String msg) {
+        cantidadOrdenes();
+
         try {
             extTextDlg txtdlg = new extTextDlg();
             txtdlg.buildDialog(DomImport.this,"Pedidos","OK");
@@ -309,6 +315,24 @@ public class DomImport extends PBase {
         }
 
         return ordennum;
+    }
+
+    private void cantidadOrdenes() {
+        try {
+            long fechahoy =du.getActDate();
+            D_domicilio_encObj.fill("WHERE (fecha_hora>="+ fechahoy +") AND (estado<7) AND (estado<>5) ");
+            int nr=D_domicilio_encObj.count;
+
+            String ss="UPDATE P_SUCURSAL SET DOMICILIO_CANT_ORDENES="+nr+" WHERE (CODIGO_SUCURSAL="+gl.tienda+") ";
+
+            Intent intent = new Intent(DomImport.this, srvCommit.class);
+            intent.putExtra("URL",gl.wsurl);
+            intent.putExtra("command",ss);
+            startService(intent);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     //endregion
