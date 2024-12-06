@@ -2064,6 +2064,7 @@ public class Menu extends PBase {
 			listdlg.add("Reporte Ventas por Vendedor");
 			listdlg.add("Consumo materia prima");
 			listdlg.add("Reporte de Ventas por Cliente");
+			listdlg.add("Pagos de caja");
 			listdlg.add("Margen y Beneficio por Producto");
 			listdlg.add("Margen y Beneficio por Familia");
 			listdlg.add("Cierre X");
@@ -2091,7 +2092,7 @@ public class Menu extends PBase {
 					if (ss.equalsIgnoreCase("Consumo materia prima")) gl.reportid=13;
 					//if (ss.equalsIgnoreCase("Consumo materia prima por producto")) gl.reportid=14;
 					if (ss.equalsIgnoreCase("Cortesias")) gl.reportid=15;
-
+					if (ss.equalsIgnoreCase("Pagos de caja")) gl.reportid=16;
 
 					gl.titReport = ss;
 
@@ -2205,7 +2206,7 @@ public class Menu extends PBase {
 						if (valida()) {
 
 							if (gl.cajaid==2) {
-								startActivity(new Intent(Menu.this, CajaPagos.class));
+								startActivity(new Intent(Menu.this, CajaPagosLista.class));
 							} else {
 								if (gl.cajaid==1) {
 									validaInicioInv();

@@ -395,7 +395,7 @@ public class Reportes extends PBase {
                 if (DT.getCount()==0) return;
             }
 
-            if(gl.reportid!=12 && gl.reportid!=14){
+            if (gl.reportid!=12 && gl.reportid!=14){
                 vItem = clsCls.new clsCD();
                 vItem.Cod="Todos";
                 vItem.Desc="";
@@ -432,43 +432,37 @@ public class Reportes extends PBase {
     }
 
     public void GeneratePrint(View view){
-
-        try{
-
+        try {
             if(!report) {
-                AskReport();
-                return;
+                AskReport();return;
             }
 
             if(report) {
-                gl.QRCodeStr="";
-                app.doPrint();
+                gl.QRCodeStr="";app.doPrint();
                 return;
             }
 
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        } catch (Exception e){
             msgbox("GeneratePrint: "+e);
         }
     }
 
     private void AskReport() {
+        try {
 
-        try{
-
-            if(dateini <= 0){
+            if (dateini <= 0){
                 msgbox("Fecha inicial errónea");return;
             }
 
-            if(datefin <= 0){
+            if (datefin <= 0){
                 msgbox("Fecha final errónea");return;
             }
 
-            if(dateini>datefin){
+            if (dateini>datefin){
                 msgbox("La fecha final no puede ser mayor a la inicial");return;
             }
 
-            if(gl.reportid==3 || gl.reportid==4){
+            if (gl.reportid==3 || gl.reportid==4){
                 if(lblProd.getText().toString().trim().isEmpty() && !id_item.equals("Todos")) {
                     if (gl.reportid == 3){
                         msgbox("Escoja un producto");
@@ -480,8 +474,8 @@ public class Reportes extends PBase {
                 }
             }
 
-            if(!report) {
-                if(fillItems()){
+            if (!report) {
+                if (fillItems()){
                     if (gl.reportid<15) {
                         if (itemR.size() == 0) {
                             msgbox("No se ha realizado ninguna venta con los parámetros indicados.");
@@ -520,16 +514,13 @@ public class Reportes extends PBase {
                 text.append('\n');
             }
             br.close() ;
-        }catch (IOException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        } catch (IOException e) {
             msgbox("getTXT: "+e);
-            e.printStackTrace();
         }
 
-        try{
+        try {
             lblFact.setText(text);
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        } catch (Exception e){
             msgbox("getTXT setText: "+e);
         }
 
@@ -726,6 +717,13 @@ public class Reportes extends PBase {
                             "WHERE (D_FACTURA.ANULADO=0) AND (D_FACTURA.FECHA >= 2101010000)  " +
                             "GROUP BY P_PRODUCTO.DESCLARGA, D_FACTURAR.UM  ORDER BY P_PRODUCTO.DESCLARGA ";
 
+                    break;
+
+                case 16:
+
+                    sql="SELECT '','',0,'',P_CAJAPAGOS.NODOCUMENTO,  P_CONCEPTOPAGO.NOMBRE,0,0, P_CAJAPAGOS.MONTO, P_CAJAPAGOS.FECHA " +
+                        "FROM  P_CAJAPAGOS INNER JOIN P_CONCEPTOPAGO ON P_CAJAPAGOS.TIPO=P_CONCEPTOPAGO.CODIGO " +
+                        "WHERE (P_CAJAPAGOS.FECHA BETWEEN "+ dateini +" AND "+datefin+")";
                     break;
 
                 default:
@@ -1294,7 +1292,28 @@ public class Reportes extends PBase {
                             rep.line();
                             rep.addmptot(tot);
                         }
+                } else if (gl.reportid==16) {
+
+                    if(acc==1){
+                        tot=0;
+                        rep.addc("REPORTE PAGOS DE CAJA ");
+                        rep.addc(fecharango);
+                        setDatosVersion();
+                        rep.add3llr("Fecha","Documento","Monto");
+                        rep.line();
+                        acc = 2;
                     }
+
+                    tot+=itemR.get(i).total;
+                    rep.add3llr(du.sfecha(itemR.get(i).fecha), itemR.get(i).descrip, mu.frmcur(itemR.get(i).total));
+                    rep.add(itemR.get(i).um);
+
+                    if(i==itemR.size()-1){
+                        rep.line();
+                        rep.add3llr("Total:", "", mu.frmcur(tot));
+                    }
+                }
+
                 }
 
                 rep.line();

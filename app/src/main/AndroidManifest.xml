@@ -885,9 +885,14 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".Municipio"
+            android:exported="false"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:exported="false" />
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".CajaPagosLista"
+            android:exported="false"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
     </application>
 
 </manifest>

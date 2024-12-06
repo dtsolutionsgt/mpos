@@ -82,6 +82,16 @@ public class CajaPagos extends PBase {
         doc=new CajaPagos.clsDocExist(this,prn.prw,"");
     }
 
+    //region Events
+
+    public void save(View view) {
+        msgask(1,"¿Guardar pago?");
+    }
+
+    public void doExit(View view) {
+        msgAskExit("Salir");
+    }
+
     private void setHandlers() {
 
         cboProv.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -90,7 +100,7 @@ public class CajaPagos extends PBase {
                 try {
                     TextView spinlabel = (TextView) parentView.getChildAt(0);
                     spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
-                    spinlabel.setTextSize(21);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+                    spinlabel.setTextSize(30);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
                     String scod = spincode.get(position);
                     proveedor =  Integer.parseInt(scod);
@@ -116,7 +126,7 @@ public class CajaPagos extends PBase {
 
                     if (spinlabel!=null){
                         spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
-                        spinlabel.setTextSize(21);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+                        spinlabel.setTextSize(30);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
                     }
 
                     String scod = spincode1.get(position);
@@ -139,18 +149,71 @@ public class CajaPagos extends PBase {
 
     }
 
+    //endregion
+
     //region Main
+
+    public void save(){
+        try {
+            clsP_cajapagosObj cpago = new clsP_cajapagosObj(this,Con,db);
+
+            docAsoc = lblDocAsoc.getText().toString().trim();
+            montoS = lblMonto.getText().toString().trim();
+            desc = lblDesc.getText().toString().trim();
+
+            if (proveedor==0){
+                msgbox("El proveedor no puede ir vacío");return;
+            }
+
+            if (cPago==0){
+                msgbox("El concepto de pago no puede ir vacío");return;
+            }
+
+            if (docAsoc.isEmpty()) {
+                msgbox("Falta definir documento");return;
+            }
+
+            if(!montoS.isEmpty()) {
+                monto = Double.parseDouble(montoS);
+                if (monto<=0) {
+                    msgbox("Monto incorrecto");return;
+                }
+            } else {
+                msgbox("Falta definir monto");return;
+            }
+
+            if (desc.isEmpty()) desc=" ";
+
+            cpago.fill(" ORDER BY COREL DESC");
+            if (cpago.count==0) corel=1;
+            if (cpago.count >0)  corel = cpago.first().corel + 1;
+
+            if (Item()){
+                cpago.add(item);
+                Toast.makeText(this, "Pago realizado correctamente", Toast.LENGTH_LONG).show();
+                super.finish();
+            } else {
+                Toast.makeText(this, "Error al guardar el pago", Toast.LENGTH_LONG).show();
+            }
+
+            doc.buildPrint("0", 0);
+            GeneratePrint();
+
+        } catch (Exception e){
+            msgbox("save: "+e);
+        }
+    }
 
     private boolean Item() {
 
-        try{
+        try {
             item.empresa=gl.emp;
             item.sucursal=gl.tienda;
             item.ruta=gl.codigo_ruta;
             item.corel=corel;
             item.item=0;
             item.anulado=0;
-            item.fecha=date;
+            item.fecha=du.getActDateTime();
             item.tipo=cPago;
             item.proveedor=proveedor;
             item.monto=monto;
@@ -163,60 +226,8 @@ public class CajaPagos extends PBase {
 
             return true;
 
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        } catch (Exception e){
             msgbox("Item: "+e);return false;
-        }
-
-    }
-
-    public void save(View view){
-
-        clsP_cajapagosObj cpago = new clsP_cajapagosObj(this,Con,db);
-
-        try{
-
-            docAsoc = lblDocAsoc.getText().toString().trim();
-            montoS = lblMonto.getText().toString().trim();
-            desc = lblDesc.getText().toString().trim();
-
-            if(!montoS.isEmpty()) monto = Double.parseDouble(montoS); else return;
-
-            if(desc.isEmpty()) desc ="Sin Descripción";
-
-            if(proveedor==0){
-                msgbox("El proveedor no puede ir vacío");return;
-            }
-
-            if(cPago==0){
-                msgbox("El concepto de pago no puede ir vacío");return;
-            }
-
-            cpago.fill(" ORDER BY COREL DESC");
-
-            if(cpago.count==0) corel=1;
-
-            if(cpago.count>0){
-                corel = cpago.first().corel + 1;
-            }
-
-            if(Item()){
-
-                cpago.add(item);
-
-                Toast.makeText(this, "Pago realizado correctamente", Toast.LENGTH_LONG).show();
-
-                super.finish();
-            }else {
-                Toast.makeText(this, "Error al guardar el pago", Toast.LENGTH_LONG).show();
-            }
-
-            doc.buildPrint("0", 0);
-            GeneratePrint();
-
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            msgbox("save: "+e);
         }
 
     }
@@ -350,12 +361,7 @@ public class CajaPagos extends PBase {
         }
     }
 
-    public void doExit(View view) {
-        msgAskExit("Salir");
-    }
-
-
-    public void GeneratePrint(){
+    private void GeneratePrint(){
         try{
 
             app.doPrint();
@@ -369,7 +375,20 @@ public class CajaPagos extends PBase {
 
     //endregion
 
-    //region msg
+    //region Dialogs
+
+    public void dialogswitch() {
+        try {
+            switch (gl.dialogid) {
+                case 0:
+                    finish();break;
+                case 1:
+                    save();break;
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     private void msgAskExit(String msg) {
         ExDialog dialog = new ExDialog(this);
@@ -392,7 +411,6 @@ public class CajaPagos extends PBase {
     //endregion
 
     //region DocPrint
-
 
     private class clsDocExist extends clsDocument {
         String fechaR="";
@@ -427,16 +445,19 @@ public class CajaPagos extends PBase {
                 totSinImpF=0;
                 impF=0;
                 fecharango=dateS;
+
+                rep.empty();
+                rep.empty();
+                rep.addc("COMPROBANTE DE PAGO");
+                rep.empty();
                 rep.add("Proveedor: "+provName);
                 rep.add("Concepto Pago: "+cPagoName);
-                rep.add("Fecha Inicio Caja: "+fecharango);
+                rep.add("Fecha : "+fecharango);
                 rep.empty();
-
-                rep.add("DESCRIPCION");
-                rep.add("DOC ASOCIADO                   TOTAL");
+                rep.add("Documento asociado");
                 rep.line();
-                rep.add(item.observacion);
                 rep.addtot(item.nodocumento,item.monto);
+                if (!item.observacion.equalsIgnoreCase(" ")) rep.add(item.observacion);
                 rep.line();
                 rep.addtot("Total: ",item.monto);
 
@@ -464,6 +485,27 @@ public class CajaPagos extends PBase {
 
     }
 
+    //endregion
+
+    //region Activity Events
+
+    @Override
+    public void onResume() {
+
+        try {
+            super.onResume();
+            gl.dialogr = () -> {dialogswitch();};
+
+
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        msgask(0,"¿Salir?");
+    }
 
     //endregion
 
