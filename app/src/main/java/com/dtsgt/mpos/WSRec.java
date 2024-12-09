@@ -1497,6 +1497,7 @@ public class WSRec extends PBase {
 
         try {
 
+            if (ffel<0) ffel=0;
             if (ffel!=0) {
                 fact=du.getActDate();f14=du.addDays(fact,14);
                 if (f14>=ffel)  msgbox("Validéz de Facturación electronica está próxima a expirar.\nAvize a supervisor.");
