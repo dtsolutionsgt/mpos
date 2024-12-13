@@ -54,6 +54,8 @@ public class extListDlg {
     private Adapter adapter;
 
     public ArrayList<clsListDialogItem> items=new ArrayList<clsListDialogItem>();
+    public String selcode;
+    public int selcodeint;
 
     private int buttonCount;
     private int bwidth=420,bheight=550,mwidth=0,mheight=0,mlines=6,mminlines=1;
@@ -79,7 +81,7 @@ public class extListDlg {
         mList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                dialog.dismiss();
+                 dialog.dismiss();
             };
         });
 

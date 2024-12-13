@@ -62,8 +62,6 @@ public class CajaPagos extends PBase {
         lblDesc = (EditText) findViewById(R.id.editText22);
 
         super.InitBase();
-        addlog("CajaPagos",""+du.getActDateTime(),String.valueOf(gl.vend));
-
 
         fillSpinner2();
         getdate();
@@ -221,7 +219,7 @@ public class CajaPagos extends PBase {
             item.referencia="";
             item.observacion=desc;
             item.vendedor=gl.codigo_vendedor;
-            item.statcom="N";
+            item.statcom="P";
             item.codigo_cajapagos=gl.ruta+"_"+mu.getCorelBase();
 
             return true;

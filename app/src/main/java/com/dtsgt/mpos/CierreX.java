@@ -241,9 +241,8 @@ public class CierreX extends PBase {
                 //msgAsk("Enviar correo a: "+CorreoSucursal);
             }
 
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            msgbox("GeneratePrint: "+e);
+        } catch (Exception e){
+             msgbox("GeneratePrint: "+e);
         }
     }
 
@@ -668,19 +667,25 @@ public class CierreX extends PBase {
     }
 
     private void reporteZ(){
-
         Cursor dt;
         String ss;
+        double cajapago=0;
 
         try{
 
             if (gl.corelZ!=0){
+
+                cajapago=gl.fd_cajapagos;
 
                 sql="SELECT M.CODIGO, M.NOMBRE, C.FONDOCAJA, 0, 0, C.MONTOINI, C.MONTOFIN, C.MONTODIF, 0,C.COREL " +
                         "FROM P_CAJACIERRE C " +
                         "INNER JOIN P_MEDIAPAGO M ON C.CODPAGO = M.CODIGO " +
                         "WHERE C.COREL = "+ gl.corelZ +" " +
                         "GROUP BY M.CODIGO";
+
+                sql="SELECT M.CODIGO, M.NOMBRE, C.FONDOCAJA, 0, 0, C.MONTOINI, C.MONTOFIN, C.MONTODIF, 0,C.COREL, M.NIVEL " +
+                        "FROM P_CAJACIERRE C INNER JOIN P_MEDIAPAGO M ON C.CODPAGO = M.CODIGO " +
+                        "WHERE C.COREL = "+ gl.corelZ +" GROUP BY M.CODIGO";
 
                 dt = Con.OpenDT(sql);
 
@@ -694,7 +699,7 @@ public class CierreX extends PBase {
 
                 itemRZ.clear();
 
-                if(dt.getCount()!=0){
+                if (dt.getCount()!=0){
 
                     dt.moveToFirst();
 
@@ -713,8 +718,17 @@ public class CierreX extends PBase {
                         itemZ.cant=dt.getDouble(4);
                         itemZ.cantmin=dt.getDouble(5);
                         itemZ.disp=dt.getDouble(6);
-                        itemZ.precio=dt.getDouble(7);
+
                         itemZ.costo=dt.getDouble(8);
+
+                        if (dt.getInt(10)==1) {
+                            itemZ.cajapago=cajapago;
+                        } else {
+                            itemZ.cajapago=0;
+                        }
+
+                        itemZ.precio=dt.getDouble(7)-itemZ.cajapago;
+
                         itemRZ.add(itemZ);
                         dt.moveToNext();
                     }
@@ -736,19 +750,19 @@ public class CierreX extends PBase {
                     itemZ.cant=0;
                     itemZ.cantmin=gl.fondoCaja;
                     itemZ.disp=gl.FinMonto;
-                    itemZ.precio=gl.fondoCaja-gl.FinMonto;
+                    itemZ.precio=gl.fondoCaja-cajapago-gl.FinMonto;
                     itemZ.costo=0;
                     counter=1;
+
                     itemRZ.add(itemZ);
                 }
 
-            }else{
+            } else {
                 msgAskOk("Aún no se ha realizado ningún cierre Z.");
             }
 
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            msgbox("reporteZ: "+e);
+        } catch (Exception e){
+             msgbox("reporteZ: "+e);
         }
     }
 
@@ -835,7 +849,7 @@ public class CierreX extends PBase {
         String test,horaini;
         int cantF,cantfF,SumaCant;
         int count1, count2, count3, count4, count5, count6, count7, count8, count9, count10, count11;
-        double tot,totF;
+        double tot,totF,totC;
         double porcentaje=0.0, comision;
         double totSinImp, sinImp,totSinImpF, impF;
 
@@ -911,23 +925,29 @@ public class CierreX extends PBase {
                 count10 += count9;
                 count11 += count10;
 
-                if(gl.reportid==10){
+                if (gl.reportid==10){
                     rep.add("Fondo caja : "+gl.peMon+Fondo);
                     rep.empty();
                     rep.addc("REPORTE DE CUADRE");
                     rep.line();
                     rep.add("CODIGO  M.PAGO");
-                    rep.add("MONT.INI        MONT.FIN       DIF.");
+                    //rep.add("MONT.INI        MONT.FIN       DIF.");
+                    rep.add4rrrr("MONT.INI","PAGO CAJA","MONT.FIN","DIF.");
                     rep.line();
 
-                    tot=0;totF=0;totSinImp=0;
+                    tot=0;totF=0;totC=0;totSinImp=0;
 
                     for (int j=0; j<itemRZ.size(); j++){
                         //rep.addtot(itemRZ.get(j).id,itemRZ.get(j).nombre);
                         rep.add(itemRZ.get(j).nombre);
-                        rep.add4lrrTotZ(itemRZ.get(j).cantmin,itemRZ.get(j).disp,itemRZ.get(j).precio);
+
+                        //rep.add4lrrTotZ(itemRZ.get(j).cantmin,itemRZ.get(j).disp,itemRZ.get(j).precio);
+                        rep.add4rrrr(itemRZ.get(j).cantmin,itemRZ.get(j).cajapago,itemRZ.get(j).disp,itemRZ.get(j).precio);
+
                         tot+= mu.round2(itemRZ.get(j).cantmin);
                         totF+=mu.round2(itemRZ.get(j).disp);
+                        totC+=mu.round2(itemRZ.get(j).cajapago);
+
                         totSinImp+=mu.round2(itemRZ.get(j).precio);
                     }
 
@@ -938,7 +958,8 @@ public class CierreX extends PBase {
                     }
 
                     rep.line();
-                    rep.add4lrrTotZ(tot,totF,totSinImp);
+                    //rep.add4lrrTotZ(tot,totF,totSinImp);
+                    rep.add4rrrr(tot,totC,totF,totSinImp);
                     rep.add("");
                     rep.add("");
                     rep.line();
@@ -1859,7 +1880,7 @@ public class CierreX extends PBase {
     }
     //endregion
 
-    // Activity Events
+    //region Activity Events
 
     @Override
     public void onResume() {
@@ -1870,5 +1891,7 @@ public class CierreX extends PBase {
             msgbox(e.getMessage());
         }
     }
+
+    //endregion
 
 }

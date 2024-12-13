@@ -60,7 +60,7 @@ public class appGlobals extends Application {
   	             cli_muni,cli_muni_suc,cli_depto,cli_depto_suc;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,
 			      dom_total,bar_cant,descadd,monto_propina,limite_credito,preccombo,
-				  fd_hn_imp,fd_hn_exen,fd_hn_grav;
+				  fd_hn_imp,fd_hn_exen,fd_hn_grav,fd_cajapagos;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,paraentrega,
@@ -118,7 +118,7 @@ public class appGlobals extends Application {
 	public Boolean peCafeTicket,peNoEnviar,peUsaSoloBOF,peAcumDesc, peNumOrdCommandaVenta;
 	public Boolean peImpFactBT,peImpFactLan,peImpFactUSB,peNumOrdCentral,peCajaMesasManual,peMesaAtenderTodos;
 	public Boolean peFactPropinaAparte,pePrecu1015,peCargarClientes,pePagoCredito,peRepLimitado;
-	public Boolean peDescPerc,peESAComprobante,peComandaVentaLAN,peComandaBorrarPass;
+	public Boolean peDescPerc,peESAComprobante,peComandaVentaLAN,peComandaBorrarPass,paDesc100,paCortProd;
     public double  pePropinaPerc,pePropinaCarta,peDescMax;
 
     // Parametros Extra Local

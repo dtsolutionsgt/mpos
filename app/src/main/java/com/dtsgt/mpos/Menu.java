@@ -1495,7 +1495,7 @@ public class Menu extends PBase {
 		try {
 			db.beginTransaction();
 
-			sqlfs="SELECT COREL FROM D_FACTURA WHERE FECHA<"+fd;
+			sqlfs="SELECT COREL FROM D_FACTURA WHERE (FECHA<"+fd+") AND (STATCOM='S')";
 
 			db.execSQL("DELETE FROM D_FACTURAD    WHERE COREL IN ("+sqlfs+")");
 			db.execSQL("DELETE FROM D_FACTURA_FEL WHERE COREL IN ("+sqlfs+")");
@@ -1507,7 +1507,7 @@ public class Menu extends PBase {
 			db.execSQL("DELETE FROM D_FACTURAR    WHERE COREL IN ("+sqlfs+")");
 			db.execSQL("DELETE FROM D_FACTURAS    WHERE COREL IN ("+sqlfs+")");
 
-			db.execSQL("DELETE FROM D_FACTURA WHERE FECHA<"+fd);
+			db.execSQL("DELETE FROM D_FACTURA WHERE (FECHA<"+fd+") AND (STATCOM='S')");
 
 			db.setTransactionSuccessful();
 			db.endTransaction();

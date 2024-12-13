@@ -133,7 +133,20 @@ public class clsClasses {
         public int  idseleccion;
         public int  orden;
         public String nombre;
-     }
+    }
+
+    public class clsD_facturacor {
+        public int  id;
+        public int  empresa;
+        public String corel;
+        public int  anulado;
+        public int  producto;
+        public String um;
+        public double cant;
+        public double precio;
+        public double total;
+        public int  autorizo;
+    }
 
     public class clsD_facturad {
         public int  empresa;
@@ -1891,6 +1904,16 @@ public class clsClasses {
         public double percep;
     }
 
+    public class clsT_venta_cor {
+        public String producto;
+        public String empresa;
+        public String um;
+        public double cant;
+        public double precio;
+        public double total;
+        public int  autorizo;
+    }
+
     public class clsT_venta_hora {
         public int  hora;
         public int  codigo;
@@ -2091,7 +2114,7 @@ public class clsClasses {
 	public class clsBonifProd {
 		public String id,nombre,prstr;
 		public int flag;
-		public double cant,cantmin,disp,precio,costo;
+		public double cant,cantmin,disp,precio,costo,cajapago;
 	}	
 	
 	public class clsDemoDlg {

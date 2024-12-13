@@ -147,7 +147,7 @@ public class CajaPagosLista extends PBase {
         try {
 
             sql="SELECT COREL, OBSERVACION, FECHA, MONTO, ITEM, TIPO, ANULADO, VENDEDOR, NODOCUMENTO "+
-                "FROM P_cajapagos WHERE (FECHA >="+dateini+") AND (FECHA<="+datefin+") ORDER BY FECHA ";
+                "FROM P_cajapagos WHERE (FECHA >="+dateini+") AND (FECHA<="+datefin+") ORDER BY FECHA DESC";
 
             DT=Con.OpenDT(sql);
             if (DT.getCount()>0) {

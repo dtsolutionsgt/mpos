@@ -65,6 +65,7 @@ import com.dtsgt.classes.clsT_ordencomboObj;
 import com.dtsgt.classes.clsT_ordencomboadObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ventaObj;
+import com.dtsgt.classes.clsT_venta_corObj;
 import com.dtsgt.classes.clsT_venta_horaObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
@@ -141,6 +142,7 @@ public class Venta extends PBase {
     private clsT_ventaObj T_ventaObj;
     private clsP_linea_impresoraObj P_linea_impresoraObj;
     private clsP_impresoraObj P_impresoraObj;
+    private clsT_venta_corObj T_venta_corObj;
 
     private wsCommit wscom;
     private wsOpenDT wso;
@@ -164,11 +166,11 @@ public class Venta extends PBase {
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos,descflag,meseros=false;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
     private boolean horiz=true,porcentaje,domenvio,modoHN,modoSV,desclinmsg;
-    private int codigo_cliente, emp,pedidoscant,cod_prod,mododocesa;
+    private int codigo_cliente, emp,pedidoscant,cod_prod,mododocesa,cort_user;
     private String cliid,saveprodid,pedcorel,prodlinea;
     private int famid = -1;
     public boolean DescPorProducto, DesPorLinea = false, DesPorMarca = false;
-    public int pTipo = -1;
+    public int pTipo = -1,modo_supervis;
     public double auxCant=0;
 
     @Override
@@ -233,6 +235,7 @@ public class Venta extends PBase {
             T_comandaObj=new clsT_comandaObj(this,Con,db);
             P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
             P_impresoraObj=new clsP_impresoraObj(this,Con,db);
+            T_venta_corObj=new clsT_venta_corObj(this,Con,db);
 
             app.parametrosExtra();
 
@@ -628,7 +631,6 @@ public class Venta extends PBase {
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
     }
 
     //endregion
@@ -682,7 +684,7 @@ public class Venta extends PBase {
                     item.val=mu.frmdecimal(item.Cant,gl.peDecImp)+" "+ltrim(item.um,6);
 
                     if (desc>0) {
-                        item.valp=mu.frmdecno(desc);
+                        item.valp=mu.frmdec(desc);
                     } else {
                         item.valp=".";
                     }
@@ -1023,7 +1025,7 @@ public class Venta extends PBase {
             impval=prc.impval;
             totsin=prc.totsin;
 
-           /*
+            /*
             tot = prc.tot;
             descmon = savetot-tot;//prc.descmon;
             prodtot = tot;
@@ -1653,16 +1655,6 @@ public class Venta extends PBase {
 
     }
 
-    private void delItem(){
-        try {
-            db.execSQL("DELETE FROM T_VENTA WHERE PRODUCTO='"+prodid+"'");
-            listItems();
-        } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox("Error : " + e.getMessage());
-        }
-    }
-
     public void finalizarOrden(){
 
         try{
@@ -1769,8 +1761,60 @@ public class Venta extends PBase {
     public void cambiaPrecio() {
         if (uid.equalsIgnoreCase("0")) return;
 
-        browse=11;
-        startActivity(new Intent(this,ValidaSuper.class));
+        //browse=11;
+        //startActivity(new Intent(this,ValidaSuper.class));
+        modo_supervis=1;
+        validaSupervisor();
+    }
+
+    private void aplicaCortesia() {
+
+        try {
+            db.beginTransaction();
+
+            gl.promdesc=100;
+            desccant=vitem.Cant;
+            desc=gl.promdesc;
+            cant=desccant;
+            prec=vitem.Prec;
+
+            updItemMonto();
+
+            clsClasses.clsT_venta_cor item = clsCls.new clsT_venta_cor();
+
+            item.producto=vitem.Cod;
+            item.empresa=vitem.emp;
+            item.um= vitem.um;
+            item.cant=vitem.Cant;
+            item.precio=vitem.Prec;
+            item.total=vitem.Total;
+            item.autorizo=cort_user;
+
+            T_venta_corObj.add(item);
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void borrarCortesia() {
+        try {
+            db.beginTransaction();
+
+            db.execSQL("DELETE FROM T_VENTA WHERE (PRODUCTO='"+vitem.Cod+"') AND (EMPRESA='"+vitem.emp+"')");
+            db.execSQL("DELETE FROM T_VENTA_COR WHERE (PRODUCTO='"+vitem.Cod+"') AND (EMPRESA='"+vitem.emp+"')");
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            listItems();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     //endregion
@@ -2107,55 +2151,6 @@ public class Venta extends PBase {
         }
     }
 
-    private void msgAskDel(String msg) {
-        try{
-
-            ExDialog dialog = new ExDialog(this);
-            dialog.setMessage(msg  + " ?");
-            dialog.setIcon(R.drawable.ic_quest);
-
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    delItem();
-                }
-            });
-
-            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) { }
-            });
-
-            dialog.show();
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-
-    }
-
-    private void msgAskBarra(String msg) {
-        try{
-
-            ExDialog dialog = new ExDialog(this);
-            dialog.setMessage(msg  + " ?");
-            dialog.setIcon(R.drawable.ic_quest);
-
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    borraBarra();
-                 }
-            });
-
-            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) { }
-            });
-
-            dialog.show();
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-
-
-    }
-
     private void msgAskAdd(String msg) {
         try{
 
@@ -2177,114 +2172,6 @@ public class Venta extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-    }
-
-    private void msgAskLimit(String msg,boolean updateitem) {
-        final boolean updatem=updateitem;
-        try{
-
-            ExDialog dialog = new ExDialog(this);
-            dialog.setMessage(msg);
-            dialog.setIcon(R.drawable.ic_quest);
-
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    processCant(updatem);
-                }
-            });
-
-            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {}
-            });
-
-            dialog.show();
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
-
-    private void msgAskInfo(String msg) {
-        try {
-            ExDialog dialog = new ExDialog(this);
-            dialog.setMessage(msg);
-            dialog.setIcon(R.drawable.ic_quest);
-
-            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-
-            dialog.show();
-        } catch (Exception e){ }
-    }
-
-    private void valorDescuento() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-        alert.setTitle("Porcentaje descuento");
-
-        final EditText input = new EditText(this);
-        alert.setView(input);
-
-        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        input.setText("");
-        input.requestFocus();
-
-        alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                try {
-                    String s=input.getText().toString();
-                    double val=Double.parseDouble(s);
-                    if (val<0) throw new Exception();
-
-                    gl.promdesc=val;
-                    updDesc();
-                } catch (Exception e) {
-                    mu.msgbox("Porcentaje incorrecto");return;
-                }
-            }
-        });
-
-        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {}
-        });
-
-        alert.show();
-    }
-
-    private void valorDescuentoMonto() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-        alert.setTitle("Monto descuento");
-
-        final EditText input = new EditText(this);
-        alert.setView(input);
-
-        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        input.setText("");
-        input.requestFocus();
-
-        alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                try {
-                    String s=input.getText().toString();
-                    double val=Double.parseDouble(s);
-                    if (val<0) throw new Exception();
-
-                    gl.promdesc=val;
-                    updDescMonto();
-                } catch (Exception e) {
-                    mu.msgbox("Monto incorrecto");return;
-                }
-            }
-        });
-
-        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {}
-        });
-
-        alert.show();
     }
 
     private void ingresoNota() {
@@ -2319,12 +2206,23 @@ public class Venta extends PBase {
     private void showVentaItemMenu(int mmodo) {
 
         try {
+            T_venta_corObj.fill("WHERE (PRODUCTO='"+vitem.Cod+"') AND (EMPRESA='"+vitem.emp+"')");
+            if (T_venta_corObj.count>0) {
+                msgAskDelCotresia("Borrar producto de cortesia");return;
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        try {
             extListDlg listdlg = new extListDlg();
             listdlg.buildDialog(Venta.this,"Venta");
 
-            listdlg.add("Cambiar cantidad");
-            listdlg.add("Nota");
-            listdlg.add("Descuento");
+            listdlg.add(1,"Cambiar cantidad");
+            listdlg.add(2,"Nota");
+            listdlg.add(3,"Descuento");
+            if (gl.paCortProd) listdlg.add(4,"Cortesía");
+
             //listdlg.add("Ingredientes adicionales");
             //if (gl.idmodgr>0) listdlg.add("Modificadores");
 
@@ -2332,8 +2230,11 @@ public class Venta extends PBase {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
                     try {
-                        switch (position) {
-                            case 0:
+
+                        int optid=listdlg.getCodigoInt(position);
+
+                        switch (optid) {
+                            case 1:
                                 if (mmodo==0) {
                                     browse=6;
                                     startActivity(new Intent(Venta.this,VentaEdit.class));
@@ -2355,16 +2256,15 @@ public class Venta extends PBase {
                                     } else {
                                         startActivity(new Intent(Venta.this,ProdMenu.class));
                                     }
-
-
                                 }
                                 break;
-                            case 1:
-                                ingresoNota();break;
                             case 2:
-                                //Ingredientes();
-                                cambiaPrecio();break;
+                                ingresoNota();break;
                             case 3:
+                                cambiaPrecio();break;
+                            case 4:
+                                procesaCortesia();break;
+                            case 99:
                                 startActivity(new Intent(Venta.this,ModifVenta.class));break;
                         }
                         listdlg.dismiss();
@@ -2793,6 +2693,7 @@ public class Venta extends PBase {
                 case 3:
                     menuImprDoc(3);break;
                 case 4:
+                    modo_supervis=0;
                     validaSupervisor();break;
                     //gl.tipo=3;menuAnulDoc();break;
                 case 14:
@@ -2847,8 +2748,29 @@ public class Venta extends PBase {
                     if (listdlg.getInput().isEmpty()) return;
 
                     if (listdlg.validPassword()) {
-                        gl.tipo=3;menuAnulDoc();
-                        listdlg.dismiss();
+
+                        cort_user=listdlg.validUserId();
+
+                        switch (modo_supervis) {
+                            case 0:
+                                gl.tipo=3;menuAnulDoc();
+                                listdlg.dismiss();
+                                showVoidMenuTodo();
+                                listdlg.dismiss();
+                                break;
+                            case 1:
+                                browse=13;
+                                gl.total_factura_previo_descuento=prodtotlin;
+                                startActivity(new Intent(Venta.this,DescMonto.class));
+                                listdlg.dismiss();
+                                break;
+                            case 2:
+                                listdlg.dismiss();
+                                aplicaCortesia();
+                                break;
+                        }
+
+
                     } else {
                         toast("Contraseña incorrecta");
                     }
@@ -3221,20 +3143,17 @@ public class Venta extends PBase {
 
     }
 
-    private void exitBtn() {
-        Cursor dt;
-
+    private void procesaCortesia() {
         try {
-            sql="SELECT * FROM T_VENTA";
-            dt=Con.OpenDT(sql);
-
-            if (dt.getCount()>0) {
-                msgAskExit("Regresar al menú principal sin terminar la venta");
+            T_venta_corObj.fill("WHERE (PRODUCTO='"+vitem.Cod+"') AND (EMPRESA='"+vitem.emp+"')");
+            if (T_venta_corObj.count>0) {
+                msgbox("El artículo ya está registrado como cortesía.");
             } else {
-                finish();
+                modo_supervis=2;
+                validaSupervisor();
             }
-
         } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -4206,6 +4125,9 @@ public class Venta extends PBase {
 
         try {
             sql="DELETE FROM T_VENTA";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_VENTA_COR";
             db.execSQL(sql);
 
             sql="DELETE FROM T_COMBO";
@@ -5380,6 +5302,22 @@ public class Venta extends PBase {
         return true;
     }
 
+    private void exitBtn() {
+        Cursor dt;
+
+        try {
+            sql="SELECT * FROM T_VENTA";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                msgAskExit("Regresar al menú principal sin terminar la venta");
+            } else {
+                finish();
+            }
+
+        } catch (Exception e) {
+        }
+    }
 
     //endregion
 
@@ -5391,8 +5329,8 @@ public class Venta extends PBase {
         dialog.setMessage("¿" + msg + "?");
         dialog.setPositiveButton("Si", (dialog12, which) -> {
             try {
-                sql="DELETE FROM T_VENTA";
-                db.execSQL(sql);
+                db.execSQL("DELETE FROM T_VENTA");
+                db.execSQL("DELETE FROM T_VENTA_COR");
                 listItems();
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -5426,19 +5364,13 @@ public class Venta extends PBase {
 
     }
 
-    private void msgAskOrden(String msg) {
-
-        if (!hasProducts()) {
-            msgbox("La venta está vacía, no se puede convertir a orden!");return;
-        }
-
+    private void msgAskDelCotresia(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
-        dialog.setPositiveButton("Si", (dialog1, which) -> crearPedido());
+        dialog.setPositiveButton("Si", (dialog1, which) -> borrarCortesia());
         dialog.setNegativeButton("No", (dialog12, which) -> {});
 
         dialog.show();
-
     }
 
     private void showNivelMenu() {
@@ -5521,19 +5453,6 @@ public class Venta extends PBase {
         alert.show();
     }
 
-    private void msgAskSend(String msg) {
-        ExDialog dialog = new ExDialog(this);
-        dialog.setMessage(msg);
-
-        dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                enviaAvizo();
-                processMenuTools(1);
-            }
-        });
-
-        dialog.show();
-    }
 
     //endregion
 
@@ -6312,6 +6231,7 @@ public class Venta extends PBase {
             T_comandaObj.reconnect(Con,db);
             P_linea_impresoraObj.reconnect(Con,db);
             P_impresoraObj.reconnect(Con,db);
+            T_venta_corObj.reconnect(Con,db);
 
             checkLock();
 
@@ -6352,6 +6272,7 @@ public class Venta extends PBase {
 
                 try  {
                     db.execSQL("DELETE FROM T_VENTA");
+                    db.execSQL("DELETE FROM T_VENTA_COR");
                     db.execSQL("DELETE FROM T_VENTA_MOD");
                     db.execSQL("DELETE FROM T_VENTA_ING");
 
