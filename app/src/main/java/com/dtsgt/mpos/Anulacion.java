@@ -1145,6 +1145,12 @@ public class Anulacion extends PBase {
 			sql="UPDATE D_FACTURAP SET Anulado=1 WHERE COREL='"+itemid+"'";
 			db.execSQL(sql);
 
+			try {
+				sql="UPDATE D_FACTURACOR SET Anulado=1 WHERE COREL='"+itemid+"'";
+				db.execSQL(sql);
+			} catch (Exception e) {}
+
+
 			//#CKFK 20200526 Puse esto en comentario porque esa tabla no se usa en MPos
 			//anulBonif(itemid);
 

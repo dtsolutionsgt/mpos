@@ -1890,7 +1890,7 @@ public class FacturaRes extends PBase {
 					dcitem.um=itm.um;
 					dcitem.cant=itm.cant;
 					dcitem.precio=itm.precio;
-					dcitem.total=itm.total;
+					dcitem.total=itm.cant*itm.precio;
 					dcitem.autorizo=itm.autorizo;
 
 					D_facturacorObj.add(dcitem);newfcid++;

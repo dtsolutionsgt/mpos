@@ -579,6 +579,11 @@ public class clsRepBuilder {
 		items.add(ts);
 	}
 
+	public void addtotcant(String s1,String val) {
+		ts=ltrim(s1,prw-6)+" "+rtrim(val,4);
+		items.add(ts);
+	}
+
 	public void addtotrs(String s1,String val) {
 
 		String str;

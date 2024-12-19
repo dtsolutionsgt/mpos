@@ -185,7 +185,6 @@ public class Reportes extends PBase {
     //region Events
 
     public void printDoc() {
-
         try{
             printEpson();
         }catch (Exception e){
@@ -720,10 +719,29 @@ public class Reportes extends PBase {
                     break;
 
                 case 16:
-
                     sql="SELECT '','',0,'',P_CAJAPAGOS.NODOCUMENTO,  P_CONCEPTOPAGO.NOMBRE,0,0, P_CAJAPAGOS.MONTO, P_CAJAPAGOS.FECHA " +
                         "FROM  P_CAJAPAGOS INNER JOIN P_CONCEPTOPAGO ON P_CAJAPAGOS.TIPO=P_CONCEPTOPAGO.CODIGO " +
                         "WHERE (P_CAJAPAGOS.FECHA BETWEEN "+ dateini +" AND "+datefin+")";
+                    break;
+
+                case 17:
+                    sql="SELECT '','',CANT,'',P_PRODUCTO.DESCCORTA,'',0,PRECIO,TOTAL,D_FACTURA.FECHA FROM D_facturacor " +
+                        "INNER JOIN D_FACTURA ON (D_FACTURA.COREL=D_facturacor.COREL) " +
+                        "INNER JOIN P_PRODUCTO ON (P_PRODUCTO.CODIGO_PRODUCTO=D_facturacor.PRODUCTO) " +
+                        "WHERE (D_FACTURA.ANULADO=0)  AND " +
+                        "(D_facturacor.COREL IN ( SELECT COREL FROM D_FACTURA WHERE (FECHA>="+ dateini +") AND (FECHA<"+datefin+") )) " +
+                        "ORDER BY P_PRODUCTO.DESCCORTA,D_FACTURA.FECHA";
+
+                    sql="SELECT '','',SUM(CANT),'',P_PRODUCTO.DESCCORTA,'',0,0,0,0 FROM D_facturacor " +
+                        "INNER JOIN D_FACTURA ON (D_FACTURA.COREL=D_facturacor.COREL) " +
+                        "INNER JOIN P_PRODUCTO ON (P_PRODUCTO.CODIGO_PRODUCTO=D_facturacor.PRODUCTO) " +
+                        "WHERE (D_FACTURA.ANULADO=0)  AND " +
+                        "(D_facturacor.COREL IN ( SELECT COREL FROM D_FACTURA WHERE (FECHA>="+ dateini +") AND (FECHA<"+datefin+") )) " +
+                        "GROUP BY PRODUCTO " +
+                        "ORDER BY P_PRODUCTO.DESCCORTA";
+
+
+
                     break;
 
                 default:
@@ -1292,27 +1310,48 @@ public class Reportes extends PBase {
                             rep.line();
                             rep.addmptot(tot);
                         }
-                } else if (gl.reportid==16) {
+                    } else if (gl.reportid==16) {
 
-                    if(acc==1){
-                        tot=0;
-                        rep.addc("REPORTE PAGOS DE CAJA ");
-                        rep.addc(fecharango);
-                        setDatosVersion();
-                        rep.add3llr("Fecha","Documento","Monto");
-                        rep.line();
-                        acc = 2;
+                        if(acc==1){
+                            tot=0;
+                            rep.addc("REPORTE PAGOS DE CAJA ");
+                            rep.addc(fecharango);
+                            setDatosVersion();
+                            rep.add3llr("Fecha","Documento","Monto");
+                            rep.line();
+                            acc = 2;
+                        }
+
+                        tot+=itemR.get(i).total;
+                        rep.add3llr(du.sfecha(itemR.get(i).fecha), itemR.get(i).descrip, mu.frmcur(itemR.get(i).total));
+                        rep.add(itemR.get(i).um);
+
+                        if(i==itemR.size()-1){
+                            rep.line();
+                            rep.add3llr("Total:", "", mu.frmcur(tot));
+                        }
+
+                    } else if (gl.reportid==17) {
+
+                        if(acc==1){
+                            tot=0;
+                            rep.addc("REPORTE CORTESIA POR ARTICULO ");
+                            rep.addc(fecharango);
+                            setDatosVersion();
+                            rep.addtotcant("Descripcion","Cant");
+                            rep.line();
+                            acc = 2;
+                        }
+
+                        tot+=itemR.get(i).correl;
+                        rep.addtotcant( itemR.get(i).descrip,""+itemR.get(i).correl);
+
+                        if(i==itemR.size()-1){
+                            rep.line();
+                            int itot=(int) tot;
+                            rep.addtotcant("Total:",""+itot);
+                        }
                     }
-
-                    tot+=itemR.get(i).total;
-                    rep.add3llr(du.sfecha(itemR.get(i).fecha), itemR.get(i).descrip, mu.frmcur(itemR.get(i).total));
-                    rep.add(itemR.get(i).um);
-
-                    if(i==itemR.size()-1){
-                        rep.line();
-                        rep.add3llr("Total:", "", mu.frmcur(tot));
-                    }
-                }
 
                 }
 
