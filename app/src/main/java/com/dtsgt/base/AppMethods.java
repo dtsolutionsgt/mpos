@@ -2820,11 +2820,9 @@ public class AppMethods {
 	}
 
 	public int isOnWifi(){
-
 		int activo=0;
 
-		try{
-
+		try {
 			ConnectivityManager connectivityManager = (ConnectivityManager) cont.getSystemService(Context.CONNECTIVITY_SERVICE);
 			NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
@@ -2839,12 +2837,9 @@ public class AppMethods {
 				}
 			}
 
-		} catch (Exception ex){
-
-		}
+		} catch (Exception ex){}
 
 		return activo;
-
 	}
 
     public void zip(String file, String zipFile) throws IOException {

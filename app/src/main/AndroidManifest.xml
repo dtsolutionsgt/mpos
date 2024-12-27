@@ -788,9 +788,14 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".Municipio"
+            android:exported="false"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:exported="false" />
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".EnvioNube"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
     </application>
 
 </manifest>

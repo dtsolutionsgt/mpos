@@ -1032,7 +1032,7 @@ public class Menu extends PBase {
 			listdlg.add("Inicio de caja");
 			listdlg.add("Inicializar inventario");
 			listdlg.add("Reinicializar numero de orden");
-
+			listdlg.add("Envio de datos de emergencia");
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 				try {
@@ -1047,11 +1047,13 @@ public class Menu extends PBase {
 							if (gl.bloqueo_venta) return;
 							actualizaVersion();break;
 						case 3:
-							enviarBaseDeDatos();break;
+							msgAskDatabase("Enviar base de datos al centro de soporte");break;
 						case 4:
 							msgAskFEL("Certificar facturas pendientes");break;
 						case 5:
-							validaSuperLimpia();break;
+							msgAskLimpiar("Este proceso se debe ejecutar únicamente antes " +
+									"de abrir la caja o despues de cierre de caja.\n Continuar?");break;
+							//validaSuperLimpia();
 						case 6:
 							estadoBluTooth();break;
 						case 7:
@@ -1072,7 +1074,8 @@ public class Menu extends PBase {
 							validaSuperInventario();break;
 						case 15:
 							validaSuperNumOrden();break;
-
+						case 16:
+							uploadDB();break;
 					}
 					listdlg.dismiss();
 				} catch (Exception e) {}
@@ -1121,10 +1124,6 @@ public class Menu extends PBase {
         }
     }
 
-    private void enviarBaseDeDatos() {
-        msgAskDatabase("Enviar la base de datos al centro de soporte");
-    }
-
     private void sendDB() {
 
         String subject,body;
@@ -1141,9 +1140,10 @@ public class Menu extends PBase {
             app.zip(dir+"/posdts_"+gl.codigo_ruta+".db",dir + "/posdts_"+gl.codigo_ruta+".zip");
 
 			try {
-				fsize=f3.length();fslim=25*1024*1000;
+				fsize=f3.length();
+				fslim=25*1000*1000;
 				if (fsize>fslim) {
-					msgbox("El tamaño de archivo mayor de 25MB, por favor avize a soporte ");return;
+					msgAskEnvioTamano("El tamaño de archivo es mayor que tamaño máximo.\nRealizar limpieza de tablas?");return;
 				}
 			} catch (Exception e) {
 				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -1172,6 +1172,10 @@ public class Menu extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
+	private void uploadDB() {
+		startActivity(new Intent(this,EnvioNube.class));
+	}
 
     private void infoSystem() {
 
@@ -2843,6 +2847,7 @@ public class Menu extends PBase {
 		
 	}
 
+	@SuppressLint("SuspiciousIndentation")
 	private int getPrinterType() {
 
 		Cursor DT;
@@ -3351,7 +3356,27 @@ public class Menu extends PBase {
 
     }
 
-    private void msgAskCF() {
+	private void msgAskLimpiar(String msg) {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage(msg);
+		dialog.setCancelable(false);
+		dialog.setPositiveButton("Si", (dialog1, which) -> Limpiar_Tablas_No_Criticas());
+		dialog.setNegativeButton("No", (dialog12, which) -> {});
+		dialog.show();
+	}
+
+	private void msgAskEnvioTamano(String msg) {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage(msg);
+		dialog.setCancelable(false);
+		dialog.setPositiveButton("Si", (dialog1, which) ->
+				msgAskLimpiar("Este proceso se debe ejecutar únicamente antes " +
+						"de abrir la caja o despues de cierre de caja.\n Continuar?"));
+		dialog.setNegativeButton("No", (dialog12, which) -> {});
+		dialog.show();
+	}
+
+	private void msgAskCF() {
 
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("Corregir consumidor final");
