@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -24,10 +26,10 @@ import java.io.File;
 public class EnvioNube extends PBase {
 
     private TextView lbl1,btnsend;
+    private ProgressBar pbar;
 
     private FirebaseStorage storage;
     private StorageReference storageReference;
-
 
     boolean idle=true;
 
@@ -41,6 +43,7 @@ public class EnvioNube extends PBase {
 
             lbl1 = findViewById(R.id.textView322);lbl1.setText("");
             btnsend = findViewById(R.id.textView321);
+            pbar = findViewById(R.id.progressBar10);pbar.setVisibility(View.INVISIBLE);
 
             storage = FirebaseStorage.getInstance();
             storageReference = storage.getReference();
@@ -60,7 +63,8 @@ public class EnvioNube extends PBase {
 
         idle=false;
         btnsend.setVisibility(View.INVISIBLE);
-        lbl1.setText("Enviando base de datos.\n\nEspere, por favor . . .");
+        lbl1.setText("Enviando base de datos.\nEspere, por favor . . .");
+        pbar.setVisibility(View.VISIBLE);
 
         sendDB();
     }
@@ -96,9 +100,11 @@ public class EnvioNube extends PBase {
                                 public synchronized void run() {
                                     try {
                                         idle=true;
+                                        pbar.setVisibility(View.INVISIBLE);
                                         msgExit();
                                     } catch (Exception e) {
                                         lbl1.setText("Error: "+e.getMessage());
+                                        pbar.setVisibility(View.INVISIBLE);
                                     }
 
                                 }
@@ -114,13 +120,14 @@ public class EnvioNube extends PBase {
                                 public synchronized void run() {
                                     idle=true;
                                     lbl1.setText("Error: "+errmsg);
+                                    pbar.setVisibility(View.INVISIBLE);
                                 }
                             });
                         }
                     });
 
         } catch (Exception e) {
-            lbl1.setText("Error: "+e.getMessage()); idle=true;
+            lbl1.setText("Error: "+e.getMessage()); idle=true;pbar.setVisibility(View.INVISIBLE);
         }
 
     }

@@ -1032,7 +1032,8 @@ public class Menu extends PBase {
 			listdlg.add("Inicio de caja");
 			listdlg.add("Inicializar inventario");
 			listdlg.add("Reinicializar numero de orden");
-			listdlg.add("Envio de datos de emergencia");
+			listdlg.add("Envio datos de emergencia");
+			listdlg.add("Actualizar");
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 				try {
@@ -1076,6 +1077,8 @@ public class Menu extends PBase {
 							validaSuperNumOrden();break;
 						case 16:
 							uploadDB();break;
+						case 17:
+							actualizaVersionOld();break;
 					}
 					listdlg.dismiss();
 				} catch (Exception e) {}
@@ -1095,17 +1098,24 @@ public class Menu extends PBase {
     }
 
     private void actualizaVersion() {
-        try {
+		try {
+			startActivity(new Intent(this,InstalaVersion.class));
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+    }
+
+	private void actualizaVersionOld() {
+		try {
             Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.mposupd");
             intent.putExtra("filename","mpos.apk");
             this.startActivity(intent);
         } catch (Exception e) {
             msgbox("No está instalada aplicación para actualización de versiónes, por favor informe soporte.");
         }
+	}
 
-    }
-
-    private void askCambUsuario() {
+	private void askCambUsuario() {
 
         try{
 

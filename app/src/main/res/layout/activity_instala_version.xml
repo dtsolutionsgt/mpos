@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#B0000000"
+        tools:context=".InstalaVersion">
+
+        <RelativeLayout
+            android:layout_width="500dp"
+            android:layout_height="350dp"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="false"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="0dp"
+            android:background="#FFFFFF">
+
+            <RelativeLayout
+                android:id="@+id/relbotpan"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="1dp"
+                android:layout_marginBottom="1dp"
+                android:background="@drawable/blue_strip">
+
+                <TextView
+                    android:id="@+id/textView9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center_horizontal"
+                    android:paddingRight="10dp"
+                    android:text="DTSolutions"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/imageView149"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:clickable="true"
+                    android:onClick="doExit"
+                    android:src="@drawable/prev48" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/relRoad"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/top_strip">
+
+                <RelativeLayout
+                    android:id="@+id/relRoadbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerVertical="true"
+                    android:background="#9A999E"></RelativeLayout>
+
+                <TextView
+                    android:id="@+id/lblTit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:text="ACTUALIZACION DE VERSIÓN"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/textView321"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/relbotpan"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/frame_btn"
+                android:clickable="true"
+                android:onClick="doSend"
+                android:padding="12dp"
+                android:text="ACTUALIZAR"
+                android:textColor="#202020"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView322"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/textView321"
+                android:layout_below="@+id/progressBar9"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:text="TextView"
+                android:textColor="#202020"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView325"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/relRoad"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/frame_btn"
+                android:clickable="true"
+                android:onClick="doAccess"
+                android:padding="5dp"
+                android:text="ACTIVAR"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+
+            <ProgressBar
+                android:id="@+id/progressBar9"
+                style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/relRoad"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
