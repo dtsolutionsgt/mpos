@@ -1936,7 +1936,7 @@ public class FacturaRes extends PBase {
 
 			//endregion
 
-			//region D_FACTURACOR
+						//region D_FACTURACOR
 
 			clsD_facturacorObj D_facturacorObj=new clsD_facturacorObj(this,Con,db);
 			int newfcid=D_facturacorObj.newID("SELECT MAX(id) FROM D_facturacor");

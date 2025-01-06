@@ -2209,7 +2209,7 @@ public class clsClasses {
     public class clsBonifProd {
         public String id, nombre, prstr;
         public int flag;
-        public double cant, cantmin, disp, precio, costo;
+        public double cant, cantmin, disp, precio, costo, cajapago;
     }
 
     public class clsDemoDlg {
