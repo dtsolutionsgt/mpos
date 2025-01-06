@@ -27,7 +27,7 @@ public class clsDocument {
     public String pais="",nomdepto,nommuni,nomtipo,tiendanom,tiendanit;
     public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
-	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden;
+	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden,felISR2impr;
 	public boolean parallevar,domicilio,factsinpropina,modorest,LANPrint,PropinaAparte,precuenta1015;
 	public long ffecha;
     public int pendiente,diacred,pagoefectivo,empid,tipo_doc,corel_doc;
@@ -1560,9 +1560,9 @@ public class clsDocument {
                         if (!fraseIVA.isEmpty()) felIVA=fraseIVA;
                         if (!fraseISR.isEmpty()) felISR=fraseISR;
 
-                        if (felISR2impr) {
-                             felISR2="";
-                        }
+                        //if (felISR2impr) {
+                        //     felISR2="";
+                        //}
 
                         //#EJC202301040807AM: Corregir a futuro.
                         switch (empid) {

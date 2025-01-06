@@ -1330,6 +1330,19 @@ public class AppMethods {
 		}
 
 		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=172";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			ival=Integer.parseInt(val);
+
+			gl.peDomTiempo = ival;
+		} catch (Exception e) {
+			gl.peDomTiempo = 15;
+		}
+
+		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=173";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
@@ -1354,20 +1367,9 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peReg4impr = false;
 		}
-	}
 
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=172";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
 
-			val=dt.getString(0);
-			ival=Integer.parseInt(val);
 
-			gl.peDomTiempo = ival;
-		} catch (Exception e) {
-			gl.peDomTiempo = 15;
-		}
 
 	}
 
