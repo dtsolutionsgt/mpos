@@ -213,8 +213,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -228,8 +227,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -248,26 +246,17 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
             sql="ALTER TABLE P_res_mesa ADD COLUMN CODIGO_QR TEXT;";
             db.execSQL(sql);
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
 
         try {
             sql="DROP TABLE P_res_mesero;";
             db.execSQL(sql);
-        } catch (Exception e) {
-        }
-
-        try {
-
-
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
 
         try {
             sql="CREATE TABLE [P_res_turno] ("+
@@ -278,8 +267,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
 
         try {
 
@@ -301,8 +289,7 @@ public class BaseDatosVersion {
             sql="CREATE INDEX P_res_sesion_idx1 ON P_res_sesion(CODIGO_MESA)";db.execSQL(sql);
             sql="CREATE INDEX P_res_sesion_idx2 ON P_res_sesion(ESTADO)";db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
 
         try {
 
@@ -341,7 +328,6 @@ public class BaseDatosVersion {
             db.execSQL(sql);
 
         } catch (Exception e) {}
-
 
         try {
 
@@ -401,8 +387,7 @@ public class BaseDatosVersion {
             sql="CREATE INDEX T_ordencombo_idx1 ON T_ordencombo(COREL)";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
 
         try {
 
@@ -417,7 +402,6 @@ public class BaseDatosVersion {
             sql="CREATE INDEX T_orden_nota_idx1 ON T_orden_nota(COREL)";db.execSQL(sql);
         } catch (Exception e) {}
 
-
         try {
 
             sql="CREATE TABLE [T_FACTURA_FEL] ("+
@@ -431,8 +415,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -440,9 +423,7 @@ public class BaseDatosVersion {
             if (vCursor != null) vCursor.moveToLast();
             if (vCursor.getCount()==0) db.execSQL("DROP TABLE T_ordencuenta");
 
-        } catch (Exception e) {
-            String ee=e.getMessage();
-        }
+        } catch (Exception e) { }
 
         try {
 
@@ -461,8 +442,7 @@ public class BaseDatosVersion {
             sql="CREATE INDEX T_ordencombo_idx1 ON T_ordencombo(COREL)";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -481,9 +461,7 @@ public class BaseDatosVersion {
             sql="CREATE INDEX T_ordencombo_idx1 ON T_ordencombo(COREL)";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
-
+        } catch (Exception e) { }
 
         try {
 
@@ -497,8 +475,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -512,8 +489,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
 
         try {
 
@@ -535,8 +511,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -548,8 +523,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
 
         try {
 
@@ -562,8 +536,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
 
         try {
 
@@ -577,8 +550,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
 
         try {
 
@@ -593,8 +565,7 @@ public class BaseDatosVersion {
             sql="CREATE INDEX T_comanda_idx1 ON T_comanda(ID)";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
 
         try {
 
@@ -604,8 +575,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -617,8 +587,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -630,8 +599,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -645,8 +613,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -660,8 +627,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -671,8 +637,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -687,8 +652,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -708,8 +672,7 @@ public class BaseDatosVersion {
             sql="CREATE INDEX D_facturar_idx2 ON D_facturar(PRODUCTO)";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -733,8 +696,7 @@ public class BaseDatosVersion {
             sql="CREATE INDEX P_prodreceta_idx3 ON P_prodreceta(CODIGO_ARTICULO)";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -745,8 +707,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {   }
 
         try {
 
@@ -765,8 +726,7 @@ public class BaseDatosVersion {
             sql="CREATE INDEX P_unidad_conv_idx2 ON P_unidad_conv(CODIGO_UNIDAD2)";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -779,9 +739,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
-
+        } catch (Exception e) {  }
 
         try {
 
@@ -799,7 +757,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {}
+        } catch (Exception e) {  }
 
         try {
 
@@ -841,14 +799,12 @@ public class BaseDatosVersion {
         try {
             sql="ALTER TABLE D_FACTURAPR ADD COLUMN PROPPERC REAL DEFAULT 0;";
             db.execSQL(sql);
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
             sql="ALTER TABLE D_FACTURAPR ADD COLUMN PROPEXTRA REAL DEFAULT 0;";
             db.execSQL(sql);
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {  }
 
         try {
 
@@ -864,8 +820,7 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
 
         try {
 
@@ -1225,7 +1180,6 @@ public class BaseDatosVersion {
 
         } catch (Exception e) {}
 
-
         try {
 
             db.execSQL("ALTER TABLE P_PRODUCTO ADD CLASIFICACION INTEGER DEFAULT 0");
@@ -1406,9 +1360,7 @@ public class BaseDatosVersion {
             sql="CREATE INDEX D_barril_idx4 ON D_barril(STATCOM)";
             db.execSQL(sql);
 
-        } catch (Exception e) {
-
-        }
+        } catch (Exception e) { }
 
         try {
 
@@ -1475,7 +1427,6 @@ public class BaseDatosVersion {
 
         } catch (Exception e) {}
 
-
         try {
 
             sql="CREATE TABLE [P_cortesia] ("+
@@ -1499,7 +1450,6 @@ public class BaseDatosVersion {
             sql="DROP INDEX IX_P_CAJACIERRE ";
             db.execSQL(sql);
         } catch (Exception e) { }
-
 
         try {
             sql="CREATE TABLE [T_cierre_cred] ("+
@@ -1626,7 +1576,6 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
         } catch (Exception e) { }
-
 
         try {
             sql="CREATE TABLE [T_sv_gcont] ("+
@@ -1810,7 +1759,6 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
         } catch (Exception e) { }
-
 
         try {
             sql="CREATE TABLE [T_stock] ("+
@@ -2076,6 +2024,39 @@ public class BaseDatosVersion {
 
 
 
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [T_venta_cor] ("+
+                    "PRODUCTO TEXT NOT NULL,"+
+                    "EMPRESA TEXT NOT NULL,"+
+                    "UM TEXT NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "PRECIO REAL NOT NULL,"+
+                    "TOTAL REAL NOT NULL,"+
+                    "AUTORIZO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([PRODUCTO],[EMPRESA],[UM])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [D_facturacor] ("+
+                    "ID INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "ANULADO INTEGER NOT NULL,"+
+                    "PRODUCTO INTEGER NOT NULL,"+
+                    "UM TEXT NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "PRECIO REAL NOT NULL,"+
+                    "TOTAL REAL NOT NULL,"+
+                    "AUTORIZO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX D_facturacor_idx1 ON D_facturacor(COREL)";db.execSQL(sql);
         } catch (Exception e) { }
 
 

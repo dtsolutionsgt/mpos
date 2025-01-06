@@ -1356,6 +1356,32 @@ public class AppMethods {
 		}
 
 		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=174";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.paDesc100 = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.paDesc100 = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=175";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.paCortProd = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.paCortProd = false;
+		}
+
+		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=176";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();

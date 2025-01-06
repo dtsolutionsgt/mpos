@@ -11,10 +11,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/imgImg4"
+            android:layout_width="112dp"
+            android:layout_height="48dp"
+            android:layout_below="@+id/relRoad"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginRight="10dp"
+            android:clickable="true"
+            android:onClick="save"
+            android:src="@drawable/icok" />
+
+        <ImageView
+            android:id="@+id/imageView39"
+            android:layout_width="96dp"
+            android:layout_height="48dp"
+            android:layout_below="@+id/relRoad"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="20dp"
+            android:clickable="true"
+            android:onClick="doExit"
+            android:src="@drawable/prev48" />
+
         <RelativeLayout
             android:id="@+id/relRoad"
             android:layout_width="match_parent"
-            android:layout_height="48dp">
+            android:layout_height="48dp"
+            android:background="@drawable/frame_rect_blue">
 
             <ImageView
                 android:id="@+id/imgTitLogo"
@@ -34,6 +59,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:adjustViewBounds="true"
+                android:background="#FFFFFF"
                 android:padding="5dp"
                 android:src="@drawable/existencias" />
 
@@ -51,56 +77,40 @@
                 android:id="@+id/lblTit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/imgRoadTit"
+                android:layout_centerInParent="true"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:text="Pago de caja"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#1A8AC6" />
+                android:textColor="#FFFFFF"
+                android:textSize="30sp"
+                android:textStyle="bold" />
         </RelativeLayout>
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/relRoad">
+            android:layout_below="@id/relRoad"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="130dp"
+            android:layout_toEndOf="@+id/imageView39">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/relRoad">
-
-                <ImageView
-                    android:id="@+id/imgImg4"
-                    android:layout_width="112dp"
-                    android:layout_height="81dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginBottom="478dp"
-                    android:clickable="true"
-                    android:onClick="save"
-                    android:src="@drawable/icok" />
-
-                <ImageView
-                    android:id="@+id/imageView39"
-                    android:layout_width="96dp"
-                    android:layout_height="75dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
-                    android:clickable="true"
-                    android:onClick="doExit"
-                    android:src="@drawable/prev48" />
+                android:layout_below="@id/relRoad"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp">
 
                 <Spinner
                     android:id="@+id/cboProv"
-                    android:layout_width="382dp"
-                    android:layout_height="49dp"
-                    android:layout_alignTop="@+id/textView131"
-                    android:layout_alignParentEnd="true"
+                    android:layout_width="600dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="false"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="-1dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginEnd="10dp"
                     android:layout_toEndOf="@+id/textView131"
                     android:background="@drawable/spinner_style" />
@@ -109,167 +119,170 @@
                     android:id="@+id/textView132"
                     android:layout_width="300dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/textView131"
                     android:layout_alignStart="@+id/textView131"
+                    android:layout_alignTop="@+id/cboCPago"
                     android:layout_alignEnd="@+id/textView131"
+                    android:layout_alignBottom="@+id/cboCPago"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="46dp"
+                    android:layout_marginTop="0dp"
                     android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="0dp"
                     android:background="@drawable/blue_strip"
                     android:gravity="center"
-                    android:text="Conc. pago"
+                    android:text="Concepto pago"
                     android:textColor="#FFFFFFFF"
-                    android:textSize="30sp" />
+                    android:textSize="24sp" />
 
                 <Spinner
                     android:id="@+id/cboCPago"
-                    android:layout_width="384dp"
+                    android:layout_width="400dp"
                     android:layout_height="51dp"
                     android:layout_below="@+id/cboProv"
                     android:layout_alignStart="@+id/cboProv"
                     android:layout_alignEnd="@+id/cboProv"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="37dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="-2dp"
                     android:background="@drawable/spinner_style" />
 
                 <TextView
                     android:id="@+id/textView133"
-                    android:layout_width="297dp"
+                    android:layout_width="200dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/textView132"
-                    android:layout_alignStart="@+id/textView132"
-                    android:layout_alignEnd="@+id/textView132"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="52dp"
+                    android:layout_alignTop="@+id/editText17"
+                    android:layout_alignBottom="@+id/editText17"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="0dp"
                     android:layout_marginEnd="2dp"
+                    android:layout_toEndOf="@+id/editText17"
                     android:background="@drawable/blue_strip"
                     android:gravity="center"
                     android:text="Fecha"
                     android:textColor="#FFFFFFFF"
-                    android:textSize="30sp" />
+                    android:textSize="24sp" />
 
                 <EditText
                     android:id="@+id/editText19"
-                    android:layout_width="wrap_content"
+                    android:layout_width="200dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/cboCPago"
                     android:layout_alignStart="@+id/cboCPago"
+                    android:layout_alignTop="@+id/textView133"
                     android:layout_alignEnd="@+id/cboCPago"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginTop="43dp"
-                    android:layout_marginEnd="0dp"
-                    android:background="#C0C0C0"
+                    android:layout_marginStart="380dp"
+                    android:layout_marginTop="1dp"
+                    android:background="#E0E0E0"
                     android:ems="10"
                     android:inputType="number|numberDecimal"
                     android:paddingLeft="10dp"
                     android:paddingTop="5dp"
                     android:paddingBottom="5dp"
-                    android:textSize="24sp" />
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/textView134"
                     android:layout_width="293dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/textView133"
-                    android:layout_alignStart="@+id/textView133"
-                    android:layout_alignEnd="@+id/textView133"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginTop="37dp"
-                    android:layout_marginEnd="-1dp"
+                    android:layout_alignTop="@+id/editText20"
+                    android:layout_alignEnd="@+id/textView131"
+                    android:layout_alignBottom="@+id/editText20"
+                    android:layout_alignParentStart="true"
                     android:background="@drawable/blue_strip"
                     android:gravity="center"
                     android:text="Documento"
                     android:textColor="#FFFFFFFF"
-                    android:textSize="30sp" />
+                    android:textSize="24sp" />
 
                 <EditText
                     android:id="@+id/editText20"
-                    android:layout_width="384dp"
+                    android:layout_width="400dp"
                     android:layout_height="52dp"
-                    android:layout_below="@+id/editText19"
-                    android:layout_alignStart="@+id/editText19"
-                    android:layout_alignEnd="@+id/editText19"
+                    android:layout_below="@+id/cboCPago"
+                    android:layout_alignStart="@+id/cboCPago"
+                    android:layout_alignEnd="@+id/cboCPago"
                     android:layout_marginStart="3dp"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginEnd="-3dp"
+                    android:layout_marginTop="10dp"
                     android:ems="10"
                     android:inputType="text"
-                    android:textSize="24sp" />
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/textView130"
                     android:layout_width="291dp"
                     android:layout_height="44dp"
-                    android:layout_below="@+id/textView134"
-                    android:layout_alignStart="@+id/textView133"
-                    android:layout_alignEnd="@+id/textView134"
+                    android:layout_alignTop="@+id/editText17"
+                    android:layout_alignBottom="@+id/editText17"
+                    android:layout_alignParentStart="true"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="47dp"
-                    android:layout_marginEnd="2dp"
+                    android:layout_toStartOf="@+id/cboProv"
                     android:background="@drawable/blue_strip"
                     android:gravity="center"
                     android:text="Monto"
                     android:textColor="#FFFFFFFF"
-                    android:textSize="30sp" />
+                    android:textSize="24sp" />
 
                 <EditText
                     android:id="@+id/editText17"
-                    android:layout_width="384dp"
+                    android:layout_width="150dp"
                     android:layout_height="52dp"
                     android:layout_below="@+id/editText20"
-                    android:layout_alignStart="@+id/editText19"
-                    android:layout_alignEnd="@+id/editText20"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginTop="40dp"
+                    android:layout_alignStart="@+id/editText20"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="0dp"
                     android:ems="10"
                     android:inputType="numberDecimal"
-                    android:textSize="24sp" />
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/editText22"
                     android:layout_width="384dp"
-                    android:layout_height="155dp"
+                    android:layout_height="50dp"
                     android:layout_below="@+id/editText17"
                     android:layout_alignStart="@+id/editText17"
-                    android:layout_alignEnd="@+id/editText17"
+                    android:layout_alignEnd="@+id/editText19"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="0dp"
                     android:ems="10"
                     android:gravity="start|top"
-                    android:inputType="textMultiLine" />
+                    android:inputType="text"
+                    android:maxLength="50"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/textView144"
                     android:layout_width="291dp"
-                    android:layout_height="44dp"
+                    android:layout_height="50dp"
                     android:layout_below="@+id/textView130"
-                    android:layout_alignStart="@+id/textView130"
-                    android:layout_alignEnd="@+id/textView130"
+                    android:layout_alignEnd="@+id/textView131"
+                    android:layout_alignParentStart="true"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="34dp"
-                    android:layout_marginEnd="0dp"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/blue_strip"
                     android:gravity="center"
                     android:text="Descripcion"
                     android:textColor="#FFFFFFFF"
-                    android:textSize="30sp" />
+                    android:textSize="24sp" />
 
                 <TextView
                     android:id="@+id/textView131"
                     android:layout_width="200dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_alignParentStart="true"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="100dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="20dp"
                     android:background="@drawable/blue_strip"
                     android:gravity="center"
                     android:text="Proveedor"
                     android:textColor="#FFFFFFFF"
-                    android:textSize="30sp" />
+                    android:textSize="24sp" />
             </RelativeLayout>
         </ScrollView>
+
     </RelativeLayout>
 </RelativeLayout>

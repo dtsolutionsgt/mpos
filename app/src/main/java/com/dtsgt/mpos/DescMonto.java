@@ -46,6 +46,8 @@ public class DescMonto extends PBase {
     }
 
     public void doKey(View view) {
+        boolean flag;
+
         khand.handleKey(view.getTag().toString());
         if (khand.isEnter) {
             if (khand.val.isEmpty()) {
@@ -57,11 +59,15 @@ public class DescMonto extends PBase {
                     }
 
                     if (gl.peDescPerc) {
-                        if (khand.value > 100) {
-                            msgbox("Porcentaje de descuento incorrecto.");
-                        } else {
+                        flag=true;
+                        if (khand.value>100) flag=false;
+                        if (khand.value==100) flag=gl.paDesc100;
+
+                        if (flag) {
                             gl.desc_monto = khand.value;
                             finish();
+                        } else {
+                            msgbox("Porcentaje de descuento incorrecto.");
                         }
                     } else {
                         if (khand.value >= gl.total_factura_previo_descuento) {

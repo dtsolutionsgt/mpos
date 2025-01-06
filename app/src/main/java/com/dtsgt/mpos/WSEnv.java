@@ -24,6 +24,7 @@ import com.dtsgt.classes.clsD_factura_felObj;
 import com.dtsgt.classes.clsD_factura_fel_paisObj;
 import com.dtsgt.classes.clsD_factura_svObj;
 import com.dtsgt.classes.clsD_facturacObj;
+import com.dtsgt.classes.clsD_facturacorObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturahnObj;
 import com.dtsgt.classes.clsD_facturapObj;
@@ -77,6 +78,7 @@ public class WSEnv extends PBase {
     private clsD_factura_svObj D_factura_svObj;
     private clsD_facturahnObj D_facturahnObj;
     private clsD_factura_fel_paisObj D_factura_fel_paisObj;
+    private clsD_facturacorObj D_facturacorObj;
 
     private clsD_MovObj D_MovObj;
     private clsD_MovDObj D_MovDObj;
@@ -146,13 +148,14 @@ public class WSEnv extends PBase {
         D_factura_fel_paisObj = new clsD_factura_fel_paisObj(this, Con, db);
         D_facturahnObj=new clsD_facturahnObj(this,Con,db);
         D_factura_svObj = new clsD_factura_svObj(this, Con, db);
+        D_facturacorObj=new clsD_facturacorObj(this,Con,db);
         D_MovObj = new clsD_MovObj(this, Con, db);
         D_MovDObj = new clsD_MovDObj(this, Con, db);
         D_mov_almacenObj = new clsD_mov_almacenObj(this, Con, db);
         D_movd_almacenObj = new clsD_movd_almacenObj(this, Con, db);
         T_costoObj = new clsT_costoObj(this, Con, db);
         D_fel_errorObj=new clsD_fel_errorObj(this,Con,db);
-          T_venta_horaObj=new clsT_venta_horaObj(this,Con,db);
+        T_venta_horaObj=new clsT_venta_horaObj(this,Con,db);
         P_cjCierreObj = new clsP_cajacierreObj(this, Con, db);
         P_cjPagosObj = new clsP_cajapagosObj(this, Con, db);
         P_cjReporteObj = new clsP_cajareporteObj(this, Con, db);
@@ -601,6 +604,8 @@ public class WSEnv extends PBase {
         D_factura_svObj.fill("WHERE COREL='" + corel + "'");
         D_facturahnObj.fill("WHERE COREL='" + corel + "'");
         D_factura_fel_paisObj.fill("WHERE COREL='"+corel+"'");
+        D_facturacorObj.fill("WHERE COREL='" + corel + "'");
+
 
         idfact = D_facturaObj.first().serie + "-" + D_facturaObj.first().corelativo;
         int cliid = D_facturaObj.first().cliente;
@@ -620,6 +625,7 @@ public class WSEnv extends PBase {
         CSQL = CSQL + "DELETE FROM D_FACTURAHN WHERE COREL='"+corel+"';";
         CSQL = CSQL + "DELETE FROM D_FACTURA_SV WHERE COREL='"+corel+"';";
         CSQL = CSQL + "DELETE FROM D_FACTURA_FEL_PAIS WHERE COREL='"+corel+"';";
+        CSQL = CSQL + "DELETE FROM D_FACTURACOR WHERE COREL='" + corel + "';";
 
         CSQL = CSQL + addFactheader(D_facturaObj.first()) + ";";
 
@@ -681,6 +687,10 @@ public class WSEnv extends PBase {
 
         for (int i = 0; i < D_factura_fel_paisObj.count; i++) {
             CSQL=CSQL+D_fact_fel_paisItemSql(D_factura_fel_paisObj.items.get(i)) + ";";
+        }
+
+        for (int i = 0; i < D_facturacorObj.count; i++) {
+            CSQL = CSQL + addFacturaCorItem(D_facturacorObj.items.get(i)) + ";";
         }
 
 
@@ -806,6 +816,25 @@ public class WSEnv extends PBase {
         ins.add("PROPINA", item.propina);
         ins.add("PROPPERC", item.propperc);
         ins.add("PROPEXTRA", item.propextra);
+        return ins.sql();
+
+    }
+
+    public String addFacturaCorItem(clsClasses.clsD_facturacor item) {
+
+        ins.init("D_facturacor");
+
+        //ins.add("ID",item.id);
+        ins.add("EMPRESA",item.empresa);
+        ins.add("COREL",item.corel);
+        ins.add("ANULADO",item.anulado);
+        ins.add("PRODUCTO",item.producto);
+        ins.add("UM",item.um);
+        ins.add("CANT",item.cant);
+        ins.add("PRECIO",item.precio);
+        ins.add("TOTAL",item.total);
+        ins.add("AUTORIZO",item.autorizo);
+
         return ins.sql();
 
     }

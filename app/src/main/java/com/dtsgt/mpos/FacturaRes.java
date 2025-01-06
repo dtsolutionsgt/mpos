@@ -1,5 +1,6 @@
 package com.dtsgt.mpos;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -44,6 +45,7 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_factura_domObj;
 import com.dtsgt.classes.clsD_factura_felObj;
 import com.dtsgt.classes.clsD_factura_svObj;
+import com.dtsgt.classes.clsD_facturacorObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturahnObj;
 import com.dtsgt.classes.clsD_facturamuniObj;
@@ -69,6 +71,7 @@ import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_factrecetaObj;
 import com.dtsgt.classes.clsT_ventaObj;
+import com.dtsgt.classes.clsT_venta_corObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListPassDlg;
@@ -476,7 +479,8 @@ public class FacturaRes extends PBase {
 		}
 	}
 
-    public void payCard(View view) {
+    @SuppressLint("SuspiciousIndentation")
+	public void payCard(View view) {
 		if (!validaMontoMaximo()) return;
 
         pendiente=false;
@@ -1931,6 +1935,39 @@ public class FacturaRes extends PBase {
 			}
 
 			//endregion
+
+			//region D_FACTURACOR
+
+			clsD_facturacorObj D_facturacorObj=new clsD_facturacorObj(this,Con,db);
+			int newfcid=D_facturacorObj.newID("SELECT MAX(id) FROM D_facturacor");
+
+			clsT_venta_corObj T_venta_corObj=new clsT_venta_corObj(this,Con,db);
+			T_venta_corObj.fill();
+
+			clsClasses.clsD_facturacor dcitem;
+			if (T_venta_corObj.count>0) {
+				for (clsClasses.clsT_venta_cor itm : T_venta_corObj.items) {
+
+					dcitem = clsCls.new clsD_facturacor();
+
+					dcitem.id=newfcid;
+					dcitem.empresa=gl.emp;
+					dcitem.corel=corel;
+					dcitem.anulado=0;
+					dcitem.producto=app.codigoProducto(itm.producto);
+					dcitem.um=itm.um;
+					dcitem.cant=itm.cant;
+					dcitem.precio=itm.precio;
+					dcitem.total=itm.cant*itm.precio;
+					dcitem.autorizo=itm.autorizo;
+
+					D_facturacorObj.add(dcitem);newfcid++;
+
+				}
+			}
+
+			//endregion
+
 
             procesaInventario();
 

@@ -1508,7 +1508,7 @@ public class Menu extends PBase {
 		try {
 			db.beginTransaction();
 
-			sqlfs="SELECT COREL FROM D_FACTURA WHERE FECHA<"+fd;
+			sqlfs="SELECT COREL FROM D_FACTURA WHERE (FECHA<"+fd+") AND (STATCOM='S')";
 
 			db.execSQL("DELETE FROM D_FACTURAD    WHERE COREL IN ("+sqlfs+")");
 			db.execSQL("DELETE FROM D_FACTURA_FEL WHERE COREL IN ("+sqlfs+")");
@@ -1520,7 +1520,7 @@ public class Menu extends PBase {
 			db.execSQL("DELETE FROM D_FACTURAR    WHERE COREL IN ("+sqlfs+")");
 			db.execSQL("DELETE FROM D_FACTURAS    WHERE COREL IN ("+sqlfs+")");
 
-			db.execSQL("DELETE FROM D_FACTURA WHERE FECHA<"+fd);
+			db.execSQL("DELETE FROM D_FACTURA WHERE (FECHA<"+fd+") AND (STATCOM='S')");
 
 			db.setTransactionSuccessful();
 			db.endTransaction();
@@ -2077,6 +2077,8 @@ public class Menu extends PBase {
 			listdlg.add("Reporte Ventas por Vendedor");
 			listdlg.add("Consumo materia prima");
 			listdlg.add("Reporte de Ventas por Cliente");
+			listdlg.add("Pagos de caja");
+			listdlg.add("Cortesia por artículo");
 			listdlg.add("Margen y Beneficio por Producto");
 			listdlg.add("Margen y Beneficio por Familia");
 			listdlg.add("Cierre X");
@@ -2104,7 +2106,8 @@ public class Menu extends PBase {
 					if (ss.equalsIgnoreCase("Consumo materia prima")) gl.reportid=13;
 					//if (ss.equalsIgnoreCase("Consumo materia prima por producto")) gl.reportid=14;
 					if (ss.equalsIgnoreCase("Cortesias")) gl.reportid=15;
-
+					if (ss.equalsIgnoreCase("Pagos de caja")) gl.reportid=16;
+					if (ss.equalsIgnoreCase("Cortesia por artículo")) gl.reportid=17;
 
 					gl.titReport = ss;
 
@@ -2218,7 +2221,7 @@ public class Menu extends PBase {
 						if (valida()) {
 
 							if (gl.cajaid==2) {
-								startActivity(new Intent(Menu.this, CajaPagos.class));
+								startActivity(new Intent(Menu.this, CajaPagosLista.class));
 							} else {
 								if (gl.cajaid==1) {
 									validaInicioInv();

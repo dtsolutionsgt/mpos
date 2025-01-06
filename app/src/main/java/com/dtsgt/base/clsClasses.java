@@ -216,6 +216,19 @@ public class clsClasses {
         public String nombre;
     }
 
+    public class clsD_facturacor {
+        public int  id;
+        public int  empresa;
+        public String corel;
+        public int  anulado;
+        public int  producto;
+        public String um;
+        public double cant;
+        public double precio;
+        public double total;
+        public int  autorizo;
+    }
+
     public class clsD_facturad {
         public int empresa;
         public String corel;
@@ -1985,6 +1998,16 @@ public class clsClasses {
         public double val3;
         public String val4;
         public double percep;
+    }
+
+    public class clsT_venta_cor {
+        public String producto;
+        public String empresa;
+        public String um;
+        public double cant;
+        public double precio;
+        public double total;
+        public int  autorizo;
     }
 
     public class clsT_venta_hora {

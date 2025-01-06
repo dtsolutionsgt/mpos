@@ -432,7 +432,7 @@ public class Caja extends PBase {
             }
 
 
-            sql="SELECT SUM(MONTO) FROM P_cajapagos WHERE COREL=0";
+            sql="SELECT SUM(MONTO) FROM P_cajapagos WHERE STATCOM='P'";
             dt = Con.OpenDT(sql);
 
             if(dt.getCount()==0) {
@@ -443,7 +443,7 @@ public class Caja extends PBase {
 
             dt.close();
 
-            gmontoDif = tot - pago;
+            gmontoDif = tot + pago;
             gmontoDif =mu.round2(gmontoDif);
             montoFin=mu.round2(montoFin);
             gmontoDif = mu.round2(montoFin - gmontoDif);
@@ -557,6 +557,15 @@ public class Caja extends PBase {
             } else if(gl.cajaid==3) {
 
                 writeCorelLog(7,gl.corelZ,"");
+
+                sql="SELECT SUM(MONTO) FROM  P_CAJAPAGOS WHERE (STATCOM='P')";
+                dt=Con.OpenDT(sql);
+                if (dt.getCount()>0) {
+                    dt.moveToFirst();
+                    gl.fd_cajapagos=dt.getDouble(0);
+                } else {
+                    gl.fd_cajapagos=0;
+                }
 
                 //#CKFK 20200711 Agregué la condicion de que sume las que no están anuladas AND F.ANULADO = 0
                 sql=" SELECT P.CODPAGO, P.TIPO, SUM(P.VALOR),M.NIVEL " +
@@ -683,6 +692,9 @@ public class Caja extends PBase {
                 db.execSQL(sql);
 
                 sql="UPDATE P_CAJACIERRE SET ESTADO=1 WHERE COREL < " + gl.corelZ;
+                db.execSQL(sql);
+
+                sql="UPDATE P_CAJAPAGOS SET STATCOM='N' WHERE (STATCOM='P')";
                 db.execSQL(sql);
 
                 writeCorelLog(9,gl.corelZ,"");
