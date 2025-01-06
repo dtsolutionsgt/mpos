@@ -1560,6 +1560,10 @@ public class clsDocument {
                         if (!fraseIVA.isEmpty()) felIVA=fraseIVA;
                         if (!fraseISR.isEmpty()) felISR=fraseISR;
 
+                        if (felISR2impr) {
+                             felISR2="";
+                        }
+
                         //#EJC202301040807AM: Corregir a futuro.
                         switch (empid) {
                             case 33:

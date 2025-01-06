@@ -1073,6 +1073,7 @@ public class FacturaRes extends PBase {
 				fdoc.fraseIVA = gl.peFraseIVA;
 				fdoc.fraseISR = gl.peFraseISR;
 				fdoc.PropinaAparte=gl.peFactPropinaAparte;
+				fdoc.felISR2impr=gl.peReg4impr;
 
 				fdoc.tiendanom=gl.tiendanom;
 				fdoc.tiendanit=gl.tiendanit;
@@ -4601,12 +4602,15 @@ public class FacturaRes extends PBase {
 			return;
 		}
 
+		/*
 		if (gl.gNITCliente.length() == 13) {
 			gl.nit_tipo = "C";
 			return;
 		}
+		*/
 
-		if (gl.gNITCliente.length() > 13) {
+		if (gl.gNITCliente.length() > 8) {
+			//if (gl.gNITCliente.length() > 13) {
 			gl.nit_tipo = "N";
 			gl.gNITCliente = "CF";
 			return;
@@ -4619,10 +4623,12 @@ public class FacturaRes extends PBase {
 			gl.gNITCliente = "CF";
 		}
 
+		/*
 		if (gl.gNITCliente.length() > 18) {
 			gl.nit_tipo = "E";
 			gl.gNITCliente = "CF";
 		}
+		*/
 
 		String snn=gl.gNITCliente;
 		snn=snn+"";

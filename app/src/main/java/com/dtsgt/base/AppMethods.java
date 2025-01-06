@@ -1343,6 +1343,20 @@ public class AppMethods {
 		}
 
 		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=176";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peReg4impr = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peReg4impr = false;
+		}
+	}
+
+		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=172";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
@@ -3141,8 +3155,7 @@ public class AppMethods {
 	public int isOnWifi() {
 		int activo=0;
 
-		try{
-
+		try {
 			ConnectivityManager connectivityManager = (ConnectivityManager) cont.getSystemService(Context.CONNECTIVITY_SERVICE);
 			NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
@@ -3160,7 +3173,6 @@ public class AppMethods {
 		} catch (Exception ex){	}
 
 		return activo;
-
 	}
 
 	public boolean sinInternet() {

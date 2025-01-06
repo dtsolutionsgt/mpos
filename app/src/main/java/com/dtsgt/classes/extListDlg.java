@@ -69,6 +69,8 @@ public class extListDlg {
                 dialog.dismiss();
             };
         });
+        mList.setVerticalScrollBarEnabled(true);
+        mList.setScrollBarFadeDuration(0);
 
         mTitleLabel = dialog.findViewById(R.id.lbltitulo);
         mTitleLabel.setText(titletext);
