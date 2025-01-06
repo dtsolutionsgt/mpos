@@ -26,7 +26,7 @@ public class clsDocument {
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero;
     public String pais="",nomdepto,nommuni,nomtipo;
 	public clsRepBuilder rep;
-	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
+	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod,felISR2impr;
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden;
 	public boolean parallevar,domicilio,factsinpropina,modorest,LANPrint,PropinaAparte,precuenta1015;
 	public long ffecha;
@@ -1535,6 +1535,10 @@ public class clsDocument {
 
                         if (!fraseIVA.isEmpty()) felIVA=fraseIVA;
                         if (!fraseISR.isEmpty()) felISR=fraseISR;
+
+                        if (felISR2impr) {
+                             felISR2="";
+                        }
 
                         //#EJC202301040807AM: Corregir a futuro.
                         switch (empid) {

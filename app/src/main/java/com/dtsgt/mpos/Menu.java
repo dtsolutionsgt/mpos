@@ -1032,7 +1032,7 @@ public class Menu extends PBase {
 			listdlg.add("Inicio de caja");
 			listdlg.add("Inicializar inventario");
 			listdlg.add("Reinicializar numero de orden");
-			listdlg.add("Envio datos de emergencia");
+			listdlg.add("Envio datos por correo");
 			listdlg.add("Actualizar");
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
@@ -1048,7 +1048,7 @@ public class Menu extends PBase {
 							if (gl.bloqueo_venta) return;
 							actualizaVersion();break;
 						case 3:
-							msgAskDatabase("Enviar base de datos al centro de soporte");break;
+							uploadDB();break;
 						case 4:
 							msgAskFEL("Certificar facturas pendientes");break;
 						case 5:
@@ -1076,7 +1076,7 @@ public class Menu extends PBase {
 						case 15:
 							validaSuperNumOrden();break;
 						case 16:
-							uploadDB();break;
+							msgAskDatabase("Enviar base de datos al centro de soporte");break;
 						case 17:
 							actualizaVersionOld();break;
 					}

@@ -990,6 +990,7 @@ public class FacturaRes extends PBase {
 				fdoc.fraseIVA = gl.peFraseIVA;
 				fdoc.fraseISR = gl.peFraseISR;
 				fdoc.PropinaAparte=gl.peFactPropinaAparte;
+				fdoc.felISR2impr=gl.peReg4impr;
 
 				fdoc.idpais=gl.codigo_pais;
 				if (gl.codigo_pais.equalsIgnoreCase("HN")) cargaTotalesHonduras();

@@ -1219,6 +1219,19 @@ public class AppMethods {
 		}
 
 
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=176";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peReg4impr = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peReg4impr = false;
+		}
 	}
 
 	//                  Params extra

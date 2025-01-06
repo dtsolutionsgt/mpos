@@ -95,7 +95,7 @@ public class appGlobals extends Application {
 	public Boolean peVentaDomicilio,peVentaEntrega,peDomEntEnvio,peNoCerrarMesas,peActOrdenMesas;
 	public Boolean peCafeTicket,peNoEnviar,peUsaSoloBOF,peAcumDesc, peNumOrdCommandaVenta;
 	public Boolean peImpFactBT,peImpFactLan,peImpFactUSB,peNumOrdCentral,peCajaMesasManual;
-	public Boolean peFactPropinaAparte,pePrecu1015,peComandaVentaLAN;
+	public Boolean peFactPropinaAparte,pePrecu1015,peComandaVentaLAN,peReg4impr;
     public double  pePropinaPerc,pePropinaCarta,peDescMax;
 
     // Parametros Extra Local
