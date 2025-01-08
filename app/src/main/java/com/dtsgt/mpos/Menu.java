@@ -2910,8 +2910,9 @@ public class Menu extends PBase {
                 if (isPackageInstalled("com.dts.epsonprint")) {
                     return true;
                 } else {
-                    gl.prndrvmsg="El controlador de Epson TM BT no está instalado\nNo se va a poder imprimir.";
-                    return false;
+                    //gl.prndrvmsg="El controlador de Epson TM BT no está instalado\nNo se va a poder imprimir.";
+                    //return false;
+					return true;
                 }
             } catch (Exception e) {
                 msgbox("impresoraInstalada : "+e.getMessage());

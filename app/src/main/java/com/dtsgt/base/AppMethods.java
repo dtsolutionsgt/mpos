@@ -1895,6 +1895,17 @@ public class AppMethods {
         }
     }
 
+	public void validaImpresoraBT() {
+		try {
+			loadPrintConfig(0);
+			if (gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")) {
+				if (gl.peImpFactBT) estadoBluTooth();
+			}
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
 	private boolean rename(File from, File to) {
 		return from.getParentFile().exists() && from.exists() && from.renameTo(to);
 	}
