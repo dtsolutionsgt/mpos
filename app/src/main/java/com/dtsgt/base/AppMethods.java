@@ -2013,7 +2013,11 @@ public class AppMethods {
 			if (gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")) {
 
 				if (gl.peImpFactBT) {
-					if (estadoBluTooth()) printEpsonTMBT(copies);else return;
+					if (estadoBluTooth()) {
+						printEpsonTMBT(copies);
+					} else {
+						printEpsonTMBT(copies);
+					}
 				}
 				if (gl.peImpFactLan) print3nstar_print();
 				if (gl.peImpFactUSB) print3nstarnusb();
@@ -2054,6 +2058,17 @@ public class AppMethods {
             toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
         }
     }
+
+	public void validaImpresoraBT() {
+		try {
+			loadPrintConfig(0);
+			if (gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")) {
+				if (gl.peImpFactBT) estadoBluTooth();
+			}
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
 
 	private boolean rename(File from, File to) {
 		return from.getParentFile().exists() && from.exists() && from.renameTo(to);

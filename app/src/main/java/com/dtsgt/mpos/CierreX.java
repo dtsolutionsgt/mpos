@@ -728,18 +728,19 @@ public class CierreX extends PBase {
                         itemZ.prstr="";
                         itemZ.flag=dt.getInt(3);
                         itemZ.cant=dt.getDouble(4);
-                        itemZ.cantmin=dt.getDouble(5);
-                        itemZ.disp=dt.getDouble(6);
+                        itemZ.cantmin=dt.getDouble(5);  //Efectivo
+                        itemZ.disp=dt.getDouble(6);  // Monto Final
 
                         itemZ.costo=dt.getDouble(8);
 
                         if (dt.getInt(10)==1) {
-                            itemZ.cajapago=cajapago;
+                            itemZ.cajapago=cajapago;   //Caja
                         } else {
                             itemZ.cajapago=0;
                         }
 
-                        itemZ.precio=dt.getDouble(7)-itemZ.cajapago;
+                        //itemZ.precio=dt.getDouble(7)-itemZ.cajapago;
+                        itemZ.precio=itemZ.cantmin-itemZ.cajapago-itemZ.disp;
 
                         itemRZ.add(itemZ);
                         dt.moveToNext();

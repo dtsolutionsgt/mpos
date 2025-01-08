@@ -415,6 +415,7 @@ public class FacturaRes extends PBase {
 				}
 			}
 
+			app.validaImpresoraBT();
 
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

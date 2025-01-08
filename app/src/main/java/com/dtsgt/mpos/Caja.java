@@ -443,7 +443,7 @@ public class Caja extends PBase {
 
             dt.close();
 
-            gmontoDif = tot + pago;
+            gmontoDif = tot - pago;
             gmontoDif =mu.round2(gmontoDif);
             montoFin=mu.round2(montoFin);
             gmontoDif = mu.round2(montoFin - gmontoDif);
