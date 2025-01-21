@@ -516,6 +516,8 @@ public class WSEnv extends PBase {
 
             }
 
+            limpiaArchivosCierre();
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -565,6 +567,10 @@ public class WSEnv extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+    }
+
+    private void limpiaArchivosCierre() {
+
     }
 
     //endregion

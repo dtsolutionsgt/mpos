@@ -1482,7 +1482,7 @@ public class WSRec extends PBase {
             }
 
             if (FELsvmodo>=0) {
-                validaFELESA_archivo(FELsvcrt);
+                //validaFELESA_archivo(FELsvcrt);
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

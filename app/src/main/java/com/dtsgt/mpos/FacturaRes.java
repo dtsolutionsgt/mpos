@@ -1870,8 +1870,18 @@ public class FacturaRes extends PBase {
 				clsClasses.clsD_facturamuni fmuni = clsCls.new clsD_facturamuni();
 
 				fmuni.corel = corel;
-				fmuni.idmuni = gl.cli_muni;
-				fmuni.iddepto = gl.cli_depto;
+
+				try {
+					if (gl.cli_muni.isEmpty()) fmuni.idmuni = "S0614";else fmuni.idmuni = gl.cli_muni;
+				} catch (Exception e) {
+					fmuni.idmuni = "S0614";
+				}
+
+				try {
+					if (gl.cli_depto.isEmpty()) fmuni.iddepto = "S06"; else fmuni.iddepto = gl.cli_depto;
+				} catch (Exception e) {
+					fmuni.iddepto = "S06";
+				}
 
 				D_facturamuniObj.add(fmuni);
 			}
