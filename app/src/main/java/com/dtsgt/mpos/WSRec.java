@@ -103,6 +103,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class WSRec extends PBase {
 
@@ -227,7 +230,8 @@ public class WSRec extends PBase {
     //region  Events
 
     public void doStart(View view) {
-        Recibir();
+        limpiaArchivosCierre();
+        //Recibir();
     }
 
     //endregion
@@ -1217,6 +1221,7 @@ public class WSRec extends PBase {
             printBypass();
             productoPropinaServicio();
             fechaContratoFEL();
+            limpiaArchivosCierre();
 
             if (app.citems.size()>0) mostrarLista();
 
@@ -1364,6 +1369,46 @@ public class WSRec extends PBase {
 
         //prodprecioz
         //BienOServicio
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void limpiaArchivosCierre() {
+        try {
+            File folder = new File(Environment.getExternalStorageDirectory()+"");
+            File[] files = folder.listFiles();
+            String fname="",ss="-";
+            Calendar calendar = Calendar.getInstance();
+            long fd;
+
+            int fc=0;
+            long fl=du.getActDate();fl=du.addDays(fl,-3);
+
+            for (File file : files) {
+                if (file.isFile() && file.getName().startsWith("Cierre_Caja_")) {
+
+                    fname=file.getAbsolutePath();
+                    try {
+                        File ff = new File(fname);
+                        Date fdt= new Date(ff.lastModified());
+
+                        calendar.setTime(fdt);
+                        fd=du.cfecha(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DAY_OF_MONTH));
+                        if (fd<=fl) {
+                            ff.delete();
+                            fc++;
+                            //ss+=du.sfecha(fd)+" < "+du.sfecha(fl)+"  "+fname+"\n";
+                        }
+                    } catch (Exception e) {
+                        //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                    }
+
+
+                    if (fc>20) return;
+                }
+            }
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
