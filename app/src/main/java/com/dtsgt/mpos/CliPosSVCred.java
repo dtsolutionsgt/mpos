@@ -72,12 +72,10 @@ public class CliPosSVCred extends PBase {
                 cargaCliente();
             }
 
-            /*
             txtNIT.setText("12345678901222");
             txtNom.setText("DT solutions");
             txtEmail.setText("email@email.com");
             txtDir.setText("calle 12345");
-            */
 
             txtNom.requestFocus();
 

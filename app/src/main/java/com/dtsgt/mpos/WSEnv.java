@@ -570,7 +570,13 @@ public class WSEnv extends PBase {
     }
 
     private void limpiaArchivosCierre() {
+        try {
+            long ff=du.getActDate();
+            ff=du.addDays(ff,-7);
 
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     //endregion

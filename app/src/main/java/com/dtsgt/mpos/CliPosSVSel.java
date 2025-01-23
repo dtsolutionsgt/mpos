@@ -35,8 +35,7 @@ public class CliPosSVSel extends PBase {
 
             P_clienteObj=new clsP_clienteObj(this,Con,db);
 
-            //txtNIT.setText("12345678901111");
-            //txtNRC.setText("12345678");
+            txtNIT.setText("12345678");
 
             setHandlers();
         } catch (Exception e) {
@@ -74,7 +73,6 @@ public class CliPosSVSel extends PBase {
     }
 
     public void doNRC(View view) {
-
         try {
             nrc=txtNIT.getText().toString();
             if (nrc.isEmpty()) {
