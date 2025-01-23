@@ -230,8 +230,7 @@ public class WSRec extends PBase {
     //region  Events
 
     public void doStart(View view) {
-        limpiaArchivosCierre();
-        //Recibir();
+        Recibir();
     }
 
     //endregion

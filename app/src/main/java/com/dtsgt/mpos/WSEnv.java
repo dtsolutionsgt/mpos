@@ -516,8 +516,6 @@ public class WSEnv extends PBase {
 
             }
 
-            limpiaArchivosCierre();
-
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -564,16 +562,6 @@ public class WSEnv extends PBase {
                 intent.putExtra("command", CSQL);
                 startService(intent);
             }
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void limpiaArchivosCierre() {
-        try {
-            long ff=du.getActDate();
-            ff=du.addDays(ff,-7);
-
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
