@@ -35,7 +35,7 @@ public class CliPosSVSel extends PBase {
 
             P_clienteObj=new clsP_clienteObj(this,Con,db);
 
-            txtNIT.setText("12345678");
+            //txtNIT.setText("2247806");
 
             setHandlers();
         } catch (Exception e) {
@@ -185,9 +185,43 @@ public class CliPosSVSel extends PBase {
     private boolean testDUI() {
         try {
             if (nit.isEmpty()) return false;
+
+            nit=nit.replaceAll("-","");
             int ll=nit.length();
             if (ll!=9)  return false;
-            return true;
+
+            return validaDUI(nit);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean validaDUI(String sdui) {
+        String c;
+        int ctrl,verif,suma,resid;
+
+        try {
+            int[] dui= new int[9];
+            int[] pidx= new int[9];
+
+            for (int i = 0; i <9; i++) {
+                c= sdui.substring(i,i+1);
+                dui[i]=Integer.parseInt(c);
+                pidx[i]=9-i;
+            }
+            ctrl=dui[8];
+
+            suma=0;
+            for (int i = 0; i <8; i++) {
+                suma+=dui[i]*pidx[i];
+            }
+            resid=suma % 10;
+            verif=10-resid;
+
+            if (verif==0) return true;
+
+            return verif==ctrl;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             return false;

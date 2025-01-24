@@ -72,10 +72,13 @@ public class CliPosSVCred extends PBase {
                 cargaCliente();
             }
 
-            txtNIT.setText("12345678901222");
+            /*
+            txtNIT.setText("06141708071018");
+            txtNIT.setText("11111111105012");
             txtNom.setText("DT solutions");
-            txtEmail.setText("email@email.com");
+            txtEmail.setText("jpospichal@dts.com.gt");
             txtDir.setText("calle 12345");
+            */
 
             txtNom.requestFocus();
 
@@ -390,8 +393,8 @@ public class CliPosSVCred extends PBase {
 
             lblDep.setText(dep);
             lblMuni.setText(muni);
-            //txtGiro.setText(""+idneg);
-            txtNIT.setText(nit);
+            //txtGiro.setText(""+idneg);txtNIT.setText(nit);
+            txtNIT.setText("");
 
             return true;
 
@@ -534,14 +537,14 @@ public class CliPosSVCred extends PBase {
             if (nit.isEmpty()) {
                 msgbox("NIT incorrecto");txtNIT.requestFocus();txtNIT.selectAll();return false;
             } else {
-               if (!testNIT()) {
-                   msgbox("NIT incorrecto");txtNIT.requestFocus();txtNIT.selectAll();return false;
-               }
-            }
+                if (nit.length()!=14) {
+                    msgbox("NIT incorrecto");
+                    txtNIT.requestFocus();txtNIT.selectAll();return false;
+                }
 
-            if (nit.length()!=14) {
-                msgbox("NIT incorrecto");
-                txtNIT.requestFocus();txtNIT.selectAll();return false;
+                if (!testNIT()) {
+                    msgbox("NIT incorrecto");txtNIT.requestFocus();txtNIT.selectAll();return false;
+                }
             }
 
             return true;
@@ -586,10 +589,40 @@ public class CliPosSVCred extends PBase {
     }
 
     private boolean testNIT() {
+        String c;
+        int ctrl,verif,suma,resid,tnit,pidx,factor;
+
         try {
             if (nit.isEmpty()) return false;
             if (nit.length()!=14)  return false;
-            return true;
+
+            int[] nt= new int[14];
+
+            for (int i = 0; i <14; i++) {
+                c= nit.substring(i,i+1);
+                nt[i]=Integer.parseInt(c);
+            }
+            ctrl=nt[13];
+            tnit=100*nt[10]+10*nt[11]+nt[12];
+
+            suma=0;
+            for (int i = 0; i <13; i++) {
+                pidx=i+1;
+
+                if (tnit>100) {
+                    factor=(int) ((pidx+4)/6);
+                    factor=(3+6*factor)-pidx;
+                } else {
+                    factor=15-pidx;
+                }
+
+                suma+=nt[i]*factor;
+            }
+
+            resid=suma % 11;
+            verif=11-resid;
+
+            return verif==ctrl;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             return false;
