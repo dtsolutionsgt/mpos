@@ -181,7 +181,7 @@ public class Venta extends PBase {
     private int nivel,dweek,clidia,counter,menuitemid, lineaId, marcaId,prw;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos,descflag,meseros=false;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
-    private boolean horiz=true,porcentaje,domenvio,modoHN,modoSV,desclinmsg;
+    private boolean horiz=true,porcentaje,domenvio,modoHN,modoSV,modoPA,desclinmsg;
     private int codigo_cliente, emp,pedidoscant,cod_prod,mododocesa,cort_user;
     private String cliid,saveprodid,pedcorel,prodlinea;
     private int famid = -1;
@@ -218,6 +218,7 @@ public class Venta extends PBase {
 
             modoHN=gl.codigo_pais.equalsIgnoreCase("HN");
             modoSV=gl.codigo_pais.equalsIgnoreCase("SV");
+            modoPA=gl.codigo_pais.equalsIgnoreCase("PA");
 
             cliid=gl.cliente;
             //cliid="0"; #CKFK 20200515 puse esto en comentario porque primero se le asigna el Id de cliente
@@ -710,6 +711,7 @@ public class Venta extends PBase {
                         item.Total=ttsin;
                         if (modoHN) item.Total=tt;
                         if (modoSV) item.Total=tt;
+                        if (modoPA) item.Total=tt;
                     } else {
                         item.Total=tt;
                     }
@@ -752,12 +754,14 @@ public class Venta extends PBase {
                 if (modoHN) {
                     lblTot.setText(mu.frmcur(tot));
                     lblStot.setText("Subt : "+mu.frmcur(stot));
-                    //lblStot.setText("Subt : "+mu.frmcur(ttsin));
                 }
                 if (modoSV) {
                     lblTot.setText(mu.frmcur(tot));
                     lblStot.setText("Subt : "+mu.frmcur(stot));
-                    //lblStot.setText("Subt : "+mu.frmcur(ttsin));
+                }
+                if (modoPA) {
+                    lblTot.setText(mu.frmcur(tot));
+                    lblStot.setText("Subt : "+mu.frmcur(stot));
                 }
             } else {
                 tot=mu.round(tot,2);
@@ -1269,9 +1273,11 @@ public class Venta extends PBase {
         if (gl.codigo_pais.equalsIgnoreCase("GT")) {
             prec = prodPrecioBaseImp(app.codigoProducto(prodid));
         } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-            prec=prodPrecioBaseImp(app.codigoProducto(prodid));
+            prec = prodPrecioBaseImp(app.codigoProducto(prodid));
         } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-            prec=prodPrecioBaseImp(app.codigoProducto(prodid));
+            prec = prodPrecioBaseImp(app.codigoProducto(prodid));
+        } else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+            prec = prodPrecioBaseImp(app.codigoProducto(prodid));
         }
         prec=mu.round(prec,2);
 
@@ -1301,6 +1307,8 @@ public class Venta extends PBase {
             if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                 precdoc = precsin;
             } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+
+            } else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
 
             } else {
                 precdoc=prec;
@@ -1332,6 +1340,8 @@ public class Venta extends PBase {
             if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                 ins.add("VAL1", pimp);
             } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                ins.add("VAL1", pimp);
+            } else  if (gl.codigo_pais.equalsIgnoreCase("PA")) {
                 ins.add("VAL1", pimp);
             } else {
                 ins.add("VAL1",0);
@@ -1610,8 +1620,10 @@ public class Venta extends PBase {
                 if (gl.sal_PER) {
                     upd.add("PRECIODOC", precdoc);
                 } else {
-                    upd.add("PRECIODOC",prec);
+                    upd.add("PRECIODOC", prec);
                 }
+            } else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+                upd.add("PRECIODOC", prec);
             } else {
                 upd.add("PRECIODOC",prec);
             }
@@ -4322,6 +4334,8 @@ public class Venta extends PBase {
             sinimp = true;
         } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
             sinimp = true;
+        } else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+            sinimp = true;
         } else {
             sinimp=false;
         }
@@ -5257,6 +5271,8 @@ public class Venta extends PBase {
 
         if (gl.codigo_pais.equalsIgnoreCase("GT")) {
             return disponibleCorelFactura();
+        } else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+                return disponibleCorelFactura();
         } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
             return disponibleCorelFactura();
         } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {

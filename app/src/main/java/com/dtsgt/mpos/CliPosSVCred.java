@@ -1,6 +1,5 @@
 package com.dtsgt.mpos;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.database.SQLException;

@@ -639,6 +639,7 @@ public class FacturaRes extends PBase {
 		validaPagoEfectivo();
 	}
 
+	@SuppressLint("SuspiciousIndentation")
 	public void doKey(View view) {
 		khand.handleKey(view.getTag().toString());
 		if (khand.isEnter) {
@@ -837,6 +838,8 @@ public class FacturaRes extends PBase {
 			gl.sinimp=true;
 		} else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
 			gl.sinimp=true;
+		} else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+			gl.sinimp=true;
 		}
 
 		try {
@@ -844,18 +847,6 @@ public class FacturaRes extends PBase {
 			if (gl.sinimp) {
 
 				totimp=mu.round2(totimp);
-
-				/*
-				if (gl.codigo_pais.equalsIgnoreCase("GT")) {
-					stot=stot-totimp;
-				} else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-					stot=stot-totimp;
-					if ((stot>percep_val) && (gl.sal_PER)) gl.percepcion=1;
-					if (stot<100) gl.percepcion=0;
-				} else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-					stot=stot-totimp;
-				}
-				*/
 
 				totperc=stot*(gl.percepcion/100);
 				totperc=mu.round2dec(totperc);
@@ -867,6 +858,8 @@ public class FacturaRes extends PBase {
 					tot=stot-descmon;
 				} else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
 					//tot=stot-descmon+totimp;
+					tot=stot-descmon;
+				} else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
 					tot=stot-descmon;
 				} else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
 					//tot=stot-descmon+totimp;
@@ -889,6 +882,8 @@ public class FacturaRes extends PBase {
 
 				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
 					agr_impuesto= gl.sal_PER;
+				} else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+					agr_impuesto=true;
 				} else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
 					agr_impuesto=true;
 				} else if (gl.codigo_pais.equalsIgnoreCase("GT")) {
@@ -1090,6 +1085,11 @@ public class FacturaRes extends PBase {
 					fdoc.sal_nit="NIT: ";
 					if (gl.sal_NRC) fdoc.sal_nit="NRC: ";
 				}
+				if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+					cargaTotalesSalvador();
+					fdoc.sal_nit="NIT: ";
+					if (gl.sal_NRC) fdoc.sal_nit="NRC: ";
+				}
 
 				fdoc.LANPrint=gl.peImpFactLan;
 				if (gl.peImpFactLan) fdoc.LAN_IP=gl.peImpFactIP;else fdoc.LAN_IP="";
@@ -1099,6 +1099,7 @@ public class FacturaRes extends PBase {
 				if (gl.peMFact)	gl.QRCodeStr=fdoc.QRCodeStr;else gl.QRCodeStr="";
 				if (gl.codigo_pais.equalsIgnoreCase("HN")) gl.QRCodeStr="";
 				if (gl.codigo_pais.equalsIgnoreCase("SV")) gl.QRCodeStr="";
+				if (gl.codigo_pais.equalsIgnoreCase("PA")) gl.QRCodeStr="";
 
 				app.doPrint(gl.peNumImp,0);
 
@@ -1340,18 +1341,33 @@ public class FacturaRes extends PBase {
 			ins.add("VEHICULO",gl.parVer);
 
 			if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-				svnit="N";tipo_factura=1;
-				if (gl.codigo_cliente==gl.emp*10) {
-					svnit="T";tipo_factura=3;
+				if (gl.codigo_cliente == gl.emp * 10) {
+					svnit = "T";
+					tipo_factura = 3;
 				} else {
-				//if (gl.sal_NRC) {
 					if (gl.sal_PER) {
-						svnit="C";tipo_factura=2;
+						svnit = "C";
+						tipo_factura = 2;
 					} else {
-						svnit="N";tipo_factura=1;
+						svnit = "N";
+						tipo_factura = 1;
 					}
 				}
-				ins.add("AYUDANTE",svnit);
+				ins.add("AYUDANTE", svnit);
+			} else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+				if (gl.codigo_cliente == gl.emp * 10) {
+					svnit = "T";
+					tipo_factura = 3;
+				} else {
+					if (gl.sal_PER) {
+						svnit = "C";
+						tipo_factura = 2;
+					} else {
+						svnit = "N";
+						tipo_factura = 1;
+					}
+				}
+				ins.add("AYUDANTE", svnit);
 			} else {
 				if (gl.codigo_pais.equalsIgnoreCase("GT")) {
 					tipoNIT();
@@ -1501,7 +1517,8 @@ public class FacturaRes extends PBase {
 
 			//region D_FACTURAHN
 
-			if (gl.codigo_pais.equalsIgnoreCase("HN") | gl.codigo_pais.equalsIgnoreCase("SV")) {
+			if (gl.codigo_pais.equalsIgnoreCase("HN") | gl.codigo_pais.equalsIgnoreCase("SV")
+			    | gl.codigo_pais.equalsIgnoreCase("PA") ) {
 
 				double fh_stotal,fh_exon=0,fh_exent,fh_grav,fh_imp1,fh_imp2,fh_val1,fh_val2;
 
@@ -1529,7 +1546,8 @@ public class FacturaRes extends PBase {
 				if (gl.codigo_pais.equalsIgnoreCase("HN")) {
 					sql="SELECT SUM(CANT*PRECIODOC) FROM T_VENTA WHERE (VAL1>0)";
 				} else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-					//sql="SELECT SUM(CANT*PRECIODOC) FROM T_VENTA ";
+					sql="SELECT SUM(CANT*PRECIODOC) FROM T_VENTA WHERE (VAL1>0)";
+				} else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
 					sql="SELECT SUM(CANT*PRECIODOC) FROM T_VENTA WHERE (VAL1>0)";
 				}
 				dt=Con.OpenDT(sql);
@@ -1621,6 +1639,8 @@ public class FacturaRes extends PBase {
 				if (gl.codigo_pais.equalsIgnoreCase("HN")) {
 					idmoneda=9;
 				} else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+					idmoneda=1;
+				} else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
 					idmoneda=1;
 				}
 
@@ -1862,6 +1882,41 @@ public class FacturaRes extends PBase {
 
 			//endregion
 
+			//region D_FACTURA_PA
+
+			if ( gl.codigo_pais.equalsIgnoreCase("PA")) {
+
+				clsD_factura_svObj D_factura_svObj=new clsD_factura_svObj(this,Con,db);
+
+				clsClasses.clsD_factura_sv itemt = clsCls.new clsD_factura_sv();
+
+				try {
+					if (gl.sal_iddep.isEmpty()) gl.sal_iddep="06";
+				} catch (Exception e) {
+					gl.sal_iddep="06";
+				}
+
+				try {
+					if (gl.sal_idmun.isEmpty()) gl.sal_idmun="14";
+				} catch (Exception e) {
+					gl.sal_idmun="14";
+				}
+
+				if (gl.sal_idneg==0) gl.sal_idneg=1;
+
+				itemt.corel = corel;
+				itemt.empresa = gl.emp;
+				itemt.codigo_tipo_factura = tipo_factura;
+				itemt.codigo_departamento = gl.sal_iddep;
+				itemt.codigo_municipio = gl.sal_idmun;
+				itemt.codigo_tipo_negocio = gl.sal_idneg;
+
+				D_factura_svObj.add(itemt);
+
+			}
+
+			//endregion
+
 			//region D_FACTURAMUNI
 
 			if ( gl.codigo_pais.equalsIgnoreCase("SV")) {
@@ -1994,6 +2049,17 @@ public class FacturaRes extends PBase {
 					resguardo=0;
 				}
 			}
+
+			if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+				if (tipo_factura==1) {
+					resguardo=4;
+				} else if(tipo_factura==2) {
+					resguardo=2;
+				} else if(tipo_factura==3) {
+					resguardo=0;
+				}
+			}
+
 
 			sql="UPDATE P_COREL SET CORELULT="+fcorel+"  " +
 				"WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO="+resguardo+") ";
@@ -2352,6 +2418,18 @@ public class FacturaRes extends PBase {
 			} else {
 				assignCorelTicket();
 			}
+		} else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+			if (gl.sal_NIT) {
+				assignCorelFactura();
+			} else if (gl.sal_NRC) {
+				if (gl.sal_PER) {
+					assignCorelCredito();
+				} else {
+					assignCorelFactura();
+				}
+			} else {
+				assignCorelFactura();
+			}
 		}
 
 	}
@@ -2500,7 +2578,6 @@ public class FacturaRes extends PBase {
 				mu.msgbox("No esta definido correlativo de credito fiscal. No se puede continuar con la venta.\n");
 				return;
 			}
-
 
 			if (!app.usaFEL()) {
 				if (fcorel>cf) {
