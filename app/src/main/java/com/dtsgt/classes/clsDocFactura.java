@@ -1251,12 +1251,6 @@ public class clsDocFactura extends clsDocument {
         stot=fh_grav+fh_exent+fh_exon;
         totperc=stot*(percep/100);totperc=round2(totperc);
 
-        /*
-        totimp=tot-stot;
-        difimp=fh_imp1+fh_imp2-totimp;
-        if (fh_imp1>0) vimp1=fh_imp1-difimp; else vimp2=fh_imp2-difimp;
-        */
-
         vimp1=round2(fh_imp1);vimp2=round2(fh_imp2);
 
         if (vimp1>0) {

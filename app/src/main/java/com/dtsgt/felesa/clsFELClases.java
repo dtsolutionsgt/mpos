@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.stream.Collectors;
 
 public class clsFELClases {
@@ -60,7 +62,7 @@ public class clsFELClases {
             jsitem.put("unidad_medida", 59);
             jsitem.put("descuento", descuento_monto);
             jsitem.put("descripcion", descripcion);
-            jsitem.put("precio_unitario", precio_unitario);
+            jsitem.put("precio_unitario", round2dec(precio_unitario));
 
             jsitems.put(jsitem);
         }
@@ -75,7 +77,7 @@ public class clsFELClases {
             jsitem.put("unidad_medida", 59);
             jsitem.put("descuento", descuento_monto);
             jsitem.put("descripcion", descripcion);
-            jsitem.put("precio_unitario", precio_unitario);
+            jsitem.put("precio_unitario", round2dec(precio_unitario));
 
             jsitems.put(jsitem);
         }
@@ -139,6 +141,8 @@ public class clsFELClases {
             jshead.put("tipo_dte","03");
             jshead.put("establecimiento",establecimiento);
             jshead.put("condicion_pago",condicion_pago);
+            jshead.put("retener_iva",true);
+            jshead.put("percibir_iva",true);
 
             contingencia=false;
         }
@@ -167,8 +171,7 @@ public class clsFELClases {
             jshead.put("receptor",jsr);
         }
 
-        public void agregarProducto(String descripcion,double cantidad,
-                                    double precio_unitario,double impuesto_monto) throws JSONException {
+        public void agregarProducto(String descripcion,double cantidad,double precio_unitario,double impuesto_monto) throws JSONException {
 
             double precio;
 
@@ -180,14 +183,12 @@ public class clsFELClases {
             //jsitem.put("descuento", 25);
             jsitem.put("descripcion", descripcion);
 
+            impuesto_monto=impuesto_monto*cantidad;
             precio=precio_unitario*cantidad-impuesto_monto;
             precio=precio/cantidad;precio=mu.round2dec(precio);
-            //jsitem.put("precio_unitario", precio_unitario);
-            jsitem.put("precio_unitario", precio);
+            jsitem.put("precio_unitario",precio);
 
             JSONArray jstrib = new JSONArray();
-
-            impuesto_monto=mu.round2(impuesto_monto);
 
             if (impuesto_monto >0) {
 
@@ -293,7 +294,6 @@ public class clsFELClases {
 
             precio=precio_unitario*cantidad-impuesto_monto;
             precio=precio/cantidad;precio=mu.round2dec(precio);
-            //jsitem.put("precio_unitario", precio_unitario);
             jsitem.put("precio_unitario", precio);
 
             JSONArray jstrib = new JSONArray();
@@ -386,7 +386,7 @@ public class clsFELClases {
             jsitem.put("unidad_medida", 59);
             jsitem.put("descuento", descuento_monto);
             jsitem.put("descripcion", descripcion);
-            jsitem.put("precio_unitario", precio_unitario);
+            jsitem.put("precio_unitario", round2dec(precio_unitario));
 
             jsitems.put(jsitem);
         }
@@ -596,6 +596,12 @@ public class clsFELClases {
     }
 
     //region Aux
+
+    public  double round2dec(double value) {
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
 
     public String numControlFEL(boolean esFactura,String codEstab,String uid,int idruta,MiscUtils mu) {
         String nc="DTE-",cpos;

@@ -74,7 +74,6 @@ public class CliPosSVCred extends PBase {
 
             /*
             txtNIT.setText("06141708071018");
-            txtNIT.setText("11111111105012");
             txtNom.setText("DT solutions");
             txtEmail.setText("jpospichal@dts.com.gt");
             txtDir.setText("calle 12345");
@@ -130,7 +129,7 @@ public class CliPosSVCred extends PBase {
         guardaSeleccion();
         guardaNRC();
 
-        agregaCliente(gl.gNITCliente, nom, email,dir);
+        agregaCliente(nit, nom, email,dir);
         procesaNIT();
 
         gl.mododocesa=2;
@@ -145,6 +144,8 @@ public class CliPosSVCred extends PBase {
                 txtNom.setText(P_clienteObj.first().nombre);
                 txtEmail.setText(P_clienteObj.first().email);
                 txtDir.setText(P_clienteObj.first().direccion);
+                txtNIT.setText(P_clienteObj.first().codbarra);
+
             } else {
                 codigo=nitnumsv(gl.gNITCliente);
             }
@@ -273,7 +274,7 @@ public class CliPosSVCred extends PBase {
             ins.add("BONIFICACION",1);
             ins.add("ULTVISITA",du.getActDate());
             ins.add("IMPSPEC",0);
-            ins.add("NIT",NIT.toUpperCase());
+            ins.add("NIT",gl.gNITCliente);
             ins.add("EMAIL",Correo);
             ins.add("ESERVICE","N"); // estado envio
             ins.add("TELEFONO","");
@@ -282,7 +283,7 @@ public class CliPosSVCred extends PBase {
             ins.add("COORY",0);
             ins.add("BODEGA",""+gl.sucur);
             ins.add("COD_PAIS","");
-            ins.add("CODBARRA","");
+            ins.add("CODBARRA",NIT.toUpperCase());
             ins.add("PERCEPCION",0);
             ins.add("TIPO_CONTRIBUYENTE","");
             ins.add("EMPRESA",gl.emp);
@@ -299,11 +300,13 @@ public class CliPosSVCred extends PBase {
 
                 upd.init("P_CLIENTE");
                 upd.add("NOMBRE",Nom);
-                upd.add("NIT",NIT);
                 upd.add("DIRECCION",dir);
                 upd.add("EMAIL",Correo);
                 upd.add("ESERVICE","N");
                 upd.add("CODIGO","0");
+                upd.add("BODEGA",""+gl.sucur);
+                upd.add("CODBARRA",NIT.toUpperCase());
+
                 upd.Where("CODIGO_CLIENTE="+codigo);
                 db.execSQL(upd.sql());
 

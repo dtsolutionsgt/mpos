@@ -1301,7 +1301,7 @@ public class Venta extends PBase {
             if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                 precdoc = precsin;
             } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-
+                precdoc=prec;
             } else {
                 precdoc=prec;
             }
@@ -1309,6 +1309,8 @@ public class Venta extends PBase {
             if (prec==0) {
                 msgbox("Precio 0, no se puede vender");return false;
             }
+
+            if (impval<0.01) impval=0;
 
             ins.init("T_VENTA");
             counter++;
@@ -1398,6 +1400,7 @@ public class Venta extends PBase {
         try {
 
             if (sinimp) precdoc=precsin; else precdoc=prec;
+            if (impval<0.01) impval=0;
 
             ins.init("T_VENTA");
             ins.add("PRODUCTO",prodid);
@@ -1721,6 +1724,14 @@ public class Venta extends PBase {
                 }
             }
 
+            if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                if (gl.sal_PER) {
+                    cambiaPrecioSinImpuesto();
+                } else {
+                    cambiaPrecioConImpuesto();
+                }
+            }
+
             gl.gstr="";
             browse=1;
 
@@ -1771,6 +1782,48 @@ public class Venta extends PBase {
         } catch (Exception e){
             gridViewOpciones.setEnabled(true);
             mu.msgbox("finishOrder: "+e.getMessage());
+        }
+    }
+
+    public void cambiaPrecioConImpuesto() {
+        try {
+            T_ventaObj.fill();
+            for (clsClasses.clsT_venta itm: T_ventaObj.items) {
+                itm.preciodoc=itm.precio;
+                T_ventaObj.update(itm);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public void cambiaPrecioSinImpuesto() {
+        double vimp;
+
+        try {
+            try {
+                sql="SELECT VALOR FROM P_IMPUESTO  WHERE (VALOR>0)";
+                Cursor DT=Con.OpenDT(sql);
+                DT.moveToFirst();
+                vimp=DT.getDouble(0);
+            } catch (Exception e) {
+                vimp=0;
+            }
+
+            vimp=1+vimp/100;
+
+            T_ventaObj.fill();
+            for (clsClasses.clsT_venta itm: T_ventaObj.items) {
+                if (itm.imp>0) {
+                    itm.preciodoc=mu.round2(itm.precio/vimp);
+                } else {
+                    itm.preciodoc=itm.precio;
+                }
+
+                T_ventaObj.update(itm);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 

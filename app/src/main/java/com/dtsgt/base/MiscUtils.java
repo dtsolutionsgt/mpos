@@ -19,6 +19,8 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 
@@ -42,7 +44,6 @@ public class MiscUtils {
 		ffrmgps = new DecimalFormat("##0.0000000");
 
 	}
-
 
 	public MiscUtils(Context context) {
 		cCont=context;
@@ -126,43 +127,23 @@ public class MiscUtils {
 		return ss;
 	}
 	
-	public double round2(double val){
-		int ival;
-		
-		val=(double) (100*val);
-		double rslt=Math.round(val);
-		rslt=Math.floor(rslt);
-		
-		ival=(int) rslt;
-		rslt=(double) ival;
-		
-		return (double) (rslt/100);
+	public double round2(double value){
+		BigDecimal bd = BigDecimal.valueOf(value);
+		bd = bd.setScale(2, RoundingMode.HALF_UP);
+		return bd.doubleValue();
 	}
 
-	public double round2dec(double val){
-		double dval;
-		long ival;
 
-		val=val+0.000001;
-		dval=val*100;
-		ival=Math.round(dval);
-		dval=(double) ival;
-		val=dval*0.01;
-
-		return val;
+	public  double round2dec(double value) {
+		BigDecimal bd = BigDecimal.valueOf(value);
+		bd = bd.setScale(2, RoundingMode.HALF_UP);
+		return bd.doubleValue();
 	}
 
-	public double round6dec(double val){
-		double dval;
-		long ival;
-
-		val=val+0.000001;
-		dval=val*1000000;
-		ival=Math.round(dval);
-		dval=(double) ival;
-		val=dval*0.000001;
-
-		return val;
+	public  double round6dec(double value) {
+		BigDecimal bd = BigDecimal.valueOf(value);
+		bd = bd.setScale(6, RoundingMode.HALF_UP);
+		return bd.doubleValue();
 	}
 
 	public boolean emptystr(String s){

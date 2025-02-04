@@ -373,8 +373,7 @@ public class FELFacturaSV extends PBase {
             String sj = jcred.json;
             sj = sj + "";
         } catch (Exception e) {
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
 

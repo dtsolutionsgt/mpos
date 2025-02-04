@@ -1436,7 +1436,7 @@ public class clsDocument {
             facturaflag = true;
 
             //Imprime solo ticket
-            tipo_doc=3;
+            //tipo_doc=3;
 
             if ( tipo_doc==1) {
                 facturaflag = true;

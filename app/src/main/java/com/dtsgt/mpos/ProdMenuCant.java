@@ -218,6 +218,7 @@ public class ProdMenuCant extends PBase {
             double desc=prc.desc;
             double descmon = prc.descmon;
             double tot = prc.tot;
+            double pimp=prc.imp;
 
             tot=prec*cant;
 
@@ -265,7 +266,15 @@ public class ProdMenuCant extends PBase {
             ins.add("TOTAL",tot);
             ins.add("PRECIODOC",prec);
             ins.add("PESO",0);
-            ins.add("VAL1",0);
+
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                ins.add("VAL1", pimp);
+            } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                ins.add("VAL1", pimp);
+            } else {
+                ins.add("VAL1",0);
+            }
+
             ins.add("VAL2",1);
             ins.add("VAL3",0);
             ins.add("VAL4",""+uitemid);

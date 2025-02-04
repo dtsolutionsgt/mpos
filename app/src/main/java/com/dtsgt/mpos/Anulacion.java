@@ -417,7 +417,8 @@ public class Anulacion extends PBase {
 		
 		try {
 
-			ff=du.getActDate();fsvf=du.addDays(ff,-29);fsvc=du.addDays(ff,-1);
+			ff=du.getActDate();fsvf=du.addDays(ff,-29);
+			fsvc=du.addDays(ff,-1);
 
 			if (tipo==2) {
 
@@ -542,9 +543,9 @@ public class Anulacion extends PBase {
 					if (modo_sv) {
 						ff=DT.getLong(6);guardar=true;
 						if (vItem.tipodoc.equalsIgnoreCase("C")) {
-							if (ff<fsvc) guardar=false;
+							//if (ff<fsvc) guardar=false;
 						} else {
-							if (ff<fsvf) guardar=false;
+							//if (ff<fsvf) guardar=false;
 			    		}
 					}
 

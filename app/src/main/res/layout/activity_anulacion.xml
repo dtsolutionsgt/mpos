@@ -91,6 +91,20 @@
             android:layout_marginBottom="0dp"
             android:layout_toEndOf="@+id/llFechaIni">
 
+            <CheckBox
+                android:id="@+id/checkBox27"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/editTextText4"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_toEndOf="@+id/imageView156"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="SIN CERTIFICACIÓN"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
             <EditText
                 android:id="@+id/editTextText4"
                 android:layout_width="330dp"
@@ -221,7 +235,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp">
+        android:layout_marginBottom="40dp">
 
     </ListView>
 
@@ -298,18 +312,5 @@
         android:textSize="20dp"
         android:textStyle="bold"
         android:visibility="gone" />
-
-    <CheckBox
-        android:id="@+id/checkBox27"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/listView1"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="0dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:text="NO CERTIFICADAS"
-        android:textSize="24sp"
-        android:textStyle="bold" />
 
 </RelativeLayout>

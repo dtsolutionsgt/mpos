@@ -248,7 +248,7 @@ public class FELContingenciaSV extends PBase {
                 JSONfactura("T");
             }
 
-            lbl1.setText("Certificando Factura...");
+            lbl1.setText("Certificando documento ...");
 
             if (!tipodoc.equalsIgnoreCase("C")) {
                 FactESA.Certifica(felcorel, jfact.json,fel.fel_usuario_certificacion,fel.fel_llave_certificacion);
@@ -528,7 +528,7 @@ public class FELContingenciaSV extends PBase {
         try {
             Handler mtimer = new Handler();
             Runnable mrunner= () -> {
-                enviaError(false);
+                enviaError(true);
             };
             mtimer.postDelayed(mrunner,200);
         } catch (Exception e) {
@@ -537,11 +537,13 @@ public class FELContingenciaSV extends PBase {
     }
 
     private void enviaError(boolean agregajson) {
-        String subject,body,ss,cor,scor=" ";
+        String subject,body,ss,cor,scor=" ",strfecha;
         String dir=Environment.getExternalStorageDirectory()+"";
         long fsize,fslim;
 
+
         try {
+            strfecha=du.sfecha(du.getActDateTime())+" : "+du.shora(du.getActDateTime());
 
             File f1 = new File(dir + "/posdts.db");
             File f2 = new File(dir + "/posdts_"+gl.codigo_ruta+".db");
@@ -575,13 +577,15 @@ public class FELContingenciaSV extends PBase {
                 body+=ss+"\n";
             }
 
-            if (agregajson) body+="\n\n\n\n"+FactESA.jsonsave;
-            body+="\n\n\n\n";
+            if (agregajson) {
+                body+="\n"+FactESA.jsonsave;
+            }
+            body+="\n";
 
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
 
-            subject= "Error FEL ESA : "+gl.tiendanom+" caja : "+gl.codigo_ruta;
+            subject= "Error FEL ESA : "+gl.tiendanom+" caja : "+gl.codigo_ruta+ " : "+strfecha;
 
             String[] TO = {"dtsolutionsgt@gmail.com"};
 
@@ -592,7 +596,7 @@ public class FELContingenciaSV extends PBase {
             emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
             emailIntent.putExtra(Intent.EXTRA_TEXT,body);
-            emailIntent.putExtra(Intent.EXTRA_STREAM, dburi);
+            //emailIntent.putExtra(Intent.EXTRA_STREAM, dburi);
 
             startActivity(emailIntent);
 
