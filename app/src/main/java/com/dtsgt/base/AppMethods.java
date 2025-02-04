@@ -1218,8 +1218,6 @@ public class AppMethods {
 			gl.peComandaVentaLAN = false;
 		}
 
-
-
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=176";
 			dt=Con.OpenDT(sql);
