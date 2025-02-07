@@ -750,48 +750,6 @@ public class clsDocument {
         if (LANPrint) lanheader();
         rep.empty();rep.empty();
 
-
-/*
-        for (int i = 0; i <lines.size(); i++) 		{
-
-            s=lines.get(i);if (s.isEmpty()) s=" ";
-
-            try {
-                s=encabezadoSV(s);
-                ss=s.toUpperCase();
-                nidx=ss.indexOf("NIT");
-                //if (nidx>=0) s="DUI/NIT: ";
-            } catch (Exception e) {
-                s="##";
-            }
-
-            if (s.contains("%%")) {
-                rep.add("TICKET #"+corel_doc);
-                rep.add("");
-                s="";
-            }
-
-            if (!s.equalsIgnoreCase("##") && !s.equalsIgnoreCase("@@")) {
-                su=s.toUpperCase();
-                if (su.contains("CLIENTE") ) {
-                    if (su.contains("<<") ) {
-                        s2=s.split("<<");
-                        for (int j = 1; j <s2.length; j++) {
-                            ss2=s2[j];
-                            rep.add(ss2);
-                        }
-                    } else {
-                        rep.add(s);
-                    }
-                } else {
-                    s=rep.ctrim(s);
-                    rep.add(s);
-                }
-            }
-
-        }
-*/
-
         rep.addc(tiendanom);
         rep.add("");
         //rep.add("NIT: " + tiendanit);
@@ -1434,9 +1392,6 @@ public class clsDocument {
             saveHeadLinesHON(reimpres);
         } else if (pais.equalsIgnoreCase("SV")) {
             facturaflag = true;
-
-            //Imprime solo ticket
-            //tipo_doc=3;
 
             if ( tipo_doc==1) {
                 facturaflag = true;

@@ -845,28 +845,36 @@ public class FacturaRes extends PBase {
 
 			if (gl.sinimp) {
 
-				totimp=mu.round2(totimp);
+				totimp = mu.round2(totimp);
 
-				totperc=stot*(gl.percepcion/100);
-				totperc=mu.round2dec(totperc);
-				totimp=totimp+totperc;
+				totperc = stot * (gl.percepcion / 100);
+				totperc = mu.round2dec(totperc);
+				totimp = totimp + totperc;
 
-                descmon=descmon+descaddmonto;
+				descmon = descmon + descaddmonto;
 
 				if (gl.codigo_pais.equalsIgnoreCase("GT")) {
-					tot=stot-descmon;
+					tot = stot - descmon;
 				} else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-			    	tot=stot-descmon;
+					tot = stot - descmon;
 				} else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-					tot=stot-descmon;
+					tot = stot - descmon;
 				}
 
-				tot=tot+propina;
-				tot=mu.round2(tot);
+				tot = tot + propina;
+				tot = mu.round2(tot);
+				double stotsimp = 0;
+
+				stotsimp = stot;
+				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+					if (gl.sal_PER) {
+						stotsimp = tot - mu.round2(totimp) - mu.round2(propina) - mu.round2(descmon);
+					}
+				}
 
 				item = clsCls.new clsCDB();
 				item.Cod="Subtotal";
-				item.Desc=mu.frmcur(stot);
+				item.Desc=mu.frmcur(stotsimp);
 				item.Bandera=0;
 				items.add(item);
 
@@ -889,16 +897,6 @@ public class FacturaRes extends PBase {
 					item.Bandera = 0;
 					items.add(item);
 				}
-
-				/*
-				if (gl.contrib.equalsIgnoreCase("C")) {
-					item = clsCls.new clsCDB();
-					item.Cod="Percepción";item.Desc=mu.frmcur(totperc);item.Bandera=0;
-					items.add(item);
-				}
-				*/
-
-
 
                 if (propina>0){
 
@@ -1074,7 +1072,8 @@ public class FacturaRes extends PBase {
 				if (gl.codigo_pais.equalsIgnoreCase("HN")) cargaTotalesHonduras();
 				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
 					cargaTotalesSalvador();
-					fdoc.sal_nit="NIT: ";
+					//fdoc.sal_nit="NIT: ";
+					fdoc.sal_nit="DUI: ";
 					if (gl.sal_NRC) fdoc.sal_nit="NRC: ";
 				}
 

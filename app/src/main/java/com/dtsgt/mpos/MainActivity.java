@@ -73,6 +73,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -85,6 +86,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.zxing.BarcodeFormat;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 public class MainActivity extends PBase {
 
@@ -114,7 +117,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
 
-    private String parVer = "5.5.2.1";
+    private String parVer = "5.5.3.1";
     private boolean bloqueo_venta=false;
 
     private Typeface typeface;
@@ -1433,58 +1436,18 @@ public class MainActivity extends PBase {
     }
 
     private void dodwn() {
-
-        String fbname,fname,bckfile;
-        File file;
-
         try {
-            if (app.isOnWifi()==0) {
-                msgbox("Sin conexión al internet.");return;
-            }
+            String updf="https://sandbox-certificador.infile.com.sv/api/v1/reporte/reporte_documento?uuid=FDCA3C52-741D-4387-8449-53C042C76169&formato=pdf";
 
-            bckfile="Certificado_06141106141147.crt";
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap bitmap = barcodeEncoder.encodeBitmap(updf, BarcodeFormat.QR_CODE, 400, 400);
 
-            fname=Environment.getExternalStorageDirectory()+"/"+bckfile;
-            fbname="fel_esa_cert/"+bckfile;
+            File qrfile = new File(Environment.getExternalStorageDirectory(), "/qrmpos.png");
 
-            FirebaseStorage storage;
-            StorageReference storageReference, apkref;
+            FileOutputStream fos = new FileOutputStream(qrfile);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
 
-            storage = FirebaseStorage.getInstance();
-            storageReference = storage.getReference();
-
-            apkref = storageReference.child(fbname);
-            file=new File(fname);
-            Uri localfile = Uri.fromFile(file);
-
-            apkref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    String ss=uri.toString();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    msgbox("Error de descarga2: \n"+exception.getMessage());
-                }
-            });
-
-            apkref.getFile(localfile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-
-                    if (file.exists()) {
-                        msgbox("LLave de certificacion descargada");
-                    } else {
-                        msgbox("No se pudo descargar archivo por falta de conexión al internet.");
-                    }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    msgbox("Error de descarga: \n"+exception.getMessage());
-                }
-            });
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

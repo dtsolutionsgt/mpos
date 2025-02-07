@@ -10,6 +10,8 @@ import android.widget.Toast;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+
+
 public class clsDocFactura extends clsDocument {
 
 	private ArrayList<itemData> items= new ArrayList<itemData>();
@@ -474,19 +476,8 @@ public class clsDocFactura extends clsDocument {
 
         QRCodeStr= "https://felpub.c.sat.gob.gt/verificador-web/publico/vistas/verificacionDte.jsf?tipo=autorizacion&" +
                 "numero="+ Numero_Factura + "&emisor="+ nit_emisor +"&receptor="+ nit_cliente +"&monto=" + stot;
-/*
-        if (!QRCodeStr.isEmpty()) {
-            try {
-                qrgEncoder = new QRGEncoder(QRCodeStr, null, QRGContents.Type.TEXT, 350);
-                bitmap = qrgEncoder.encodeAsBitmap();
-                if (!QRGSaver.save(qrpath, "qr", bitmap, QRGContents.ImageType.IMAGE_JPEG)) {
-                    throw new Exception("Error al guardar la barra");
-                }
-            } catch (Exception e) {
-                Toast.makeText(cont, "Error QR : " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }
-*/
+
+
 		return true;
 	}
 
@@ -760,6 +751,47 @@ public class clsDocFactura extends clsDocument {
     }
 
     protected boolean detailFacturaSV() {
+        itemData item;
+        double pr,imp,tot,totval,dval1,dval2;
+        String ps,cu,cp,s1,sp;
+        int nl;
+
+        rep.add("Descripcion");
+        rep.add3sss("Cant","Precio","Gravado");
+        rep.line();
+
+        sv_subt=0;
+        for (int i = 0; i <items.size(); i++) {
+            item=items.get(i);
+            if (!item.flag) {
+
+                nl=i+1;
+                ps=item.nombre;if (ps.length()>prw-3) ps=ps.substring(0,prw-3);
+                //rep.add(nl+" "+ps);
+                rep.add(ps);
+
+                sp=item.cant+" "+item.um;
+                pr=item.prec_orig;
+                pr=round2(pr);
+
+                dval1=0;dval2=0;
+                s1=rep.frmdec(dval1);
+                tot=pr*item.cant;
+                tot=round2(tot);sv_subt+=tot;
+
+                rep.add3lrr(sp,pr,tot);
+
+            } else {
+                rep.add("   - "+item.nombre);
+            }
+        }
+
+        rep.line();
+
+        return true;
+    }
+
+    protected boolean detailFacturaSVOrig() {
         itemData item;
         double pr,imp,tot,totval,dval1,dval2;
         String ps,cu,cp,s1;
@@ -1412,17 +1444,18 @@ public class clsDocFactura extends clsDocument {
 
         if (Math.abs(fh_grav-sv_subt)<0.02) fh_grav=sv_subt;
 
-        rep.addtotsp("Venta gravada: ", fh_grav);
-        rep.addtotsp("Venta no sujeta: ", fh_exent);
-        rep.addtotsp("Venta exenta: ", fh_exon);
-        rep.addtotsp("Subtotal: ", stot);
-        if (desc>=0.01) rep.addtotsp("Descuento: ", -desc);
+        rep.addtotsp("Sumas: ", fh_grav);
+        //rep.addtotsp("Venta no sujeta: ", fh_exent);
+        //rep.addtotsp("Venta exenta: ", fh_exon);
+        //rep.addtotsp("Subtotal: ", stot);
+        //if (desc>=0.01) rep.addtotsp("Descuento: ", -desc);
         if (fh_val1>0) rep.addtotsp("IVA Retenido: ", fh_imp1);
-        rep.addtotsp("Venta total: ", tot);
+        //rep.addtotsp("Venta total: ", tot);
         rep.addtotsp("Total a pagar: ", tot);
 
         montoLetra();
 
+        /*
         if (plines.size()>0) {
             rep.add("Condiciones de la operación: ");
             for (int ii= 0; ii <plines.size(); ii++) {
@@ -1435,6 +1468,8 @@ public class clsDocFactura extends clsDocument {
             rep.add(serie);
             rep.add("");
         }
+
+         */
 
         if (modorest) {
             rep.add("");
@@ -1490,14 +1525,14 @@ public class clsDocFactura extends clsDocument {
 
         if (Math.abs(fh_grav-sv_subt)<0.02) fh_grav=sv_subt;
 
-        rep.addtotsp("Total sin impuesto: ", sv_subt);
-        rep.addtotsp("Venta gravada: ", fh_grav);
+        rep.addtotsp("Suma total de operaciones: ", sv_subt);
+        rep.addtotsp("Sub total: ", fh_grav);
+        rep.addtotsp("Impuesto al valor agregado: ", fh_imp1);
         rep.addtotsp("Venta no sujeta: ", fh_exent);
-        rep.addtotsp("Venta exenta: ", fh_exon);
-        rep.addtotsp("Subtotal: ", sv_subt);
+        //rep.addtotsp("Venta exenta: ", fh_exon);
+        //rep.addtotsp("Subtotal: ", sv_subt);
         if (desc>=0.01) rep.addtotsp("Descuento: ", -desc);
-        if (fh_val1>0) rep.addtotsp("IVA Retenido: ", fh_imp1);
-        rep.addtotsp("Venta total: ", tot);
+        rep.addtotsp("Monto total de operacion: ", tot);
         rep.addtotsp("Total a pagar: ", tot);
 
         montoLetra();
@@ -1747,6 +1782,8 @@ public class clsDocFactura extends clsDocument {
     }
 
     //endregion
+
+    //region Aux
 
     private void direccionDomicilio() {
         String sd;

@@ -63,12 +63,14 @@ public class CliPosSVCons extends PBase {
             txtNom.selectAll();txtNom.requestFocus();
             txtNom.setSelection(txtNom.getText().length());
 
-            clsP_sucursalObj  P_sucursalObj=new clsP_sucursalObj(this,Con,db);
-            P_sucursalObj.fill("WHERE (CODIGO_SUCURSAL="+gl.tienda+")");
-            if (P_sucursalObj.count>0) {
-                txtEmail.setText(P_sucursalObj.first().correo);
-            } else {
-                txtEmail.setText("");
+            if (txtEmail.getText().toString().isEmpty()) {
+                clsP_sucursalObj P_sucursalObj = new clsP_sucursalObj(this, Con, db);
+                P_sucursalObj.fill("WHERE (CODIGO_SUCURSAL=" + gl.tienda + ")");
+                if (P_sucursalObj.count > 0) {
+                    txtEmail.setText(P_sucursalObj.first().correo);
+                } else {
+                    txtEmail.setText("");
+                }
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
