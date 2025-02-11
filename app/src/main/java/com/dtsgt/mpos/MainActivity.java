@@ -55,6 +55,7 @@ import androidx.core.app.NotificationCompat;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatosVersion;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.base.clsFont3x5;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsKeybHandler;
@@ -73,6 +74,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -85,6 +87,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.zxing.BarcodeFormat;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
+
 
 public class MainActivity extends PBase {
 
@@ -444,7 +449,8 @@ public class MainActivity extends PBase {
     }
 
     public void doFragTest(View view) {
-        startActivity(new Intent(this,FragmentTest.class));
+        //startActivity(new Intent(this,FragmentTest.class));
+        test3x5();
     }
 
     private void setHandlers() {
@@ -1433,58 +1439,18 @@ public class MainActivity extends PBase {
     }
 
     private void dodwn() {
-
-        String fbname,fname,bckfile;
-        File file;
-
         try {
-            if (app.isOnWifi()==0) {
-                msgbox("Sin conexión al internet.");return;
-            }
+            String updf="https://sandbox-certificador.infile.com.sv/api/v1/reporte/reporte_documento?uuid=FDCA3C52-741D-4387-8449-53C042C76169&formato=pdf";
 
-            bckfile="Certificado_06141106141147.crt";
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap bitmap = barcodeEncoder.encodeBitmap(updf, BarcodeFormat.QR_CODE, 400, 400);
 
-            fname=Environment.getExternalStorageDirectory()+"/"+bckfile;
-            fbname="fel_esa_cert/"+bckfile;
+            File qrfile = new File(Environment.getExternalStorageDirectory(), "/qrmpos.png");
 
-            FirebaseStorage storage;
-            StorageReference storageReference, apkref;
+            FileOutputStream fos = new FileOutputStream(qrfile);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
 
-            storage = FirebaseStorage.getInstance();
-            storageReference = storage.getReference();
-
-            apkref = storageReference.child(fbname);
-            file=new File(fname);
-            Uri localfile = Uri.fromFile(file);
-
-            apkref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    String ss=uri.toString();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    msgbox("Error de descarga2: \n"+exception.getMessage());
-                }
-            });
-
-            apkref.getFile(localfile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-
-                    if (file.exists()) {
-                        msgbox("LLave de certificacion descargada");
-                    } else {
-                        msgbox("No se pudo descargar archivo por falta de conexión al internet.");
-                    }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    msgbox("Error de descarga: \n"+exception.getMessage());
-                }
-            });
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1542,6 +1508,22 @@ public class MainActivity extends PBase {
         Dialog.show();
         */
     }
+
+    //endregion
+
+    //region Test Button
+
+    //region Font3x5
+
+    private void test3x5() {
+        try {
+            clsFont3x5 ft=new clsFont3x5(36);
+            ft.get(123);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
 
     //endregion
 

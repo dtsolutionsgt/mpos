@@ -42,9 +42,9 @@ public class CliPosSVCons extends PBase {
             txtNom.setText("");
             txtEmail.setText("");
 
-            if (clinue) {
-                codigo=nitnumsv(gl.gNITCliente);
-            } else {
+            //if (clinue) {
+            //    codigo=nitnumsv(gl.gNITCliente);
+            //} else {
                 try {
                     P_clienteObj.fill("WHERE (NIT='"+gl.gNITCliente+"')");
                     if (P_clienteObj.count>0) {
@@ -53,21 +53,24 @@ public class CliPosSVCons extends PBase {
                         txtEmail.setText(P_clienteObj.first().email);
                     } else {
                         codigo=nitnumsv(gl.gNITCliente);
+                        txtNom.setText("C.F.");
                     }
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }
-            }
+            //}
 
-            txtNom.setText("C.F.");txtNom.selectAll();txtNom.requestFocus();
+            txtNom.selectAll();txtNom.requestFocus();
             txtNom.setSelection(txtNom.getText().length());
 
-            clsP_sucursalObj  P_sucursalObj=new clsP_sucursalObj(this,Con,db);
-            P_sucursalObj.fill("WHERE (CODIGO_SUCURSAL="+gl.tienda+")");
-            if (P_sucursalObj.count>0) {
-                txtEmail.setText(P_sucursalObj.first().correo);
-            } else {
-                txtEmail.setText("");
+            if (txtEmail.getText().toString().isEmpty()) {
+                clsP_sucursalObj P_sucursalObj = new clsP_sucursalObj(this, Con, db);
+                P_sucursalObj.fill("WHERE (CODIGO_SUCURSAL=" + gl.tienda + ")");
+                if (P_sucursalObj.count > 0) {
+                    txtEmail.setText(P_sucursalObj.first().correo);
+                } else {
+                    txtEmail.setText("");
+                }
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

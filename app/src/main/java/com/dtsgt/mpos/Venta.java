@@ -34,6 +34,7 @@ import android.widget.ListView;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsVenta;
+import com.dtsgt.base.clsFont3x5;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsBonFiltro;
@@ -171,6 +172,7 @@ public class Venta extends PBase {
     private clsRepBuilder rep;
     private printer prn;
     private clsVenta vitem;
+    private clsFont3x5 ft3x5;
 
     private int browse;
     private double cant,desc,mdesc,prec,precsin,imp,impval,pimp, descLinea, descMarca;
@@ -184,7 +186,7 @@ public class Venta extends PBase {
     private boolean horiz=true,porcentaje,domenvio,modoHN,modoSV,modoPA,desclinmsg;
     private int codigo_cliente, emp,pedidoscant,cod_prod,mododocesa,cort_user;
     private String cliid,saveprodid,pedcorel,prodlinea;
-    private int famid = -1;
+    private int famid = -1,numero_orden;
     public boolean DescPorProducto, DesPorLinea = false, DesPorMarca = false;
     public int pTipo = -1,modo_supervis;
     public double auxCant=0;
@@ -328,6 +330,8 @@ public class Venta extends PBase {
             validaEstadoLicencia();
 
             //if (getEstadoLicencia()==0) msgbox("Su licencia ha expirado.");
+
+            ft3x5=new clsFont3x5(32);
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -1318,6 +1322,8 @@ public class Venta extends PBase {
                 msgbox("Precio 0, no se puede vender");return false;
             }
 
+            if (impval<0.01) impval=0;
+
             ins.init("T_VENTA");
             counter++;
             ins.add("PRODUCTO",prodid);
@@ -1408,6 +1414,7 @@ public class Venta extends PBase {
         try {
 
             if (sinimp) precdoc=precsin; else precdoc=prec;
+            if (impval<0.01) impval=0;
 
             ins.init("T_VENTA");
             ins.add("PRODUCTO",prodid);
@@ -1733,6 +1740,14 @@ public class Venta extends PBase {
                 }
             }
 
+            if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                if (gl.sal_PER) {
+                    cambiaPrecioSinImpuesto();
+                } else {
+                    cambiaPrecioConImpuesto();
+                }
+            }
+
             gl.gstr="";
             browse=1;
 
@@ -1783,6 +1798,48 @@ public class Venta extends PBase {
         } catch (Exception e){
             gridViewOpciones.setEnabled(true);
             mu.msgbox("finishOrder: "+e.getMessage());
+        }
+    }
+
+    public void cambiaPrecioConImpuesto() {
+        try {
+            T_ventaObj.fill();
+            for (clsClasses.clsT_venta itm: T_ventaObj.items) {
+                itm.preciodoc=itm.precio;
+                T_ventaObj.update(itm);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public void cambiaPrecioSinImpuesto() {
+        double vimp;
+
+        try {
+            try {
+                sql="SELECT VALOR FROM P_IMPUESTO  WHERE (VALOR>0)";
+                Cursor DT=Con.OpenDT(sql);
+                DT.moveToFirst();
+                vimp=DT.getDouble(0);
+            } catch (Exception e) {
+                vimp=0;
+            }
+
+            vimp=1+vimp/100;
+
+            T_ventaObj.fill();
+            for (clsClasses.clsT_venta itm: T_ventaObj.items) {
+                if (itm.imp>0) {
+                    itm.preciodoc=mu.round2(itm.precio/vimp);
+                } else {
+                    itm.preciodoc=itm.precio;
+                }
+
+                T_ventaObj.update(itm);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -3502,7 +3559,15 @@ public class Venta extends PBase {
 
                         rep.line24();
                         rep.add("");
+                        rep.add("      ORDEN # "+gl.ref1.toUpperCase());
                         rep.add("");
+
+                        ft3x5.get(numero_orden);
+                        rep.add(ft3x5.L1);
+                        rep.add(ft3x5.L2);
+                        rep.add(ft3x5.L3);
+                        rep.add(ft3x5.L4);
+                        rep.add(ft3x5.L5);
                         rep.add("");
 
                         ln = rep.items.size();
@@ -3909,10 +3974,11 @@ public class Venta extends PBase {
 
                 ordennum=ordennum % gl.peMaxOrden;if (ordennum==0) ordennum=1;
                 ordencod=""+ordennum;
-
+                numero_orden=ordennum;
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 ordencod="---";
+                numero_orden=0;
             }
 
             gl.ref1=ordencod.toUpperCase();
@@ -3990,6 +4056,7 @@ public class Venta extends PBase {
                 wso.openDTCursor.moveToFirst();
                 nord_orig=wso.openDTCursor.getInt(0);
                 nord=nord_orig % gl.peMaxOrden;if (nord==0) nord=1;
+                numero_orden=nord;
                 nid=""+nord;
                 gl.ref1=nid;lblAlm.setText("#"+gl.ref1);
 

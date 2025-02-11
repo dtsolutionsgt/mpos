@@ -289,7 +289,8 @@ public class FELFacturaSV extends PBase {
 
             jfact.Factura(fel.fel_codigo_establecimiento);
 
-            if (tipodoc.equalsIgnoreCase("N")) {
+            //if (tipodoc.equalsIgnoreCase("N")) {
+
                 try {
                     D_facturafObj.fill("WHERE (COREL='" + felcorel + "')");
 
@@ -299,10 +300,9 @@ public class FELFacturaSV extends PBase {
 
                     jfact.agregarReceptor(cnom, cnit, ccor);
                 } catch (Exception e) {
-                    msgbox(new Object() {
-                    }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+                    msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
                 }
-            }
+            //}
 
             D_facturadObj.fill("WHERE (COREL='" + felcorel + "')");
             for (int i = 0; i < D_facturadObj.count; i++) {
@@ -317,6 +317,7 @@ public class FELFacturaSV extends PBase {
             jfact.agregarAdenda(" ");
 
             jfact.json();
+
         } catch (Exception e) {
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
@@ -373,8 +374,7 @@ public class FELFacturaSV extends PBase {
             String sj = jcred.json;
             sj = sj + "";
         } catch (Exception e) {
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
 
