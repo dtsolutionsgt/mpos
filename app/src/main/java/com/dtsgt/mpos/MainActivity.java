@@ -44,6 +44,7 @@ import androidx.core.app.ActivityCompat;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatosVersion;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.base.clsFont3x5;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsKeybHandler;
@@ -74,7 +75,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
 
-    private String  parVer = "4.10.2.2";
+    private String  parVer = "4.10.3.0";
     private boolean bloqueo_venta=false;
 
     private Typeface typeface;
@@ -381,7 +382,8 @@ public class MainActivity extends PBase {
     }
 
     public void doFragTest(View view) {
-        startActivity(new Intent(this,FragmentTest.class));
+        //startActivity(new Intent(this,FragmentTest.class));
+        test3x5();
     }
 
     private void setHandlers() {
@@ -1335,7 +1337,19 @@ public class MainActivity extends PBase {
 
     //region Test Button
 
+    //region Font3x5
 
+    private void test3x5() {
+        try {
+            clsFont3x5 ft=new clsFont3x5(36);
+            ft.get(123);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+
+    //endregion
 
     //region Custom dialog
 
