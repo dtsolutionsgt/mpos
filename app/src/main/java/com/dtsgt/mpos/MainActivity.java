@@ -90,6 +90,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+
 public class MainActivity extends PBase {
 
     private GridView gridView;
