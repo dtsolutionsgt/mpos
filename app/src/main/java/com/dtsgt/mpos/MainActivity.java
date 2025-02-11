@@ -55,6 +55,7 @@ import androidx.core.app.NotificationCompat;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatosVersion;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.base.clsFont3x5;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsKeybHandler;
@@ -447,7 +448,8 @@ public class MainActivity extends PBase {
     }
 
     public void doFragTest(View view) {
-        startActivity(new Intent(this,FragmentTest.class));
+        //startActivity(new Intent(this,FragmentTest.class));
+        test3x5();
     }
 
     private void setHandlers() {
@@ -1505,6 +1507,22 @@ public class MainActivity extends PBase {
         Dialog.show();
         */
     }
+
+    //endregion
+
+    //region Test Button
+
+    //region Font3x5
+
+    private void test3x5() {
+        try {
+            clsFont3x5 ft=new clsFont3x5(36);
+            ft.get(123);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
 
     //endregion
 

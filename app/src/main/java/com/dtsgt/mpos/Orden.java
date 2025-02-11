@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsOrden;
+import com.dtsgt.base.clsFont3x5;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsBonFiltro;
 import com.dtsgt.classes.clsBonif;
@@ -178,6 +179,7 @@ public class Orden extends PBase {
 
 
     private clsRepBuilder rep;
+    private clsFont3x5 ft3x5;
 
     private int browse;
     private double cant,desc,mdesc,prec,precsin,imp,impval;
@@ -2826,6 +2828,19 @@ public class Orden extends PBase {
                         //}
 
                         rep.line24();
+                        rep.add("");
+
+                        if (ordenpedido) {
+                            ft3x5.get(numpedido);
+                        } else {
+                            ft3x5.get(ordennum);
+                        }
+                        rep.add(ft3x5.L1);
+                        rep.add(ft3x5.L2);
+                        rep.add(ft3x5.L3);
+                        rep.add(ft3x5.L4);
+                        rep.add(ft3x5.L5);
+
                         rep.add("");
                         if (gl.mesa_grupo == 19) rep.add("PARA LLEVAR");
                         if (ordenpedido) rep.add("PARA LLEVAR");
