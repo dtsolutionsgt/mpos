@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
@@ -25,6 +26,7 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_facturaObj;
+import com.dtsgt.classes.clsD_factura_fel_paisObj;
 import com.dtsgt.classes.clsD_mov_almacenObj;
 import com.dtsgt.classes.clsD_movd_almacenObj;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
@@ -41,6 +43,8 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.firebase.fbOrdenCuenta;
 import com.dtsgt.mpos.PrintView;
 import com.dtsgt.mpos.R;
+import com.google.zxing.BarcodeFormat;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import org.apache.commons.io.FileUtils;
 
@@ -2020,7 +2024,13 @@ public class AppMethods {
 					}
 				}
 				if (gl.peImpFactLan) print3nstar_print();
-				if (gl.peImpFactUSB) print3nstarnusb();
+				if (gl.peImpFactUSB) {
+					if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+						printposusb();
+					} else {
+						print3nstarnusb();
+					}
+				}
 			}
 
 			if (gl.prtipo.equalsIgnoreCase("HP Engage USB")) {
@@ -2130,6 +2140,15 @@ public class AppMethods {
 	public void print3nstarnusb() {
 		try {
 			Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.prn3nsusb");
+			cont.startActivity(intent);
+		} catch (Exception e) {
+			toastlong("El controlador de 3nStar USB no está instalado");
+		}
+	}
+
+	public void printposusb() {
+		try {
+			Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.posprintusb");
 			cont.startActivity(intent);
 		} catch (Exception e) {
 			toastlong("El controlador de 3nStar USB no está instalado");
@@ -2764,6 +2783,28 @@ public class AppMethods {
 		}
 
 		return false;
+	}
+
+	public void qrsalvador(String idfact) {
+		try {
+
+			clsD_factura_fel_paisObj D_factura_fel_paisObj=new clsD_factura_fel_paisObj(cont,Con,db);
+			D_factura_fel_paisObj.fill("WHERE (COREL='"+idfact+"')");
+
+			String updf=D_factura_fel_paisObj.first().sv_pdf_path;
+
+			BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+			Bitmap bitmap = barcodeEncoder.encodeBitmap(updf, BarcodeFormat.QR_CODE, 400, 400);
+
+			File qrfile = new File(Environment.getExternalStorageDirectory(), "/qrmpos.png");
+
+			FileOutputStream fos = new FileOutputStream(qrfile);
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+			fos.flush();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 	}
 
 	//endregion

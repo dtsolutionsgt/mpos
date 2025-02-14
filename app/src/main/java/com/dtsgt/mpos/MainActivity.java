@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -24,11 +23,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
@@ -36,7 +33,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.webkit.URLUtil;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -48,14 +44,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatosVersion;
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.base.clsFont3x5;
+import com.dtsgt.classes.clsFont3x5;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsKeybHandler;
@@ -64,14 +59,10 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
-import com.dtsgt.felesa.FELESATest;
 import com.dtsgt.firebase.fbBase;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.LA_Login;
 import com.dtsgt.webservice.srvBase;
-import com.dtsgt.webservice.startMainTimer;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -84,9 +75,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
@@ -1513,8 +1501,6 @@ public class MainActivity extends PBase {
 
     //region Test Button
 
-    //region Font3x5
-
     private void test3x5() {
         try {
             clsFont3x5 ft=new clsFont3x5(36);
@@ -1523,7 +1509,6 @@ public class MainActivity extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
-
 
     //endregion
 
