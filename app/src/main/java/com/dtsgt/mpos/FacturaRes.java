@@ -1077,12 +1077,19 @@ public class FacturaRes extends PBase {
 				fdoc.tiendanit=gl.tiendanit;
 
 				fdoc.idpais=gl.codigo_pais;
+				fdoc.qrsalvador=false;
 				if (gl.codigo_pais.equalsIgnoreCase("HN")) cargaTotalesHonduras();
 				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
 					cargaTotalesSalvador();
 					//fdoc.sal_nit="NIT: ";
 					fdoc.sal_nit="DUI: ";
 					if (gl.sal_NRC) fdoc.sal_nit="NRC: ";
+
+					if (gl.peImpFactUSB) {
+						fdoc.qrsalvador=true;
+						app.qrsalvador(corel);
+					}
+
 				}
 				if (gl.codigo_pais.equalsIgnoreCase("PA")) {
 					cargaTotalesSalvador();

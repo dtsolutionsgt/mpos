@@ -277,7 +277,7 @@ public class WSRec extends PBase {
                         break;
                     case 10:
                         if (gl.peCargarClientes){
-                            callMethod("GetP_CLIENTE", "EMPRESA", gl.emp, "FECHA", fechasync);
+                            //callMethod("GetP_CLIENTE", "EMPRESA", gl.emp, "FECHA", fechasync);
                         }
                         break;
                     case 11:
@@ -516,7 +516,7 @@ public class WSRec extends PBase {
                     execws(10);break;
                 case 10:
                     if (gl.peCargarClientes) {
-                        processCliente();
+                        //processCliente();
                     }
                     if (ws.errorflag) {
                         processComplete();break;

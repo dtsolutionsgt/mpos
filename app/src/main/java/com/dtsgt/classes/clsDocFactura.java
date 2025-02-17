@@ -184,20 +184,6 @@ public class clsDocFactura extends clsDocument {
                 li = numini;
                 lf = numfin;
 
-                /*
-                if (numini.length() < 8) {
-                    long nn = 100000000 + Long.parseLong(numini);
-                    li = "" + nn;
-                    li = li.substring(1, 9);
-                } else li = numini;
-
-                if (numfin.length() < 8) {
-                    long nn = 100000000 + Long.parseLong(numfin);
-                    lf = "" + nn;
-                    lf = lf.substring(1, 9);
-                } else lf = numfin;
-                */
-
                 resrango = DT.getString(3) + "-" + li + " al " + lf;
 
             } else if (pais.equalsIgnoreCase("SV")) {
@@ -466,17 +452,18 @@ public class clsDocFactura extends clsDocument {
 
         if (pais.equalsIgnoreCase("GT")) {
             nit_cliente=nit_cliente.replace("-","");
-        } else {
-
         }
 
         nit_cliente=nit_cliente.replace(".","");
         nit_cliente=nit_cliente.replace(" ","");
         nit_cliente=nit_cliente.toUpperCase();
 
-        QRCodeStr= "https://felpub.c.sat.gob.gt/verificador-web/publico/vistas/verificacionDte.jsf?tipo=autorizacion&" +
-                "numero="+ Numero_Factura + "&emisor="+ nit_emisor +"&receptor="+ nit_cliente +"&monto=" + stot;
-
+        if (pais.equalsIgnoreCase("GT")) {
+            QRCodeStr= "https://felpub.c.sat.gob.gt/verificador-web/publico/vistas/verificacionDte.jsf?tipo=autorizacion&" +
+                    "numero="+ Numero_Factura + "&emisor="+ nit_emisor +"&receptor="+ nit_cliente +"&monto=" + stot;
+        } else {
+            QRCodeStr="";
+        }
 
 		return true;
 	}
@@ -1512,6 +1499,14 @@ public class clsDocFactura extends clsDocument {
 
         direccionDomicilio();
 
+        if (qrsalvador) {
+            rep.add("DESCARGA TU DOCUMENTO EN ESTE ENLACE");
+            rep.add("");
+            rep.add("@@pic qrmpos.png");
+            rep.add("");
+            rep.add("");
+        }
+
         return super.buildFooter();
     }
 
@@ -1587,6 +1582,14 @@ public class clsDocFactura extends clsDocument {
         rep.add("");
 
         direccionDomicilio();
+
+        if (qrsalvador) {
+            rep.add("DESCARGA TU DOCUMENTO EN ESTE ENLACE");
+            rep.add("");
+            rep.add("@@pic qrmpos.png");
+            rep.add("");
+            rep.add("");
+        }
 
         return super.buildFooter();
     }
