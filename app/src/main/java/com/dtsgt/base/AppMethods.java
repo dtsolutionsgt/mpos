@@ -2025,11 +2025,8 @@ public class AppMethods {
 				}
 				if (gl.peImpFactLan) print3nstar_print();
 				if (gl.peImpFactUSB) {
-					if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-						printposusb();
-					} else {
-						print3nstarnusb();
-					}
+					//if (gl.codigo_pais.equalsIgnoreCase("SV")) printposusb(); else print3nstarnusb();
+					printposusb();
 				}
 			}
 

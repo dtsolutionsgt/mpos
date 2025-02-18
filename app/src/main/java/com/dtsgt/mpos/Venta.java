@@ -1310,9 +1310,9 @@ public class Venta extends PBase {
             if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                 precdoc = precsin;
             } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-
+                //
             } else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
-
+                precdoc = precsin;
             } else {
                 precdoc=prec;
             }
@@ -1629,7 +1629,7 @@ public class Venta extends PBase {
                     upd.add("PRECIODOC", prec);
                 }
             } else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
-                upd.add("PRECIODOC", prec);
+                upd.add("PRECIODOC", precsin);
             } else {
                 upd.add("PRECIODOC",prec);
             }

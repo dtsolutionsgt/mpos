@@ -1595,6 +1595,13 @@ public class FacturaRes extends PBase {
 						dt=Con.OpenDT(sql);
 						dt.moveToFirst();
 						fh_imp1=dt.getDouble(0);
+
+					} else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+
+						sql="SELECT SUM(IMP) FROM T_VENTA WHERE (VAL1="+fh_val1+")";
+						dt=Con.OpenDT(sql);
+						dt.moveToFirst();
+						fh_imp1=dt.getDouble(0);
 					}
 
 				} else {
