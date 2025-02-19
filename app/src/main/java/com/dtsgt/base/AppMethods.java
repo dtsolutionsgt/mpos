@@ -2160,9 +2160,7 @@ public class AppMethods {
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.hp.retail.test");
             cont.startActivity(intent);
         } catch (Exception e) {
-			//#EJC20200627: Modifique mensaje, menos especifico.
-            msgbox("El controlador de impresiónUSB no está instalado (Ref -> HPEngage?) ");
-            //msgbox("El controlador de HP Engage USB no está instalado\n"+e.getMessage());
+            msgbox("El controlador de impresiónUSB no está instalado (Ref -> HPEngage?) ");//msgbox("El controlador de HP Engage USB no está instalado\n"+e.getMessage());
         }
     }
 
