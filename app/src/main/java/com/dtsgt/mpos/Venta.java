@@ -1714,7 +1714,6 @@ public class Venta extends PBase {
 
             } catch (Exception e){
                 gridViewOpciones.setEnabled(true);
-                addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                 mu.msgbox("finishOrder: "+e.getMessage());
             }
 
@@ -5353,6 +5352,8 @@ public class Venta extends PBase {
             } else {
                 return validaCorelTicket();
             }
+        } else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+            return disponibleCorelFactura();
         }
 
         return false;
