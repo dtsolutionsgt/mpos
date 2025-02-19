@@ -1786,14 +1786,14 @@ public class Venta extends PBase {
 
             } catch (Exception e){
                 gridViewOpciones.setEnabled(true);
-                addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                 mu.msgbox("finishOrder: "+e.getMessage());
             }
 
             if (gl.codigo_cliente==0) {
                 toast("Falta definir cliente "+gl.codigo_cliente);
                 browse=8;
-                startActivity(new Intent(this,Clientes.class));
+                //startActivity(new Intent(this,Clientes.class));
+                startActivity(new Intent(this,CliPos.class));
                 return;
             }
 
@@ -5098,6 +5098,8 @@ public class Venta extends PBase {
             } else {
                 return validaCorelTicket();
             }
+        } else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+            return disponibleCorelFactura();
         }
 
         return false;
