@@ -486,6 +486,19 @@ public class OrdenMenu extends PBase {
                 tot=prec*cant;
             }
 
+            double precsin=prec-impval;
+            double precdoc;
+
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                precdoc=precsin;
+            } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                precdoc=precsin;
+            } else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+                precdoc=precsin;
+            } else {
+                precdoc=prec;
+            }
+
             db.beginTransaction();
 
             newid=du.getOrdenCorel(gl.codigo_ruta);
@@ -531,12 +544,15 @@ public class OrdenMenu extends PBase {
             fbitem.des=desc;
             fbitem.desmon=descmon;
             fbitem.total=tot;
-            fbitem.preciodoc=prec;
+            //fbitem.preciodoc=prec;
+            fbitem.preciodoc=precdoc;
             fbitem.peso=0;
 
             if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                 fbitem.val1=pimp;
             } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                fbitem.val1=pimp;
+            } else  if (gl.codigo_pais.equalsIgnoreCase("PA")) {
                 fbitem.val1=pimp;
             } else {
                 fbitem.val1=0;

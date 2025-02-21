@@ -61,8 +61,6 @@ public class VentaEdit extends PBase {
         };
         mtimer.postDelayed(mrunner,200);
 
-
-
         lbl1.setText(gl.gstr);
         lbl2.setText("" + cant);
         lbl3.setText("Disponible : ");

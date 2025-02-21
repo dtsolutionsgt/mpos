@@ -1150,6 +1150,8 @@ public class Orden extends PBase {
                 precdoc=precsin;
             } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
                 precdoc=precsin;
+            } else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+                precdoc=precsin;
             } else {
                 precdoc=prec;
             }
@@ -1180,6 +1182,8 @@ public class Orden extends PBase {
             if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                 fbitem.val1=pimp;
             } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                fbitem.val1=pimp;
+            } else  if (gl.codigo_pais.equalsIgnoreCase("PA")) {
                 fbitem.val1=pimp;
             } else {
                 fbitem.val1=0;
@@ -1300,6 +1304,8 @@ public class Orden extends PBase {
             if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                 precdoc=precsin;
             } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                precdoc=precsin;
+            } else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
                 precdoc=precsin;
             } else {
                 precdoc=prec;
@@ -1636,6 +1642,8 @@ public class Orden extends PBase {
                 precdoc=precsin;
             } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
                 precdoc=precsin;
+            } else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+                precdoc=precsin;
             } else {
                 precdoc=prec;
             }
@@ -1707,6 +1715,8 @@ public class Orden extends PBase {
             if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                 precdoc=precsin;
             } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                precdoc=precsin;
+            } else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
                 precdoc=precsin;
             } else {
                 precdoc=prec;

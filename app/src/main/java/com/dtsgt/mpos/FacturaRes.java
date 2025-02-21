@@ -869,13 +869,16 @@ public class FacturaRes extends PBase {
 
 				tot = tot + propina;
 				tot = mu.round2(tot);
-				double stotsimp = 0;
+				double stotsimp = stot;
 
-				stotsimp = stot;
-				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+			    if (gl.codigo_pais.equalsIgnoreCase("SV")) {
 					if (gl.sal_PER) {
 						stotsimp = tot - mu.round2(totimp) - mu.round2(propina) - mu.round2(descmon);
 					}
+				}
+
+				if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+					stotsimp = tot - mu.round2(totimp) - mu.round2(propina) - mu.round2(descmon);
 				}
 
 				item = clsCls.new clsCDB();

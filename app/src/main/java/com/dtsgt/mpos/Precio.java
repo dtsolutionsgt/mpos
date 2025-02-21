@@ -297,7 +297,8 @@ public class Precio {
 		pr=pr*(1+vimp);pr=pr+0.000001;
 		stot=pr;
 
-		stot=mu.round2dec(stot);
+		//stot=mu.round2dec(stot);
+		stot=mu.round6dec(stot);
 
 		if (imp>0) {
 			impval=preciobase*imp/100;  //JP20230911
@@ -325,7 +326,8 @@ public class Precio {
 			precsin=preciobase;//JP20230911
 		}
 
-		totsin=mu.round2dec(precsin);  //JP20230911
+		//totsin=mu.round2dec(precsin);  //JP20230911
+		totsin=mu.round6dec(precsin);  //JP20230911
 		precsin=totsin;
 
 	}
@@ -353,10 +355,11 @@ public class Precio {
 		tsimp = mu.round2dec(pr);//JP20230911
 
 		imp = getImp();
-		pr = pr * (1 + imp / 100);
+		double impval=pr * imp / 100;
+		pr = pr  + impval;
+		pr = mu.round2(pr);
 
 		stot = pr;
-		stot = mu.round(stot, ndec);
 
 		if (imp > 0) {
 			//impval=stot-tsimp;  //JP20230911

@@ -80,7 +80,6 @@ public class ProdMenu extends PBase {
         newitem = gl.newmenuitem;
         idorden="VENTA";
 
-        precorig=gl.menuprecio;
         precorig=prodPrecioItem(app.codigoProducto(gl.prodid));
 
         lbl1.setText(gl.gstr);
@@ -583,6 +582,16 @@ public class ProdMenu extends PBase {
 
             prec=precnuevo;
             tot=cant*prec;tot=mu.round2(tot);
+            double precsin=prec-impval;
+
+            double precdoc=prec;
+            if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                if (gl.sal_PER) {
+                    precdoc=precsin;
+                } else {
+                    precdoc=prec;
+                }
+            }
 
             ins.init("T_VENTA");
             ins.add("PRODUCTO",gl.prodid);
@@ -596,12 +605,28 @@ public class ProdMenu extends PBase {
             ins.add("DES",desc);
             ins.add("DESMON",descmon);
             ins.add("TOTAL",tot);
-            ins.add("PRECIODOC",prec);
+
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                ins.add("PRECIODOC", precdoc);
+            } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                if (gl.sal_PER) {
+                    ins.add("PRECIODOC", precdoc);
+                } else {
+                    ins.add("PRECIODOC", prec);
+                }
+            } else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+                ins.add("PRECIODOC", precsin);
+            } else {
+                ins.add("PRECIODOC",prec);
+            }
+
             ins.add("PESO",0);
 
             if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                 ins.add("VAL1", pimp);
             } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                ins.add("VAL1", pimp);
+            } else  if (gl.codigo_pais.equalsIgnoreCase("PA")) {
                 ins.add("VAL1", pimp);
             } else {
                 ins.add("VAL1",0);
