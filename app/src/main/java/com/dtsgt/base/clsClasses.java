@@ -1212,6 +1212,11 @@ public class clsClasses {
         public int id;
     }
 
+    public class clsP_panama_ubic {
+        public String codigo_ubic;
+        public String nombre;
+    }
+
     public class clsP_paramext {
         public int id;
         public String nombre;

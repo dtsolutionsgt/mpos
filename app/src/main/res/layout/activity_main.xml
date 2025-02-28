@@ -729,7 +729,7 @@
             android:layout_marginBottom="10dp"
             android:onClick="doFPTest"
             android:text="Button"
-            android:visibility="invisible" />
+            android:visibility="visible" />
 
 
     </RelativeLayout>

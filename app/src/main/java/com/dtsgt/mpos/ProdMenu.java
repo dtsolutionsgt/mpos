@@ -554,6 +554,10 @@ public class ProdMenu extends PBase {
                 tot=prec*cant;
             }
 
+            //impval=mu.round2dec(impval); //JP20230911
+            impval=impval*cant;
+            impval=mu.round6dec(impval); //JP20230911
+
             db.beginTransaction();
 
             if (!newitem){

@@ -297,8 +297,8 @@ public class Precio {
 		pr=pr*(1+vimp);pr=pr+0.000001;
 		stot=pr;
 
-		//stot=mu.round2dec(stot);
-		stot=mu.round6dec(stot);
+		stot=mu.round2dec(stot);
+		//stot=mu.round6dec(stot);
 
 		if (imp>0) {
 			impval=preciobase*imp/100;  //JP20230911

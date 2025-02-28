@@ -1093,7 +1093,7 @@ public class Orden extends PBase {
 
         try {
             prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, 0,um,gl.prodcod);
-            prec=mu.round(prec,2);
+            prec=mu.round2dec(prec);
 
             pimp=prc.imp;
         } catch (Exception e){
@@ -1133,7 +1133,7 @@ public class Orden extends PBase {
 
         cantbas=cant*fact;
         peso=mu.round(gl.dpeso*gl.umfactor,gl.peDec);
-        prodtot=mu.round(prec*cant,2);
+        prodtot=mu.round2dec(prec*cant);
 
         try {
             sql="SELECT MAX(ID) FROM T_ORDEN WHERE (COREL='"+idorden+"')";

@@ -420,25 +420,13 @@ public class MainActivity extends PBase {
     }
 
     public void doFPTest(View view) {
-        //startActivity(new Intent(this, FBTest.class));
-        try {
-            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.mposupd");
-            intent.putExtra("filename","mpos.apk");
-            this.startActivity(intent);
-        } catch (Exception e) {
-            msgbox("No está instalada aplicación para actualización de versiónes, por favor informe soporte.");
-        }
+        startActivity(new Intent(this, CliPanama.class));
     }
 
     public void doFELESA(View view) {
         dodwn();
         //startActivity(new Intent(this, FELESATest.class));
         //felESA();
-    }
-
-    public void doFragTest(View view) {
-        //startActivity(new Intent(this,FragmentTest.class));
-        test3x5();
     }
 
     private void setHandlers() {
@@ -625,43 +613,11 @@ public class MainActivity extends PBase {
             msgbox(e.getMessage());
         }
 
-        /*
-        if (!gl.peFEL.equals("SIN FEL") && !gl.peFEL.isEmpty()) {
-            imgFel.setVisibility(View.VISIBLE);
-        }else{
-            imgFel.setVisibility(View.GONE);
-        }
-         */
-
         configBase();
 
         llenaUsuarios();
 
         if (gl.pePedidos) iniciaDomicilio();
-
-
-
-        /*
-
-         if (gl.pePedidos | gl.pelCajaRecep) {
-            String params = gl.wsurl + "#" + gl.emp + "#" + gl.tienda;
-            startMainTimer.startService(this, params);
-        }
-
-        if (gl.pePedidos) {
-            String params = gl.wsurl + "#" + gl.emp + "#" + gl.tienda;
-            startPedidosImport.startService(this, params);
-            toasttop("Captura de pedidos activada");
-        }
-
-        if (gl.pelCajaRecep) {
-            String params = gl.wsurl + "#" + gl.emp + "#" + gl.tienda;
-            startOrdenImport.startService(this, params);
-            toasttop("Captura de ordenes activada");
-        }
-        */
-
-
 
 
     }
@@ -1501,14 +1457,6 @@ public class MainActivity extends PBase {
 
     //region Test Button
 
-    private void test3x5() {
-        try {
-            clsFont3x5 ft=new clsFont3x5(36);
-            ft.get(123);
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
 
     //endregion
 

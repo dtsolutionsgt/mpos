@@ -1282,7 +1282,7 @@ public class Venta extends PBase {
         } else if (gl.codigo_pais.equalsIgnoreCase("PA")) {
             prec = prodPrecioBaseImp(app.codigoProducto(prodid));
         }
-        prec=mu.round(prec,2);
+        prec=mu.round2dec(prec);
 
         cantbas=cant*fact;
         peso=mu.round(gl.dpeso*gl.umfactor,gl.peDec);
@@ -4788,11 +4788,15 @@ public class Venta extends PBase {
             vimp=vimp1+vimp2+vimp3;
             vimp=vimp*0.01;
             pr=pr*(1+vimp);pr=pr+0.000001;
-            //pr=mu.round2(pr);
+            pr=mu.round2dec(pr);
+
+            /*
+            pr=pr+0.000001;
             prr=pr*100;
             prri=Math.round(prr);
             prr=(double) prri;
             pr=prr*0.01;
+            */
 
             if (DT!=null) DT.close();
         } catch (Exception e) {

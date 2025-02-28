@@ -184,6 +184,17 @@ public class BaseDatosVersion {
 
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [P_panama_ubic] ("+
+                    "CODIGO_UBIC TEXT NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_UBIC])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX P_panama_ubic_idx1 ON P_panama_ubic(NOMBRE)";db.execSQL(sql);
+        } catch (Exception e) { }
+
 
         try {
 
@@ -194,7 +205,6 @@ public class BaseDatosVersion {
         } catch (Exception e) { }
 
     }
-
 
     private void update02() {
 

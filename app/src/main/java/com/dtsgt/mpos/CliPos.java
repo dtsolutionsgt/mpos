@@ -64,8 +64,9 @@ public class CliPos extends PBase {
 	private String sNITCliente, sNombreCliente, sDireccionCliente, sCorreoCliente,
             sTelCliente,wspnerror,pedcorel,corelorden;
 	private boolean consFinal=false,idleped=true;
-	private boolean request_exit=false,bloqueado,domicilio,nrslt;
-	private int cantped;
+	private boolean request_exit=false,bloqueado,domicilio,nrslt,NitValidadoInfile =false;
+
+    private int cantped;
 
     private TimerTask ptask;
     private int period=10000,delay=50;
@@ -1431,8 +1432,6 @@ public class CliPos extends PBase {
             return true;
         }
     }
-
-    private boolean NitValidadoInfile =false;
 
     private void consultaNITInfile() {
         String nc;

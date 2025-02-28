@@ -60,6 +60,7 @@ import com.dtsgt.classes.clsP_motivoajusteObj;
 import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_nivelprecio_sucursalObj;
+import com.dtsgt.classes.clsP_panama_ubicObj;
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_prodclasifmodifObj;
 import com.dtsgt.classes.clsP_prodcomboObj;
@@ -4334,8 +4335,77 @@ public class WSRec extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-        terminaStream();
+        llenaPanamaUbic();
     }
+
+    private void llenaPanamaUbic() {
+
+        if (!gl.codigo_pais.equalsIgnoreCase("PA")) {
+            terminaStream();
+            return;
+        }
+
+        try {
+            sql="SELECT CODIGO_UBIC,NOMBRE FROM P_panama_ubic";
+            wso.execute(sql,() -> { panamaUbic(); });
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            terminaStream();
+        }
+    }
+
+    private void panamaUbic() {
+        Cursor dt;
+        clsP_panama_ubicObj P_panama_ubicObj;
+        clsClasses.clsP_panama_ubic item;
+
+        try {
+            if (wso.errflag) throw new Exception(wso.error);
+
+            if (!db.isOpen()) {
+                browse=0;onResume();
+            }
+
+            dt=wso.openDTCursor;
+            P_panama_ubicObj=new clsP_panama_ubicObj(this,Con,db);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            terminaStream();return;
+        }
+
+        try {
+            db.beginTransaction();
+
+            db.execSQL("DELETE FROM P_panama_ubic");
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                while (!dt.isAfterLast()) {
+
+                    item = clsCls.new clsP_panama_ubic();
+
+                    item.codigo_ubic=dt.getString(0);
+                    item.nombre=dt.getString(1);
+
+                    P_panama_ubicObj.add(item);
+
+                    dt.moveToNext();
+                }
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            terminaStream();
+        }
+
+        terminaStream();
+
+    }
+
 
     //endregion
 

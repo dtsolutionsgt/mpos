@@ -1,10 +1,12 @@
-package com.dtsgt.felesa;
+package com.dtsgt.felpana;
 
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.dtsgt.felesa.clsFELClases;
 import com.dtsgt.mpos.PBase;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -17,11 +19,14 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class clsFactESA {
+public class clsFEPDocVal {
 
     public boolean errorflag;
-    public String  error="",estado,jsonsave,WSURL;
+    public String  error="",WSURL,RUC="";
+    public int value;
 
     private clsFELClases fclas=new clsFELClases();
     public clsFELClases.respuesta respuesta =fclas.new respuesta();
@@ -32,40 +37,153 @@ public class clsFactESA {
     private PBase parent;
     private Context cont;
 
-    private String jsfirm,corel, usrcert, llavecert;
+    Pattern rucpattern;
+
+    private String jsruc,usuario, clave_api,clave_firma ;
 
     private int responsecode,timeout=45000;
 
-    private String usuario, clave;
+    private String regexruc_patt="(([P][E][-](([-]|[0-9]){1,17})|[N][-](([-]|[0-9]){1,18})|[E][-](([-]|[0-9]){1,18})|(([-]|[0-9]){5,20}))|(((([0-9]{1})[-][A][V][-](([-]|[0-9]){1,15}))|(([0-9]{2})[-][A][V][-](([-]|[0-9]){1,14})))|((([0-9]{1,2})[-][N][T][-](([-]|[0-9]){1,15}))|(([0-9]{1,2})[-][N][T][-](([-]|[0-9]){1,14}))|([N][T][-](([-]|[0-9]){1,14}))|(([0-9]{1,2})[-][P][I][-](([-]|[0-9]){1,14}))|([P][I][-](([-]|[0-9]){1,14}))|(([0-9]){1,2}[P][I][-](([-]|[0-9]){1,14})))))?";
 
-
-    //String WSURL="https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
-
-    public clsFactESA(PBase Parent, String Usuario, String Clave, String URL) {
+    public clsFEPDocVal(PBase Parent, String Usuario, String Clave_Api, String Clave_Firma, String URL) {
         parent = Parent;
         cont = Parent;
         usuario = Usuario;
-        clave = Clave;
+        clave_api = Clave_Api;
+        clave_firma = Clave_Firma;
         WSURL=URL;
+
+        rucpattern = Pattern.compile(regexruc_patt);
     }
 
-    public void Certifica(String Corel,String json,String usr_cert,String llave_cert)  {
-        corel=Corel;
-        jsfirm=json;jsonsave=json;
-        usrcert =usr_cert;
-        llavecert =llave_cert;
+    public int validaCedula(String nced) {
+        // 1 Regular , 2 Panameño nacido en el extranjero, 3 - Extranjero con cédula
+        // 4 Naturalizado , 5 - Panameños nacidos antes de la vigencia , 6 Población indigena
 
-        AsyncCallWS wstask = new AsyncCallWS();
-        wstask.execute();
+        int rslt=0,np,ps;
+        String pp,p1,p2;
+
+        try {
+            String[] cp = nced.split("-");
+            if (cp.length!=3) return 0;
+
+            pp=cp[0];pp=pp.toUpperCase();
+            if (pp.length()>4) return 0;
+            if (cp[1].length()>6) return 0;
+            if (cp[2].length()>6) return 0;
+
+            try {
+                np=Integer.parseInt(pp);
+                if ((np>0) && (np<14)) return 1;
+            } catch (Exception e) {}
+
+            ps=pp.indexOf("PE");
+            if (ps==0) {
+                if (pp.length()==2) return 2;
+            }
+
+            ps=pp.indexOf("E");
+            if (ps==0) {
+                if (pp.length()==1) return 3;
+            }
+
+            ps=pp.indexOf("N");
+            if (ps==0) {
+                if (pp.length()==1) return 4;
+            }
+
+            ps=pp.indexOf("AV");
+            if (ps>0) {
+                if (pp.length()==3) {
+                    p1=pp.substring(0,1);
+                    p2=pp.substring(1);
+                    try {
+                        np=Integer.parseInt(p1);
+                    } catch (Exception e) {
+                        return 0;
+                    }
+                    if ((np<1) | (np>13)) return 0;
+                    return 5;
+                }
+                if (pp.length()==4) {
+                    p1=pp.substring(0,2);
+                    p2=pp.substring(2);
+                    try {
+                        np=Integer.parseInt(p1);
+                    } catch (Exception e) {
+                        return 0;
+                    }
+                    if ((np<1) | (np>13)) return 0;
+                    return 5;
+                }
+            }
+
+            ps=pp.indexOf("PI");
+            if (ps>0) {
+                if (pp.length()==3) {
+                    p1=pp.substring(0,1);
+                    p2=pp.substring(1);
+                    try {
+                        np=Integer.parseInt(p1);
+                    } catch (Exception e) {
+                        return 0;
+                    }
+                    if ((np<1) | (np>13)) return 0;
+                    return 6;
+                }
+                if (pp.length()==4) {
+                    p1=pp.substring(0,2);
+                    p2=pp.substring(2);
+                    try {
+                        np=Integer.parseInt(p1);
+                    } catch (Exception e) {
+                        return 0;
+                    }
+                    if ((np<1) | (np>13)) return 0;
+                    return 6;
+                }
+            }
+
+            return 0;
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
-    private Boolean wsExecuteF(){
+    public boolean validaRUC(String vRUC) {
+        RUC=vRUC;
+        Matcher matcher = rucpattern.matcher(vRUC);
+        return matcher.matches();
+    }
+
+    public void ValidaRUC_API(String vRUC)  {
+        RUC=vRUC;
+
+        try {
+            value=-1;
+
+            JSONObject jsdoc;
+            jsdoc = new JSONObject();
+
+            jsdoc.put("ruc",vRUC);
+            jsdoc.put("tipo_contribuyente",2);
+
+            jsruc=jsdoc.toString();
+
+            AsyncCallWS wstask = new AsyncCallWS();
+            wstask.execute();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private boolean wsExecute() {
         HttpURLConnection connection = null;
         JSONObject jObj=null;
         URL url;
-        String ekey,eval;
 
-        try {
+        try  {
+
             responsecode=0;error="";errorflag=false;
             erritems.clear();
 
@@ -77,11 +195,9 @@ public class clsFactESA {
             connection.setReadTimeout(timeout);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json");
-            //connection.setRequestProperty("usuario","06141106141147");
-            //connection.setRequestProperty("llave","3f9e4c2014c4e05e036c17b45c028605");
-            connection.setRequestProperty("usuario", usrcert);
-            connection.setRequestProperty("llave", llavecert);
-            connection.setRequestProperty("identificador",corel);
+            connection.setRequestProperty("Usuario-api", usuario);
+            connection.setRequestProperty("Llave-api", clave_api);
+            connection.setRequestProperty("Llave-firma",clave_firma);
             connection.setUseCaches (false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
@@ -107,10 +223,10 @@ public class clsFactESA {
                 error="No responde2: " + s.getMessage();
                 errorflag=true;return errorflag;
             } catch (IOException e) {
-                error=e.getMessage();errorflag=true;return null;
+                error=e.getMessage();errorflag=true;return errorflag;
             }
 
-            wr.writeBytes (jsfirm);
+            wr.writeBytes (jsruc);
             wr.flush ();
             wr.close ();
 
@@ -136,6 +252,9 @@ public class clsFactESA {
                     String jstr=sb.toString();
                     jObj = new JSONObject(jstr);
 
+                    String jsm=jObj.getString("mensaje");
+                    error=""+jsm+"\n";
+                    erritems.add(jsm);
 
                     error=error+"";
                     errorflag=true;return errorflag;
@@ -145,14 +264,12 @@ public class clsFactESA {
                 }
             }
 
-
             try {
                 responsecode =connection.getResponseCode();
             } catch (Exception e) {
                 error=e.getMessage();
                 errorflag=true;return errorflag;
             }
-
 
             if (responsecode==200 | responsecode==201) {
 
@@ -168,77 +285,10 @@ public class clsFactESA {
                 String jstr=sb.toString();
                 jObj = new JSONObject(jstr);
 
-                Boolean rslt=jObj.getBoolean("ok");
+                value=0;errorflag=false;
+                Boolean rslt=jObj.getBoolean("valido");
 
-                if (rslt) {
-                    errorflag=false;
-
-                    try {
-                        respuesta =fclas.new respuesta();
-
-                        respuesta.mensaje=jObj.getString("mensaje");
-                        estado= respuesta.mensaje;
-                        respuesta.pathpdf=jObj.getString("pdf_path");
-                        respuesta.duplicado=estado.indexOf("correctamente")<1;
-
-                        jso=jObj.getJSONObject("respuesta");
-                        respuesta.identificador=jso.getString("identificador");
-                        respuesta.codigoGeneracion=jso.getString("codigoGeneracion");
-                        respuesta.selloRecepcion=jso.getString("selloRecepcion");
-                        respuesta.numeroControl=jso.getString("numeroControl");
-                        respuesta.status=jso.getString("status");
-                        respuesta.fechaEmision=jso.getString("fechaEmision");
-
-                        jso=jObj.getJSONObject("respuesta_dgi");
-
-                        respuesta.estado=jso.getString("estado");
-                        respuesta.descripcionMsg=jso.getString("descripcionMsg");
-                        respuesta.comentarios=jso.getString("comentarios");
-
-                        JSONObject jsjs=jObj.getJSONObject("json");
-                        jso=jsjs.getJSONObject("resumen");
-
-                        respuesta.totalNoSuj=jso.getDouble("totalNoSuj");
-                        respuesta.totalExenta=jso.getDouble("totalExenta");
-                        respuesta.totalGravada=jso.getDouble("totalGravada");
-                        respuesta.subTotalVentas=jso.getDouble("subTotalVentas");
-                        respuesta.descuNoSuj=jso.getDouble("descuNoSuj");
-                        respuesta.descuExenta=jso.getDouble("descuExenta");
-                        respuesta.descuGravada=jso.getDouble("descuGravada");
-                        respuesta.porcentajeDescuento=jso.getDouble("porcentajeDescuento");
-                        respuesta.totalDescu=jso.getDouble("totalDescu");
-                        respuesta.subTotal=jso.getDouble("subTotal");
-                        respuesta.ivaRete1=jso.getDouble("ivaRete1");
-                        respuesta.reteRenta=jso.getDouble("reteRenta");
-                        respuesta.montoTotalOperacion=jso.getDouble("montoTotalOperacion");
-                        respuesta.totalNoGravado-=jso.getDouble("totalNoGravado");
-                        respuesta.totalPagar=jso.getDouble("totalPagar");
-                        respuesta.totalLetras=jso.getString("totalLetras");
-                        try {
-                            respuesta.totalIva=jso.getDouble("totalIva");
-                        } catch (Exception e) {
-                            respuesta.totalIva=0;
-                        }
-                        respuesta.saldoFavor=jso.getDouble("saldoFavor");
-                    } catch (Exception se){
-                        error="JSON error1: " + se.getMessage();
-                        errorflag=true;return errorflag;
-                    }
-
-                } else {
-                    error=" "+jObj.getString("mensaje");
-                    erritems.add("-"+error);
-                    try {
-                        jstr=jObj.getString("errores").toString();
-                        jstr=jstr.replace("{","");jstr=jstr.replace("}","");
-                        error+=jstr;
-                        erritems.add("- "+jstr);
-                    } catch (Exception eee) {
-                        error+=" error no identificado";
-                        erritems.add("-"+" error no identificado");
-                    }
-                    errorflag=true;return errorflag;
-                }
+                if (rslt) value=1;
             } else {
                 error=""+ responsecode;errorflag=true;return errorflag;
             }
@@ -251,11 +301,11 @@ public class clsFactESA {
         }
 
         return errorflag;
+
     }
 
-    private void wsFinishedF() {
+    private void wsFinished() {
         try  {
-            if (estado.isEmpty()) estado="Certificado";
             parent.felCallBack();
         } catch (Exception e) {
             e.printStackTrace();
@@ -267,10 +317,8 @@ public class clsFactESA {
         @Override
         protected Boolean doInBackground(String... params)  {
             try  {
-                wsExecuteF();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                wsExecute();
+            } catch (Exception e) {}
             return errorflag;
         }
 
@@ -278,8 +326,8 @@ public class clsFactESA {
         protected void onPostExecute(Boolean result) {
             try {
                 if (!errorflag){
-                    wsFinishedF();
-                }else{
+                    wsFinished();
+                } else{
                     parent.felCallBack();
                 }
             } catch (Exception e)  {
@@ -296,7 +344,7 @@ public class clsFactESA {
         @Override
         protected void onCancelled() {
             try {
-                errorflag=true;error+="Se agotó tiempo de certificación";
+                errorflag=true;error="Se agotó tiempo de validación";
                 parent.felCallBack();
             } catch (Exception e) {
                 String ss=e.getMessage();
@@ -308,5 +356,3 @@ public class clsFactESA {
     }
 
 }
-
-
