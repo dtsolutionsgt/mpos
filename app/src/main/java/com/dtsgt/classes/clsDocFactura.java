@@ -176,13 +176,15 @@ public class clsDocFactura extends clsDocument {
                 ff = DT.getLong(2);
                 resvence = "Fecha limite: " + sfecha_dos(ff);
                 //#EJC20181130: Se cambió el mensaje por revisión de auditor de SAT.
-                resrangot = "Rango autorizado del";
-                String numini = "" + DT.getLong(4);
-                String numfin = "" + DT.getLong(5);
-                String li, lf;
 
-                li = numini;
-                lf = numfin;
+                resrangot = "Rango autorizado del";
+                String li, lf,l;
+                long nn;
+
+                nn=100000000+DT.getLong(4);
+                l=""+nn;li=l.substring(1,9);
+                nn=100000000+DT.getLong(5);
+                l=""+nn;lf=l.substring(1,9);
 
                 resrango = DT.getString(3) + "-" + li + " al " + lf;
 
