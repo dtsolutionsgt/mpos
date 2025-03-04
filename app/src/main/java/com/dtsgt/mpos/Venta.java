@@ -6663,6 +6663,11 @@ public class Venta extends PBase {
 
                 gl.cli_muni=gl.cli_muni_suc;
                 gl.cli_depto=gl.cli_depto_suc;
+
+                if (gl.codigo_pais.equalsIgnoreCase("PA")) {
+                    gl.cli_muni="";gl.cli_depto="";
+                }
+
                 iniciaMasVendidos();
 
             } else {}

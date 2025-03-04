@@ -12,16 +12,17 @@ import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.ladapt.LA_municipio;
+import com.dtsgt.ladapt.LA_panama_ubic;
 
 import java.util.ArrayList;
 
-public class Municipio extends PBase {
+public class PanamaUbic extends PBase {
 
     private ListView listView;
     private EditText txtflt;
     private TextView lblreg;
 
-    private LA_municipio adapter;
+    private LA_panama_ubic adapter;
 
     private ArrayList<clsClasses.clsLista> items= new ArrayList<clsClasses.clsLista>();
 
@@ -32,7 +33,7 @@ public class Municipio extends PBase {
 
         try {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_municipio2);
+            setContentView(R.layout.activity_panama_ubic);
 
             super.InitBase();
 
@@ -41,17 +42,15 @@ public class Municipio extends PBase {
             lblreg = findViewById(R.id.textView331);lblreg.setText("Encontrado: "+0);
             listView.requestFocus();
 
-            sql="SELECT  P_MUNICIPIO.CODIGO, P_MUNICIPIO.CODIGO_DEPARTAMENTO, P_MUNICIPIO.NOMBRE, P_DEPARTAMENTO.NOMBRE " +
-                    "FROM P_MUNICIPIO INNER JOIN  P_DEPARTAMENTO ON P_MUNICIPIO.CODIGO_DEPARTAMENTO = P_DEPARTAMENTO.CODIGO " +
-                    "WHERE (P_MUNICIPIO.CODIGO_DEPARTAMENTO="+gl.cli_depto_suc+") ORDER BY P_MUNICIPIO.NOMBRE";
+            sql="SELECT CODIGO_UBIC,NOMBRE FROM P_panama_ubic ORDER BY NOMBRE";
             listItems();
 
             setHandlers();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-    }
 
+    }
 
     //region Events
 
@@ -61,9 +60,7 @@ public class Municipio extends PBase {
 
     public void doClear(View view) {
         txtflt.setText("");
-        sql="SELECT  P_MUNICIPIO.CODIGO, P_MUNICIPIO.CODIGO_DEPARTAMENTO, P_MUNICIPIO.NOMBRE, P_DEPARTAMENTO.NOMBRE " +
-                "FROM P_MUNICIPIO INNER JOIN  P_DEPARTAMENTO ON P_MUNICIPIO.CODIGO_DEPARTAMENTO = P_DEPARTAMENTO.CODIGO " +
-                "WHERE (1=0) ";
+        sql="SELECT CODIGO_UBIC,NOMBRE FROM P_panama_ubic ORDER BY NOMBRE";
         listItems();
     }
 
@@ -94,11 +91,9 @@ public class Municipio extends PBase {
                     String ss=s.toString().trim();
 
                     if (ss.isEmpty()) return;
-                    if (ss.length()<2) return;
+                    //if (ss.length()<2) return;
 
-                    sql="SELECT  P_MUNICIPIO.CODIGO, P_MUNICIPIO.CODIGO_DEPARTAMENTO, P_MUNICIPIO.NOMBRE, P_DEPARTAMENTO.NOMBRE " +
-                        "FROM P_MUNICIPIO INNER JOIN  P_DEPARTAMENTO ON P_MUNICIPIO.CODIGO_DEPARTAMENTO = P_DEPARTAMENTO.CODIGO " +
-                        "WHERE (P_MUNICIPIO.NOMBRE  LIKE '%"+ss+"%') ORDER BY P_MUNICIPIO.NOMBRE";
+                    sql="SELECT CODIGO_UBIC,NOMBRE FROM P_panama_ubic WHERE (NOMBRE LIKE '%"+ss+"%') ORDER BY NOMBRE";
                     listItems();
                 }
             });
@@ -115,6 +110,7 @@ public class Municipio extends PBase {
     private void listItems() {
         Cursor dt;
         clsClasses.clsLista item;
+        String u1,u2,u3;
 
         if (!idle) return;
 
@@ -122,19 +118,6 @@ public class Municipio extends PBase {
         lblreg.setText("Encontrado: "+0);
 
         try {
-            /*
-
-            String flt=txtflt.getText().toString().toUpperCase();
-
-            if (flt.isEmpty()) {
-                P_productoObj.fill();
-            } else {
-                sql="WHERE (UPPER(CODIGO) LIKE '%"+flt+"%' ) OR (UPPER(DESCCORTA) LIKE '%"+flt+"%') ORDER BY DESCCORTA LIMIT 10";
-                P_productoObj.fill(sql);
-            }
-
-             */
-
             items.clear();
             dt = Con.OpenDT(sql);
 
@@ -146,17 +129,25 @@ public class Municipio extends PBase {
 
                     item.f1=dt.getString(0);
                     item.f2=dt.getString(1);
-                    item.f3=dt.getString(2);
-                    item.f4=dt.getString(3);
 
-                    items.add(item);
+                    try {
+                        String[] pt = item.f2.split("-");
+
+                        item.f3=pt[0];
+                        item.f4=pt[1];
+                        item.f5=pt[2];
+
+                        items.add(item);
+                    } catch (Exception e) {
+                        msgbox("Ubicacion incorrecta:\n"+item.f2);
+                    }
 
                     dt.moveToNext();
                 }
             }
 
 
-            adapter=new LA_municipio(this,this,items);
+            adapter=new LA_panama_ubic(this,this,items);
             listView.setAdapter(adapter);
 
             lblreg.setText("Encontrado: "+items.size());

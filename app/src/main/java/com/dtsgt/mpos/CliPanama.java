@@ -1,5 +1,6 @@
 package com.dtsgt.mpos;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.KeyEvent;
@@ -85,7 +86,7 @@ public class CliPanama extends PBase {
 
             //if (gl.cliente_dom!=0) cargaCliente();
 
-            txtNIT.setText(" 1AV-1234-12345 ");
+            txtNIT.setText("PE-123456 ");
             parametrosPanama();
             fdval= new clsFEPDocVal(this,Usuario_FEL,LLave_API,LLave_FIRMA,URL_FEL) ;
         } catch (Exception e) {
@@ -98,8 +99,11 @@ public class CliPanama extends PBase {
         try {
             if (fdval.errorflag) throw new Exception(fdval.error);
 
-            RUC_result();
-
+            if (fdval.value==1) {
+                procesaCliente();
+            } else {
+                msgbox("RUC "+fdval.RUC+" incorrecto");
+            }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -108,13 +112,115 @@ public class CliPanama extends PBase {
     //region Events
 
     public void clienteNIT(View view) {
-        boolean flag_NRC;
+        try {
+            purgeNIT();
+            sNITCliente =txtNIT.getText().toString();
+
+            if (cbRUC.isChecked()) {
+                if (fdval.validaRUC(sNITCliente)) {
+                    if (!app.sinInternet()) {
+                        toast("API");
+                        fdval.ValidaRUC_API(sNITCliente);
+                    } else {
+                        procesaCliente();
+                    }
+                } else {
+                    msgbox("RUC "+fdval.RUC+" incorrecto.");
+                }
+            } else {
+                if (fdval.validaCedula(sNITCliente)>0) {
+                    procesaCliente();
+                } else {
+                    msgbox("Cedula incorrecta.");
+                }
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public void consFinal(View view) {
+        String ss=txtNIT.getText().toString();
+        String ddnom,ddir,dcor;
 
         purgeNIT();
         sNITCliente =txtNIT.getText().toString();
 
-        fdval.ValidaRUC_API(sNITCliente);
+        int rslt=fdval.validaCedula(sNITCliente);
+        if (rslt>0) msgbox("OK");else msgbox("FAIL");
 
+
+        //testCedula();
+
+        /*
+        try {
+            ddnom =txtNom.getText().toString();if (ddnom.isEmpty()) ddnom="Consumidor final";
+            ddir =txtRef.getText().toString();if (ddir.isEmpty()) ddir="Ciudad";
+            dcor="consumidorfinal@gmail.com";
+
+            gl.mododocesa=0;
+
+            consFinal=true;
+            gl.sal_PER=false;
+            gl.sal_NRC=false;
+            gl.sal_NIT=false;
+
+            if (agregaCliente("C.F.",ddnom,ddir,dcor,""+txtTel.getText().toString())) procesaCF() ;
+
+        } catch (Exception e) {
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+         */
+
+    }
+
+    public void doDomicilio(View view) {
+        cbllevar.setChecked(false);
+    }
+
+    public void doLlevar(View view) {
+        cbdomicilio.setChecked(false);
+    }
+
+    public void doUbic(View view) {
+        startActivity(new Intent(this,PanamaUbic.class));
+    }
+
+    private void setHandlers() {
+
+        cbdomicilio.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) cbllevar.setChecked(false);
+                    }
+                }
+        );
+
+        cbllevar.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                        if (isChecked){
+                            gl.parallevar = true;cbdomicilio.setChecked(false);
+                        } else{
+                            gl.parallevar = false;
+                        }
+                    }
+                }
+        );
+
+    }
+
+    //endregion
+
+    //region Main
+
+    private void procesaCliente() {
+
+        toast("procesaCliente");
 
         /*
         try {
@@ -186,113 +292,20 @@ public class CliPanama extends PBase {
 
             if (sTelCliente.isEmpty()) sTelCliente="";
 
-            flag_NRC=false;gl.sal_PER=false;
-            if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-                if (gl.sal_NRC) flag_NRC = true;
-            }
-
-            if (flag_NRC) {
-                msgAskCG("Gran contribuyente ");
+            gl.mododocesa=1;
+            if (!existeCliente()){
+                if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente)) procesaNIT(sNITCliente);
             } else {
-                gl.mododocesa=1;
-                if (!existeCliente()){
-                    if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente)) procesaNIT(sNITCliente);
-                } else {
-                    actualizaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente);
-                    procesaNIT(sNITCliente);
-                }
+                actualizaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente);
+                procesaNIT(sNITCliente);
             }
 
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
-         */
-    }
-
-    public void consFinal(View view) {
-        String ss=txtNIT.getText().toString();
-        String ddnom,ddir,dcor;
-
-        purgeNIT();
-        sNITCliente =txtNIT.getText().toString();
-
-        int rslt=fdval.validaCedula(sNITCliente);
-        if (rslt>0) msgbox("OK");else msgbox("FAIL");
-
-
-        //testCedula();
-
-        /*
-        try {
-            ddnom =txtNom.getText().toString();if (ddnom.isEmpty()) ddnom="Consumidor final";
-            ddir =txtRef.getText().toString();if (ddir.isEmpty()) ddir="Ciudad";
-            dcor="consumidorfinal@gmail.com";
-
-            gl.mododocesa=0;
-
-            consFinal=true;
-            gl.sal_PER=false;
-            gl.sal_NRC=false;
-            gl.sal_NIT=false;
-
-            if (agregaCliente("C.F.",ddnom,ddir,dcor,""+txtTel.getText().toString())) procesaCF() ;
-
-        } catch (Exception e) {
-            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-         */
+        */
 
     }
-
-    private void setHandlers() {
-
-        try {
-
-            txtNIT.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    int i=0;
-                    if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
-                        //consultaNITInfile();
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-            });
-
-        } catch (Exception e){ }
-
-        cbdomicilio.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) cbllevar.setChecked(false);
-                    }
-                }
-        );
-
-        cbllevar.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
-                        if (isChecked){
-                            gl.parallevar = true;cbdomicilio.setChecked(false);
-                        } else{
-                            gl.parallevar = false;
-                        }
-                    }
-                }
-        );
-
-    }
-
-    //endregion
-
-    //region Main
-
 
     //endregion
 
@@ -302,10 +315,6 @@ public class CliPanama extends PBase {
     //endregion
 
     //region Aux
-
-    private void RUC_result() {
-        if (fdval.value==1) msgbox("RUC "+fdval.RUC+" correcto");else msgbox("RUC "+fdval.RUC+" incorrecto");
-    }
 
     private void getURL() {
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";

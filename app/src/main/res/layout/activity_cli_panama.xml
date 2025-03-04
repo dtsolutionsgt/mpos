@@ -25,13 +25,14 @@
             android:layout_height="44dp"
             android:layout_below="@+id/editText2"
             android:layout_alignEnd="@+id/checkBox21"
-            android:layout_marginStart="0dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="3dp"
             android:layout_marginEnd="1dp"
             android:layout_marginBottom="0dp"
+            android:layout_toEndOf="@+id/textView317"
             android:background="@drawable/frame_btn"
             android:clickable="true"
-            android:onClick="doMuni"
+            android:onClick="doUbic"
             android:padding="3dp"
             android:src="@drawable/btn_pin" />
 
@@ -43,7 +44,9 @@
             android:layout_alignEnd="@+id/textView223"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
-            android:text="Municipio:"
+            android:clickable="true"
+            android:onClick="doUbic"
+            android:text="Ubicación:"
             android:textColor="#202020"
             android:textSize="18sp" />
 
@@ -53,10 +56,12 @@
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/editTextNumber4"
             android:layout_alignTop="@+id/editText1"
+            android:layout_alignEnd="@+id/editTextNumber4"
             android:layout_marginStart="0dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:layout_toStartOf="@+id/imageView148"
+            android:layout_marginEnd="0dp"
+            android:ellipsize="start"
+            android:maxLines="1"
             android:text="TextView"
             android:textColor="#202020"
             android:textSize="18sp"
@@ -455,6 +460,7 @@
             android:layout_marginTop="0dp"
             android:layout_marginEnd="20dp"
             android:button="@drawable/checkbox_selector"
+            android:onClick="doLlevar"
             android:text="  PARA  LLEVAR"
             android:textColor="#000000"
             android:textColorHighlight="#000000"
@@ -543,13 +549,16 @@
 
         <CheckBox
             android:id="@+id/checkBox30"
-            android:layout_width="wrap_content"
+            android:layout_width="374dp"
             android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/editText2"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="11dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="11dp"
             android:layout_toEndOf="@+id/txt1"
             android:text="Cliente con RUC"
+            android:textColor="#000000"
             android:textSize="16sp" />
 
     </RelativeLayout>
