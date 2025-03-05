@@ -22,10 +22,11 @@ public class clsDescFiltro {
 	
 	private DateUtils DU;
 	
-	private int cliid,rutaid;
+	private int rutaid;
+	private long cliid;
 	private long fecha;
 	
-	public clsDescFiltro(Context context, int ruta, int cliente) {
+	public clsDescFiltro(Context context, int ruta, long cliente) {
 		
 		cliid=cliente;rutaid=ruta;
 		

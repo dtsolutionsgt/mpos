@@ -654,12 +654,32 @@ public class clsClasses {
 
     //region FB Clases
 
+    public class clsFbCliCorel {
+        public int id;
+        public int corel;
+    }
+
     public class clsfbMesaAbierta {
         public int codigo_mesa;
         public int estado;
         public String mesero;
         public String caja;
         public Long fecha;
+    }
+
+    public class clsFbOrdenEstado {
+        public String corel;
+        public int id;
+        public int estado;
+        public int idmesa;
+        public String nombre;
+        public Long fecha;
+        public int mesero;
+    }
+
+    public class clsFbOrdenNota {
+        public int id;
+        public String nota;
     }
 
     public class clsfbResSesion {
@@ -701,20 +721,6 @@ public class clsClasses {
         public int bandera;
     }
 
-    public class clsFbOrdenEstado {
-        public String corel;
-        public int id;
-        public int estado;
-        public int idmesa;
-        public String nombre;
-        public Long fecha;
-        public int mesero;
-    }
-
-    public class clsFbOrdenNota {
-        public int id;
-        public String nota;
-    }
 
     //endregion
 
@@ -1700,6 +1706,11 @@ public class clsClasses {
         public String nombre;
         public double total;
         public double caja;
+    }
+
+    public class clsT_cli_corel {
+        public int  id;
+        public int  corel;
     }
 
     public class clsT_comanda {

@@ -24,11 +24,12 @@ public class clsBonFiltro {
 	private String vSQL;
 	
 	private DateUtils DU;
-	
-	private int cliid,rutaid;
+
+	private int rutaid;
+	private long cliid;
 	private long fecha;
 	
-	public clsBonFiltro(Context context,int ruta,int cliente) {
+	public clsBonFiltro(Context context,int ruta,long cliente) {
 		
 		cont=context;
 		

@@ -38,7 +38,6 @@ public class BaseDatosVersion {
 
     private void update_ver_5_5() {
 
-
         try {
             sql="CREATE TABLE [D_domicilio_enc] ("+
                     "COREL TEXT NOT NULL,"+
@@ -194,6 +193,16 @@ public class BaseDatosVersion {
 
             sql="CREATE INDEX P_panama_ubic_idx1 ON P_panama_ubic(NOMBRE)";db.execSQL(sql);
         } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [T_cli_corel] ("+
+                    "ID INTEGER NOT NULL,"+
+                    "COREL INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
 
 
         try {

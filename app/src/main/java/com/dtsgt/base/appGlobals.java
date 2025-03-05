@@ -34,7 +34,7 @@ public class appGlobals extends Application {
 			umfactor,prectemp,fondoCaja,FinMonto;
 	public boolean CellCom,closeDevBod,modoinicial,newmenuitem,validDate,comquickrec;
 	public String ref1,ref2,ref3,escaneo,corel_d_mov,barra,parVer,gcods,prtipo,prpar;
-	public String gNITCliente, gDirCliente, gNombreCliente, gCorreoCliente,gTelCliente;
+	public String gNITCliente, gDirCliente, gNombreCliente, gCorreoCliente,gTelCliente,gDVCliente;
 	public String felcorel,felserie,felnum,feluuid,prodid,pedid,pedcorel,idorden,mesanom,nom_est;
 	public String tiendanom,tiendanit,cajanom,urlglob,menuitemid,titReport,pickcode,pickname,wsurl;
 	public int tiponcredito,validarCred,gpsdist,gcodi,savemantid,salaid,idmesero,modoclave,mododocesa;
@@ -43,9 +43,9 @@ public class appGlobals extends Application {
 			    reportList, usarpeso, banderafindia, depparc, incNoLectura, cobroPendiente, findiaactivo,
 	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular,checksuper,gNITcf,
 				inic_inv_auto;
-	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,idmodgr,
+	public int  mpago, corelZ,codigo_ruta,codigo_vendedor,codigo_proveedor,idmodgr,
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid,mesero_venta,mesacodigo,
-                comensales, cliente_dom, idclidir, idalm, idalm2, idalmpred,mesa_grupo,
+                comensales, idclidir, idalm, idalm2, idalmpred,mesa_grupo,codigo_cliente, cliente_dom,
 			    uidingrediente, idgrres, idgrsel, idgrpos, usuario_cortesia,bar_prod,cuenta_borrar,cuenta_pagar,
 				mesa_vend,mesa_codigo,invcent_cod,invcen_alm,sal_idneg,desc_tipo_apl,prcu_mesa,
 			    prcu_vend,precuenta_cuenta,combo_cuenta,dias_credito,precuenta_modo,domicilio_notif,

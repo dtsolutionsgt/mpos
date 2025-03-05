@@ -9,7 +9,7 @@
     <RelativeLayout
         android:id="@+id/relclipos"
         android:layout_width="match_parent"
-        android:layout_height="260dp"
+        android:layout_height="263dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="false"
         android:layout_centerVertical="false"
@@ -75,7 +75,7 @@
             android:layout_alignStart="@+id/textView2"
             android:layout_alignParentLeft="false"
             android:layout_marginStart="2dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="20dp"
             android:paddingBottom="3dp"
             android:text="Correo"
             android:textAppearance="?android:attr/textAppearanceSmall"
@@ -147,7 +147,7 @@
             android:layout_below="@+id/textView1"
             android:layout_alignStart="@+id/textView1"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="25dp"
             android:paddingBottom="3dp"
             android:text="Nombre"
             android:textAppearance="?android:attr/textAppearanceSmall"
@@ -162,7 +162,7 @@
             android:layout_alignStart="@+id/textView2"
             android:layout_alignParentLeft="false"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:paddingBottom="3dp"
             android:text="Dirección"
             android:textAppearance="?android:attr/textAppearanceSmall"
@@ -180,7 +180,8 @@
             android:layout_marginTop="0dp"
             android:layout_marginEnd="280dp"
             android:layout_marginBottom="0dp"
-            android:maxLines="2" />
+            android:maxLines="2"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/editText1"
@@ -192,7 +193,8 @@
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
-            android:ems="10" />
+            android:ems="10"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/txtCorreo"
@@ -204,7 +206,8 @@
             android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
             android:ems="10"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView4"
@@ -307,7 +310,8 @@
             android:layout_marginEnd="10dp"
             android:layout_toStartOf="@+id/progressBar4"
             android:ems="10"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:textStyle="bold" />
 
         <RelativeLayout
             android:id="@+id/relbotpan"
@@ -358,6 +362,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="8dp"
             android:layout_marginTop="-6dp"
+            android:padding="2dp"
             android:src="@drawable/cli_nit" />
 
         <ImageView
@@ -368,7 +373,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentBottom="false"
             android:layout_marginStart="9dp"
-            android:layout_marginTop="-3dp"
+            android:layout_marginTop="-5dp"
             android:layout_marginBottom="1071dp"
             android:src="@drawable/cli_name" />
 
@@ -388,8 +393,9 @@
             android:layout_height="28dp"
             android:layout_below="@+id/imageView67"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            android:padding="3dp"
             android:src="@drawable/envelope" />
 
         <ProgressBar
@@ -432,7 +438,8 @@
             android:layout_marginEnd="170dp"
             android:layout_toEndOf="@+id/textView223"
             android:ems="10"
-            android:inputType="number" />
+            android:inputType="number"
+            android:textStyle="bold" />
 
         <CheckBox
             android:id="@+id/chkPickup"
@@ -541,7 +548,7 @@
             android:layout_height="40dp"
             android:layout_alignBottom="@+id/textView6"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="12dp"
             android:layout_marginBottom="0dp"
             android:background="@drawable/frame_rect"
             android:padding="1dp"
@@ -549,17 +556,42 @@
 
         <CheckBox
             android:id="@+id/checkBox30"
-            android:layout_width="374dp"
+            android:layout_width="170dp"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/editText2"
             android:layout_alignParentTop="true"
             android:layout_marginStart="20dp"
             android:layout_marginTop="6dp"
-            android:layout_marginEnd="11dp"
             android:layout_toEndOf="@+id/txt1"
             android:text="Cliente con RUC"
             android:textColor="#000000"
             android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textView385"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_toEndOf="@+id/checkBox30"
+            android:text="DV"
+            android:textColor="#000000"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/editTextNumber13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/editText2"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="0dp"
+            android:layout_toEndOf="@+id/textView385"
+            android:ems="10"
+            android:inputType="number"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
