@@ -4025,7 +4025,11 @@ public class FacturaRes extends PBase {
 						}
 
 						if (!gl.dom_nom.isEmpty()) {
-							rep.addc(gl.dom_nom);rep.add("");
+							rep.addc(gl.dom_nom);
+							rep.add("");
+							rep.add("");
+							rep.add("");
+							rep.add("");
 						}
 
 						ln = rep.items.size();
