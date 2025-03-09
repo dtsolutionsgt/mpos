@@ -409,6 +409,7 @@ public class WSRec extends PBase {
                         break;
                     case 50:
                         callMethod("GetP_PARAMEXT_RUTA","RUTA", gl.codigo_ruta);
+                        //callMethod("GetP_PARAMEXT_RUTA_EMP","EMPRESA", gl.emp,"RUTA", gl.codigo_ruta);
                         break;
                     case 51:
                         callMethod("GetP_REGLA_COSTO", "EMPRESA", gl.emp);
@@ -3001,6 +3002,7 @@ public class WSRec extends PBase {
             clsClasses.clsP_paramext var;
             String sqlaa;
 
+            //items = xobj.getresult(clsBeP_PARAMEXTList.class, "GetP_PARAMEXT_RUTA_EMP");
             items = xobj.getresult(clsBeP_PARAMEXTList.class, "GetP_PARAMEXT_RUTA");
             try {
                 if (items.items.size() == 0) return;
