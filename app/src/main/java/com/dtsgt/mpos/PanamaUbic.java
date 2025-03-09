@@ -45,6 +45,8 @@ public class PanamaUbic extends PBase {
             sql="SELECT CODIGO_UBIC,NOMBRE FROM P_panama_ubic ORDER BY NOMBRE";
             listItems();
 
+            gl.gstr="";
+
             setHandlers();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -75,6 +77,9 @@ public class PanamaUbic extends PBase {
                     adapter.setSelectedIndex(position);
                     gl.cli_muni = item.f1;
                     gl.cli_depto = item.f2;
+
+                    String[] pt = gl.cli_depto.split("-");
+                    gl.gstr=pt[2];
 
                     finish();
                 } catch (Exception e) {

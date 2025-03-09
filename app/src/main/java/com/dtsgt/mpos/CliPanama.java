@@ -16,7 +16,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsT_cli_corelObj;
+import com.dtsgt.felpana.clsFELClasesPA;
 import com.dtsgt.felpana.clsFEPDocVal;
 import com.dtsgt.firebase.fbCliCorel;
 
@@ -37,7 +39,9 @@ public class CliPanama extends PBase {
     private fbCliCorel fbcc;
 
     private clsFEPDocVal fdval;
+    private clsFELClasesPA.FELAmbiente FELAmb;
 
+    private clsP_clienteObj P_clienteObj;
     private clsT_cli_corelObj T_cli_corelObj;
 
     private String sNITCliente, sNombreCliente, sDireccionCliente, sCorreoCliente,
@@ -90,7 +94,11 @@ public class CliPanama extends PBase {
             bloqueado=false;
             domicilio=gl.peVentaDomicilio;
 
+            P_clienteObj=new clsP_clienteObj(this,Con,db);
             T_cli_corelObj=new clsT_cli_corelObj(this,Con,db);
+
+            clsFELClasesPA FELPA=new clsFELClasesPA();
+            FELAmb= FELPA.new FELAmbiente(this,Con,db,gl.tienda);
 
             cbllevar.setEnabled(true); cbllevar.setChecked(false);
             cbdomicilio.setEnabled(true); cbdomicilio.setChecked(false);
@@ -104,7 +112,8 @@ public class CliPanama extends PBase {
             txtNom.setText("Nombre");
             txtCorreo.setText("jpospichal@dts.com.gt");
 
-            txtNIT.setText("894-57-103790");
+            txtNIT.setText("894-57-103790");txtDV.setText("67");cbRUC.setChecked(true);
+            //txtNIT.setText("N-1234-1234");
 
             parametrosPanama();
             fdval= new clsFEPDocVal(this,Usuario_FEL,LLave_API,LLave_FIRMA,URL_FEL) ;
@@ -121,6 +130,8 @@ public class CliPanama extends PBase {
             if (fdval.errorflag) throw new Exception(fdval.error);
 
             if (fdval.value==1) {
+                txtDV.setText(fdval.DV);
+                txtNom.setText(fdval.Nombre);
                 procesaCliente();
             } else {
                 msgbox("RUC "+fdval.RUC+" incorrecto");
@@ -140,7 +151,38 @@ public class CliPanama extends PBase {
                 txtNIT.requestFocus();toast("Falta ingresar cedula o RUC.");return;
             }
 
+            sNITCliente =txtNIT.getText().toString()+"";
+            sNombreCliente =txtNom.getText().toString()+"";
+            sDireccionCliente =txtRef.getText().toString()+"";
+            sCorreoCliente = txtCorreo.getText().toString()+"";
+            sTelCliente=txtTel.getText().toString()+"";
+            sDV=txtDV.getText().toString()+"";
+
+            if (sNombreCliente.isEmpty()) {
+                msgbox("Falta definir nombre");return;
+            }
+            if (sNombreCliente.length()<5) {
+                msgbox("Nombre debe tener minimo 5 letras");return;
+            }
+
+            if (sCorreoCliente.isEmpty()) {
+                msgbox("Falta definir nombre");return;
+            }
+
             if (cbRUC.isChecked()) {
+
+                if (sDV.isEmpty()) {
+                    toast("Falta definir DV");return;
+                }
+
+                if (sDireccionCliente.isEmpty()) {
+                    toast("Falta definir direccion");return;
+                }
+
+                if (gl.cli_muni.isEmpty()) {
+                    toast("Falta definir ubicación");return;
+                }
+
                 if (fdval.validaRUC(sNITCliente)) {
                     if (app.isOnWifi()>0) {
                         pbar.setVisibility(View.VISIBLE);idle=false;
@@ -201,19 +243,34 @@ public class CliPanama extends PBase {
         startActivity(new Intent(this,PanamaUbic.class));
     }
 
+    public void buscarCliente(View view) {
+        gl.cliente="";
+        browse=2;
+        startActivity(new Intent(this,Clientes.class));
+    }
+
     private void setHandlers() {
 
-        cbdomicilio.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
+        txtNIT.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
+                    existeCliente();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        cbdomicilio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) cbllevar.setChecked(false);
                     }
-                }
-        );
+                });
 
-        cbllevar.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
+        cbllevar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
                         if (isChecked){
@@ -222,8 +279,7 @@ public class CliPanama extends PBase {
                             gl.parallevar = false;
                         }
                     }
-                }
-        );
+                } );
 
     }
 
@@ -248,6 +304,10 @@ public class CliPanama extends PBase {
             }
             if (sNombreCliente.length()<5) {
                 msgbox("Nombre debe tener minimo 5 letras");return;
+            }
+
+            if (sCorreoCliente.isEmpty()) {
+                msgbox("Falta definir nombre");return;
             }
 
             if (cbRUC.isChecked()) {
@@ -296,7 +356,6 @@ public class CliPanama extends PBase {
         } catch (Exception e){
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
     }
 
     private boolean agregaCliente(String NIT,String Nom,String dir, String Correo,String tel) {
@@ -441,6 +500,7 @@ public class CliPanama extends PBase {
             upd.add("CODBARRA",sDV);
             upd.add("ESERVICE","N"); //
             upd.Where("CODIGO_CLIENTE="+codigo);
+
             db.execSQL(upd.sql());
 
             return true;
@@ -544,40 +604,60 @@ public class CliPanama extends PBase {
         try {
 
             String NIT=txtNIT.getText().toString();
-            sql="SELECT CODIGO, NOMBRE,DIRECCION,NIVELPRECIO,DIRECCION, MEDIAPAGO,TIPO_CONTRIBUYENTE,CODIGO_CLIENTE, EMAIL,TELEFONO FROM P_CLIENTE " +
-                    "WHERE (NIT='"+NIT+"') AND (CODIGO_CLIENTE<>"+nitcf+")";
-            DT=Con.OpenDT(sql);
 
-            if (DT != null){
+            if (mu.emptystr(NIT)) {
+                txtNIT.requestFocus();
+                resultado=false;
+            } else {
+                sql = "SELECT CODIGO, NOMBRE,DIRECCION,NIVELPRECIO,DIRECCION, MEDIAPAGO, TIPO_CONTRIBUYENTE," +
+                      "CODIGO_CLIENTE, EMAIL,TELEFONO,CODBARRA FROM P_CLIENTE " +
+                      "WHERE (NIT='" + NIT + "') AND (CODIGO_CLIENTE<>" + nitcf + ")";
+                DT = Con.OpenDT(sql);
 
-                if (DT.getCount()>0){
+                if (DT != null) {
 
-                    DT.moveToFirst();
+                    if (DT.getCount() > 0) {
 
-                    txtNom.setText(DT.getString(1));
-                    txtRef.setText(DT.getString(2));
-                    txtCorreo.setText(DT.getString(8));
-                    txtTel.setText(DT.getString(9));
+                        DT.moveToFirst();
 
-                    gl.rutatipo="V";
-                    gl.cliente=DT.getString(0);
-                    gl.nivel=gl.nivel_sucursal;
-                    gl.percepcion=0;
-                    gl.contrib=DT.getString(6);;
-                    gl.scancliente = gl.cliente;
-                    gl.gNombreCliente =txtNom.getText().toString();
-                    gl.gNITCliente =NIT;
-                    gl.gDirCliente =DT.getString(4);
+                        txtNom.setText(DT.getString(1));
+                        txtRef.setText(DT.getString(2));
+                        txtCorreo.setText(DT.getString(8));
+                        txtTel.setText(DT.getString(9));
+                        txtDV.setText(DT.getString(10));
 
-                    gl.media=DT.getInt(5);
-                    gl.codigo_cliente=DT.getInt(7);
-                    gl.cliente_dom=gl.codigo_cliente;
+                        gl.rutatipo = "V";
+                        gl.cliente = DT.getString(0);
+                        gl.nivel = gl.nivel_sucursal;
+                        gl.percepcion = 0;
+                        gl.contrib = DT.getString(6);
+                        gl.clienteDV = DT.getString(10);
+                        gl.scancliente = gl.cliente;
+                        gl.gNombreCliente = txtNom.getText().toString();
+                        gl.gNITCliente = NIT;
+                        gl.gDirCliente = DT.getString(4);
 
-                    resultado=true;
+                        gl.media = DT.getInt(5);
+                        gl.codigo_cliente = DT.getInt(7);clicorel=gl.codigo_cliente;
+                        gl.cliente_dom = gl.codigo_cliente;
+
+                        resultado = true;
+                    } else {
+                        if (gl.codigo_cliente==gl.emp*10) {
+                            txtNom.setText("Consumidor Final");
+                            txtRef.setText("");
+                            txtCorreo.setText("");
+                            txtTel.setText("");
+                            txtDV.setText("");
+
+                            resultado = true;
+                        } else {
+                            resultado = false;
+                        }
+                    }
                 }
+                if (DT != null) DT.close();
             }
-            if (DT!=null) DT.close();
-
         } catch (Exception e){
             mu.toast("Ocurrió un error buscando al cliente");
             resultado=false;
@@ -675,16 +755,13 @@ public class CliPanama extends PBase {
 
     private void parametrosPanama() {
         try {
-            Usuario_FEL="12345-05-123456";
-            LLave_API="bf3f86f74dbb706f42749939c";
-            LLave_FIRMA="SIOB5IYVWO3PIZ94FRDSPAK4B4LN5HT5";
-            URL_FEL="https://certificador-unificado.infilepac.com/api/v1/consultas/unificado/test/json/ruc_dv";
+            Usuario_FEL=FELAmb.usuario_api;
+            LLave_API=FELAmb.llave_api;
+            LLave_FIRMA=FELAmb.llave_firma;
+            URL_FEL=FELAmb.URL_ruc;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
-
-
     }
 
     private void corelCliente() {
@@ -753,15 +830,25 @@ public class CliPanama extends PBase {
         try {
             super.onResume();
 
+            P_clienteObj.reconnect(Con,db);
             T_cli_corelObj.reconnect(Con,db);
 
             if (browse==1) {
                 browse=0;
-                lblMuni.setText(gl.cli_depto);
+                lblMuni.setText(gl.gstr);
                 return;
             }
 
-        } catch (Exception e){
+            if (browse==2) {
+                browse = 0;
+                if (!gl.cliente.isEmpty()) {
+                    txtNIT.setText(gl.gNITCliente);
+                    existeCliente();
+                }
+                return;
+            }
+
+            } catch (Exception e){
             msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }

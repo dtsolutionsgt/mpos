@@ -56,7 +56,7 @@ public class appGlobals extends Application {
                 corelmov, linea_sel="",mesa_alias,nummesapedido, nombre_cortesia,bar_um,bar_idbarril;
 	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir,sal_iddep,sal_idmun,sal_neg,sal_mun,sal_dep,
 			     prcu_corel,nom_alm,nom_alm2,mesa_area,nit_tipo,invcent_tipo,FEL_llave_cont,
-  	             cli_muni,cli_muni_suc,cli_depto,cli_depto_suc,dom_det_cod,
+  	             cli_muni,cli_muni_suc,cli_depto,cli_depto_suc,dom_det_cod,clienteDV,
 			     ped_dom_corel,ped_dom_orden,ped_dom_cliente,ped_dom_dir,ped_dom_texto,ped_dom_tel,ped_dom_cambio;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,
 			      dom_total,bar_cant,descadd,monto_propina,limite_credito,preccombo,

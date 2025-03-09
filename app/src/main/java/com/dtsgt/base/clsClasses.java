@@ -1011,6 +1011,13 @@ public class clsClasses {
         public int codigo_factorconv;
     }
 
+    public class clsP_fel_impuesto {
+        public int  codigo_impuesto;
+        public String codigo_pais;
+        public double valor;
+        public String codigo_fel;
+    }
+
     public class clsP_fel_sv_amb {
         public int id;
         public int ambiente;

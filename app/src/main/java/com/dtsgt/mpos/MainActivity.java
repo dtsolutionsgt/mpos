@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -48,6 +49,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import com.dtsgt.base.AppMethods;
+import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.BaseDatosVersion;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsFont3x5;
@@ -59,6 +61,7 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
+import com.dtsgt.felpana.clsFELClasesPA;
 import com.dtsgt.firebase.fbBase;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.LA_Login;
@@ -77,6 +80,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+import org.json.JSONException;
 
 
 public class MainActivity extends PBase {
@@ -420,7 +425,8 @@ public class MainActivity extends PBase {
     }
 
     public void doFPTest(View view) {
-        startActivity(new Intent(this, CliPanama.class));
+        //startActivity(new Intent(this, CliPanama.class));
+        testButton();
     }
 
     public void doFELESA(View view) {
@@ -1457,6 +1463,26 @@ public class MainActivity extends PBase {
 
     //region Test Button
 
+    private void testButton() {
+        generaJson();
+    }
+
+    private void generaJson() {
+        try {
+            clsFELClasesPA FEL=new clsFELClasesPA();
+            clsFELClasesPA.FELAmbiente amb=FEL.new FELAmbiente(this,Con,db,gl.tienda);
+            clsFELClasesPA.JSONFactura fac=FEL.new JSONFactura();
+
+            fac.Factura(100,gl.codigo_ruta,amb.establecimiento,false,1);
+
+            fac.json();
+            String json=fac.json;
+            json+="";
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     //endregion
 

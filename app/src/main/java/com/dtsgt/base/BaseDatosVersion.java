@@ -203,6 +203,16 @@ public class BaseDatosVersion {
             db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [P_fel_impuesto] ("+
+                    "CODIGO_IMPUESTO INTEGER NOT NULL,"+
+                    "CODIGO_PAIS TEXT NOT NULL,"+
+                    "VALOR REAL NOT NULL,"+
+                    "CODIGO_FEL TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_IMPUESTO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
 
 
         try {

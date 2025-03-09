@@ -42,6 +42,7 @@ import com.dtsgt.classes.clsP_empresaObj;
 import com.dtsgt.classes.clsP_empresa_transObj;
 import com.dtsgt.classes.clsP_encabezado_reporteshhObj;
 import com.dtsgt.classes.clsP_factorconvObj;
+import com.dtsgt.classes.clsP_fel_impuestoObj;
 import com.dtsgt.classes.clsP_fel_sv_ambObj;
 import com.dtsgt.classes.clsP_fraseObj;
 import com.dtsgt.classes.clsP_giro_negocioObj;
@@ -1489,10 +1490,37 @@ public class WSRec extends PBase {
                 db.execSQL(sql);
                 //validaFechaContrato();
 
-                if (cod_pais.equalsIgnoreCase("SV")) {
-                    aplicaAmbienteSV(FELsvcrt,FELsvmodo);
-                }
+                if (cod_pais.equalsIgnoreCase("SV")) aplicaAmbienteSV(FELsvcrt,FELsvmodo);
+                if (cod_pais.equalsIgnoreCase("PA")) aplicaAmbientePA(FELsvmodo);
 
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void aplicaAmbientePA(int FELsvmodo) {
+        try {
+
+            if (FELsvmodo<0) return;
+
+
+            clsP_fel_sv_ambObj P_fel_sv_ambObj=new clsP_fel_sv_ambObj(this,Con,db);
+
+            clsClasses.clsP_fel_sv_amb item = clsCls.new clsP_fel_sv_amb();
+
+            item.id=1;
+            item.ambiente=FELsvmodo;
+            item.archivo="";
+
+            try {
+                P_fel_sv_ambObj.add(item);
+            } catch (Exception e) {
+                P_fel_sv_ambObj.update(item);
+            }
+
+            if (FELsvmodo>=0) {
+                //validaFELESA_archivo(FELsvcrt);
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -4341,7 +4369,7 @@ public class WSRec extends PBase {
     private void llenaPanamaUbic() {
 
         if (!gl.codigo_pais.equalsIgnoreCase("PA")) {
-            terminaStream();
+            continue_FelImpuesto();
             return;
         }
 
@@ -4389,6 +4417,70 @@ public class WSRec extends PBase {
                     item.nombre=dt.getString(1);
 
                     P_panama_ubicObj.add(item);
+
+                    dt.moveToNext();
+                }
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            terminaStream();
+        }
+
+        continue_FelImpuesto();
+
+    }
+
+    private void continue_FelImpuesto() {
+        try {
+            sql="SELECT CODIGO_IMPUESTO, CODIGO_PAIS, VALOR, CODIGO_FEL FROM  P_FEL_IMPUESTO";
+            wso.execute(sql,() -> { felImpuesto(); });
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            terminaStream();
+        }
+    }
+
+    private void felImpuesto() {
+        Cursor dt;
+        clsP_fel_impuestoObj P_fel_impuestoObj;
+        clsClasses.clsP_fel_impuesto item;
+
+        try {
+            if (wso.errflag) throw new Exception(wso.error);
+
+            if (!db.isOpen()) {
+                browse=0;onResume();
+            }
+
+            dt=wso.openDTCursor;
+            P_fel_impuestoObj=new clsP_fel_impuestoObj(this,Con,db);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            terminaStream();return;
+        }
+
+        try {
+            db.beginTransaction();
+
+            db.execSQL("DELETE FROM P_fel_impuesto");
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                while (!dt.isAfterLast()) {
+
+                    item = clsCls.new clsP_fel_impuesto();
+
+                    item.codigo_impuesto=dt.getInt(0);
+                    item.codigo_pais=dt.getString(1);
+                    item.valor=dt.getInt(2);
+                    item.codigo_fel=dt.getString(3);
+
+                    P_fel_impuestoObj.add(item);
 
                     dt.moveToNext();
                 }

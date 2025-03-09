@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 public class clsFEPDocVal {
 
     public boolean errorflag;
-    public String  error="",WSURL,RUC="";
+    public String  error="",WSURL,RUC="",DV,Nombre;
     public int value;
 
     private clsFELClases fclas=new clsFELClases();
@@ -151,13 +151,13 @@ public class clsFEPDocVal {
     }
 
     public boolean validaRUC(String vRUC) {
-        RUC=vRUC;
+        RUC=vRUC;DV="";Nombre="";
         Matcher matcher = rucpattern.matcher(vRUC);
         return matcher.matches();
     }
 
     public void ValidaRUC_API(String vRUC)  {
-        RUC=vRUC;
+        RUC=vRUC;DV="";Nombre="";
 
         try {
             value=-1;
@@ -271,6 +271,7 @@ public class clsFEPDocVal {
                 errorflag=true;return errorflag;
             }
 
+            DV="";Nombre="";
             if (responsecode==200 | responsecode==201) {
 
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
@@ -287,6 +288,11 @@ public class clsFEPDocVal {
 
                 value=0;errorflag=false;
                 Boolean rslt=jObj.getBoolean("valido");
+
+                JSONObject jResp=jObj.getJSONObject("respuesta_pac");
+                JSONObject jRuc=jResp.getJSONObject("ruc");
+                DV=jRuc.getString("dDV");
+                Nombre=jRuc.getString("dNomb");
 
                 if (rslt) value=1;
             } else {
