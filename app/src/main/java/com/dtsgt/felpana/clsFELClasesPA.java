@@ -14,16 +14,20 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+
 import org.apache.commons.lang3.StringUtils;
 
 public class clsFELClasesPA {
+
+    public ArrayList<clsClasses.clsP_fel_impuesto> cod_impuesto = new ArrayList<clsClasses.clsP_fel_impuesto>();
 
     public class JSONFactura {
 
         public String json;
 
         private JSONObject jsdoc,jso,jsitem,jsad,jsrec;
-        private JSONArray jsitems;
+        private JSONArray jsitems,jsformas;
 
         private String ss,llave_cont,forma_pago,tipo_documento,num_doc,estab,caja;
         private boolean contingencia,zona_franca;
@@ -45,6 +49,8 @@ public class clsFELClasesPA {
             contingencia=false;
 
             jsdoc = new JSONObject();
+            jsitems = new JSONArray();
+            jsformas = new JSONArray();
 
             generaEncabezado();
         }
@@ -98,32 +104,47 @@ public class clsFELClasesPA {
 
         }
 
-        public void agregarProducto(String descripcion,double cantidad,
-                                    double precio_unitario,double descuento_monto) throws JSONException {
+        public void agregarProducto(String codigo,String descripcion,double cantidad,
+                                    double precio_unitario,double impuesto,double descuento_monto) throws JSONException {
 
             jsitem = new JSONObject();
 
-            jsitem.put("tipo", 1);
-            jsitem.put("cantidad",cantidad);
-            jsitem.put("unidad_medida", 59);
+            jsitem.put("descripcion_producto", descripcion);
+            jsitem.put("codigo_interno", codigo);
+            jsitem.put("unidad_medida", "und");
+            jsitem.put("cantidad_producto", cantidad);
+            jsitem.put("precio_unitario", precio_unitario);
             jsitem.put("descuento", descuento_monto);
-            jsitem.put("descripcion", descripcion);
-            jsitem.put("precio_unitario", round2dec(precio_unitario));
+
+            double imp_unit=impuesto/cantidad;
+            String codImp=codigoImpuesto(precio_unitario,imp_unit);
+            jsitem.put("tasa_itbms",codImp);
 
             jsitems.put(jsitem);
+        }
+
+        public void agregarPago(double monto) throws JSONException {
+
+            jsitem = new JSONObject();
+
+            jsitem.put("forma_pago", forma_pago);
+            jsitem.put("forma_pago_monto", monto);
+
+            jsformas.put(jsitem);
         }
 
 
         public void json() throws JSONException {
 
             jsdoc.put("receptor",jsrec);
+            jsdoc.put("items",jsitems);
+            jsdoc.put("formas_pago_factura",jsformas);
 
             json = jsdoc.toString();
+            json +="";
         }
 
     }
-
-
 
     public class FELAmbiente {
         public String URL,URLAnul,URL_ruc;
@@ -171,6 +192,28 @@ public class clsFELClasesPA {
         BigDecimal bd = BigDecimal.valueOf(value);
         bd = bd.setScale(2, RoundingMode.HALF_UP);
         return bd.doubleValue();
+    }
+
+    public String codigoImpuesto(double precio,double impuesto) {
+        String ci="";
+        if (precio==0) return ci;
+
+        double valimpd=100*impuesto/precio;
+        int valimp=roundint(valimpd);
+        int vimp;
+
+        for (clsClasses.clsP_fel_impuesto itm : cod_impuesto) {
+            vimp=(int) itm.valor;
+            if (vimp==valimp) return itm.codigo_fel;
+        }
+        return ci;
+    }
+
+    public int roundint(double value) {
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+        int rslt=(int) bd.doubleValue();
+        return rslt;
     }
 
     //endregion

@@ -14,7 +14,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -49,13 +48,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import com.dtsgt.base.AppMethods;
-import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.BaseDatosVersion;
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.clsFont3x5;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsKeybHandler;
+import com.dtsgt.classes.clsP_fel_impuestoObj;
 import com.dtsgt.classes.clsP_vendedor_rolObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListChkDlg;
@@ -1475,14 +1473,26 @@ public class MainActivity extends PBase {
             clsFELClasesPA.FELAmbiente amb=FEL.new FELAmbiente(this,Con,db,gl.tienda);
             clsFELClasesPA.JSONFactura fac=FEL.new JSONFactura();
 
-            /*
+            clsP_fel_impuestoObj P_fel_impuestoObj=new clsP_fel_impuestoObj(this,Con,db);
+            P_fel_impuestoObj.fill("WHERE (codigo_pais='PA')");
+            FEL.cod_impuesto =P_fel_impuestoObj.items;
+
+
             fac.Factura(100,gl.codigo_ruta,amb.establecimiento,false,1);
             fac.agregarReceptorRUC("Cliente con RUC","894-57-103790","67",
                     "Direccion","PCorr-Pdist-Pprov","jpospichal@dts.com.gt","1234-5678");
-            */
 
-            fac.Factura(100,gl.codigo_ruta,amb.establecimiento,false,2);
-            fac.agregarReceptor("Cliente con cedula","N-1234-1234","jpospichal@dts.com.gt","1234-5678");
+            //fac.Factura(100,gl.codigo_ruta,amb.establecimiento,false,2);
+            //fac.agregarReceptor("Cliente con cedula","N-1234-1234","jpospichal@dts.com.gt","1234-5678");
+
+
+            fac.agregarProducto("01","Producto1",1, 3.73832,0.261681, 0); // 4.00
+            fac.agregarProducto("02","Producto2",1, 3.73832,0.373832, 0); // 4.11
+            fac.agregarProducto("03","Producto3",1, 1.17523,0.176285, 0); // 1.35
+            fac.agregarProducto("04","Producto4",1, 2.00000,0.000000, 0); // 2.00
+                                                                          // 11.46
+
+            fac.agregarPago(11.46);
 
             fac.json();
             String json=fac.json;

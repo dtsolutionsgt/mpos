@@ -133,7 +133,6 @@ public class MiscUtils {
 		return bd.doubleValue();
 	}
 
-
 	public  double round2dec(double value) {
 		BigDecimal bd = BigDecimal.valueOf(value);
 		bd = bd.setScale(2, RoundingMode.HALF_UP);
