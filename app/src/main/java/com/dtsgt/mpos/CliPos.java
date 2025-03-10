@@ -193,6 +193,10 @@ public class CliPos extends PBase {
                 msgbox("Identificación incorrecta");return;
             }
 
+            if (sNITCliente.length()>9) {
+                msgbox("Identificación incorrecta");return;
+            }
+
             if (sDireccionCliente.isEmpty()) {
                 toast("Falta definir la direccion");return;
             }
@@ -202,13 +206,8 @@ public class CliPos extends PBase {
             gl.nit_tipo="N";
 
             if (gl.codigo_pais.equalsIgnoreCase("GT")) {
-                if (sNITCliente.length()>13) {
+                if (sNITCliente.length()>9) {
                     msgbox("Identificación incorrecta");return;
-                }
-                if (sNITCliente.length()!=13) {
-                    if (!validaNIT(sNITCliente)) {
-                        msgbox("NIT incorrecto");return;
-                    }
                 }
             }  else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                 if (!validaNITHon(sNITCliente)) {
@@ -262,6 +261,7 @@ public class CliPos extends PBase {
 
             ss=ss.trim();
 
+            ss=ss.replace("-","");
             ss=ss.replace("!","");
             ss=ss.replace("#","");
             ss=ss.replace("$","");
@@ -1481,7 +1481,7 @@ public class CliPos extends PBase {
         if  (!mu.emptystr(gl.felUsuarioCertificacion) && ! mu.emptystr(gl.felLlaveCertificacion) && !mu.emptystr(txtNIT.getText().toString())) {
 
             nc=txtNIT.getText().toString();
-            if (nc.length()==13) return;
+            if (nc.length()>9) return;
 
             JSONObject params = new JSONObject();
 

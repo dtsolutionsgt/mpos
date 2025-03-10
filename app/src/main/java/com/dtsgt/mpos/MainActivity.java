@@ -75,7 +75,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
 
-    private String  parVer = "4.10.4.0";
+    private String  parVer = "4.11.0.0";
     private boolean bloqueo_venta=false;
 
     private Typeface typeface;
@@ -494,6 +494,8 @@ public class MainActivity extends PBase {
         } catch (Exception e) {
             addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
         }
+
+        lblRuta.setText("Caja: "+ gl.rutanom+" ( "+gl.codigo_ruta+" )");
 
         try {
             //#HS_20181120_1616 Se agrego el campo UNIDAD_MEDIDA_PESO.//campo INCIDENCIA_NO_LECTURA
