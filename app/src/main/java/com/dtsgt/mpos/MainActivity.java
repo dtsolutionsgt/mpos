@@ -542,6 +542,8 @@ public class MainActivity extends PBase {
             addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
         }
 
+        lblRuta.setText("Caja: "+ gl.rutanom+" ( "+gl.codigo_ruta+" )");
+
         try {
             //#HS_20181120_1616 Se agrego el campo UNIDAD_MEDIDA_PESO.//campo INCIDENCIA_NO_LECTURA
             sql = " SELECT EMPRESA,NOMBRE,CLAVE,COD_PAIS FROM P_EMPRESA";

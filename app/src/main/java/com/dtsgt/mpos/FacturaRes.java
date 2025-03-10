@@ -4091,8 +4091,8 @@ public class FacturaRes extends PBase {
 						rep.add(prip);
 
 						rep.empty();
-						rep.empty();
-						if (!gl.peNumOrdCommandaVenta) rep.add("ORDEN : "+gl.ref1.toUpperCase());
+						//rep.empty();
+						//if (!gl.peNumOrdCommandaVenta) rep.add("ORDEN : "+gl.ref1.toUpperCase());
 						rep.add("Hora : " + du.shora(du.getActDateTime()));
 						rep.line24();
 
@@ -4105,6 +4105,9 @@ public class FacturaRes extends PBase {
 
 						rep.line24();
 						rep.add("");
+						rep.add("Caja :"+gl.cajanom);
+						rep.add("Cajero : "+gl.vendnom);
+
 						if (gl.peNumOrdCommandaVenta) {
 							rep.add("");
 							rep.addc("************************");
@@ -4115,9 +4118,18 @@ public class FacturaRes extends PBase {
 
 						if ( gl.parallevar) {
 							rep.addc(" P A R A   L L E V A R ");rep.add("");
-							if (!gl.dom_nom.isEmpty()) {
-								rep.addc(gl.dom_nom);rep.add("");
-							}
+						}
+
+						if ( gl.domicilio) {
+							rep.addc(" D O M I C I L I O ");rep.add("");
+						}
+
+						if (!gl.dom_nom.isEmpty()) {
+							rep.addc(gl.dom_nom);
+							rep.add("");
+							rep.add("");
+							rep.add("");
+							rep.add("");
 						}
 
 						ln = rep.items.size();
@@ -4780,15 +4792,7 @@ public class FacturaRes extends PBase {
 			return;
 		}
 
-		/*
-		if (gl.gNITCliente.length() == 13) {
-			gl.nit_tipo = "C";
-			return;
-		}
-		*/
-
-		if (gl.gNITCliente.length() > 8) {
-			//if (gl.gNITCliente.length() > 13) {
+		if (gl.gNITCliente.length() > 9) {
 			gl.nit_tipo = "N";
 			gl.gNITCliente = "CF";
 			return;
@@ -4801,16 +4805,8 @@ public class FacturaRes extends PBase {
 			gl.gNITCliente = "CF";
 		}
 
-		/*
-		if (gl.gNITCliente.length() > 18) {
-			gl.nit_tipo = "E";
-			gl.gNITCliente = "CF";
-		}
-		*/
-
 		String snn=gl.gNITCliente;
 		snn=snn+"";
-
 	}
 
 	private boolean validaNIT(String N)  {
