@@ -26,7 +26,7 @@ public class clsFELClasesPA {
         private JSONArray jsitems;
 
         private String ss,llave_cont,forma_pago,tipo_documento,num_doc,estab,caja;
-        private boolean receptor,contingencia,zona_franca;
+        private boolean contingencia,zona_franca;
         private int tipo_factura;
 
 
@@ -42,7 +42,6 @@ public class clsFELClasesPA {
             estab=StringUtils.leftPad(establecimiento,4,'0');
 
             forma_pago="02";  // efectivo
-            receptor=true;
             contingencia=false;
 
             jsdoc = new JSONObject();
@@ -60,15 +59,43 @@ public class clsFELClasesPA {
             jsdoc.put("naturaleza_operacion","01"); // fijo
         }
 
-        public void agregarReceptor(String nombre,String nit,String correo) throws JSONException {
+        public void agregarReceptorRUC(String nombre,String ruc,String DV,
+                    String dir,String ubic,String correo,String tel) throws JSONException {
             jsrec = new JSONObject();
 
-            jsrec.put("tipo","02");
-            jsrec.put("nombre",nombre);
-            jsrec.put("correo",correo);
-            jsrec.put("numero_documento",nit);
+            String[] ub = ubic.split("-");
 
-            receptor =true;
+            jsrec.put("receptor_tipo","01");
+            jsrec.put("receptor_tipo_contribuyente",2);
+            jsrec.put("receptor_ruc",ruc);
+            jsrec.put("receptor_digito_verificador",DV);
+            jsrec.put("receptor_nombre",nombre);
+            jsrec.put("receptor_direccion",dir);
+            jsrec.put("receptor_codigo_ubicacion_corregimiento",ub[0]);
+            jsrec.put("receptor_codigo_ubicacion_distrito",ub[1]);
+            jsrec.put("receptor_codigo_ubicacion_provincia",ub[2]);
+            jsrec.put("receptor_telefono",tel);
+            jsrec.put("receptor_correo",correo);
+
+        }
+
+        public void agregarReceptor(String nombre,String nit,String correo,String tel) throws JSONException {
+            switch (tipo_factura) {
+                case 2:
+                    agregarReceptorCedula(nombre,nit,correo,tel);break;
+                case 3:
+                    agregarReceptorCedula("Consumidor final","CF",correo,tel);break;
+            }
+        }
+
+        public void agregarReceptorCedula(String nombre,String nit,String correo,String tel) throws JSONException {
+            jsrec = new JSONObject();
+
+            jsrec.put("receptor_tipo","02");
+            jsrec.put("receptor_nombre",nombre);
+            jsrec.put("receptor_telefono",tel);
+            jsrec.put("receptor_correo",correo);
+
         }
 
         public void agregarProducto(String descripcion,double cantidad,
@@ -89,9 +116,9 @@ public class clsFELClasesPA {
 
         public void json() throws JSONException {
 
+            jsdoc.put("receptor",jsrec);
 
             json = jsdoc.toString();
-            json+="";
         }
 
     }

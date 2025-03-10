@@ -1473,7 +1473,14 @@ public class MainActivity extends PBase {
             clsFELClasesPA.FELAmbiente amb=FEL.new FELAmbiente(this,Con,db,gl.tienda);
             clsFELClasesPA.JSONFactura fac=FEL.new JSONFactura();
 
+            /*
             fac.Factura(100,gl.codigo_ruta,amb.establecimiento,false,1);
+            fac.agregarReceptorRUC("Cliente con RUC","894-57-103790","67",
+                    "Direccion","PCorr-Pdist-Pprov","jpospichal@dts.com.gt","1234-5678");
+            */
+
+            fac.Factura(100,gl.codigo_ruta,amb.establecimiento,false,2);
+            fac.agregarReceptor("Cliente con cedula","N-1234-1234","jpospichal@dts.com.gt","1234-5678");
 
             fac.json();
             String json=fac.json;
