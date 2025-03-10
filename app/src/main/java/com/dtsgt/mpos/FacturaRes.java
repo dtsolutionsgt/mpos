@@ -4692,15 +4692,7 @@ public class FacturaRes extends PBase {
 			return;
 		}
 
-		/*
-		if (gl.gNITCliente.length() == 13) {
-			gl.nit_tipo = "C";
-			return;
-		}
-		*/
-
-		if (gl.gNITCliente.length() > 8) {
-			//if (gl.gNITCliente.length() > 13) {
+		if (gl.gNITCliente.length() > 9) {
 			gl.nit_tipo = "N";
 			gl.gNITCliente = "CF";
 			return;
@@ -4713,16 +4705,8 @@ public class FacturaRes extends PBase {
 			gl.gNITCliente = "CF";
 		}
 
-		/*
-		if (gl.gNITCliente.length() > 18) {
-			gl.nit_tipo = "E";
-			gl.gNITCliente = "CF";
-		}
-		*/
-
 		String snn=gl.gNITCliente;
 		snn=snn+"";
-
 	}
 
 	private boolean validaNIT(String N)  {
