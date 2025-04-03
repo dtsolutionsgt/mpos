@@ -193,7 +193,7 @@ public class CliPos extends PBase {
                 msgbox("Identificación incorrecta");return;
             }
 
-            if (sNITCliente.length()>9) {
+            if (sNITCliente.length()>12) {
                 msgbox("Identificación incorrecta");return;
             }
 
@@ -206,7 +206,7 @@ public class CliPos extends PBase {
             gl.nit_tipo="N";
 
             if (gl.codigo_pais.equalsIgnoreCase("GT")) {
-                if (sNITCliente.length()>9) {
+                if (sNITCliente.length()>12) {
                     msgbox("Identificación incorrecta");return;
                 }
             }  else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
@@ -441,7 +441,6 @@ public class CliPos extends PBase {
             //gl.gTelCliente ="";
             gl.gNITCliente ="CF";
             gl.nit_tipo="N";
-
 
             gl.dom_nit= gl.gNITCliente;
             gl.dom_nom=sNombreCliente;

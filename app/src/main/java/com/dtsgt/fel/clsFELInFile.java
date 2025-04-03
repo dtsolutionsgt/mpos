@@ -266,7 +266,7 @@ public class clsFELInFile {
                 return errorflag;
             } catch (IOException e) {
                 //error=e.getMessage();
-                error="SIN CONEXIÓN A INTERNET\n\n"+e.getMessage();
+                error="SIN CONEXIÓN A INTERNET\n(Revise en configuración si el WiFi está activado.)\n\n"+e.getMessage();
                 errorcon=true;errorflag=true;constat=false;
                 return errorflag;
             }
