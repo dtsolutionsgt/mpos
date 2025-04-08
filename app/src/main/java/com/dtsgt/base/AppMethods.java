@@ -18,17 +18,11 @@ import android.net.NetworkInfo;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
-
 import com.dtsgt.classes.ExDialog;
-import com.dtsgt.classes.clsD_MovDObj;
-import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_factura_fel_paisObj;
-import com.dtsgt.classes.clsD_mov_almacenObj;
-import com.dtsgt.classes.clsD_movd_almacenObj;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsP_prodmenuopcObj;
 import com.dtsgt.classes.clsP_prodmenuopcdetObj;
@@ -38,7 +32,6 @@ import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
-import com.dtsgt.classes.clsT_venta_horaObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.firebase.fbOrdenCuenta;
 import com.dtsgt.mpos.PrintView;
@@ -47,9 +40,6 @@ import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import org.apache.commons.io.FileUtils;
-
-import com.google.zxing.BarcodeFormat;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 
 import java.io.BufferedInputStream;
@@ -1416,8 +1406,6 @@ public class AppMethods {
 		}
 	}
 
-
-	}
 
     public boolean paramCierre(int pid) {
         Cursor dt;
