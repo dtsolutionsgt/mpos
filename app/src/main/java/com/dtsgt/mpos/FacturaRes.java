@@ -992,12 +992,16 @@ public class FacturaRes extends PBase {
 				fdoc.PropinaAparte=gl.peFactPropinaAparte;
 				fdoc.felISR2impr=gl.peReg4impr;
 
+				fdoc.feluuid=gl.feluuid;
 				fdoc.idpais=gl.codigo_pais;
 				if (gl.codigo_pais.equalsIgnoreCase("HN")) cargaTotalesHonduras();
 				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
 					cargaTotalesSalvador();
 					fdoc.sal_nit="NIT: ";
 					if (gl.sal_NRC) fdoc.sal_nit="NRC: ";
+				}
+				if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+					if (!fdoc.feluuid.isEmpty()) app.qrguatemala(fdoc.feluuid);
 				}
 
 				fdoc.LANPrint=gl.peImpFactLan;

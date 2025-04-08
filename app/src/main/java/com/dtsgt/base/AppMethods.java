@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
@@ -41,6 +42,10 @@ import com.dtsgt.mpos.PrintView;
 import com.dtsgt.mpos.R;
 
 import org.apache.commons.io.FileUtils;
+
+import com.google.zxing.BarcodeFormat;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
+
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -1230,6 +1235,19 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peReg4impr = false;
 		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=178";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peRepFormaSuper = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peRepFormaSuper = false;
+		}
 	}
 
 	//                  Params extra
@@ -1854,7 +1872,17 @@ public class AppMethods {
 					if (estadoBluTooth()) printEpsonTMBT(copies);else return;
 				}
 				if (gl.peImpFactLan) print3nstar_print();
-				if (gl.peImpFactUSB) print3nstarnusb();
+
+				if (gl.peImpFactUSB) {
+					if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+						printposusb();
+					}else if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+						printposusb();
+					} else {
+						print3nstarnusb();
+					}
+				}
+
 			}
 
 			if (gl.prtipo.equalsIgnoreCase("HP Engage USB")) {
@@ -1970,6 +1998,15 @@ public class AppMethods {
 		}
 	}
 
+	public void printposusb() {
+		try {
+			Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.posprintusb");
+			cont.startActivity(intent);
+		} catch (Exception e) {
+			toastlong("El controlador de 3nStar USB no está instalado");
+		}
+	}
+
 	private void HPEngageUSB(int copies) {
         try {
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.hp.retail.test");
@@ -2060,9 +2097,7 @@ public class AppMethods {
 
 	public void qrguatemala(String uuid) {
 		try {
-
-
-			String updf="https://report.feel.com.gt/ingfacereport/ingfacereport_documento?uuid="+uuid+"&formato=pdf&tipo_operacion=CERTIFICACION"
+			String updf="https://report.feel.com.gt/ingfacereport/ingfacereport_documento?uuid="+uuid+"&formato=pdf&tipo_operacion=CERTIFICACION";
 
 			BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
 			Bitmap bitmap = barcodeEncoder.encodeBitmap(updf, BarcodeFormat.QR_CODE, 400, 400);

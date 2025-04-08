@@ -93,9 +93,12 @@ dependencies {
     //compile 'com.embarkmobile:zxing-android-minimal:2.0.0@aar'
     //compile 'com.embarkmobile:zxing-android-integration:2.0.0@aar'
     //compile 'com.google.zxing:core:3.0.1'
-
     implementation 'com.google.zxing:core:3.2.0'
     implementation 'androidx.core:core:1.9.0'
+    implementation 'com.google.zxing:core:3.5.1'
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+
+
     // Import the BoM for the Firebase platform
 
     implementation platform('com.google.firebase:firebase-bom:30.4.1')

@@ -1316,9 +1316,9 @@ public class Reportes extends PBase {
             rep.add("Empresa: " + gl.empnom);
             rep.add("Sucursal: " + gl.tiendanom);
             rep.add("Caja: " + gl.rutanom);
-            rep.add("Impresión: "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
-            rep.add("Vesión MPos: "+gl.parVer);
-            rep.add("Generó: "+gl.vendnom);
+            rep.add("Impresion: "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+            rep.add("Vesion MPos: "+gl.parVer);
+            rep.add("Genero: "+gl.vendnom);
             rep.line();
             rep.empty();
         }
