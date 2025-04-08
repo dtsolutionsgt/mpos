@@ -48,6 +48,10 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import org.apache.commons.io.FileUtils;
 
+import com.google.zxing.BarcodeFormat;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -1398,7 +1402,19 @@ public class AppMethods {
 			gl.peReg4impr = false;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=178";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
 
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peRepFormaSuper = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peRepFormaSuper = false;
+		}
+	}
 
 
 	}
@@ -2241,7 +2257,27 @@ public class AppMethods {
 		return ipb;
 	}
 
-    //endregion
+	public void qrguatemala(String uuid) {
+		try {
+			String updf="https://report.feel.com.gt/ingfacereport/ingfacereport_documento?uuid="+uuid+"&formato=pdf&tipo_operacion=CERTIFICACION";
+
+			BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+			Bitmap bitmap = barcodeEncoder.encodeBitmap(updf, BarcodeFormat.QR_CODE, 400, 400);
+
+			File qrfile = new File(Environment.getExternalStorageDirectory(), "/qrmpos.png");
+
+			FileOutputStream fos = new FileOutputStream(qrfile);
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+			fos.flush();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+
+
+	//endregion
 
 	//region Impresion inventario
 

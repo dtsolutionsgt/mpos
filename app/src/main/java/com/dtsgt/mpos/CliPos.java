@@ -225,7 +225,7 @@ public class CliPos extends PBase {
             gl.nit_tipo="N";
 
             if (gl.codigo_pais.equalsIgnoreCase("GT")) {
-                if (sNITCliente.length()>9) {
+                if (sNITCliente.length()>12) {
                     msgbox("Identificación incorrecta");return;
                 }
                 if (sNITCliente.length()!=13) {
@@ -466,7 +466,6 @@ public class CliPos extends PBase {
             //gl.gTelCliente ="";
             gl.gNITCliente ="CF";
             gl.nit_tipo="N";
-
 
             gl.dom_nit= gl.gNITCliente;
             gl.dom_nom=sNombreCliente;
