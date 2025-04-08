@@ -178,7 +178,7 @@ public class Venta extends PBase {
     private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot,savecant,desccant;
     private double px,py,cpx,cpy,cdist,savetot,saveprec,prodtotlin;
 
-    private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname;
+    private String uid,seluid,descuid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname;
     private int nivel,dweek,clidia,counter,menuitemid, lineaId, marcaId,prw;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos,descflag,meseros=false;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
@@ -435,7 +435,11 @@ public class Venta extends PBase {
                         gl.prodmenu=app.codigoProducto(prodid);//gl.prodmenu=prodid;
                         uprodid=prodid;
                         prodtotlin=vitem.Total;
-                        uid=vitem.emp;gl.menuitemid=uid;seluid=uid;// identificador unico de linea de T_VENTA ( Campo EMPRESA )
+                        uid=vitem.emp;
+                        gl.menuitemid=uid;
+                        seluid=uid;// identificador unico de linea de T_VENTA ( Campo EMPRESA )
+                        descuid=uid;
+
                         try {
                             gl.produid=Integer.parseInt(uid);
                         } catch (Exception e) {
@@ -719,6 +723,7 @@ public class Venta extends PBase {
                         item.Total=tt;
                     }
 
+                    /*
                     T_ordencomboprecioObj.fill("WHERE (COREL='VENTA') AND (IDCOMBO="+item.emp+")");
                     if (T_ordencomboprecioObj.count>0) {
                         item.Prec=T_ordencomboprecioObj.first().prectotal;
@@ -727,6 +732,7 @@ public class Venta extends PBase {
                         tt=item.Cant*item.Prec;tt=mu.round2(tt);
                         item.Total=tt;
                     }
+                     */
 
                     items.add(item);
 
@@ -1227,7 +1233,12 @@ public class Venta extends PBase {
         double sdesc=desc;
 
         try {
+
+            gl.prodcod=app.codigoProducto(prodid);
+
             prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, 0,um,gl.prodcod);
+            double pprecsin=precsin;
+            double prcprecsin=prc.precsin;
             pimp=prc.imp;
             double impv=prc.impval;
             desc=sdesc;
@@ -1412,7 +1423,11 @@ public class Venta extends PBase {
 
         try {
 
-            if (sinimp) precdoc=precsin; else precdoc=prec;
+            if (sinimp) {
+                precdoc=precsin;
+            } else {
+                precdoc=prec;
+            }
             if (impval<0.01) impval=0;
 
             ins.init("T_VENTA");
@@ -1552,7 +1567,11 @@ public class Venta extends PBase {
             impval=impval*ptot/savetot;
             //impval=mu.round6dec(prc.impval); //JP20230911
 
-            if (sinimp) precdoc=precsin; else precdoc=prec;
+            if (sinimp) {
+                precdoc=prc.precsin;
+            } else {
+                precdoc=prec;
+            }
 
             upd.init("T_VENTA");
 
@@ -1569,7 +1588,7 @@ public class Venta extends PBase {
                 upd.add("PRECIODOC",prec);
             }
 
-            upd.Where("EMPRESA='"+uid+"'");
+            upd.Where("EMPRESA='"+descuid+"'");
 
             db.execSQL(upd.sql());
 
@@ -1592,7 +1611,11 @@ public class Venta extends PBase {
             prodtot=prec*cant;
             prodtot= mu.round2dec(prodtot);
 
-            if (sinimp) precdoc=precsin; else precdoc=prec;
+            if (sinimp) {
+                precdoc=precsin;
+            } else {
+                precdoc=prec;
+            }
             if (gl.codigo_pais.equalsIgnoreCase("SV")) {
                 if (gl.sal_PER) {
                     precdoc=precsin;

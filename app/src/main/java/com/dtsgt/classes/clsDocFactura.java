@@ -1252,6 +1252,13 @@ public class clsDocFactura extends clsDocument {
         agregaDomicilio();
         direccionDomicilio();
 
+        if (!feluuid.isEmpty()) {
+            rep.add("");
+            rep.add("@@pic qrmpos.png");
+            rep.add("");
+        }
+
+
         rep.add("");
         rep.add("");
         rep.add("");

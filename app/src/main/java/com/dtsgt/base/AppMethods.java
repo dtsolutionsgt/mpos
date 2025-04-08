@@ -18,17 +18,11 @@ import android.net.NetworkInfo;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
-
 import com.dtsgt.classes.ExDialog;
-import com.dtsgt.classes.clsD_MovDObj;
-import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_factura_fel_paisObj;
-import com.dtsgt.classes.clsD_mov_almacenObj;
-import com.dtsgt.classes.clsD_movd_almacenObj;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsP_prodmenuopcObj;
 import com.dtsgt.classes.clsP_prodmenuopcdetObj;
@@ -38,7 +32,6 @@ import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
-import com.dtsgt.classes.clsT_venta_horaObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.firebase.fbOrdenCuenta;
 import com.dtsgt.mpos.PrintView;
@@ -47,6 +40,7 @@ import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import org.apache.commons.io.FileUtils;
+
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -1398,10 +1392,20 @@ public class AppMethods {
 			gl.peReg4impr = false;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=178";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
 
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
 
-
+			gl.peRepFormaSuper = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peRepFormaSuper = false;
+		}
 	}
+
 
     public boolean paramCierre(int pid) {
         Cursor dt;
@@ -2238,7 +2242,27 @@ public class AppMethods {
 		return ipb;
 	}
 
-    //endregion
+	public void qrguatemala(String uuid) {
+		try {
+			String updf="https://report.feel.com.gt/ingfacereport/ingfacereport_documento?uuid="+uuid+"&formato=pdf&tipo_operacion=CERTIFICACION";
+
+			BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+			Bitmap bitmap = barcodeEncoder.encodeBitmap(updf, BarcodeFormat.QR_CODE, 400, 400);
+
+			File qrfile = new File(Environment.getExternalStorageDirectory(), "/qrmpos.png");
+
+			FileOutputStream fos = new FileOutputStream(qrfile);
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+			fos.flush();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+
+
+	//endregion
 
 	//region Impresion inventario
 

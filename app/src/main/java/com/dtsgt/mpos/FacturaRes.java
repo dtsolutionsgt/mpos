@@ -1079,6 +1079,7 @@ public class FacturaRes extends PBase {
 				fdoc.tiendanom=gl.tiendanom;
 				fdoc.tiendanit=gl.tiendanit;
 
+				fdoc.feluuid=gl.feluuid;
 				fdoc.idpais=gl.codigo_pais;
 				fdoc.qrsalvador=false;
 				if (gl.codigo_pais.equalsIgnoreCase("HN")) cargaTotalesHonduras();
@@ -1098,6 +1099,9 @@ public class FacturaRes extends PBase {
 					cargaTotalesSalvador();
 					fdoc.sal_nit="NIT: ";
 					if (gl.sal_NRC) fdoc.sal_nit="NRC: ";
+				}
+				if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+					if (!fdoc.feluuid.isEmpty()) app.qrguatemala(fdoc.feluuid);
 				}
 
 				fdoc.LANPrint=gl.peImpFactLan;
