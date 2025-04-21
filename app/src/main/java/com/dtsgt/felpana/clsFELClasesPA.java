@@ -8,6 +8,7 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsP_fel_sv_ambObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,7 +17,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 
-import org.apache.commons.lang3.StringUtils;
 
 public class clsFELClasesPA {
 
@@ -42,7 +42,7 @@ public class clsFELClasesPA {
 
             ss=""+numero;num_doc=StringUtils.leftPad(ss,10,'0');
             idcaja=idcaja-200;ss=""+idcaja;
-            caja=StringUtils.leftPad(ss,3,'0');
+            caja= StringUtils.leftPad(ss,3,'0');
             estab=StringUtils.leftPad(establecimiento,4,'0');
 
             forma_pago="02";  // efectivo
