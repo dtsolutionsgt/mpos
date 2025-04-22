@@ -1132,9 +1132,15 @@ public class AppMethods {
 			dt.moveToFirst();
 
 			val=dt.getString(0);
+
+			gl.peImpFactUSBSTAR=false;
 			if (!emptystr(val)) {
 				if (val.equalsIgnoreCase("USB")) {
 					gl.peImpFactBT=false;gl.peImpFactLan=false;gl.peImpFactUSB=true;
+					gl.peImpFactIP="";
+				} else if (val.equalsIgnoreCase("USBSTAR")){
+					gl.peImpFactBT=false;gl.peImpFactLan=false;
+					gl.peImpFactUSB=true;gl.peImpFactUSBSTAR=true;
 					gl.peImpFactIP="";
 				} else if (val.indexOf(".")>0){
 					gl.peImpFactBT=false;gl.peImpFactLan=true;gl.peImpFactUSB=false;
@@ -2029,10 +2035,17 @@ public class AppMethods {
 				}
 				if (gl.peImpFactLan) print3nstar_print();
 				if (gl.peImpFactUSB) {
-					if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-						printposusb();
+
+					if (gl.peImpFactUSBSTAR) {
+						printusbstar();
 					} else {
-						print3nstarnusb();
+						if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+							printposusb();
+						} else if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+							printposusb();
+						} else {
+							print3nstarnusb();
+						}
 					}
 				}
 			}
@@ -2153,6 +2166,15 @@ public class AppMethods {
 	public void printposusb() {
 		try {
 			Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.posprintusb");
+			cont.startActivity(intent);
+		} catch (Exception e) {
+			toastlong("El controlador de 3nStar USB no está instalado");
+		}
+	}
+
+	public void printusbstar() {
+		try {
+			Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.posprintstar");
 			cont.startActivity(intent);
 		} catch (Exception e) {
 			toastlong("El controlador de 3nStar USB no está instalado");
