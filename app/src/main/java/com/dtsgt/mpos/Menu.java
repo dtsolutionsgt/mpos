@@ -2268,6 +2268,8 @@ public class Menu extends PBase {
 
 					if (gl.cajaid==5) {
 						listaCierres();
+					} else	if (gl.cajaid==4) {
+						startActivity(new Intent(Menu.this, Deposito.class));
 					} else {
 						if (valida()) {
 
@@ -2288,7 +2290,6 @@ public class Menu extends PBase {
 								txt = "La caja no se ha abierto, si desea iniciar turno o realizar pagos debe realizar el inicio de caja.";
 							if (gl.cajaid == 1)
 								txt = "La caja ya está abierta, si desea iniciar otro turno debe realizar el fin de caja.";
-							if (gl.cajaid == 4) txt = "Pendiente implementación.";
 							if (gl.cajaid == 3)
 								txt = "La caja está cerrada, si desea iniciar operaciones o realizar pagos debe realizar el inicio de caja.";
 							msgAskValid(txt);

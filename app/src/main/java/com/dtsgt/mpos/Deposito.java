@@ -64,6 +64,9 @@ public class Deposito extends PBase {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+
+		try {
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_deposito);
 		
@@ -118,21 +121,15 @@ public class Deposito extends PBase {
 		boldep=gl.boldep;
 		depparc=gl.depparc;
 
-	}
-	
-	
-	// Events
-	
-	public void listaDoc(View view){
-		try{
-			showDocDialog();
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
-
 	}
 	
-	public void saveDepos(View view){
+	
+	//region Events
+	
+	public void doSave(View view){
 		try{
 
 			Cursor DT;
@@ -156,50 +153,59 @@ public class Deposito extends PBase {
 
 	}
 
-	public void OpenDesglose(View view){
+	public void doDesglose(View view){
 		try{
 			gl.totDep =Double.parseDouble( mu.frmcur_sm(tef).replace(",",""));
-			startActivity(new Intent(this,desglose.class));
+			startActivity(new Intent(this, DesgloseMon.class));
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
 	}
 
+	private void doExit(){
+		try {
+			finish();
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+	}
 
-	// Main
-	
 	private void setHandlers(){
-		    
+
 		spinBanco.setOnItemSelectedListener(new OnItemSelectedListener() {
-		    @Override
-		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-		    	TextView spinlabel;
-		       	
-		    	try {
-		    		spinlabel=(TextView)parentView.getChildAt(0);
-			    	spinlabel.setTextColor(Color.BLACK);
-			    	spinlabel.setPadding(5, 0, 0, 0);
-			    	spinlabel.setTextSize(18);
-				    
-			    	bancoid=spincode.get(position);
-			    	cuenta=spincuenta.get(position);
-			    	
-		        } catch (Exception e) {
+			@Override
+			public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+				TextView spinlabel;
+
+				try {
+					spinlabel=(TextView)parentView.getChildAt(0);
+					spinlabel.setTextColor(Color.BLACK);
+					spinlabel.setPadding(5, 0, 0, 0);
+					spinlabel.setTextSize(18);
+
+					bancoid=spincode.get(position);
+					cuenta=spincuenta.get(position);
+
+				} catch (Exception e) {
 					addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-				   	mu.msgbox( e.getMessage());
-		        }			    	
-		    }
+					mu.msgbox( e.getMessage());
+				}
+			}
 
-		    @Override
-		    public void onNothingSelected(AdapterView<?> parentView) {
-		        return;
-		    }
+			@Override
+			public void onNothingSelected(AdapterView<?> parentView) {
+				return;
+			}
 
-		});	
-			
-	}	
-	
+		});
+
+	}
+
+	//endregion
+
+	//region Main
+
 	private void scanValues(){
 		double val,vef=0,vcheq=0;
 		
@@ -223,223 +229,7 @@ public class Deposito extends PBase {
 		lblTot.setText(mu.frmcur(ttot));
 		
 	}
-	
-	private void showDocDialog(){
-		final Dialog dialog = new Dialog(this);
-		final String rv;
-		final int rvi;
-		
-		dialog.setContentView(R.layout.activity_depos_doc);
-		dialog.setTitle("Documentos pendientes");
 
-		try{
-			listView   = (ListView)  dialog.findViewById(R.id.listView1);
-			btnSave    = (ImageView) dialog.findViewById(R.id.imageView2);
-			btnCancel  = (ImageView) dialog.findViewById(R.id.btnImp);
-			btnSelAll  = (ImageView) dialog.findViewById(R.id.imageView10);
-			btnSelNone = (ImageView) dialog.findViewById(R.id.imageView11);
-
-			if (depparc==true) {
-				btnSelAll.setVisibility(View.VISIBLE);btnSelNone.setVisibility(View.VISIBLE);
-			} else {
-				btnSelAll.setVisibility(View.INVISIBLE);btnSelNone.setVisibility(View.INVISIBLE);
-			}
-
-			adapter=new ListAdaptDepos(this, items);adapter.cursym=gl.peMon;
-			listView.setAdapter(adapter);
-
-			listView.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-					int flag;
-					try {
-						clsClasses.clsDepos selitem = (clsClasses.clsDepos) adapter.getItem(position);
-						flag=selitem.Bandera;
-
-						if (depparc==true) {
-							if (flag==0) flag=1; else flag=0;
-							selitem.Bandera=flag;
-
-							adapter.refreshItems();
-							adapter.setSelectedIndex(position);
-						}
-
-					} catch (Exception e) {
-						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-					}
-				};
-			});
-
-			btnSave.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					scanValues();
-					dialog.dismiss();
-				}
-			});
-
-			btnCancel.setOnClickListener(new OnClickListener() {
-				@Override public void onClick(View v) {
-					dialog.dismiss();
-				}
-			});
-
-			btnSelAll.setOnClickListener(new OnClickListener() {
-				@Override public void onClick(View v) {
-					try {
-						for(int i = 0; i < items.size(); i++ ) items.get(i).Bandera=1;
-					} catch (Exception e) {
-						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-					}
-
-					adapter.notifyDataSetChanged();
-					scanValues();
-				}
-			});
-
-			btnSelNone.setOnClickListener(new OnClickListener() {
-				@Override public void onClick(View v) {
-					try {
-						for(int i = 0; i < items.size(); i++ ) items.get(i).Bandera=0;
-					} catch (Exception e) {
-						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-					}
-
-					adapter.notifyDataSetChanged();
-					scanValues();
-				}
-			});
-
-			dialog.show();
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-			
-	}	
-	
-	private void fillDocList(){
-		Cursor DT,DTD;
-		clsClasses.clsDepos item;	
-		double val,efect,chec;
-		int nchec;
-		
-		items.clear();
-	
-		try {
-			
-			sql="SELECT D_COBRO.COREL,P_CLIENTE.NOMBRE,D_COBRO.TOTAL "+
-			     "FROM D_COBRO INNER JOIN P_CLIENTE ON P_CLIENTE.CODIGO=D_COBRO.CLIENTE WHERE D_COBRO.DEPOS<>'S' ";
-			DT=Con.OpenDT(sql);
-			//if (DT.getCount()==0) {return;}
-			
-			DT.moveToFirst();
-			while (!DT.isAfterLast()) {
-				
-				sql="SELECT SUM(Valor)	FROM D_COBROP WHERE (COREL='"+DT.getString(0)+"') AND  (TIPO='E')";
-				DTD=Con.OpenDT(sql);
-				try {
-					DTD.moveToFirst();
-					efect=DTD.getDouble(0);
-				} catch (Exception ee) {
-					addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ee.getMessage(),"");
-					efect=0;
-				}
-				
-				sql="SELECT SUM(Valor),Count(Valor) FROM D_COBROP WHERE (COREL='"+DT.getString(0)+"') AND  (TIPO='C')";
-				DTD=Con.OpenDT(sql);
-				try {
-					DTD.moveToFirst();
-					chec=DTD.getDouble(0);nchec=DTD.getInt(1);
-				} catch (Exception ee) {
-					addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ee.getMessage(),"");
-					chec=0;nchec=0;
-				}
-				
-				val=efect+chec;
-				
-				if (val>0) {
-					item = clsCls.new clsDepos();
-					
-					item.Cod=DT.getString(0);
-					item.Nombre=DT.getString(1);
-					item.Valor=val;
-					item.Total=DT.getDouble(2);
-					item.Efect=efect;
-					item.Chec=chec;
-					item.NChec=nchec;
-					item.Tipo="C";
-					item.Bandera=1;
-					item.Banco="Cobro";
-					
-					items.add(item);				
-				}
-			 
-				DT.moveToNext();
-			}
-				
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-		}
-		
-		try {
-			
-			sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.TOTAL,D_FACTURA.SERIE,D_FACTURA.CORELATIVO "+
-			     "FROM D_FACTURA INNER JOIN P_CLIENTE ON P_CLIENTE.CODIGO=D_FACTURA.CLIENTE " +
-			     "WHERE D_FACTURA.ANULADO='N' AND D_FACTURA.DEPOS<>'S' ";
-			DT=Con.OpenDT(sql);
-			
-			DT.moveToFirst();
-			while (!DT.isAfterLast()) {
-				
-				sql="SELECT SUM(Valor)	FROM D_FACTURAP WHERE (COREL='"+DT.getString(0)+"') AND  (TIPO='E')";
-				DTD=Con.OpenDT(sql);
-				try {
-					DTD.moveToFirst();
-					efect=DTD.getDouble(0);
-				} catch (Exception ee) {
-					addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ee.getMessage(),"");
-					efect=0;
-				}
-				
-				sql="SELECT SUM(Valor),Count(Valor) FROM D_FACTURAP WHERE (COREL='"+DT.getString(0)+"') AND  (TIPO='C')";
-				DTD=Con.OpenDT(sql);
-				try {
-					DTD.moveToFirst();
-					chec=DTD.getDouble(0);nchec=DTD.getInt(1);
-				} catch (Exception ee) {
-					addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ee.getMessage(),"");
-					chec=0;nchec=0;
-				}
-				
-				val=efect+chec;
-				
-				if (val>0) {
-					item = clsCls.new clsDepos();
-					
-					item.Cod=DT.getString(0);
-					item.Nombre=DT.getString(3)+"-"+DT.getString(4);
-					item.Valor=val;
-					item.Total=DT.getDouble(2);
-					item.Efect=efect;
-					item.Chec=chec;
-					item.NChec=nchec;
-					item.Tipo="F";
-					item.Bandera=1;
-					item.Banco="Factura";
-					
-					items.add(item);						
-				}
-			 
-				DT.moveToNext();
-			}
-				
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-		}		
-		
-	}
-	
 	private boolean saveDoc(){
 		Cursor DT;
 		clsClasses.clsDepos item;
@@ -639,9 +429,341 @@ public class Deposito extends PBase {
 
 	}
 
+	//endregion
 
-	// Aux
-	
+	//region Aux
+
+	private void desglose() {
+		Cursor DT;
+		int c100 = 0, c50 = 0, c20 = 0, c10 = 0, c5 = 0, c2 = 0, c1 = 0, c050 = 0, c025 = 0, c010 = 0, c005 = 0, c001 = 0;
+		double flt = 0;
+		String tipo;
+
+		try {
+
+			val100 = 0;
+			val50 = 0;
+			val20 = 0;
+			val10 = 0;
+			val5 = 0;
+			val2 = 0;
+			val1 = 0;
+			val050 = 0;
+			val025 = 0;
+			val010 = 0;
+			val005 = 0;
+			val001 = 0;
+
+			sql = "SELECT * FROM T_DEPOSB";
+			DT = Con.OpenDT(sql);
+
+			if (DT.getCount() == 0) {
+
+				lblTotal.setText(String.valueOf(mu.frmcur(gl.totDep)));
+
+
+			} else {
+
+				DT.moveToFirst();
+				while (!DT.isAfterLast()) {
+
+					//corel = DT.getString(0);
+
+					tipo = DT.getString(0);
+
+					if (tipo.equals("100")) {
+						c100 += DT.getInt(1);
+						val100 += (Double.parseDouble(tipo) * c100);
+					}
+
+					if (tipo.equals("50")) {
+						c50 += DT.getInt(1);
+						val50 += (Double.parseDouble(tipo) * c50);
+					}
+
+					if (tipo.equals("20")) {
+						c20 += DT.getInt(1);
+						val20 += (Double.parseDouble(tipo) * c20);
+					}
+
+					if (tipo.equals("10")) {
+						c10 += DT.getInt(1);
+						val10 += (Double.parseDouble(tipo) * c10);
+					}
+
+					if (tipo.equals("5")) {
+						c5 += DT.getInt(1);
+						val5 += (Double.parseDouble(tipo) * c5);
+					}
+
+					if (tipo.equals("2")) {
+						c2 += DT.getInt(1);
+						val2 += (Double.parseDouble(tipo) * c2);
+					}
+
+					if (tipo.equals("1")) {
+						c1 += DT.getInt(1);
+						val1 += (Double.parseDouble(tipo) * c1);
+					}
+
+					if (tipo.equals("0.5")) {
+						c050 += DT.getInt(1);
+						val050 += (Double.parseDouble(tipo) * c050);
+					}
+
+					if (tipo.equals("0.25")) {
+						c025 += DT.getInt(1);
+						val025 += (Double.parseDouble(tipo) * c025);
+					}
+
+					if (tipo.equals("0.1")) {
+						c010 += DT.getInt(1);
+						val010 += (Double.parseDouble(tipo) * c010);
+					}
+
+					if (tipo.equals("0.05")) {
+						c005 += DT.getInt(1);
+						val005 += (Double.parseDouble(tipo) * c005);
+					}
+
+					if (tipo.equals("0.01")) {
+						c001 += DT.getInt(1);
+						val001 += (Double.parseDouble(tipo) * c001);
+					}
+
+					DT.moveToNext();
+
+				}
+
+				valtotc1 = val100 + val50 + val20 + val10 + val5 + val2 + val1;
+
+				valtotc2 = val050 + val025 + val010 + val005 + val001;
+
+				valtot = valtotc1 + valtotc2;
+
+				if (gl.totDep == 0) {
+					gl.totDep = valtot;
+				}
+
+				flt = gl.totDep - valtot;
+
+				if (gl.depparc) {
+
+					if (!editando) {
+						if (gl.totDep < valtot) {
+							LimpiaValores();
+							lblTotal.setText(String.valueOf(mu.frmcur(mu.round(gl.totDep, gl.peDec))));
+							return;
+						}
+					} else {
+						LimpiaValores();
+						lblTotal.setText(String.valueOf(mu.frmcur(mu.round(gl.totDep, gl.peDec))));
+						return;
+					}
+
+
+				}
+
+				Totcien.setText(String.valueOf(mu.frmcur(val100)));
+				Totcnt.setText(String.valueOf(mu.frmcur(val50)));
+				Totvein.setText(String.valueOf(mu.frmcur(val20)));
+				Totdies.setText(String.valueOf(mu.frmcur(val10)));
+				Totcinco.setText(String.valueOf(mu.frmcur(val5)));
+				Totdos.setText(String.valueOf(mu.frmcur(val2)));
+				Totuno.setText(String.valueOf(mu.frmcur(val1)));
+
+				TotCntCvs.setText(String.valueOf(mu.frmcur(val050)));
+				totVCCvs.setText(String.valueOf(mu.frmcur(val025)));
+				totDiezCvs.setText(String.valueOf(mu.frmcur(val010)));
+				totCincoCvs.setText(String.valueOf(mu.frmcur(val005)));
+				totUnCv.setText(String.valueOf(mu.frmcur(val001)));
+
+				lblTotal.setText(String.valueOf(mu.frmcur(mu.round(gl.totDep, gl.peDec))));
+
+				txtcien.setText(String.valueOf(c100));
+				txtcint.setText(String.valueOf(c50));
+				txtveint.setText(String.valueOf(c20));
+				txtdies.setText(String.valueOf(c10));
+				txtcinco.setText(String.valueOf(c5));
+				txtdos.setText(String.valueOf(c2));
+				txtuno.setText(String.valueOf(c1));
+				txtCntCvs.setText(String.valueOf(c050));
+				txtVCCvs.setText(String.valueOf(c025));
+				txtDiezCvs.setText(String.valueOf(c010));
+				txtCincoCvs.setText(String.valueOf(c005));
+				txtUnCv.setText(String.valueOf(c001));
+
+			}
+
+
+		} catch (Exception e) {
+			addlog(new Object() {
+			}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
+		}
+
+	}
+
+	private void showDocDialog(){
+		final Dialog dialog = new Dialog(this);
+		final String rv;
+		final int rvi;
+
+		dialog.setContentView(R.layout.activity_depos_doc);
+		dialog.setTitle("Documentos pendientes");
+
+		try{
+			listView   = (ListView)  dialog.findViewById(R.id.listView1);
+			btnSave    = (ImageView) dialog.findViewById(R.id.imageView2);
+			btnCancel  = (ImageView) dialog.findViewById(R.id.btnImp);
+			btnSelAll  = (ImageView) dialog.findViewById(R.id.imageView10);
+			btnSelNone = (ImageView) dialog.findViewById(R.id.imageView11);
+
+			if (depparc==true) {
+				btnSelAll.setVisibility(View.VISIBLE);btnSelNone.setVisibility(View.VISIBLE);
+			} else {
+				btnSelAll.setVisibility(View.INVISIBLE);btnSelNone.setVisibility(View.INVISIBLE);
+			}
+
+			adapter=new ListAdaptDepos(this, items);adapter.cursym=gl.peMon;
+			listView.setAdapter(adapter);
+
+			listView.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+					int flag;
+					try {
+						clsClasses.clsDepos selitem = (clsClasses.clsDepos) adapter.getItem(position);
+						flag=selitem.Bandera;
+
+						if (depparc==true) {
+							if (flag==0) flag=1; else flag=0;
+							selitem.Bandera=flag;
+
+							adapter.refreshItems();
+							adapter.setSelectedIndex(position);
+						}
+
+					} catch (Exception e) {
+						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+					}
+				};
+			});
+
+			btnSave.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					scanValues();
+					dialog.dismiss();
+				}
+			});
+
+			btnCancel.setOnClickListener(new OnClickListener() {
+				@Override public void onClick(View v) {
+					dialog.dismiss();
+				}
+			});
+
+			btnSelAll.setOnClickListener(new OnClickListener() {
+				@Override public void onClick(View v) {
+					try {
+						for(int i = 0; i < items.size(); i++ ) items.get(i).Bandera=1;
+					} catch (Exception e) {
+						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+					}
+
+					adapter.notifyDataSetChanged();
+					scanValues();
+				}
+			});
+
+			btnSelNone.setOnClickListener(new OnClickListener() {
+				@Override public void onClick(View v) {
+					try {
+						for(int i = 0; i < items.size(); i++ ) items.get(i).Bandera=0;
+					} catch (Exception e) {
+						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+					}
+
+					adapter.notifyDataSetChanged();
+					scanValues();
+				}
+			});
+
+			dialog.show();
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+
+
+	}
+
+	private void fillDocList(){
+		Cursor DT,DTD;
+		clsClasses.clsDepos item;
+		double val,efect,chec;
+		int nchec;
+
+		items.clear();
+
+
+		try {
+
+			sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.TOTAL,D_FACTURA.SERIE,D_FACTURA.CORELATIVO "+
+					"FROM D_FACTURA INNER JOIN P_CLIENTE ON P_CLIENTE.CODIGO=D_FACTURA.CLIENTE " +
+					"WHERE D_FACTURA.ANULADO='N' AND D_FACTURA.DEPOS<>'S' ";
+			DT=Con.OpenDT(sql);
+
+			DT.moveToFirst();
+			while (!DT.isAfterLast()) {
+
+				sql="SELECT SUM(Valor)	FROM D_FACTURAP WHERE (COREL='"+DT.getString(0)+"') AND  (TIPO='E')";
+				DTD=Con.OpenDT(sql);
+				try {
+					DTD.moveToFirst();
+					efect=DTD.getDouble(0);
+				} catch (Exception ee) {
+					addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ee.getMessage(),"");
+					efect=0;
+				}
+
+				sql="SELECT SUM(Valor),Count(Valor) FROM D_FACTURAP WHERE (COREL='"+DT.getString(0)+"') AND  (TIPO='C')";
+				DTD=Con.OpenDT(sql);
+				try {
+					DTD.moveToFirst();
+					chec=DTD.getDouble(0);nchec=DTD.getInt(1);
+				} catch (Exception ee) {
+					addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ee.getMessage(),"");
+					chec=0;nchec=0;
+				}
+
+				val=efect+chec;
+
+				if (val>0) {
+					item = clsCls.new clsDepos();
+
+					item.Cod=DT.getString(0);
+					item.Nombre=DT.getString(3)+"-"+DT.getString(4);
+					item.Valor=val;
+					item.Total=DT.getDouble(2);
+					item.Efect=efect;
+					item.Chec=chec;
+					item.NChec=nchec;
+					item.Tipo="F";
+					item.Bandera=1;
+					item.Banco="Factura";
+
+					items.add(item);
+				}
+
+				DT.moveToNext();
+			}
+
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+		}
+
+	}
+
 	private void fillSpinner(){
 		Cursor DT;
 		  
@@ -751,15 +873,6 @@ public class Deposito extends PBase {
 			
 	}	
 
-	private void doExit(){
-		try {
-			super.finish();
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-	}
-
 	private void askPrint() {
 		try{
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -797,9 +910,20 @@ public class Deposito extends PBase {
 
 	}
 
+	//endregion
 
-	// Activity Events
-	
+	//region Activity Events
+
+	@Override
+	protected void onResume() {
+		try {
+			super.onResume();
+			desglose();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
 	@Override
 	public void onBackPressed() {
 		try{
@@ -809,6 +933,6 @@ public class Deposito extends PBase {
 		}
 
 	}
-	
-	
+
+	//endregion
 }

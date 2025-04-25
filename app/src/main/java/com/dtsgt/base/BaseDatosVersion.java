@@ -186,6 +186,55 @@ public class BaseDatosVersion {
 
 
         try {
+            sql="CREATE TABLE [P_deposito] ("+
+                    "CODIGO_DEPOSITO INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "CODIGO_RUTA INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "CODIGO_BANCO INTEGER NOT NULL,"+
+                    "CUENTA TEXT NOT NULL,"+
+                    "BOLETA TEXT NOT NULL,"+
+                    "MONTO_EFECTIVO REAL NOT NULL,"+
+                    "MONTO_CHEQUES REAL NOT NULL,"+
+                    "MONTO_TOTAL REAL NOT NULL,"+
+                    "CODIGO_VENDEDOR INTEGER NOT NULL,"+
+                    "STATCOM TEXT NOT NULL,"+
+                    "REFERENCIA INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_DEPOSITO])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX P_deposito_idx1 ON P_deposito(STATCOM)";db.execSQL(sql);
+        } catch (Exception e) { }
+
+
+        try {
+            sql="CREATE TABLE [P_deposito] ("+
+                    "CODIGO_DEPOSITO INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "CODIGO_RUTA INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "CODIGO_BANCO INTEGER NOT NULL,"+
+                    "CUENTA TEXT NOT NULL,"+
+                    "BOLETA TEXT NOT NULL,"+
+                    "MONTO_EFECTIVO REAL NOT NULL,"+
+                    "MONTO_CHEQUES REAL NOT NULL,"+
+                    "MONTO_TOTAL REAL NOT NULL,"+
+                    "CODIGO_VENDEDOR INTEGER NOT NULL,"+
+                    "STATCOM TEXT NOT NULL,"+
+                    "REFERENCIA INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_DEPOSITO])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX P_deposito_idx1 ON P_deposito(STATCOM)";db.execSQL(sql);
+        } catch (Exception e) { }
+
+
+
+        try {
 
         } catch (Exception e) { }
 

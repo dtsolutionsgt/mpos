@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Desglose">
+    tools:context=".DesgloseMon">
 
     <RelativeLayout
         android:id="@+id/rlDes"
@@ -533,7 +533,8 @@
         <RelativeLayout
             android:id="@+id/relRoad"
             android:layout_width="match_parent"
-            android:layout_height="48dp">
+            android:layout_height="48dp"
+            android:background="#FFFFFF">
 
             <RelativeLayout
                 android:id="@+id/relRoadbar"

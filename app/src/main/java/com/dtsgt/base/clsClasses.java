@@ -2178,6 +2178,24 @@ public class clsClasses {
         public String Nombre, Cod, Meta, Acum, Falta, Perc;
     }
 
+    public class clsP_deposito {
+        public int  codigo_deposito;
+        public int  empresa;
+        public int  codigo_sucursal;
+        public int  codigo_ruta;
+        public long fecha;
+        public int  codigo_banco;
+        public String cuenta;
+        public String boleta;
+        public double monto_efectivo;
+        public double monto_cheques;
+        public double monto_total;
+        public int  codigo_vendedor;
+        public String statcom;
+        public int  referencia;
+    }
+
+
     public class clsDepos {
         public String Nombre, Cod, Tipo, Banco;
         public double Valor, Total, Efect, Chec;

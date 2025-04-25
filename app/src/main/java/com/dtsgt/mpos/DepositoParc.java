@@ -104,7 +104,7 @@ public class DepositoParc extends PBase {
 	public void OpenDesglose(View view){
 		try{
 			gl.totDep = tef;
-			startActivity(new Intent(this,desglose.class));
+			startActivity(new Intent(this, Desglose.class));
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}

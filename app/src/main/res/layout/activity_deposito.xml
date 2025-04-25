@@ -191,20 +191,6 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="18sp" />
 
-        <ImageView
-            android:id="@+id/imgPFoto"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignBottom="@+id/lblBU"
-            android:layout_alignParentRight="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
-            android:clickable="true"
-            android:onClick="listaDoc"
-            android:src="@drawable/consultas" />
-
         <EditText
             android:id="@+id/txt1"
             android:layout_width="wrap_content"
@@ -227,6 +213,18 @@
             android:paddingLeft="10dp"
             android:text="Boleta :"
             android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ImageView
+            android:id="@+id/imgCalc"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignTop="@+id/lblpSaldo"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="3dp"
+            android:layout_toEndOf="@+id/lblpSaldo"
+            android:onClick="doDesglose"
+            android:src="@drawable/pago_completo" />
 
     </RelativeLayout>
 
@@ -258,30 +256,18 @@
 
     <ImageView
         android:id="@+id/imgImg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
         android:layout_below="@+id/relRoad"
         android:layout_alignParentRight="true"
         android:layout_marginTop="-1dp"
         android:layout_marginRight="1dp"
-        android:layout_marginBottom="478dp"
         android:clickable="true"
-        android:onClick="saveDepos"
-        android:paddingLeft="10dp"
-        android:paddingTop="5dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:src="@drawable/next48" />
-
-    <ImageView
-        android:id="@+id/imgCalc"
-        android:layout_width="48dp"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/relativeLayout1"
-        android:layout_alignBottom="@+id/relativeLayout1"
-        android:layout_marginEnd="3dp"
-        android:layout_marginBottom="30dp"
-        android:onClick="OpenDesglose"
-        android:src="@drawable/calc" />
+        android:onClick="doSave"
+        android:paddingLeft="5dp"
+        android:paddingTop="8dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="5dp"
+        android:src="@drawable/avanzar" />
 
 </RelativeLayout>
