@@ -1085,7 +1085,10 @@ public class FacturaRes extends PBase {
 
 				}
 				if (gl.codigo_pais.equalsIgnoreCase("GT")) {
-					if (!fdoc.feluuid.isEmpty()) app.qrguatemala(fdoc.feluuid);
+
+					try {
+						if (!fdoc.feluuid.isEmpty()) app.qrguatemala(fdoc.feluuid);
+					} catch (Exception e) {	}
 				}
 
 				fdoc.LANPrint=gl.peImpFactLan;
