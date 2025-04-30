@@ -244,6 +244,10 @@ public class Reimpresion extends PBase {
 		showMenu();
 	}
 
+	public void regresar(View v) {
+		finish();
+	}
+
 	private void setHandlers(){
 		try{
 
@@ -1122,24 +1126,7 @@ public class Reimpresion extends PBase {
 		return uniqueID;
 	}
 
-	public void regresar(View v) {
 
-		ExDialog dialog = new ExDialog(this);
-		dialog.setMessage("¿Salir?");
-
-		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				finish();
-			}
-		});
-
-		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {}
-		});
-
-		dialog.show();
-
-	}
 
 	private void msgAskExit(String msg) {
 		ExDialog dialog = new ExDialog(this);

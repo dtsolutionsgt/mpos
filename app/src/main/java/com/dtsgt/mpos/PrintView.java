@@ -35,6 +35,10 @@ public class PrintView extends PBase {
         finish();
     }
 
+    public void doExit(View view) {
+        finish();
+    }
+
     //endregion
 
     //region Main

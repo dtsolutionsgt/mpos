@@ -477,7 +477,7 @@ public class FELFactura extends PBase {
 
             if (!fel.errorflag) {
                 gl.feluuid=fel.fact_uuid;
-                toastlong("Envio completo "+ gl.feluuid);
+                //toastlong("Envio completo "+ gl.feluuid);
                 if (gl.peEnvio) {
                     if (!gl.feluuid.isEmpty()) {
                         if (gl.feluuid.length()>10) {
@@ -1004,7 +1004,7 @@ public class FELFactura extends PBase {
         if (ws.errorflag) {
             toastlong("Error de envio");
         } else {
-            toastlong("Envio completo "+ gl.feluuid);
+            //toastlong("Envio completo "+ gl.feluuid);
         }
         finish();
     }

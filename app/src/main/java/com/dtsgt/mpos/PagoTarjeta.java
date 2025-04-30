@@ -18,47 +18,40 @@ import com.dtsgt.classes.extListDlg;
 public class PagoTarjeta extends PBase {
 
     private EditText txtMonto, txtAut;
-    private TextView lblTipo;
+    private TextView lblTipo,lblAut;
 
     private clsP_mediapagoObj P_mediapagoObj;
 
     private double monto;
     private String tipo="",aut;
-    private int cpago;
+    private int cpago,pnivel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pago_tarjeta);
+        try {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_pago_tarjeta);
 
-        super.InitBase();
+            super.InitBase();
 
-        lblTipo = (TextView) findViewById(R.id.textView165);
-        txtMonto = (EditText) findViewById(R.id.editText2);
-        txtAut = (EditText) findViewById(R.id.editText1);
+            lblTipo = (TextView) findViewById(R.id.textView165);
+            txtMonto = (EditText) findViewById(R.id.editText2);
+            txtAut = (EditText) findViewById(R.id.editText1);
+            lblAut = (TextView) findViewById(R.id.textView154);
 
-        monto=gl.total_pago;
-        txtMonto.setText(""+round2(monto));
-        lblTipo.setText(tipo);txtAut.setText("");txtAut.requestFocus();
+            monto=gl.total_pago;
+            txtMonto.setText(""+round2(monto));
+            lblTipo.setText(tipo);
+            txtAut.setText("");txtAut.requestFocus();
 
-        setHandlers();
+            setHandlers();
 
-        listaTipos();
+            listaTipos();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
-    public double round2(double val){
-
-        int ival;
-
-        val=(double) (100*val);
-        double rslt=Math.round(val);
-        rslt=Math.floor(rslt);
-
-        ival=(int) rslt;
-        rslt=(double) ival;
-
-        return (double) (rslt/100);
-    }
     //region Events
 
     public void doSave(View view) {
@@ -163,10 +156,13 @@ public class PagoTarjeta extends PBase {
                 item=dt.getInt(0)+1;
             }
 
+            String tpago="K";
+            if (pnivel==2 || pnivel==3) tpago="C";
+
             ins.init("T_PAGO");
             ins.add("ITEM",item);
             ins.add("CODPAGO",codpago);
-            ins.add("TIPO","K");
+            ins.add("TIPO",tpago);
             ins.add("VALOR",mto);
             ins.add("DESC1",txtAut.getText().toString());
             ins.add("DESC2",tipo);
@@ -192,7 +188,7 @@ public class PagoTarjeta extends PBase {
             P_mediapagoObj.fill("WHERE (NIVEL>1) AND (ACTIVO=1) ORDER BY NOMBRE");
 
             extListDlg listdlg = new extListDlg();
-            listdlg.buildDialog(PagoTarjeta.this,"Media pago");
+            listdlg.buildDialog(PagoTarjeta.this,"Tipo pago");
             listdlg.setLines(6);
 
             if (P_mediapagoObj.count>0) {
@@ -221,6 +217,20 @@ public class PagoTarjeta extends PBase {
                             gl.modo_cortesia=true;
                             finish();
                         }
+
+                        P_mediapagoObj.fill("WHERE (codigo="+cpago+")");
+                        String lbnivel="Nota";
+                        pnivel=P_mediapagoObj.first().nivel;
+                        switch (pnivel) {
+                            case 2:
+                                lbnivel="#Cheque";break;
+                            case 3:
+                                lbnivel="#Cheque";break;
+                            case 4:
+                                lbnivel="#Autorización";break;
+                        }
+                        lblAut.setText(lbnivel);
+
                         listdlg.dismiss();
                     } catch (Exception e) {}
                 };
@@ -239,6 +249,20 @@ public class PagoTarjeta extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
+    }
+
+    public double round2(double val){
+
+        int ival;
+
+        val=(double) (100*val);
+        double rslt=Math.round(val);
+        rslt=Math.floor(rslt);
+
+        ival=(int) rslt;
+        rslt=(double) ival;
+
+        return (double) (rslt/100);
     }
 
     //endregion

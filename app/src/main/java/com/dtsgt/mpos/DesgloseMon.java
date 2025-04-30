@@ -28,8 +28,10 @@ public class DesgloseMon extends PBase {
     private Runnable printcallback, printclose;
     private clsDesglose fdesg;
 
-    private EditText txtcien, txtcint, txtveint, txtdies, txtcinco, txtdos, txtuno, txtCntCvs, txtVCCvs, txtDiezCvs, txtCincoCvs, txtUnCv;
-    private TextView lblTotal, Totcien, Totcnt, Totvein, Totdies, Totcinco, Totdos, Totuno, TotCntCvs, totVCCvs, totDiezCvs, totCincoCvs, totUnCv;
+    private EditText txtcien, txtcint, txtveint, txtdies, txtcinco, txtdos, txtuno, txtCntCvs,
+            txtVCCvs, txtDiezCvs, txtCincoCvs, txtUnCv;
+    private TextView lblTotal, Totcien, Totcnt, Totvein, Totdies, Totcinco, Totdos, Totuno,
+            TotCntCvs, totVCCvs, totDiezCvs, totCincoCvs, totUnCv;
 
 
     @Override
@@ -40,7 +42,6 @@ public class DesgloseMon extends PBase {
             setContentView(R.layout.activity_desglose_mon);
 
             super.InitBase();
-            addlog("Desglose", "" + du.getActDateTime(), String.valueOf(gl.vend));
 
             txtcien = (EditText) findViewById(R.id.txtcien);
             txtcint = (EditText) findViewById(R.id.txtcint);
@@ -98,8 +99,6 @@ public class DesgloseMon extends PBase {
             txtCincoCvs.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(0)});
             txtUnCv.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(0)});
 
-
-
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -109,12 +108,14 @@ public class DesgloseMon extends PBase {
 
     public void doSave(View view){
         SaveDesglose();
-        //impresDesglose();
-        finish();
     }
 
     public void clearVals(View view) {
         LimpiaValores();
+    }
+
+    public void doExit(View view) {
+        finish();
     }
 
     private void setHandles() {
@@ -530,7 +531,6 @@ public class DesgloseMon extends PBase {
 
             });
 
-
         } catch (Exception ex) {
             msgbox(ex.getMessage());
         }
@@ -550,149 +550,140 @@ public class DesgloseMon extends PBase {
 
             sql = "SELECT * FROM T_DEPOSB";
             DT = Con.OpenDT(sql);
-
-            if (DT.getCount() == 0) {
-
-                lblTotal.setText(String.valueOf(mu.frmcur(gl.totDep)));
+            lblTotal.setText(String.valueOf(mu.frmcur(gl.totDep)));
 
 
-            } else {
+            DT.moveToFirst();
+            while (!DT.isAfterLast()) {
 
-                DT.moveToFirst();
-                while (!DT.isAfterLast()) {
+                //corel = DT.getString(0);
 
-                    //corel = DT.getString(0);
+                tipo = DT.getString(0);
 
-                    tipo = DT.getString(0);
-
-                    if (tipo.equals("100")) {
-                        c100 += DT.getInt(1);
-                        val100 += (Double.parseDouble(tipo) * c100);
-                    }
-
-                    if (tipo.equals("50")) {
-                        c50 += DT.getInt(1);
-                        val50 += (Double.parseDouble(tipo) * c50);
-                    }
-
-                    if (tipo.equals("20")) {
-                        c20 += DT.getInt(1);
-                        val20 += (Double.parseDouble(tipo) * c20);
-                    }
-
-                    if (tipo.equals("10")) {
-                        c10 += DT.getInt(1);
-                        val10 += (Double.parseDouble(tipo) * c10);
-                    }
-
-                    if (tipo.equals("5")) {
-                        c5 += DT.getInt(1);
-                        val5 += (Double.parseDouble(tipo) * c5);
-                    }
-
-                    if (tipo.equals("2")) {
-                        c2 += DT.getInt(1);
-                        val2 += (Double.parseDouble(tipo) * c2);
-                    }
-
-                    if (tipo.equals("1")) {
-                        c1 += DT.getInt(1);
-                        val1 += (Double.parseDouble(tipo) * c1);
-                    }
-
-                    if (tipo.equals("0.5")) {
-                        c050 += DT.getInt(1);
-                        val050 += (Double.parseDouble(tipo) * c050);
-                    }
-
-                    if (tipo.equals("0.25")) {
-                        c025 += DT.getInt(1);
-                        val025 += (Double.parseDouble(tipo) * c025);
-                    }
-
-                    if (tipo.equals("0.1")) {
-                        c010 += DT.getInt(1);
-                        val010 += (Double.parseDouble(tipo) * c010);
-                    }
-
-                    if (tipo.equals("0.05")) {
-                        c005 += DT.getInt(1);
-                        val005 += (Double.parseDouble(tipo) * c005);
-                    }
-
-                    if (tipo.equals("0.01")) {
-                        c001 += DT.getInt(1);
-                        val001 += (Double.parseDouble(tipo) * c001);
-                    }
-
-                    DT.moveToNext();
-
+                if (tipo.equals("100")) {
+                    c100 += DT.getInt(1);
+                    val100 += (Double.parseDouble(tipo) * c100);
                 }
 
-                valtotc1 = val100 + val50 + val20 + val10 + val5 + val2 + val1;
-
-                valtotc2 = val050 + val025 + val010 + val005 + val001;
-
-                valtot = valtotc1 + valtotc2;
-
-                if (gl.totDep == 0) {
-                    gl.totDep = valtot;
+                if (tipo.equals("50")) {
+                    c50 += DT.getInt(1);
+                    val50 += (Double.parseDouble(tipo) * c50);
                 }
 
-                flt = gl.totDep - valtot;
+                if (tipo.equals("20")) {
+                    c20 += DT.getInt(1);
+                    val20 += (Double.parseDouble(tipo) * c20);
+                }
 
-                if (gl.depparc) {
+                if (tipo.equals("10")) {
+                    c10 += DT.getInt(1);
+                    val10 += (Double.parseDouble(tipo) * c10);
+                }
 
-                    if (!editando) {
-                        if (gl.totDep < valtot) {
-                            LimpiaValores();
-                            lblTotal.setText(String.valueOf(mu.frmcur(mu.round(gl.totDep, gl.peDec))));
-                            return;
-                        }
-                    } else {
+                if (tipo.equals("5")) {
+                    c5 += DT.getInt(1);
+                    val5 += (Double.parseDouble(tipo) * c5);
+                }
+
+                if (tipo.equals("2")) {
+                    c2 += DT.getInt(1);
+                    val2 += (Double.parseDouble(tipo) * c2);
+                }
+
+                if (tipo.equals("1")) {
+                    c1 += DT.getInt(1);
+                    val1 += (Double.parseDouble(tipo) * c1);
+                }
+
+                if (tipo.equals("0.5")) {
+                    c050 += DT.getInt(1);
+                    val050 += (Double.parseDouble(tipo) * c050);
+                }
+
+                if (tipo.equals("0.25")) {
+                    c025 += DT.getInt(1);
+                    val025 += (Double.parseDouble(tipo) * c025);
+                }
+
+                if (tipo.equals("0.1")) {
+                    c010 += DT.getInt(1);
+                    val010 += (Double.parseDouble(tipo) * c010);
+                }
+
+                if (tipo.equals("0.05")) {
+                    c005 += DT.getInt(1);
+                    val005 += (Double.parseDouble(tipo) * c005);
+                }
+
+                if (tipo.equals("0.01")) {
+                    c001 += DT.getInt(1);
+                    val001 += (Double.parseDouble(tipo) * c001);
+                }
+
+                DT.moveToNext();
+
+            }
+
+            valtotc1 = val100 + val50 + val20 + val10 + val5 + val2 + val1;
+
+            valtotc2 = val050 + val025 + val010 + val005 + val001;
+
+            valtot = valtotc1 + valtotc2;
+
+            if (gl.totDep == 0) {
+                gl.totDep = valtot;
+            }
+
+            flt = gl.totDep - valtot;
+
+            if (gl.depparc) {
+
+                if (!editando) {
+                    if (gl.totDep < valtot) {
                         LimpiaValores();
                         lblTotal.setText(String.valueOf(mu.frmcur(mu.round(gl.totDep, gl.peDec))));
                         return;
                     }
-
-
+                } else {
+                    LimpiaValores();
+                    lblTotal.setText(String.valueOf(mu.frmcur(mu.round(gl.totDep, gl.peDec))));
+                    return;
                 }
 
-                Totcien.setText(String.valueOf(mu.frmcur(val100)));
-                Totcnt.setText(String.valueOf(mu.frmcur(val50)));
-                Totvein.setText(String.valueOf(mu.frmcur(val20)));
-                Totdies.setText(String.valueOf(mu.frmcur(val10)));
-                Totcinco.setText(String.valueOf(mu.frmcur(val5)));
-                Totdos.setText(String.valueOf(mu.frmcur(val2)));
-                Totuno.setText(String.valueOf(mu.frmcur(val1)));
-
-                TotCntCvs.setText(String.valueOf(mu.frmcur(val050)));
-                totVCCvs.setText(String.valueOf(mu.frmcur(val025)));
-                totDiezCvs.setText(String.valueOf(mu.frmcur(val010)));
-                totCincoCvs.setText(String.valueOf(mu.frmcur(val005)));
-                totUnCv.setText(String.valueOf(mu.frmcur(val001)));
-
-                lblTotal.setText(String.valueOf(mu.frmcur(mu.round(gl.totDep, gl.peDec))));
-
-                txtcien.setText(String.valueOf(c100));
-                txtcint.setText(String.valueOf(c50));
-                txtveint.setText(String.valueOf(c20));
-                txtdies.setText(String.valueOf(c10));
-                txtcinco.setText(String.valueOf(c5));
-                txtdos.setText(String.valueOf(c2));
-                txtuno.setText(String.valueOf(c1));
-                txtCntCvs.setText(String.valueOf(c050));
-                txtVCCvs.setText(String.valueOf(c025));
-                txtDiezCvs.setText(String.valueOf(c010));
-                txtCincoCvs.setText(String.valueOf(c005));
-                txtUnCv.setText(String.valueOf(c001));
 
             }
 
+            Totcien.setText(String.valueOf(mu.frmcur(val100)));
+            Totcnt.setText(String.valueOf(mu.frmcur(val50)));
+            Totvein.setText(String.valueOf(mu.frmcur(val20)));
+            Totdies.setText(String.valueOf(mu.frmcur(val10)));
+            Totcinco.setText(String.valueOf(mu.frmcur(val5)));
+            Totdos.setText(String.valueOf(mu.frmcur(val2)));
+            Totuno.setText(String.valueOf(mu.frmcur(val1)));
+
+            TotCntCvs.setText(String.valueOf(mu.frmcur(val050)));
+            totVCCvs.setText(String.valueOf(mu.frmcur(val025)));
+            totDiezCvs.setText(String.valueOf(mu.frmcur(val010)));
+            totCincoCvs.setText(String.valueOf(mu.frmcur(val005)));
+            totUnCv.setText(String.valueOf(mu.frmcur(val001)));
+
+            lblTotal.setText(String.valueOf(mu.frmcur(mu.round(gl.totDep, gl.peDec))));
+
+            txtcien.setText(String.valueOf(c100));
+            txtcint.setText(String.valueOf(c50));
+            txtveint.setText(String.valueOf(c20));
+            txtdies.setText(String.valueOf(c10));
+            txtcinco.setText(String.valueOf(c5));
+            txtdos.setText(String.valueOf(c2));
+            txtuno.setText(String.valueOf(c1));
+            txtCntCvs.setText(String.valueOf(c050));
+            txtVCCvs.setText(String.valueOf(c025));
+            txtDiezCvs.setText(String.valueOf(c010));
+            txtCincoCvs.setText(String.valueOf(c005));
+            txtUnCv.setText(String.valueOf(c001));
 
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }
@@ -750,8 +741,7 @@ public class DesgloseMon extends PBase {
 
             lblTotal.setText(String.valueOf(mu.frmcur(mu.round(valtot, gl.peDec))));
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -928,8 +918,7 @@ public class DesgloseMon extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
-            toast("Desglose guardado correctamente");
-
+            finish();
         } catch (Exception e) {
             msgbox(e.getMessage());
             db.endTransaction();
@@ -957,8 +946,7 @@ public class DesgloseMon extends PBase {
                         sql = "UPDATE D_DESPOSB SET IMPRES=IMPRES+1 WHERE COREL='" + corel + "'";
                         db.execSQL(sql);
                     } catch (Exception e) {
-                        addlog(new Object() {
-                        }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                     }
 
                     /*if (impres > 1) {
@@ -967,8 +955,7 @@ public class DesgloseMon extends PBase {
                             sql = "UPDATE D_DEPOSB SET IMPRES=IMPRES+1 WHERE COREL='" + corel + "'";
                             db.execSQL(sql);
                         } catch (Exception e) {
-                            addlog(new Object() {
-                            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+                           msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                         }
 
                         gl.brw = 0;
@@ -994,8 +981,7 @@ public class DesgloseMon extends PBase {
 
             dialog.show();
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
 
@@ -1033,8 +1019,7 @@ public class DesgloseMon extends PBase {
             super.onResume();
 
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }

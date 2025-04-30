@@ -955,6 +955,7 @@ public class CierreX extends PBase {
                         rep.add(itemRZ.get(j).nombre);
 
                         //rep.add4lrrTotZ(itemRZ.get(j).cantmin,itemRZ.get(j).disp,itemRZ.get(j).precio);
+                        itemRZ.get(j).precio=itemRZ.get(j).precio*(-1);
                         rep.add4rrrr(itemRZ.get(j).cantmin,itemRZ.get(j).cajapago,itemRZ.get(j).disp,itemRZ.get(j).precio);
 
                         tot+= mu.round2(itemRZ.get(j).cantmin);
@@ -1541,9 +1542,9 @@ public class CierreX extends PBase {
             rep.add("Empresa: " + gl.empnom);
             rep.add("Sucursal: " + gl.tiendanom);
             rep.add("Caja: " + gl.rutanom);
-            rep.add("Impresión: "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
-            rep.add("Vesión MPos: "+gl.parVer);
-            rep.add("Generó: "+gl.vendnom);
+            rep.add("Impresion: "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+            rep.add("Vesion MPos: "+gl.parVer);
+            rep.add("Genero: "+gl.vendnom);
             rep.line();
             rep.empty();
         }

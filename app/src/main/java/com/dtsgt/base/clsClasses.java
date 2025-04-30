@@ -2193,6 +2193,10 @@ public class clsClasses {
         public int  codigo_vendedor;
         public String statcom;
         public int  referencia;
+
+        public String sfecha;
+        public String stotal;
+
     }
 
 

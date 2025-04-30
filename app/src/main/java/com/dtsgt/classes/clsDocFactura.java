@@ -1886,10 +1886,6 @@ public class clsDocFactura extends clsDocument {
         rep.add("");
     }
 
-    //endregion
-
-	//region Aux
-	
 	public double round2(double val){
 		int ival;
 		

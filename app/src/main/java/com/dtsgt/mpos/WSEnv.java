@@ -39,6 +39,7 @@ import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_cajapagosObj;
 import com.dtsgt.classes.clsP_cajareporteObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
+import com.dtsgt.classes.clsP_depositoObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsP_stock_almacenObj;
@@ -91,6 +92,8 @@ public class WSEnv extends PBase {
     private clsD_fel_errorObj D_fel_errorObj;
     private clsT_venta_horaObj T_venta_horaObj;
     private clsD_cxcObj D_cxcObj;
+    private clsP_depositoObj P_depositoObj;
+
 
     private ArrayList<String> clients = new ArrayList<String>();
     private ArrayList<String> rutas = new ArrayList<String>();
@@ -112,7 +115,8 @@ public class WSEnv extends PBase {
             corelCjCierre, cjCierreError, corelCjReporte, cjReporteError, corelCjPagos, cjPagosError, cStockError;
     private int ftot, fsend, fidx, fTotMov, fIdxMov, fTotMovAlm, fIdxMovAlm,
             mSend, cjCierreTot, cjCierreSend, cjAsist, fTotAnul, cjReporteTot, cjReporteSend,
-            cjPagosTot, cjPagosSend, cjFelBita, cStockTot, cStockSend, cfjCxcSend, cCosto, cCorCie,cFELErr;
+            cjPagosTot, cjPagosSend, cjFelBita, cStockTot, cStockSend, cfjCxcSend, cCosto,
+            cCorCie,cFELErr,cDepos;
     private boolean factsend, movSend, cjCierreSendB, cjReporteSendB, cjPagosSendB, cStockSendB;
 
     @Override
@@ -160,6 +164,7 @@ public class WSEnv extends PBase {
         P_cjPagosObj = new clsP_cajapagosObj(this, Con, db);
         P_cjReporteObj = new clsP_cajareporteObj(this, Con, db);
         D_cxcObj=new clsD_cxcObj(this,Con,db);
+        P_depositoObj=new clsP_depositoObj(this,Con,db);
 
         preparaEnvio();
 
@@ -286,7 +291,12 @@ public class WSEnv extends PBase {
                             callMethod("Commit", "SQL", CSQL);
                         }
                         break;
-
+                    case 15:
+                        processDeposito();
+                        if (cDepos > 0) {
+                            callMethod("Commit", "SQL", CSQL);
+                        }
+                        break;
 
                 }
             } catch (Exception e) {
@@ -375,8 +385,13 @@ public class WSEnv extends PBase {
                     break;
                 case 14:
                     statusCxC();
+                    execws(15);
+                    break;
+                case 15:
+                    statusDeposito();
                     processComplete();
                     break;
+
             }
 
         } catch (Exception e) {
@@ -414,16 +429,28 @@ public class WSEnv extends PBase {
                 plabel = "Enviando Stock";
                 break;
             case 8:
-                plabel = "Bitácora FEL.";
+                plabel = "Enviando Bitácora FEL.";
                 break;
             case 9:
-                plabel = "Asistencias de usuario.";
+                plabel = "Enviando Asistencias de usuario.";
                 break;
             case 10:
-                plabel = "Política de costo.";
+                plabel = "Enviando Política de costo.";
                 break;
             case 11:
-                plabel = "Enviando Movimientos de almacenes ( " + (fIdxMovAlm + 1) + " )";
+                plabel = "Enviando Movimientos de almacenes ";
+                break;
+            case 12:
+                plabel = "Enviando Movimientos de almacenes ( " + (fIdxMovAlm + 1) + " )";;
+                break;
+            case 13:
+                plabel = "Enviando Estados de FEL.";
+                break;
+            case 14:
+                plabel = "Enviando Cobros";
+                break;
+            case 15:
+                plabel = "Enviando Depositos.";
                 break;
         }
 
@@ -1634,6 +1661,38 @@ public class WSEnv extends PBase {
         }
     }
 
+    private void processDeposito() {
+        clsClasses.clsP_deposito item;
+        CSQL = "";
+
+        int cod_moneda=6;  // Quetzal
+        if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+            cod_moneda=1;  // Dolar
+        } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+            cod_moneda=14; // Lempira
+        }
+
+        P_depositoObj.fill("WHERE STATCOM='N'");
+
+        for (int i = 0; i < P_depositoObj.count; i++) {
+            item = P_depositoObj.items.get(i);
+            CSQL = CSQL + addDepositoItemSql(item,cod_moneda) + ";";
+        }
+
+        String ss = CSQL;
+        ss=ss+"";
+
+    }
+
+    private void statusDeposito() {
+        try {
+            sql = "UPDATE P_deposito SET STATCOM='S' WHERE STATCOM='N'";
+            db.execSQL(sql);
+        } catch (Exception e) {
+            msgbox2(e.getMessage());
+        }
+    }
+
 
     //endregion
 
@@ -1877,6 +1936,9 @@ public class WSEnv extends PBase {
             cFELErr=D_fel_errorObj.count;
             total_enviar += cFELErr;
 
+            P_depositoObj.fill("WHERE (STATCOM='N')");
+            cDepos=P_depositoObj.count;
+            total_enviar += cDepos;
 
             if (total_enviar > 0) {
 
@@ -1966,12 +2028,10 @@ public class WSEnv extends PBase {
 
     }
 
-
     public String addCostoUpdProdSql(clsClasses.clsT_costo item) {
         String  fs="UPDATE P_PRODUCTO SET COSTO="+item.costo+" WHERE (CODIGO_PRODUCTO="+item.codigo_producto+")";
         return fs;
     }
-
 
     public String addFELErrItemSql(clsClasses.clsD_fel_error item) {
         String fs = "" + du.univfechalong(du.getActDateTime()),err;
@@ -1992,6 +2052,32 @@ public class WSEnv extends PBase {
         ins.add("ENVIADO",item.enviado);
 
         return ins.sql();
+
+    }
+
+    public String addDepositoItemSql(clsClasses.clsP_deposito item,int cod_moneda) {
+        String fs = "" + du.univfechalong(item.fecha);
+
+        ins.init("P_deposito");
+
+        //ins.add("CODIGO_DEPOSITO",item.codigo_deposito);
+        ins.add("EMPRESA",item.empresa);
+        ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
+        ins.add("CODIGO_RUTA",item.codigo_ruta);
+        ins.add("FECHA",fs);
+        ins.add("CODIGO_BANCO",item.codigo_banco);
+        ins.add("CUENTA",item.cuenta);
+        ins.add("BOLETA",item.boleta);
+        ins.add("MONTO_EFECTIVO",item.monto_efectivo);
+        ins.add("MONTO_CHEQUES",item.monto_cheques);
+        ins.add("MONTO_TOTAL",item.monto_total);
+        ins.add("CODIGO_VENDEDOR",item.codigo_vendedor);
+        ins.add("STATCOM",item.statcom);
+        ins.add("REFERENCIA",item.referencia);
+        ins.add("CODIGO_MONEDA",cod_moneda);
+
+        return ins.sql();
+
 
     }
 

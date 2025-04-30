@@ -2269,7 +2269,7 @@ public class Menu extends PBase {
 					if (gl.cajaid==5) {
 						listaCierres();
 					} else	if (gl.cajaid==4) {
-						startActivity(new Intent(Menu.this, Deposito.class));
+						startActivity(new Intent(Menu.this, DepositoLista.class));
 					} else {
 						if (valida()) {
 

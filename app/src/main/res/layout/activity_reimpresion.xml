@@ -280,7 +280,7 @@
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="0dp"
-        android:onClick="regresar"
+        android:onClick="doExit"
         android:paddingLeft="10dp"
         android:paddingTop="5dp"
         android:paddingEnd="10dp"

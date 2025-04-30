@@ -528,6 +528,15 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp" />
+
+            <ImageView
+                android:id="@+id/imageView175"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:onClick="doExit"
+                android:padding="3dp"
+                android:src="@drawable/break_w" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -590,6 +599,20 @@
             android:background="@drawable/blue_strip">
 
             <TextView
+                android:id="@+id/lblTotal2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/lbltol"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="10dp"
+                android:text="999,999.99"
+                android:textAppearance="@android:style/TextAppearance.Holo.Medium"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:visibility="invisible" />
+
+            <TextView
                 android:id="@+id/lbltol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -607,10 +630,10 @@
                 android:id="@+id/lblTotal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/lbltol"
-                android:layout_marginStart="1dp"
-                android:layout_marginTop="0dp"
-                android:layout_toEndOf="@+id/lbltol"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="100dp"
+                android:layout_marginTop="12dp"
                 android:text="999,999.99"
                 android:textAppearance="@android:style/TextAppearance.Holo.Medium"
                 android:textColor="#FFFFFF"
