@@ -143,8 +143,6 @@ public class CliPos extends PBase {
 
         NitValidadoInfile =false;
 
-        txtNIT.setText("40921174");
-
         if (gl.codigo_pais.equalsIgnoreCase("SV")) {
             //txtNIT.setText("80002204021234");txtNom.setText("Nombre");
             //txtNIT.setText("166284-5");txtNom.setText("jaroslav pospichal ");txtCorreo.setText("jpospichal@dts.com.gt");
@@ -993,6 +991,28 @@ public class CliPos extends PBase {
         return true;
 
 	}
+
+    private void buscarCliente() {
+        try {
+            String cnit=txtNIT.getText().toString();
+            if (cnit.isEmpty())  return;
+
+
+            P_clienteObj.fill("WHERE (nit='"+cnit+"')");
+            if (P_clienteObj.count==0) {
+                if (txtRef.getText().toString().isEmpty()) txtRef.setText("Ciudad");
+                return;
+            }
+
+            txtNom.setText(""+P_clienteObj.first().nombre);
+            txtRef.setText(""+P_clienteObj.first().direccion);
+            txtCorreo.setText(""+P_clienteObj.first().email);
+            txtTel.setText(""+P_clienteObj.first().telefono);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     private void buscaCliente() {
 		Cursor DT;
