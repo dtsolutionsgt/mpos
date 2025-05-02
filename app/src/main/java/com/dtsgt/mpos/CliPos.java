@@ -128,8 +128,6 @@ public class CliPos extends PBase {
 
         NitValidadoInfile =false;
 
-        txtNIT.setText("40921174");
-
         /*
         if (gl.codigo_pais.equalsIgnoreCase("SV")) {
             //txtNIT.setText("8000-220402-123-4");
