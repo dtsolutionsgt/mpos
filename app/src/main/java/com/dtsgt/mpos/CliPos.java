@@ -24,6 +24,7 @@ import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.classes.clsD_pedidocObj;
 import com.dtsgt.classes.clsD_pedidocomboObj;
 import com.dtsgt.classes.clsD_pedidodObj;
+import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_pedidodObj;
 import com.dtsgt.classes.clsT_ventaObj;
@@ -54,9 +55,7 @@ public class CliPos extends PBase {
 	private ProgressBar pbar;
 	private CheckBox cbllevar,cbdomicilio;
 
-    //private wsInventCompartido wsi;
-
-    private Runnable rnRecibeInventario;
+    private clsP_clienteObj P_clienteObj;
 
     private ArrayList<String> pedidos =new ArrayList<String>();
     private ArrayList<String> peditems = new ArrayList<String>();
@@ -113,7 +112,8 @@ public class CliPos extends PBase {
         gl.InvCompSend=false;
 
         getURL();
-        //wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
+
+        P_clienteObj=new clsP_clienteObj(this,Con,db);
 
         gl.pedcorel="";gl.parallevar=false;gl.cf_domicilio=false;
         gl.mododocesa=-1;
@@ -143,7 +143,7 @@ public class CliPos extends PBase {
 
         NitValidadoInfile =false;
 
-        txtRef.setText("Ciudad");
+        txtNIT.setText("40921174");
 
         if (gl.codigo_pais.equalsIgnoreCase("SV")) {
             //txtNIT.setText("80002204021234");txtNom.setText("Nombre");
@@ -280,38 +280,6 @@ public class CliPos extends PBase {
 		}
 	}
 
-    private void purgeNIT() {
-        try {
-            String ss=txtNIT.getText().toString();
-
-            ss=ss.trim();
-
-            ss=ss.replace("-","");
-            ss=ss.replace("!","");
-            ss=ss.replace("#","");
-            ss=ss.replace("$","");
-            ss=ss.replace("%","");
-            ss=ss.replace("/","");
-            ss=ss.replace("(","");
-            ss=ss.replace(")","");
-            ss=ss.replace("=","");
-            ss=ss.replace("?","");
-            ss=ss.replace("'","");
-            ss=ss.replace("+","");
-            ss=ss.replace("*","");
-            ss=ss.replace(":","");
-            ss=ss.replace(";","");
-            ss=ss.replace(".","");
-            ss=ss.replace("@","");
-            ss=ss.replace("&","");
-            ss=ss.replace("_","");
-
-            txtNIT.setText(ss);
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
 	public void buscarCliente(View view) {
         gl.cliente="";
         browse=1;
@@ -365,36 +333,13 @@ public class CliPos extends PBase {
     }
 
     private void setHandlers() {
-
-        rnRecibeInventario = new Runnable() {
-            public void run() {
-                bloqueado=false;
-                pbar.setVisibility(View.INVISIBLE);
-                // if (wsi.errflag) {
-                //msgbox2("wsi"+wsi.error);
-                //} else {
-                //confirmaInventario();
-                gl.ventalock=false;
-                gl.parallevar=cbllevar.isChecked();
-                finish();
-                //}
-            }
-        };
-
         try {
 
             txtNIT.setOnKeyListener(new View.OnKeyListener() {
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    int i=0;
                     if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
-                        if (gl.codigo_pais.equalsIgnoreCase("GT")) {
-                            consultaNITInfile();
-                        } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-                            buscaRTN();
-                        }  else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-                            buscaNCR();
-                        }
+                        ingresaNIT();
                         return true;
                     } else {
                         return false;
@@ -402,41 +347,60 @@ public class CliPos extends PBase {
                 }
             });
 
+            txtNom.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) ingresaNIT();
+               }
+            });
+
+            cbdomicilio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                    if (isChecked){
+                        //gl.domicilio = true;
+                        cbllevar.setChecked(false);
+                    } else{
+                        //gl.domicilio = false;
+                    }
+                }
+            } );
+
+            cbllevar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                    if (isChecked){
+                        gl.parallevar = true;cbdomicilio.setChecked(false);
+                    } else{
+                        gl.parallevar = false;
+                    }
+                }
+            } );
+
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
-        cbdomicilio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
-                if (isChecked){
-                    //gl.domicilio = true;
-                    cbllevar.setChecked(false);
-                } else{
-                    //gl.domicilio = false;
-                }
-            }
-        }
-        );
-
-        cbllevar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
-                if (isChecked){
-                    gl.parallevar = true;cbdomicilio.setChecked(false);
-                } else{
-                    gl.parallevar = false;
-                }
-            }
-        }
-        );
-
 
     }
 
     //endregion
 
 	//region Main
+
+    private void ingresaNIT() {
+        try {
+            if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                buscarCliente();
+                consultaNITInfile();
+            } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                buscaRTN();
+            }  else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                buscaNCR();
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
 	private void procesaCF() {
 
@@ -1031,9 +995,7 @@ public class CliPos extends PBase {
 	}
 
     private void buscaCliente() {
-
 		Cursor DT;
-
 		try{
 
 			String NIT=txtNIT.getText().toString();
@@ -1065,7 +1027,6 @@ public class CliPos extends PBase {
 		} catch (Exception e){
 		    txtNom.setText("");txtRef.setText("");
 		}
-
 	}
 
 	private boolean existeCliente() {
@@ -1292,7 +1253,39 @@ public class CliPos extends PBase {
 
     }
 
-	private int nitnum(String nit) {
+    public void purgeNIT() {
+        try {
+            String ss=txtNIT.getText().toString();
+
+            ss=ss.trim();
+
+            ss=ss.replace("-","");
+            ss=ss.replace("!","");
+            ss=ss.replace("#","");
+            ss=ss.replace("$","");
+            ss=ss.replace("%","");
+            ss=ss.replace("/","");
+            ss=ss.replace("(","");
+            ss=ss.replace(")","");
+            ss=ss.replace("=","");
+            ss=ss.replace("?","");
+            ss=ss.replace("'","");
+            ss=ss.replace("+","");
+            ss=ss.replace("*","");
+            ss=ss.replace(":","");
+            ss=ss.replace(";","");
+            ss=ss.replace(".","");
+            ss=ss.replace("@","");
+            ss=ss.replace("&","");
+            ss=ss.replace("_","");
+
+            txtNIT.setText(ss);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private int nitnum(String nit) {
 
         int pp;
 
@@ -1652,6 +1645,8 @@ public class CliPos extends PBase {
     protected void onResume() {
         try{
             super.onResume();
+
+            P_clienteObj.reconnect(Con,db);
 
             municipio();
 
