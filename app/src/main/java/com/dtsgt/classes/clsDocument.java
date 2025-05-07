@@ -337,7 +337,7 @@ public class clsDocument {
             }
 
             if (s.contains("%%")) {
-                rep.addc(" ");
+                //rep.addc(" ");
                 if (banderafel) rep.addc("DOCUMENTO TRIBUTARIO ELECTRÓNICO");
                 rep.addc(nombre);
                 s=s.replace("%%","");
@@ -436,13 +436,13 @@ public class clsDocument {
 		}
 
         if (docfactura) rep.add("Version: "+fversion);
-        rep.add("");
+        //rep.add("");
         //if (es_pickup) rep.add("------ (RECOGER EN SITIO)  -------");
         //if (es_delivery) rep.add("-------  (DELIVERY)  -------");
 
         if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
 
-			rep.add("");
+			//rep.add("");
 			if (docfactura && (reimpres==1)) rep.add("-------  R E I M P R E S I Ó N  -------");
 			if (docfactura && (reimpres==10)) rep.add("-------  R E I M P R E S I Ó N  -------");
 			if (docfactura && (reimpres==2)) rep.add("------  C O P I A  ------");
@@ -453,7 +453,7 @@ public class clsDocument {
 				pendiente = reimpres;
 			}
 			if (docfactura && (reimpres==5)) rep.add("------  C O N T A B I L I D A D  ------");
-			rep.add("");
+			//rep.add("");
 
 		}else if ((docdevolucion || docpedido) && !(modofact.equalsIgnoreCase("TOL"))){
 

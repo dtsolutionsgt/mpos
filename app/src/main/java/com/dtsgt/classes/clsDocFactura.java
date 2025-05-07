@@ -1163,7 +1163,7 @@ public class clsDocFactura extends clsDocument {
         }
 
         if (plines.size()>0) {
-            rep.add("");
+            //rep.add("");
             rep.add("Desglose de pago:");
             for (int ii= 0; ii <plines.size(); ii++) {
                 rep.add(plines.get(ii));
@@ -1178,8 +1178,10 @@ public class clsDocFactura extends clsDocument {
         }
 
         if (modorest) {
-            rep.add("");
-            rep.add("Le atendió: "+nommesero);
+            if (!nommesero.isEmpty()) {
+                rep.add("");
+                rep.add("Le atendió: "+nommesero);
+            }
         }
 
         rep.add("");
@@ -1218,7 +1220,7 @@ public class clsDocFactura extends clsDocument {
                 }
             }
 
-            rep.add("");
+            //rep.add("");
             rep.add(felcert);
             rep.add(felnit);
             rep.add("");
@@ -1253,9 +1255,9 @@ public class clsDocFactura extends clsDocument {
         direccionDomicilio();
 
         if (!feluuid.isEmpty()) {
-            rep.add("");
+            //rep.add("");
             rep.add("@@pic qrmpos.png");
-            rep.add("");
+            //rep.add("");
         }
 
 

@@ -171,7 +171,6 @@ public class Venta extends PBase {
     private clsRepBuilder rep;
     private printer prn;
     private clsVenta vitem;
-    private clsFont3x5 ft3x5;
 
     private int browse;
     private double cant,desc,mdesc,prec,precsin,imp,impval,pimp, descLinea, descMarca;
@@ -329,7 +328,7 @@ public class Venta extends PBase {
 
             //if (getEstadoLicencia()==0) msgbox("Su licencia ha expirado.");
 
-            ft3x5=new clsFont3x5(32);
+
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -3568,15 +3567,9 @@ public class Venta extends PBase {
 
                         rep.line24();
                         rep.add("");
+                        rep.add("");
                         rep.add("      ORDEN # "+gl.ref1.toUpperCase());
                         rep.add("");
-
-                        ft3x5.get(numero_orden);
-                        rep.add(ft3x5.L1);
-                        rep.add(ft3x5.L2);
-                        rep.add(ft3x5.L3);
-                        rep.add(ft3x5.L4);
-                        rep.add(ft3x5.L5);
                         rep.add("");
 
                         ln = rep.items.size();

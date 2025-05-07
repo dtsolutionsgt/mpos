@@ -179,7 +179,6 @@ public class Orden extends PBase {
 
 
     private clsRepBuilder rep;
-    private clsFont3x5 ft3x5;
 
     private int browse;
     private double cant,desc,mdesc,prec,precsin,imp,impval;
@@ -344,7 +343,7 @@ public class Orden extends PBase {
             wsbtr =new wsCommit(gl.wsurl);
 
             rnOrdenInsert= () -> {ordenInsert();};
-            rnOrdenQuery= () -> {ordenQuery();};
+            rnOrdenQuery= () -> { ordenQuery(); };
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -2348,6 +2347,8 @@ public class Orden extends PBase {
 
     private void numeroOrden() {
         ordencentral=true;
+
+        /*
         if (gl.pelOrdenComanda | gl.peNumOrdCommandaVenta) {
             if (gl.peNumOrdCentral) {
                 numeroOrdenCentral();
@@ -2357,6 +2358,9 @@ public class Orden extends PBase {
         } else {
             numeroOrdenLocal();
         }
+        */
+
+        numeroOrdenCentral();
     }
 
     private void numeroOrdenLocal() {
@@ -2731,7 +2735,7 @@ public class Orden extends PBase {
     private boolean generaArchivos() {
 
         clsRepBuilder rep;
-        int printid,ln;
+        int printid,ln,prnumord;
         String fname,ss,narea,prip;
         File file;
 
@@ -2823,25 +2827,19 @@ public class Orden extends PBase {
                             rep.add(tl.get(j));
                         }
 
-                        //for (int j = 0; j <T_comandaObj.count; j++) {
-                        //    rep.add(T_comandaObj.items.get(j).texto);
-                        //}
+                        if (ordenpedido) {
+                            prnumord=numpedido;
+                        } else {
+                            prnumord=ordennum;
+                        }
 
                         rep.line24();
                         rep.add("");
-
-                        if (ordenpedido) {
-                            ft3x5.get(numpedido);
-                        } else {
-                            ft3x5.get(ordennum);
-                        }
-                        rep.add(ft3x5.L1);
-                        rep.add(ft3x5.L2);
-                        rep.add(ft3x5.L3);
-                        rep.add(ft3x5.L4);
-                        rep.add(ft3x5.L5);
-
                         rep.add("");
+                        rep.add("      ORDEN # "+prnumord);
+                        rep.add("");
+                        rep.add("");
+
                         if (gl.mesa_grupo == 19) rep.add("PARA LLEVAR");
                         if (ordenpedido) rep.add("PARA LLEVAR");
                         rep.add("");
