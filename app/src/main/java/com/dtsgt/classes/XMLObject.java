@@ -52,7 +52,6 @@ public class XMLObject {
             String xnode=getXMLRegion(source+"Result");
             Serializer serializer = new Persister();
             if (!xnode.isEmpty()){
-                //T var=serializer.read( type, xnode);
                 return serializer.read( type, xnode);
             }
         }catch (Exception e){

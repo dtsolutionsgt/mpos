@@ -2270,18 +2270,15 @@ public class AppMethods {
 	public void qrguatemala(String uuid) {
 		try {
 			String updf="https://report.feel.com.gt/ingfacereport/ingfacereport_documento?uuid="+uuid+"&formato=pdf&tipo_operacion=CERTIFICACION";
-
 			BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-			Bitmap bitmap = barcodeEncoder.encodeBitmap(updf, BarcodeFormat.QR_CODE, 400, 400);
-
+			Bitmap bitmap = barcodeEncoder.encodeBitmap(updf, BarcodeFormat.QR_CODE, 150, 150);
 			File qrfile = new File(Environment.getExternalStorageDirectory(), "/qrmpos.png");
-
 			FileOutputStream fos = new FileOutputStream(qrfile);
 			bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
 			fos.flush();
-
 		} catch (Exception e) {
-			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
 		}
 	}
 

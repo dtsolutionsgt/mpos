@@ -1223,7 +1223,7 @@ public class clsDocFactura extends clsDocument {
             //rep.add("");
             rep.add(felcert);
             rep.add(felnit);
-            rep.add("");
+            //rep.add("");
             rep.addc("Powered by DTSolutions, S.A.");
             rep.addc("dts.com.gt");
 
@@ -1248,7 +1248,7 @@ public class clsDocFactura extends clsDocument {
             }
 
         } else {
-            rep.add("");
+            //rep.add("");
         }
 
         agregaDomicilio();
@@ -1262,9 +1262,9 @@ public class clsDocFactura extends clsDocument {
 
 
         rep.add("");
-        rep.add("");
-        rep.add("");
-        rep.add("");
+//        rep.add("");
+//        rep.add("");
+//        rep.add("");
 
         return super.buildFooter();
     }
@@ -1372,7 +1372,7 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
             rep.add(felcert);
             rep.add(felnit);
-            rep.add("");
+            //rep.add("");
             rep.add("Powered by DTSolutions, S.A.");
             rep.addc("dts.com.gt");
         }

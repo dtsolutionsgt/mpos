@@ -46,7 +46,7 @@ public class clsDocument {
 	protected BaseDatos Con;
 	protected String sql;
 	
-	protected ArrayList<String> lines= new ArrayList<String>();
+	protected ArrayList<String> lines= new ArrayList<>();
     protected ArrayList<String> domlines= new ArrayList<String>();
 
     protected Context cont;
@@ -323,79 +323,70 @@ public class clsDocument {
             }
         }
 
-        for (int i = 0; i <lines.size(); i++) 		{
-
-            s=lines.get(i);if (s.isEmpty()) s=" ";
+        for (int lineIndex = 0; lineIndex < lines.size(); lineIndex++) {
+            String currentLine = lines.get(lineIndex);
 
             try {
-                s=encabezado(s);
-                ss=s.toUpperCase();
-                nidx=ss.indexOf("NIT");
-                //if (nidx>=0) s="NIT: "+nitsuc;
+                currentLine = encabezado(currentLine);
+                String upperLine = currentLine.toUpperCase();
+
+                int nitIndex = upperLine.indexOf("NIT");
+                // if (nitIndex >= 0) currentLine = "NIT: " + nitsuc;
+
             } catch (Exception e) {
-                s="##";
+                currentLine = "##";
             }
 
-            if (s.contains("%%")) {
-                //rep.addc(" ");
+            if (currentLine.contains("%%")) {
                 if (banderafel) rep.addc("DOCUMENTO TRIBUTARIO ELECTRÓNICO");
                 rep.addc(nombre);
-                s=s.replace("%%","");
+                currentLine = currentLine.replace("%%", "");
             }
 
             if (docpedido) {
-                s=s.replace("Factura serie","Pedido");
-                s=s.replace("numero : 0","");
+                currentLine = currentLine.replace("Factura serie", "Pedido")
+                        .replace("numero : 0", "");
             }
 
-            if (docrecibo) {
-				s=s.replace("Factura","Recibo");
+            if (docrecibo || docdevolucion || doccanastabod) {
+                currentLine = currentLine.replace("Factura", "Recibo");
             }
 
-            if (docdevolucion) {
-				s=s.replace("Factura","Recibo");
-			}
+            if (!currentLine.equalsIgnoreCase("##") &&
+                    !currentLine.equalsIgnoreCase("@@") &&
+                    !currentLine.trim().isEmpty()) {
 
-			if (doccanastabod){
-				s=s.replace("Factura","Recibo");
-			}
+                String upperCurrentLine = currentLine.toUpperCase();
 
-			if (!s.equalsIgnoreCase("##") && !s.equalsIgnoreCase("@@")) {
-			    su=s.toUpperCase();
-			    if (su.contains("CLIENTE") ) {
-                    if (su.contains("<<") ) {
-                        s2=s.split("<<");
-                        for (int j = 1; j <s2.length; j++) {
-                            ss2=s2[j];
-                            rep.add(ss2);
-                        }
-                    } else {
-                        rep.add(s);
-                    }
-                } else {
-			        s=rep.ctrim(s);
-                    rep.add(s);
-                }
-            }
-
-            if (docfactura) {
-
-                //if (!modofact.equalsIgnoreCase("TICKET")) {
-                if (facturaflag) {
-                    if (i==7){
-                        if (!banderafel) {
-                            rep.add("");
-                            if (docfactura) {
-                                rep.add(resol);
-                                rep.add(resfecha);
-                                rep.add(resvence);
-                                rep.add(resrango);
+                if (upperCurrentLine.contains("CLIENTE")) {
+                    if (upperCurrentLine.contains("<<")) {
+                        String[] clientParts = currentLine.split("<<");
+                        for (int j = 1; j < clientParts.length; j++) {
+                            if (!clientParts[j].trim().isEmpty()) {
+                                rep.add(clientParts[j]);
                             }
                         }
+                    } else {
+                        rep.add(currentLine);
+                    }
+                } else {
+                    currentLine = rep.ctrim(currentLine);
+                    if (!currentLine.trim().isEmpty()) {
+                        rep.add(currentLine);
                     }
                 }
             }
+
+            if (docfactura && facturaflag && lineIndex == 7 && !banderafel) {
+                rep.add(resol);
+                rep.add(resfecha);
+                rep.add(resvence);
+                rep.add(resrango);
+            }
         }
+
+        // Agregar una única línea vacía al final
+        rep.add("");
 
         if (docfactura){
 
@@ -1515,10 +1506,6 @@ public class clsDocument {
 
                         if (!fraseIVA.isEmpty()) felIVA=fraseIVA;
                         if (!fraseISR.isEmpty()) felISR=fraseISR;
-
-                        //if (felISR2impr) {
-                        //     felISR2="";
-                        //}
 
                         //#EJC202301040807AM: Corregir a futuro.
                         switch (empid) {

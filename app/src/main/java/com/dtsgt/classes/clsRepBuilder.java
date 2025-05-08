@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class clsRepBuilder {
@@ -85,43 +86,82 @@ public class clsRepBuilder {
 		return saverep(true);
 	}
 
-	public boolean saverep(boolean append){
-
-		String s;
-		int lns=0;
-
-		if (items.size()==0) return true;
+	public boolean saverep(boolean append) {
+		if (items.size() == 0) return true;
 
 		try {
+			// Limpiar líneas vacías o espacios
+			List<String> filteredItems = new ArrayList<>();
+			for (String line : items) {
+				if (line != null && !line.trim().isEmpty()) {
+					filteredItems.add(line.trim());
+				}
+			}
 
-			wfile=new FileWriter(fname,append);
+			if (filteredItems.isEmpty()) return true;
+
+			wfile = new FileWriter(fname, append);
 			writer = new BufferedWriter(wfile);
 
 			if (append) {
-				writer.write("\r\n");
-				writer.write("\r\n");
+				writer.write("\r\n"); // salto inicial opcional si estás haciendo append
 			}
 
-			for (int i = 0; i < items.size(); i++) {
-				try {
-					s=trim(items.get(i));
-				} catch (Exception e) {
-					s="";
-				}
-
-				writer.write(s);writer.write("\r\n");lns++;
+			for (String line : filteredItems) {
+				writer.write(line);
+				writer.write("\r\n");
 			}
 
 			writer.close();
 			items.clear();
 
-		} catch(Exception e){
-			Toast.makeText(cont,e.getMessage(), Toast.LENGTH_LONG).show();
+		} catch (Exception e) {
+			Toast.makeText(cont, e.getMessage(), Toast.LENGTH_LONG).show();
 			return false;
 		}
 
 		return true;
 	}
+
+//	public boolean saverep(boolean append){
+//
+//		String s;
+//		int lns=0;
+//
+//		if (items.size()==0) return true;
+//
+//		try {
+//
+//			wfile=new FileWriter(fname,append);
+//			writer = new BufferedWriter(wfile);
+//
+//			if (append) {
+//				writer.write("\r\n");
+//				//writer.write("\r\n");
+//			}
+//
+//			for (int i = 0; i < items.size(); i++) {
+//				try {
+//					s=trim(items.get(i));
+//				} catch (Exception e) {
+//					s="";
+//				}
+//
+//				writer.write(s);
+//				//writer.write("\r\n");
+//				lns++;
+//			}
+//
+//			writer.close();
+//			items.clear();
+//
+//		} catch(Exception e){
+//			Toast.makeText(cont,e.getMessage(), Toast.LENGTH_LONG).show();
+//			return false;
+//		}
+//
+//		return true;
+//	}
 
 	public boolean save(int cnt){
 		return saverep(cnt,false);
@@ -144,7 +184,7 @@ public class clsRepBuilder {
 
 			if (append) {
 				writer.write("\r\n");
-				writer.write("\r\n");
+				//writer.write("\r\n");
 			}
 
 			for (int j = 0; j < cnt; j++) {
@@ -157,14 +197,14 @@ public class clsRepBuilder {
 					}
 
 					writer.write(s);
-					writer.write("\r\n");
+					//writer.write("\r\n");
 					lns++;
 				}
 
 				writer.write("\r\n");
-				writer.write("\r\n");
-				writer.write("\r\n");
-				writer.write("\r\n");
+				//writer.write("\r\n");
+				//writer.write("\r\n");
+				//writer.write("\r\n");
 
 			}
 
@@ -811,8 +851,6 @@ public class clsRepBuilder {
 		st=StringUtils.rightPad(s2,mw);		
 		items.add(ss+" "+st);		
 	}
-	
-	
 	
 	// Aux
 	
