@@ -2769,7 +2769,11 @@ public class Orden extends PBase {
                         rep.add(P_impresoraObj.first().tipo_impresora);
                         //P_imprerep.add(soraObj.first().nombre);
                         rep.add(gl.rutanom);
-                        prip=app.ipBypass(P_impresoraObj.first().ip);
+                        if (app.impresoraStarLAN(P_impresoraObj.first().codigo_modelo)) {
+                            prip=app.ipBypass(P_impresoraObj.first().mac);
+                        } else {
+                            prip=app.ipBypass(P_impresoraObj.first().ip);
+                        }
                         rep.add(prip);
 
                         rep.empty();
@@ -2834,23 +2838,24 @@ public class Orden extends PBase {
                         }
 
                         rep.line24();
-                        rep.add("");
-                        rep.add("");
-                        rep.add("      ORDEN # "+prnumord);
-                        rep.add("");
-                        rep.add("");
+                        //rep.add("");
+                        //rep.add("");
+                        rep.add("ORDEN # "+prnumord);
+                        //rep.add("");
+                        //rep.add("");
 
                         if (gl.mesa_grupo == 19) rep.add("PARA LLEVAR");
                         if (ordenpedido) rep.add("PARA LLEVAR");
-                        rep.add("");
-                        rep.add("");
+                        //rep.add("");
 
+                        /*
                         ln = rep.items.size();
                         if (ln < 20) {
                             for (int ii = 0; ii < 20 - ln; ii++) {
                                 rep.empty();
                             }
                         }
+                        */
 
                         rep.save();
                         rep.clear();
@@ -2882,7 +2887,12 @@ public class Orden extends PBase {
 
     private void ejecutaImpresion() {
         try {
-            app.print3nstarw();
+            if (gl.impStarLAN) {
+                app.printLANstar();
+            } else {
+                app.print3nstarw();
+            }
+
             actualizaEstado();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

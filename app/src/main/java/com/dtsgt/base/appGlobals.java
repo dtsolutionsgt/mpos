@@ -67,7 +67,7 @@ public class appGlobals extends Application {
                    impresion_comanda, modo_domicilio, cf_domicilio, cierra_clave, mesero_lista ,
                    ingreso_mesero,after_login,modo_prec,mesero_precuenta,sin_propina,modo_upd_venta,
 			       modo_cortesia,modo_apertura,imp_inventario,sal_NIT,sal_NRC,sal_PER,nueva_mesa,
-				   combo_edit,cliente_credito=false,pedido_dom_import,repartidor_select;
+				   combo_edit,cliente_credito=false,pedido_dom_import,repartidor_select,impStarLAN;
 
 	//FEL Identificacion
 	public String felSIN="SIN FEL";

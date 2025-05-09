@@ -1412,7 +1412,6 @@ public class AppMethods {
 		}
 	}
 
-
     public boolean paramCierre(int pid) {
         Cursor dt;
         String sql,val="";
@@ -2181,6 +2180,16 @@ public class AppMethods {
 		}
 	}
 
+	public void printLANstar() {
+		try {
+			Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.lanprintstar");
+			intent.putExtra("modo","c");
+			cont.startActivity(intent);
+		} catch (Exception e) {
+			toastlong("El controlador de Star LAN no está instalado");
+		}
+	}
+
 	private void HPEngageUSB(int copies) {
         try {
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.hp.retail.test");
@@ -2267,6 +2276,11 @@ public class AppMethods {
 		return ipb;
 	}
 
+	public boolean impresoraStarLAN(int idimp) {
+		gl.impStarLAN=idimp==8;
+		return gl.impStarLAN;
+	}
+
 	public void qrguatemala(String uuid) {
 		try {
 			String updf="https://report.feel.com.gt/ingfacereport/ingfacereport_documento?uuid="+uuid+"&formato=pdf&tipo_operacion=CERTIFICACION";
@@ -2284,8 +2298,6 @@ public class AppMethods {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
 	}
-
-
 
 	//endregion
 
