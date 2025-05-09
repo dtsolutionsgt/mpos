@@ -3994,7 +3994,11 @@ public class FacturaRes extends PBase {
 
 						rep.add(P_impresoraObj.first().tipo_impresora);
 						rep.add(" ");
-						prip=app.ipBypass(P_impresoraObj.first().ip);
+						if (app.impresoraStarLAN(P_impresoraObj.first().codigo_modelo)) {
+							prip=app.ipBypass(P_impresoraObj.first().mac);
+						} else {
+							prip=app.ipBypass(P_impresoraObj.first().ip);
+						}
 						rep.add(prip);
 
 						rep.empty();

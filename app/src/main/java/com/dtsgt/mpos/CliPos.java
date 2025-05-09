@@ -144,10 +144,13 @@ public class CliPos extends PBase {
         NitValidadoInfile =false;
 
         /*
+         txtNIT.setText("40921174");
+
         if (gl.codigo_pais.equalsIgnoreCase("SV")) {
             //txtNIT.setText("80002204021234");txtNom.setText("Nombre");
             //txtNIT.setText("166284-5");txtNom.setText("jaroslav pospichal ");txtCorreo.setText("jpospichal@dts.com.gt");
         }
+        */
 
         if (gl.cliente_dom!=0) cargaCliente();
     }

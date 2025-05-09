@@ -2768,7 +2768,11 @@ public class Orden extends PBase {
                         rep.add(P_impresoraObj.first().tipo_impresora);
                         //P_imprerep.add(soraObj.first().nombre);
                         rep.add(gl.rutanom);
-                        prip=app.ipBypass(P_impresoraObj.first().ip);
+                        if (app.impresoraStarLAN(P_impresoraObj.first().codigo_modelo)) {
+                            prip=app.ipBypass(P_impresoraObj.first().mac);
+                        } else {
+                            prip=app.ipBypass(P_impresoraObj.first().ip);
+                        }
                         rep.add(prip);
 
                         rep.empty();
@@ -2838,12 +2842,14 @@ public class Orden extends PBase {
                         if (gl.mesa_grupo == 19) rep.add("PARA LLEVAR");
                         if (ordenpedido) rep.add("PARA LLEVAR");
 
+                        /*
                         ln = rep.items.size();
                         if (ln < 20) {
                             for (int ii = 0; ii < 20 - ln; ii++) {
                                 rep.empty();
                             }
                         }
+                        */
 
                         rep.save();
                         rep.clear();
