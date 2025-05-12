@@ -4543,6 +4543,12 @@ public class FacturaRes extends PBase {
 			fdoc.rutanombre=gl.tiendanom;
 			fdoc.precuenta1015=gl.pePrecu1015;
 
+			fdoc.impStarLANPre=gl.impStarLANPre;
+			fdoc.impStarLANFact=gl.impStarLANFact;
+			fdoc.impStarLANPrMac=gl.impStarLANPrMac;
+			fdoc.impStarLANFaMac=gl.impStarLANFaMac;
+			fdoc.impStarLANTipo="P";
+
 			fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina);
 			//fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);
 

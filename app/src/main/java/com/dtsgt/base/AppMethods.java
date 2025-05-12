@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -1410,6 +1409,36 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peRepFormaSuper = false;
 		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=179";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.impStarLANPrMac = val;
+			gl.impStarLANPre = val.length()==17;
+		} catch (Exception e) {
+			gl.impStarLANPre = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=180";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.impStarLANFaMac = val;
+			gl.impStarLANFact = val.length()==17;
+		} catch (Exception e) {
+			gl.impStarLANFact = false;
+		}
+
+
 	}
 
 
@@ -2181,6 +2210,27 @@ public class AppMethods {
 		}
 	}
 
+	public void printLANstarMulti() {
+		try {
+			Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.lanprintstar");
+			intent.putExtra("modo","c");
+			cont.startActivity(intent);
+		} catch (Exception e) {
+			toastlong("El controlador de Star LAN no está instalado");
+		}
+	}
+
+	public void printLANstar(String prn_mac) {
+		try {
+			Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.lanprintstar");
+			intent.putExtra("modo","p");
+			//intent.putExtra("mac", "prn_mac");
+			cont.startActivity(intent);
+		} catch (Exception e) {
+			toastlong("El controlador de Star LAN no está instalado");
+		}
+	}
+
 	private void HPEngageUSB(int copies) {
         try {
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.hp.retail.test");
@@ -2266,12 +2316,15 @@ public class AppMethods {
 
 		return ipb;
 	}
-	//resize of qrcode to 150x150 - again
+
+
 	public void qrguatemala(String uuid) {
 		try {
+			//aa
 			String updf="https://report.feel.com.gt/ingfacereport/ingfacereport_documento?uuid="+uuid+"&formato=pdf&tipo_operacion=CERTIFICACION";
 			BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
 			Bitmap bitmap = barcodeEncoder.encodeBitmap(updf, BarcodeFormat.QR_CODE, 150, 150);
+
 			File qrfile = new File(Environment.getExternalStorageDirectory(), "/qrmpos.png");
 			FileOutputStream fos = new FileOutputStream(qrfile);
 			bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);

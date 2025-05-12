@@ -24,11 +24,13 @@ public class clsDocument {
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felISR2,fraseIVA,fraseISR;
     public String felcont,contacc,nitsuc,sfticket;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero;
-    public String pais="",nomdepto,nommuni,nomtipo,tiendanom,tiendanit;
+    public String pais="",nomdepto,nommuni,nomtipo,tiendanom,tiendanit,
+                  impStarLANPrMac,impStarLANFaMac,impStarLANTipo;
     public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden,felISR2impr;
-	public boolean parallevar,domicilio,factsinpropina,modorest,LANPrint,PropinaAparte,precuenta1015;
+	public boolean parallevar,domicilio,factsinpropina,modorest,LANPrint,PropinaAparte,
+                   precuenta1015,impStarLANPre=false,impStarLANFact=false;
     public boolean qrsalvador;
     public long ffecha;
     public int pendiente,diacred,pagoefectivo,empid,tipo_doc,corel_doc;
@@ -313,7 +315,12 @@ public class clsDocument {
         String[] s2;
 		int nidx;
 
-        if (LANPrint) lanheader();
+        if (impStarLANPre || impStarLANFact) {
+            starlanheader();
+        } else {
+            if (LANPrint) lanheader();
+        }
+
         rep.empty();rep.empty();
 
         if (docfactura) {
@@ -475,7 +482,12 @@ public class clsDocument {
         String[] s2;
         int nidx;
 
-        if (LANPrint) lanheader();
+        if (impStarLANPre || impStarLANFact) {
+            starlanheader();
+        } else {
+            if (LANPrint) lanheader();
+        }
+
         rep.empty();rep.empty();
 
         for (int i = 0; i <lines.size(); i++) {
@@ -633,7 +645,12 @@ public class clsDocument {
         String s,ss2,su,l;
         String[] s2;
 
-        if (LANPrint) lanheader();
+        if (impStarLANPre || impStarLANFact) {
+            starlanheader();
+        } else {
+            if (LANPrint) lanheader();
+        }
+
         rep.empty();rep.empty();
 
         for (int i = 0; i <lines.size(); i++) 		{
@@ -739,7 +756,12 @@ public class clsDocument {
         String[] s2;
         int nidx;
 
-        if (LANPrint) lanheader();
+        if (impStarLANPre || impStarLANFact) {
+            starlanheader();
+        } else {
+            if (LANPrint) lanheader();
+        }
+
         rep.empty();rep.empty();
 
         rep.addc(tiendanom);
@@ -758,7 +780,12 @@ public class clsDocument {
         String s,ss2,su,l;
         String[] s2;
 
-        if (LANPrint) lanheader();
+        if (impStarLANPre || impStarLANFact) {
+            starlanheader();
+        } else {
+            if (LANPrint) lanheader();
+        }
+
         rep.empty();rep.empty();
 
         for (int i = 0; i <lines.size(); i++) 		{
@@ -1701,6 +1728,20 @@ public class clsDocument {
         rep.add(" ");
         rep.add("IMPRESORA DE CAJA");
         rep.add(LAN_IP);
+    }
+
+    public void starlanheader() {
+        rep.add(" ");
+        rep.add(" ");
+
+        if (impStarLANTipo.equalsIgnoreCase("F")) {
+            rep.add(impStarLANFaMac);
+        } else if (impStarLANTipo.equalsIgnoreCase("F")) {
+            rep.add(impStarLANPrMac);
+        } else {
+            rep.add("00:00:00:00:00:00");
+        }
+
     }
 
 	private void opendb() {

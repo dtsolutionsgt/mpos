@@ -25,7 +25,6 @@ import android.widget.TextView;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsOrden;
-import com.dtsgt.classes.clsFont3x5;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsBonFiltro;
 import com.dtsgt.classes.clsBonif;
@@ -2834,16 +2833,10 @@ public class Orden extends PBase {
                         }
 
                         rep.line24();
-                        rep.add("");
-                        rep.add("");
-                        rep.add("      ORDEN # "+prnumord);
-                        rep.add("");
-                        rep.add("");
+                        rep.add("ORDEN # "+prnumord);
 
                         if (gl.mesa_grupo == 19) rep.add("PARA LLEVAR");
                         if (ordenpedido) rep.add("PARA LLEVAR");
-                        rep.add("");
-                        rep.add("");
 
                         ln = rep.items.size();
                         if (ln < 20) {
@@ -2882,7 +2875,12 @@ public class Orden extends PBase {
 
     private void ejecutaImpresion() {
         try {
-            app.print3nstarw();
+            if (gl.impStarLAN) {
+                app.printLANstarMulti();
+            } else {
+                app.print3nstarw();
+            }
+
             actualizaEstado();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
