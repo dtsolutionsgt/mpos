@@ -2266,7 +2266,7 @@ public class AppMethods {
 
 		return ipb;
 	}
-//resize of qrcode to 150x150
+	//resize of qrcode to 150x150 - again
 	public void qrguatemala(String uuid) {
 		try {
 			String updf="https://report.feel.com.gt/ingfacereport/ingfacereport_documento?uuid="+uuid+"&formato=pdf&tipo_operacion=CERTIFICACION";
