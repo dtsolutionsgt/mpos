@@ -165,7 +165,7 @@ public class ResMesero extends PBase {
             }
 
             if (app.isOnWifi()==0) {
-                msgSync("Estado de mesas no está actualizado.\nIntente de nuevo.");
+                msgSync("No hay conexión a internet.\nNo use el dispositivo.\nInforme a gerente.");
             }
 
         } catch (Exception e) {

@@ -4046,6 +4046,10 @@ public class FacturaRes extends PBase {
 							}
 						}
 
+						rep.add("");
+						rep.add("");
+						rep.add("");
+
 						rep.save();
 						rep.clear();
 					}
