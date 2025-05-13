@@ -1205,9 +1205,9 @@ public class clsDocFactura extends clsDocument {
 
             if (!feluuid.equalsIgnoreCase(" ")) {
                 rep.add("");
-                rep.add("Número de autorización: ");
+                rep.add("Numero de autorizacion: ");
                 rep.add(feluuid);
-                rep.add("Fecha de certificación: "+feldcert);
+                rep.add("Fecha de certificacion: "+feldcert);
             }
 
             if (!felIVA.isEmpty()) {
