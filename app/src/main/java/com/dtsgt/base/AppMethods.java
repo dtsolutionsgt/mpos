@@ -1147,7 +1147,8 @@ public class AppMethods {
 				}
 			}
 		} catch (Exception e) {
-			gl.peImpFactBT=true;gl.peImpFactLan=false;gl.peImpFactUSB=false;gl.peImpFactIP="";
+			gl.peImpFactBT=true;
+			gl.peImpFactLan=false;gl.peImpFactUSB=false;gl.peImpFactIP="";
 		}
 
 		try {
@@ -2326,7 +2327,7 @@ public class AppMethods {
 			//aa
 			String updf="https://report.feel.com.gt/ingfacereport/ingfacereport_documento?uuid="+uuid+"&formato=pdf&tipo_operacion=CERTIFICACION";
 			BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-			Bitmap bitmap = barcodeEncoder.encodeBitmap(updf, BarcodeFormat.QR_CODE, 150, 150);
+			Bitmap bitmap = barcodeEncoder.encodeBitmap(updf, BarcodeFormat.QR_CODE, 250, 250);
 
 			File qrfile = new File(Environment.getExternalStorageDirectory(), "/qrmpos.png");
 			FileOutputStream fos = new FileOutputStream(qrfile);
