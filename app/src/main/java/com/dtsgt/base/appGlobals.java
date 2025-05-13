@@ -58,7 +58,7 @@ public class appGlobals extends Application {
 			     prcu_corel,nom_alm,nom_alm2,mesa_area,nit_tipo,invcent_tipo,FEL_llave_cont,
   	             cli_muni,cli_muni_suc,cli_depto,cli_depto_suc,dom_det_cod,
 			     ped_dom_corel,ped_dom_orden,ped_dom_cliente,ped_dom_dir,ped_dom_texto,ped_dom_tel,
-			     ped_dom_cambio,impStarLANPrMac,impStarLANFaMac;
+			     ped_dom_cambio, impStarLANFactMac;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,
 			      dom_total,bar_cant,descadd,monto_propina,limite_credito,preccombo,
 				  fd_hn_imp,fd_hn_exen,fd_hn_grav,ped_dom_monto,fd_cajapagos;
@@ -69,7 +69,7 @@ public class appGlobals extends Application {
                    ingreso_mesero,after_login,modo_prec,mesero_precuenta,sin_propina,modo_upd_venta,
 			       modo_cortesia,modo_apertura,imp_inventario,sal_NIT,sal_NRC,sal_PER,nueva_mesa,
 				   combo_edit,cliente_credito=false,pedido_dom_import,repartidor_select,
-			       impStarLAN,impStarLANPre,impStarLANFact;
+			       impStarLAN,impStarLANFact;
 
 	//FEL Identificacion
 	public String felSIN="SIN FEL";

@@ -1094,7 +1094,10 @@ public class FacturaRes extends PBase {
 				fdoc.LANPrint=gl.peImpFactLan;
 				if (gl.peImpFactLan) fdoc.LAN_IP=gl.peImpFactIP;else fdoc.LAN_IP="";
 
-                fdoc.buildPrint(corel,0,"",gl.peMFact);
+				fdoc.impStarLANFact=gl.impStarLANFact;
+				fdoc.impStarLANFactMac =gl.impStarLANFactMac;
+
+				fdoc.buildPrint(corel,0,"",gl.peMFact);
 
 				if (gl.peMFact)	gl.QRCodeStr=fdoc.QRCodeStr;else gl.QRCodeStr="";
 				if (gl.codigo_pais.equalsIgnoreCase("HN")) gl.QRCodeStr="";
@@ -4551,11 +4554,8 @@ public class FacturaRes extends PBase {
 			fdoc.rutanombre=gl.tiendanom;
 			fdoc.precuenta1015=gl.pePrecu1015;
 
-			fdoc.impStarLANPre=gl.impStarLANPre;
 			fdoc.impStarLANFact=gl.impStarLANFact;
-			fdoc.impStarLANPrMac=gl.impStarLANPrMac;
-			fdoc.impStarLANFaMac=gl.impStarLANFaMac;
-			fdoc.impStarLANTipo="P";
+			fdoc.impStarLANFactMac =gl.impStarLANFactMac;
 
 			fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina);
 			//fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);

@@ -1419,27 +1419,11 @@ public class AppMethods {
 			val=dt.getString(0);
 			if (emptystr(val)) throw new Exception();
 
-			gl.impStarLANPrMac = val;
-			gl.impStarLANPre = val.length()==17;
-		} catch (Exception e) {
-			gl.impStarLANPre = false;
-		}
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=180";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.impStarLANFaMac = val;
+			gl.impStarLANFactMac = val;
 			gl.impStarLANFact = val.length()==17;
 		} catch (Exception e) {
 			gl.impStarLANFact = false;
 		}
-
-
 	}
 
     public boolean paramCierre(int pid) {
@@ -2063,17 +2047,20 @@ public class AppMethods {
 					}
 				}
 				if (gl.peImpFactLan) print3nstar_print();
-				if (gl.peImpFactUSB) {
-
-					if (gl.peImpFactUSBSTAR) {
-						printusbstar();
-					} else {
-						if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-							printposusb();
-						} else if (gl.codigo_pais.equalsIgnoreCase("GT")) {
-							printposusb();
+				if (gl.impStarLANFact) {
+					printLANstar();
+				} else {
+					if (gl.peImpFactUSB) {
+						if (gl.peImpFactUSBSTAR) {
+							printusbstar();
 						} else {
-							print3nstarnusb();
+							if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+								printposusb();
+							} else if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+								printposusb();
+							} else {
+								print3nstarnusb();
+							}
 						}
 					}
 				}
@@ -2220,11 +2207,10 @@ public class AppMethods {
 		}
 	}
 
-	public void printLANstar(String prn_mac) {
+	public void printLANstar() {
 		try {
 			Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.lanprintstar");
 			intent.putExtra("modo","p");
-			//intent.putExtra("mac", "prn_mac");
 			cont.startActivity(intent);
 		} catch (Exception e) {
 			toastlong("El controlador de Star LAN no está instalado");
