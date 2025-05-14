@@ -1419,10 +1419,10 @@ public class AppMethods {
 			val=dt.getString(0);
 			if (emptystr(val)) throw new Exception();
 
-			gl.impStarLANPrMac = val;
-			gl.impStarLANPre = val.length()==17;
+			gl.impStarLANFaMac = val;
+			gl.impStarLANFact = val.length()==17;
 		} catch (Exception e) {
-			gl.impStarLANPre = false;
+			gl.impStarLANFact = false;
 		}
 
 		try {
@@ -1433,10 +1433,9 @@ public class AppMethods {
 			val=dt.getString(0);
 			if (emptystr(val)) throw new Exception();
 
-			gl.impStarLANFaMac = val;
-			gl.impStarLANFact = val.length()==17;
+			gl.peFactCantProd = val.equalsIgnoreCase("S");
 		} catch (Exception e) {
-			gl.impStarLANFact = false;
+			gl.peFactCantProd = false;
 		}
 
 
