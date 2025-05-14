@@ -1422,7 +1422,7 @@ public class AppMethods {
 			gl.impStarLANFactMac = val;
 			gl.impStarLANFact = val.length()==17;
 		} catch (Exception e) {
-			gl.impStarLANFact = false;
+			gl.peFactCantProd = false;
 		}
 	}
 
