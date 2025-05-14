@@ -1424,6 +1424,34 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peFactCantProd = false;
 		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=180";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peFactCantProd = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peFactCantProd = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=181";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peDescPassSimple = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peDescPassSimple = false;
+		}
+
+
 	}
 
     public boolean paramCierre(int pid) {

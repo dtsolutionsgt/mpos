@@ -304,9 +304,8 @@ public class clsDocCuenta extends clsDocument {
         itemData item;
         String ss;
 
-		if (LANPrint) {
-			lanheader();
-		}
+		if (LANPrint) lanheader();
+		if (impStarLANFact) starlanheader();
 
 		rep.add("");rep.add("");rep.add("");
         rep.add(rep.ctrim(rutanombre));
