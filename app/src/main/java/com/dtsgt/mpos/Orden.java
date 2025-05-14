@@ -2775,35 +2775,34 @@ public class Orden extends PBase {
                         }
                         rep.add(prip);
 
-                        rep.empty();
                         //rep.empty();
-                        //rep.empty();
-                        //rep.empty();
-                        //rep.empty();
-                        //rep.empty();
-
-                        //ordenpedido=numpedido>0;
+                        if (ordenpedido) {
+                            prnumord=numpedido;
+                        } else {
+                            prnumord=ordennum;
+                        }
+                        rep.add("ORDEN # "+prnumord);
 
                         narea="";
                         if (gl.emp==30) {
                             narea = " " + gl.mesa_area;
                         }
 
-                        rep.add("Envio: " +gl.rutanom);
+                        //rep.add("Envio: " +gl.rutanom);
 
                         if (ordenpedido) {
-                            if (numpedido!=0) rep.add("ORDEN : #" + numpedido);
+                            //if (numpedido!=0) rep.add("ORDEN : #" + numpedido);
                             rep.empty();
-                            if (numpedido == 0) rep.add("MESA : " + mesa+narea);
+                            if (numpedido == 0) rep.add("MESA : " + mesa+narea+"  Hora : " + du.shora(du.getActDateTime()));
                             if (!gl.mesa_alias.isEmpty()) rep.add(gl.mesa_alias);
-                            rep.add("Hora : " + du.shora(du.getActDateTime())+ "   "+du.sfecha(du.getActDateTime()));
+                            //rep.add("Hora : " + du.shora(du.getActDateTime())+ "   "+du.sfecha(du.getActDateTime()));
                             rep.add("Mesero : " + gl.nombre_mesero_sel);
                         } else {
-                            rep.add("ORDEN : " + ordennum);
+                            //rep.add("ORDEN : " + ordennum);
                             rep.empty();
-                            rep.add("MESA : " + mesa+narea);
+                            rep.add("MESA : " + mesa+narea +"  Hora : " + du.shora(du.getActDateTime()));
                             if (!gl.mesa_alias.isEmpty()) rep.add(gl.mesa_alias);
-                            rep.add("Hora : " + du.shora(du.getActDateTime())+ "   "+du.sfecha(du.getActDateTime()));
+                            //rep.add("Hora : " + du.shora(du.getActDateTime())+ "   "+du.sfecha(du.getActDateTime()));
                             rep.add("Mesero : " + gl.nombre_mesero_sel);
                         }
 
@@ -2830,14 +2829,9 @@ public class Orden extends PBase {
                             rep.add(tl.get(j));
                         }
 
-                        if (ordenpedido) {
-                            prnumord=numpedido;
-                        } else {
-                            prnumord=ordennum;
-                        }
-
                         rep.line24();
-                        rep.add("ORDEN # "+prnumord);
+                        //rep.add("ORDEN # "+prnumord);
+                        rep.add("PARA LLEVAR");
 
                         if (gl.mesa_grupo == 19) rep.add("PARA LLEVAR");
                         if (ordenpedido) rep.add("PARA LLEVAR");

@@ -1371,6 +1371,146 @@ public class clsDocument {
         return l;
     }
 
+    private boolean loadHeadLines() {
+
+        clsP_fraseObj P_fraseObj=new clsP_fraseObj(cont,Con,db);
+        Cursor DT =null;
+        String s;
+        String sucur="";
+        int frIVA,frISR;
+
+        try {
+
+            sql = "SELECT SUCURSAL FROM P_RUTA WHERE CODIGO_RUTA="+codigo_ruta;//+ruta;
+            DT = Con.OpenDT(sql);
+
+            if (DT!=null){
+
+                DT.moveToFirst();
+
+                sucur = DT.getString(0);
+
+                sql="SELECT TEXTO,CODIGO_ESCENARIO_IVA, CODIGO_ESCENARIO_ISR,NIT FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+sucur;
+                DT=Con.OpenDT(sql);
+
+                if (DT!=null){
+
+                    if (DT.getCount()>0) {
+
+                        DT.moveToFirst();
+
+                        textofin=DT.getString(0);
+                        frIVA=DT.getInt(1);
+                        frISR=DT.getInt(2);
+                        felISR2="";
+
+                        if (DT.getInt(1)>0) {
+                            P_fraseObj.fill("WHERE Codigo_Frase="+frIVA);
+                            if (P_fraseObj.count>0) {
+                                felIVA=P_fraseObj.first().texto;
+                            } else felIVA="";
+                        } else felIVA="";
+
+                        if (DT.getInt(2)>0) {
+                            P_fraseObj.fill("WHERE Codigo_Frase="+frISR);
+                            if (P_fraseObj.count>0) {
+                                felISR=P_fraseObj.first().texto;
+                                if (frISR==4) {
+                                    felISR2="Sujeto a pagos trimestrales ISR";
+                                }
+                            } else felISR="";
+                        } else felISR="";
+
+                        if (!fraseIVA.isEmpty()) felIVA=fraseIVA;
+                        if (!fraseISR.isEmpty()) felISR=fraseISR;
+
+                        //#EJC202301040807AM: Corregir a futuro.
+                        switch (empid) {
+                            case 33:
+                                if (frIVA!=0) {
+                                    felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";
+                                }
+                                break;
+                            case 34:
+                                if (frIVA!=0) {
+                                    felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";
+                                }
+                                break;
+                        }
+
+                    } else {
+                        textofin="";
+                    }
+
+                    nitsuc=DT.getString(3);
+
+                }
+
+            }
+
+            banderafel=false;felcert="";felnit="";
+
+            try {
+
+                sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=105";
+                DT=Con.OpenDT(sql);
+
+                if (DT!=null){
+
+                    DT.moveToFirst();
+
+                    String val=DT.getString(0);
+
+                    if (val.equalsIgnoreCase("INFILE")) {
+                        banderafel=true;
+                        felcert="CERTIFICADOR: INFILE, S.A.";
+                        felnit="NIT: 12521337";
+                    }
+                }
+
+            } catch (Exception e) {
+                banderafel=false;felcert="";felnit="";
+            }
+
+            sql="SELECT TEXTO FROM P_ENCABEZADO_REPORTESHH WHERE SUCURSAL='"+sucur+"' ORDER BY CODIGO";
+            DT=Con.OpenDT(sql);
+
+            if (DT!=null){
+
+                if (DT.getCount()==0) return false;
+
+                DT.moveToFirst();
+
+                while (!DT.isAfterLast()) {
+                    s=DT.getString(0);
+                    lines.add(s);
+                    DT.moveToNext();
+                }
+
+            }
+
+            return true;
+
+        } catch (Exception e) {
+            setAddlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            return false;
+        }finally {
+            if (DT!=null) DT.close();
+        }
+    }
+
+    public void lanheader() {
+        rep.add(" ");
+        rep.add("IMPRESORA DE CAJA");
+        rep.add(LAN_IP);
+    }
+
+    public void starlanheader() {
+        rep.add("STAR LAN");
+        rep.add("...");
+        rep.add(impStarLANFactMac);
+    }
+
     //endregion
 
     //region Private
@@ -1479,135 +1619,7 @@ public class clsDocument {
     //endregion
 
     //region Aux
-	
-	private boolean loadHeadLines() {
 
-        clsP_fraseObj P_fraseObj=new clsP_fraseObj(cont,Con,db);
-		Cursor DT =null;
-		String s;
-        String sucur="";
-		int frIVA,frISR;
-		
-		try {
-
-			sql = "SELECT SUCURSAL FROM P_RUTA WHERE CODIGO_RUTA="+codigo_ruta;//+ruta;
-			DT = Con.OpenDT(sql);
-
-            if (DT!=null){
-
-                DT.moveToFirst();
-
-                sucur = DT.getString(0);
-
-                sql="SELECT TEXTO,CODIGO_ESCENARIO_IVA, CODIGO_ESCENARIO_ISR,NIT FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+sucur;
-                DT=Con.OpenDT(sql);
-
-                if (DT!=null){
-
-                    if (DT.getCount()>0) {
-
-                        DT.moveToFirst();
-
-                        textofin=DT.getString(0);
-                        frIVA=DT.getInt(1);
-                        frISR=DT.getInt(2);
-                        felISR2="";
-
-                        if (DT.getInt(1)>0) {
-                            P_fraseObj.fill("WHERE Codigo_Frase="+frIVA);
-                            if (P_fraseObj.count>0) {
-                                felIVA=P_fraseObj.first().texto;
-                            } else felIVA="";
-                        } else felIVA="";
-
-                        if (DT.getInt(2)>0) {
-                            P_fraseObj.fill("WHERE Codigo_Frase="+frISR);
-                            if (P_fraseObj.count>0) {
-                                felISR=P_fraseObj.first().texto;
-                                if (frISR==4) {
-                                    felISR2="Sujeto a pagos trimestrales ISR";
-                                }
-                            } else felISR="";
-                        } else felISR="";
-
-                        if (!fraseIVA.isEmpty()) felIVA=fraseIVA;
-                        if (!fraseISR.isEmpty()) felISR=fraseISR;
-
-                        //#EJC202301040807AM: Corregir a futuro.
-                        switch (empid) {
-                            case 33:
-                                if (frIVA!=0) {
-                                    felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";
-                                }
-                                break;
-                            case 34:
-                                if (frIVA!=0) {
-                                    felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";
-                                }
-                                break;
-                        }
-
-                    } else {
-                        textofin="";
-                    }
-
-                    nitsuc=DT.getString(3);
-
-                }
-
-            }
-
-            banderafel=false;felcert="";felnit="";
-
-            try {
-
-                sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=105";
-                DT=Con.OpenDT(sql);
-
-                if (DT!=null){
-
-                    DT.moveToFirst();
-
-                    String val=DT.getString(0);
-
-                    if (val.equalsIgnoreCase("INFILE")) {
-                        banderafel=true;
-                        felcert="CERTIFICADOR: INFILE, S.A.";
-                        felnit="NIT: 12521337";
-                    }
-                }
-
-           } catch (Exception e) {
-                banderafel=false;felcert="";felnit="";
-            }
-
-            sql="SELECT TEXTO FROM P_ENCABEZADO_REPORTESHH WHERE SUCURSAL='"+sucur+"' ORDER BY CODIGO";
-			DT=Con.OpenDT(sql);
-
-            if (DT!=null){
-
-                if (DT.getCount()==0) return false;
-
-                DT.moveToFirst();
-
-                while (!DT.isAfterLast()) {
-                    s=DT.getString(0);
-                    lines.add(s);
-                    DT.moveToNext();
-                }
-
-            }
-
-			return true;
-
-		} catch (Exception e) {
-			setAddlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-			return false;
-		}finally {
-            if (DT!=null) DT.close();
-        }
-	}
-	
 	public boolean emptystr(String s){
 		if (s==null || s.isEmpty()) {
 			return true;
@@ -1722,18 +1734,6 @@ public class clsDocument {
 			//msgbox("Error " + e.getMessage());
 		}
 	}
-
-    public void lanheader() {
-        rep.add(" ");
-        rep.add("IMPRESORA DE CAJA");
-        rep.add(LAN_IP);
-    }
-
-    public void starlanheader() {
-        rep.add(impStarLANFactMac);
-        rep.add(" ");
-        rep.add(impStarLANFactMac);
-    }
 
 	private void opendb() {
 		

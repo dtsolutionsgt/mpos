@@ -513,15 +513,20 @@ public class Reimpresion extends PBase {
 	
 	private void printDocument() {
 
-		try{
+		try {
+
+			gl.impStarCutPaper=false;
+
 			switch (tipo) {
 				//#CKFK 20200520 Quité la reimpresión de 1-recibos, 0-pedidos y 6-notas de crédito
 				case 2:
 					imprDeposito();break;
 				case 3:
 					if (gl.peModal.equalsIgnoreCase("TOL")) {
+						gl.impStarCutPaper=true;
 						imprFactura();
 					} else {
+						gl.impStarCutPaper=true;
 						imprUltFactura();
 					}
 					break;

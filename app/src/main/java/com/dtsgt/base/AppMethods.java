@@ -2211,6 +2211,7 @@ public class AppMethods {
 		try {
 			Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.lanprintstar");
 			intent.putExtra("modo","p");
+			if (gl.impStarCutPaper) intent.putExtra("drawer","open");
 			cont.startActivity(intent);
 		} catch (Exception e) {
 			toastlong("El controlador de Star LAN no está instalado");

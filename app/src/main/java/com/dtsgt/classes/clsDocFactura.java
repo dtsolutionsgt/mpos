@@ -1240,13 +1240,10 @@ public class clsDocFactura extends clsDocument {
         if (impresionorden) {
             String sod=add1;
             if (!sod.isEmpty()) {
-                rep.add("");
                 rep.addc("************************");
                 rep.addc("ORDEN # "+sod.toUpperCase());
                 rep.addc("************************");
-                rep.add("");
             }
-
         } else {
             //rep.add("");
         }
