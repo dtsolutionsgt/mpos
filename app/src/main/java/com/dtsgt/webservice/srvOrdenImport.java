@@ -1,5 +1,6 @@
 package com.dtsgt.webservice;
 
+import android.annotation.SuppressLint;
 import android.os.Environment;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -53,6 +54,7 @@ public class srvOrdenImport extends srvBaseJob {
         }
     }
 
+    @SuppressLint("SpecifyJobSchedulerIdRange")
     private void procesaOrdenes() {
         FileWriter wfile=null;
         BufferedWriter writer=null;

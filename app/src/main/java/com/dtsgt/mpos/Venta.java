@@ -20,7 +20,10 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -5761,14 +5764,14 @@ public class Venta extends PBase {
 
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-        alert.setTitle("Impresión de comanda");
+        //alert.setTitle("Impresión de comanda");
 
         alert.setMessage("MESA NUMERO / NOMBRE: ");
 
         final EditText input = new EditText(this);
         alert.setView(input);
 
-        input.setTextSize(48);input.setTypeface(null, Typeface.BOLD);
+        input.setTextSize(24);input.setTypeface(null, Typeface.BOLD);
         input.setText("");
         input.requestFocus();
 
@@ -5792,7 +5795,18 @@ public class Venta extends PBase {
             public void onClick(DialogInterface dialog, int whichButton) {}
         });
 
-        alert.show();
+        AlertDialog dialog = alert.create();
+        dialog.show();
+
+        //alert.show();
+
+        Window window = dialog.getWindow();
+        if (window != null) {
+            WindowManager.LayoutParams layoutParams = window.getAttributes();
+            layoutParams.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+            layoutParams.y = 20; // distance from the top in pixels
+            window.setAttributes(layoutParams);
+        }
     }
 
     private void inputMesaDom() {
