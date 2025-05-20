@@ -193,7 +193,7 @@ public class Orden extends PBase {
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2,idtransbar;
     private String idorden,cliid,saveprodid, brtcorel, idresorig, idresdest,idorden_movcue,mesnom_movcue;
     private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo,maxprodid;
-    private int maxcuenta=1,movcue_nueva,movcue_orig,movcue_maxdest;
+    private int maxcuenta=1,movcue_nueva,movcue_orig,movcue_maxdest,comensales;
 
     private int maxitems=100;
 
@@ -2838,6 +2838,8 @@ public class Orden extends PBase {
                         if (gl.mesa_grupo == 19) rep.add("PARA LLEVAR");
                         if (ordenpedido) rep.add("PARA LLEVAR");
 
+                        if (gl.peComensalesComanda) rep.add("Comensales: "+comensales);
+
                         ln = rep.items.size();
                         if (ln < 20) {
                             for (int ii = 0; ii < 20 - ln; ii++) {
@@ -5082,6 +5084,8 @@ public class Orden extends PBase {
             gl.prcu_corel=fbrsitem.id;
             gl.prcu_mesa=fbrsitem.codigo_mesa;
             gl.prcu_vend=fbrsitem.vendedor;
+
+            comensales=fbrsitem.cantp;
 
             rheader=true;
         } catch (Exception e) {
