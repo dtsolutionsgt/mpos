@@ -1451,6 +1451,21 @@ public class AppMethods {
 			gl.peDescPassSimple = false;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=182";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peModoSupermercado = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peModoSupermercado = false;
+		}
+
+
+
 
 	}
 

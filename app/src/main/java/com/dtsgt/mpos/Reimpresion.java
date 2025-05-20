@@ -624,6 +624,9 @@ public class Reimpresion extends PBase {
 			fdoc.LANPrint=gl.peImpFactLan;
 			if (gl.peImpFactLan) fdoc.LAN_IP=gl.peImpFactIP;else fdoc.LAN_IP="";
 
+			fdoc.FactCantProd=gl.peFactCantProd;
+
+
 			if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura,gl.peMFact)) {
                 gl.QRCodeStr = fdoc.QRCodeStr;
 				if (gl.codigo_pais.equalsIgnoreCase("HN")) gl.QRCodeStr="";

@@ -30,11 +30,15 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ListView;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsVenta;
-import com.dtsgt.classes.clsFont3x5;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.RecyclerItemClickListener;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsBonFiltro;
 import com.dtsgt.classes.clsBonif;
@@ -79,13 +83,13 @@ import com.dtsgt.firebase.fbPedidoDet;
 import com.dtsgt.firebase.fbPedidoEnc;
 import com.dtsgt.firebase.fbPedidoLog;
 import com.dtsgt.firebase.fbStock;
-import com.dtsgt.ladapt.ListAdaptGridFam;
-import com.dtsgt.ladapt.ListAdaptGridFamList;
 import com.dtsgt.ladapt.ListAdaptGridProd;
 import com.dtsgt.ladapt.ListAdaptGridProdList;
 import com.dtsgt.ladapt.ListAdaptMasVendidos;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
 import com.dtsgt.ladapt.ListAdaptVenta;
+import com.dtsgt.ladapt.RV_GridFam;
+import com.dtsgt.ladapt.RV_GridFamList;
 import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
 
@@ -97,13 +101,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Venta extends PBase {
 
+    private RecyclerView recfam;
     private ListView listView,listMas;
-    private GridView gridViewOpciones,grdbtn,grdfam,grdprod;
+    private GridView gridViewOpciones,grdbtn,grdprod;
     private TextView lblTot,lblTit,lblAlm,lblVend, lblCambiarNivelPrecio,lblCant,lblBarra;
-    private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir, lbldocesa;
+    private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir, lbldocesa, lblprcant;
     private EditText txtBarra,txtFilter;
     private ImageView imgroad,imgscan,imgllevar;
     private RelativeLayout relScan,reldocesa;
@@ -116,13 +122,12 @@ public class Venta extends PBase {
 
     private ListAdaptMenuVenta adaptergrid;
     private ListAdaptMenuVenta adapterb;
-    private ListAdaptGridFam adapterf;
-    private ListAdaptGridFamList adapterfl;
     private ListAdaptGridProd adapterp;
     private ListAdaptGridProdList adapterpl;
     private ListAdaptMasVendidos adaptermv;
 
-    private ExDialog mMenuDlg;
+    private RV_GridFam radapterf;
+    private RV_GridFamList radapterfl;
 
     private ArrayList<clsClasses.clsMenu> mitems= new ArrayList<clsClasses.clsMenu>();
     private ArrayList<clsClasses.clsMenu> mmitems= new ArrayList<clsClasses.clsMenu>();
@@ -201,6 +206,8 @@ public class Venta extends PBase {
             }
 
             super.InitBase();
+
+            gl.reinicia_venta=false;
 
             app = new AppMethods(this, gl, Con, db);
 
@@ -287,6 +294,11 @@ public class Venta extends PBase {
             }
 
             imgflag=gl.peMImg;
+
+            if (gl.peModoSupermercado) {
+                imgflag=false;
+            }
+
             gl.sin_propina=false;
             setVisual();
 
@@ -327,8 +339,6 @@ public class Venta extends PBase {
             validaEstadoLicencia();
 
             //if (getEstadoLicencia()==0) msgbox("Su licencia ha expirado.");
-
-
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -411,7 +421,7 @@ public class Venta extends PBase {
 
     private void setHandlers(){
 
-        try{
+        try {
 
             listView.setOnTouchListener(new SwipeListener(this) {
                 public void onSwipeRight() {
@@ -499,26 +509,48 @@ public class Venta extends PBase {
                 }
             });
 
-            grdfam.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                    try {
-                        Object lvObj = grdfam.getItemAtPosition(position);
-                        clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
-                        famid=item.icod;
+            /*
+            recyclerView?.addOnItemTouchListener(
+                    RecyclerItemClickListener(this, recyclerView!!,
+                    object : RecyclerItemClickListener.OnItemClickListener {
+                override fun onItemClick(view: View, position: Int) {
+                    val productoSeleccionado = items[position]
+                    //msgbox("Producto seleccionado: ${productoSeleccionado.desclarga}")()
 
-                        if (imgflag) {
-                            adapterf.setSelectedIndex(position);
-                        } else {
-                            adapterfl.setSelectedIndex(position);
+                    gl?.gint=productoSeleccionado.codigo_producto
+                    gl?.gstr=productoSeleccionado.desclarga
+                    ingresoCantidad()
+                }
+
+                override fun onItemLongClick(view: View?, position: Int) {}
+            })
+            )
+             */
+
+            recfam.addOnItemTouchListener(new RecyclerItemClickListener((Context) this, recfam,
+                    new RecyclerItemClickListener.OnItemClickListener() {
+
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            if (imgflag) {
+                                famid=radapterf.items.get(position).icod;
+                                radapterf.setSelectedIndex(position);
+                            } else {
+                                famid=radapterfl.items.get(position).icod;
+                                radapterfl.setSelectedIndex(position);
+                            }
+
+                            Handler mtimer = new Handler();
+                            Runnable mrunner= () -> {
+                                listProduct();
+                            };
+                            mtimer.postDelayed(mrunner,50);
                         }
 
-                        listProduct();
-                    } catch (Exception e) {
-                        String ss=e.getMessage();
-                    }
-                };
-            });
+                        @Override
+                        public void onLongItemClick(View view, int position) { }
+                    })
+            );
 
             grdprod.setOnItemClickListener(new OnItemClickListener() {
                 @Override
@@ -720,17 +752,6 @@ public class Venta extends PBase {
                         item.Total=tt;
                     }
 
-                    /*
-                    T_ordencomboprecioObj.fill("WHERE (COREL='VENTA') AND (IDCOMBO="+item.emp+")");
-                    if (T_ordencomboprecioObj.count>0) {
-                        item.Prec=T_ordencomboprecioObj.first().prectotal;
-                        item.sdesc=mu.frmdec(item.Prec);
-
-                        tt=item.Cant*item.Prec;tt=mu.round2(tt);
-                        item.Total=tt;
-                    }
-                     */
-
                     items.add(item);
 
                     tot+=tt;
@@ -746,6 +767,8 @@ public class Venta extends PBase {
             adapter=new ListAdaptVenta(this,this, items);
             adapter.cursym=gl.peMon;
             listView.setAdapter(adapter);
+
+            lblprcant.setText("( "+adapter.getCount()+" )");
 
             if (sinimp) {
                 ttsin=tot-ttimp-ttperc;
@@ -2354,7 +2377,15 @@ public class Venta extends PBase {
                             case 2:
                                 ingresoNota();break;
                             case 3:
-                                cambiaPrecio();break;
+                                if (gl.desc_acceso) {
+                                    browse=13;
+                                    gl.total_factura_previo_descuento=prodtotlin;
+                                    startActivity(new Intent(Venta.this,DescMonto.class));
+                                    break;
+                                } else {
+                                    cambiaPrecio();
+                                }
+                                break;
                             case 4:
                                 procesaCortesia();break;
                             case 99:
@@ -2402,11 +2433,17 @@ public class Venta extends PBase {
             }
 
             if (imgflag) {
-                adapterf=new ListAdaptGridFam(this,fitems,imgfold,horiz);
-                grdfam.setAdapter(adapterf);
+                radapterf=new RV_GridFam(fitems);
+                recfam.setAdapter(radapterf);
+
+                //adapterf=new ListAdaptGridFam(this,fitems,imgfold,horiz);
+                //grdfam.setAdapter(adapterf);
             } else {
-                adapterfl=new ListAdaptGridFamList(this,fitems,imgfold,horiz);
-                grdfam.setAdapter(adapterfl);
+                radapterfl=new RV_GridFamList(fitems);
+                recfam.setAdapter(radapterfl);
+
+                //adapterfl=new ListAdaptGridFamList(this,fitems,imgfold,horiz);
+                //grdfam.setAdapter(adapterfl);
             }
 
         } catch (Exception e) {
@@ -2862,6 +2899,9 @@ public class Venta extends PBase {
                             case 1:
                                 browse=13;
                                 gl.total_factura_previo_descuento=prodtotlin;
+
+                                if (gl.peDescPassSimple) gl.desc_acceso=true;
+
                                 startActivity(new Intent(Venta.this,DescMonto.class));
                                 listdlg.dismiss();
                                 break;
@@ -4311,11 +4351,15 @@ public class Venta extends PBase {
     private void setControls(){
 
         try{
+            recfam = findViewById(R.id.recFam);
+            recfam.setLayoutManager(new GridLayoutManager(this, 3));
+            //recfam.setLayoutManager(new LinearLayoutManager(this));
+
+
             listView = findViewById(R.id.listView1);
             listMas= findViewById(R.id.listMas);
             gridViewOpciones = findViewById(R.id.gridView2);
             gridViewOpciones.setEnabled(true);
-            grdfam = findViewById(R.id.grdFam);
             grdprod = findViewById(R.id.grdProd);
             grdbtn = findViewById(R.id.grdbtn);
 
@@ -4332,6 +4376,7 @@ public class Venta extends PBase {
             lblKeyDP= findViewById(R.id.textView110);
             lblDir= findViewById(R.id.lblDir);
             lbldocesa = findViewById(R.id.textView333);lbldocesa.setText("");
+            lblprcant = findViewById(R.id.textView383);lblprcant.setText("( 0 )");
 
             imgroad= findViewById(R.id.imgRoadTit);
             imgscan= findViewById(R.id.imageView13);
@@ -4353,14 +4398,11 @@ public class Venta extends PBase {
     private void setVisual() {
         if (imgflag) {
             if (horiz) {
-                grdfam.setNumColumns(3);
                 grdprod.setNumColumns(3);
             } else {
-                grdfam.setNumColumns(1);
                 grdprod.setNumColumns(3);
             }
         } else {
-            grdfam.setNumColumns(2);
             grdprod.setNumColumns(1);
         }
 
@@ -5123,8 +5165,8 @@ public class Venta extends PBase {
      }
 
     private void checkLock() {
-        grdfam.setEnabled(!gl.ventalock);
-        grdprod.setEnabled(!gl.ventalock);
+        //grdfam.setEnabled(!gl.ventalock);
+        //grdprod.setEnabled(!gl.ventalock);
     }
 
     private void modoMeseros() {
@@ -6666,6 +6708,8 @@ public class Venta extends PBase {
                 gl.cli_muni=gl.cli_muni_suc;
                 gl.cli_depto=gl.cli_depto_suc;
                 iniciaMasVendidos();
+
+                gl.desc_acceso=false;
 
             } else {}
 

@@ -29,12 +29,12 @@ public class clsDocument {
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden,felISR2impr;
 	public boolean parallevar,domicilio,factsinpropina,modorest,LANPrint,PropinaAparte,
-                   precuenta1015,impStarLANFact=false;
+                   precuenta1015,impStarLANFact=false,FactCantProd;
     public boolean qrsalvador;
     public long ffecha;
     public int pendiente,diacred,pagoefectivo,empid,tipo_doc,corel_doc;
 	public String TipoCredito, NoAutorizacion,LAN_IP;
-	public double ptotal,pdesc,pprop,propvalor,propperc,sv_subt;
+	public double ptotal,pdesc,pprop,propvalor,propperc,sv_subt,cantdet;
     public String svcf_nit,svcf_dep,svcf_muni,svcf_neg;
 
     public boolean es_pickup, es_delivery;

@@ -908,6 +908,8 @@ public class clsDocFactura extends clsDocument {
         double precio, desc, cant, total;
         String cu,cp;
 
+        cantdet=0;
+
         rep.add3sss("Cantidad ","Precio","Total");
         rep.line();
 
@@ -918,7 +920,7 @@ public class clsDocFactura extends clsDocument {
                 //rep.add3lrr(rep.rtrim(""+item.cant,5),item.prec,item.tot);
                 precio = item.prec;
                 desc = item.desc;
-                cant = item.cant;
+                cant = item.cant;cantdet+=cant;
                 total = precio * cant;
                 total = round2(total);
                 rep.add3lrr(rep.rtrim(""+item.cant,5),item.prec,total);
@@ -1170,7 +1172,8 @@ public class clsDocFactura extends clsDocument {
             }
         }
 
-        //#AT20230102 Se muestra abajo del desglose de pago
+        if (FactCantProd) rep.addtotsptic("Total articulos: ", (int) cantdet);
+
         if (parallevar){
             rep.add("");
             rep.addc("PARA LLEVAR");
@@ -1791,6 +1794,8 @@ public class clsDocFactura extends clsDocument {
 
         return super.buildFooter();
     }
+
+    //endregion
 
     //endregion
 

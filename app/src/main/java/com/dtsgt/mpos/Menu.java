@@ -330,6 +330,7 @@ public class Menu extends PBase {
                         gl.preimpresion=false;gl.codigo_cliente=0;
 
 						if (impresoraInstalada()) {
+							browse=3;
                             startActivity(new Intent(this, Venta.class));
                         } else {
                             msgAskImpresora();
@@ -404,6 +405,28 @@ public class Menu extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
+	}
+
+	private void reiniciaVenta() {
+		try {
+			gl.InvCompSend=false;
+			gl.ventalock=false;
+			gl.impresion_comanda=false;
+
+			gl.nivel_sucursal=app.nivelSucursal();gl.cliente="C.F.";
+			gl.gNombreCliente ="Consumidor final";
+			gl.gNITCliente ="C.F.";gl.gDirCliente ="Ciudad";
+			gl.cliposflag=false;gl.rutatipo="V";gl.rutatipog="V";
+
+			gl.iniciaVenta=true;gl.exitflag=false;gl.forcedclose=false;
+			gl.preimpresion=false;gl.codigo_cliente=0;
+
+			browse=3;
+			startActivity(new Intent(this, Venta.class));
+
+		} catch (Exception e) {
+			msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+		}
 	}
 
 	//endregion
@@ -2629,6 +2652,7 @@ public class Menu extends PBase {
 		if (!validaVenta()) {
 			//return;//Se valida si hay correlativos de factura para la venta
 		}
+		browse=3;
 		startActivity(new Intent(Menu.this,Venta.class));//#CKFK 20200518 Quité esto porque estaba en comentario
 	}
 
@@ -3589,7 +3613,13 @@ public class Menu extends PBase {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(gl.prndrvmsg);
         dialog.setCancelable(false);
-        dialog.setPositiveButton("Continuar Venta", (dialog1, which) -> startActivity(new Intent(Menu.this, Venta.class)));
+		dialog.setPositiveButton("Continuar Venta", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				browse=3;
+				startActivity(new Intent(Menu.this, Venta.class));
+			}
+		});
+
         dialog.setNegativeButton("Salir", (dialog12, which) -> {});
         dialog.show();
     }
@@ -3951,6 +3981,14 @@ public class Menu extends PBase {
 
 			setPrintWidth();
 
+			if (browse==3){
+				browse=0;
+				if (gl.reinicia_venta) {
+					//reiniciaVenta();
+					//return;
+				}
+			}
+
 			if (browse==1 && gl.inicio_caja_correcto && !gl.inicia_caja_primera_vez){
 				gl.recibir_automatico = false;
 				browse=0;
@@ -3960,6 +3998,7 @@ public class Menu extends PBase {
 			if (browse==2){
 				browse=0;
 				validaCaja();
+				return;
 			}
 
 		} catch (Exception e){

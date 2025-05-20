@@ -1096,6 +1096,7 @@ public class FacturaRes extends PBase {
 
 				fdoc.impStarLANFact=gl.impStarLANFact;
 				fdoc.impStarLANFactMac =gl.impStarLANFactMac;
+				fdoc.FactCantProd=gl.peFactCantProd;
 
 				fdoc.buildPrint(corel,0,"",gl.peMFact);
 
