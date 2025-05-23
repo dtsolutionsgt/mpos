@@ -687,7 +687,7 @@ public class InvEgreso extends PBase {
             item.ID=55;item.Name="Borrar todo ";item.Icon=55;
             mmitems.add(item);
 
-            adapterb=new ListAdaptMenuVenta(this, mmitems);
+            adapterb=new ListAdaptMenuVenta(this, mmitems,false);
             grdbtn.setAdapter(adapterb);
 
             motivo=-1;

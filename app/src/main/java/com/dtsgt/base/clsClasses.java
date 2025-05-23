@@ -566,6 +566,16 @@ public class clsClasses {
         public String nota;
     }
 
+    public class clsD_orden_stat {
+        public String corel;
+        public int  caja;
+        public long fecha;
+        public int  comensales;
+        public int  cant;
+        public double tiempo;
+        public String statcom;
+    }
+
     public class clsD_pedido {
         public int empresa;
         public String corel;

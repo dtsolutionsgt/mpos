@@ -2578,7 +2578,7 @@ public class Venta extends PBase {
                 addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             }
 
-            adapterb=new ListAdaptMenuVenta(this, mmitems);
+            adapterb=new ListAdaptMenuVenta(this, mmitems,false);
             grdbtn.setAdapter(adapterb);
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -2762,8 +2762,11 @@ public class Venta extends PBase {
             item.ID=24;item.Name="Salir";item.Icon=57;
             mitems.add(item);
 
+            boolean oflag=false;
 
-            adaptergrid=new ListAdaptMenuVenta(this, mitems);
+            if (gl.peOcultarPagoMeseros && gl.rol==4) oflag=true;
+
+            adaptergrid=new ListAdaptMenuVenta(this, mitems, oflag);
             gridViewOpciones.setAdapter(adaptergrid);
 
         } catch (Exception e){
@@ -2776,6 +2779,9 @@ public class Venta extends PBase {
         try {
             switch (menuid) {
                 case 1:
+
+                    if (gl.peOcultarPagoMeseros  && gl.rol==4) return;
+
                     if (gl.bloqueo_venta){
                         //#EJC20231209A: Error en empresa 8, porque la fecha no se actualiza correctamente.
                         //msgbox("MSG_202312091424: Su licencia ha expirado.\nNo puede realizar ninguna venta.");return;
@@ -2785,6 +2791,7 @@ public class Venta extends PBase {
                         //#EJC20231209B: Error en empresa 8, porque la fecha no se actualiza correctamente.
                         //msgbox("Su licencia ha expirado.\nNo puede realizar ninguna venta.");return;
                     }
+
                     if (!validaMinimoCF()) return;
                     if (!disponibleCorel()) return;
                     finalizarOrden();break;

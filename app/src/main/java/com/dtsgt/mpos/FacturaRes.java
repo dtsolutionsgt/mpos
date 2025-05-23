@@ -246,7 +246,6 @@ public class FacturaRes extends PBase {
 
 			credito=gl.credito;
 
-
 			try {
 				if (!gl.nummesapedido.equalsIgnoreCase("0")) {}
 			} catch (Exception e) {
@@ -328,7 +327,6 @@ public class FacturaRes extends PBase {
 			rncreditoDisp = () -> creditoDisp();
 
 			clsDesc=new clsDescGlob(this);
-
 
 			descpmon=totalDescProd(); //descpmon=0;
 			dmax=clsDesc.dmax;
@@ -807,6 +805,9 @@ public class FacturaRes extends PBase {
 			} else {
 				propina=0;
 			}
+
+			if (gl.parallevar && gl.peLlevarSinPropina) propina=0;
+
 
 			if (gl.peRedondPropina) {
 				propina=mu.roundtoint(propina);
@@ -1439,8 +1440,7 @@ public class FacturaRes extends PBase {
 				agregaMasVendidos(intcod,vcant);
 
 				if (esProductoConStock(dt.getString(0))) {
-					//rebajaStockUM(vprod, vumstock, vcant, vfactor, vumventa,factpres,peso);
-                    rebajaStockUM(app.codigoProducto(vprod),vumstock,vcant);
+			         rebajaStockUM(app.codigoProducto(vprod),vumstock,vcant);
 				}
 
 				if (app.esProductoBarril(app.codigoProducto(vprod))) {
@@ -1786,7 +1786,6 @@ public class FacturaRes extends PBase {
 
                                 D_facturas.add(fsitem);
 
-                                //rebajaStockUM(prid, fsitem.umstock, fsitem.cant);
                             }
                         } else {
                             throw new Exception("El producto con identificador : "+prid+" no está definido o no está activo.");
@@ -2091,7 +2090,7 @@ public class FacturaRes extends PBase {
 			clsClasses.clsFbStock ritem=clsCls.new clsFbStock();
 
 			ritem.idprod=pcod;
-			ritem.idalm=0;
+			ritem.idalm=gl.idalmpred;
 			ritem.cant=-pcant;
 			ritem.um=um.trim();
 			ritem.bandera=0;

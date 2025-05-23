@@ -34,6 +34,7 @@ import com.dtsgt.classes.clsD_fel_bitacoraObj;
 import com.dtsgt.classes.clsD_fel_errorObj;
 import com.dtsgt.classes.clsD_mov_almacenObj;
 import com.dtsgt.classes.clsD_movd_almacenObj;
+import com.dtsgt.classes.clsD_orden_statObj;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_cajapagosObj;
@@ -93,6 +94,7 @@ public class WSEnv extends PBase {
     private clsT_venta_horaObj T_venta_horaObj;
     private clsD_cxcObj D_cxcObj;
     private clsP_depositoObj P_depositoObj;
+    private clsD_orden_statObj D_orden_statObj;
 
 
     private ArrayList<String> clients = new ArrayList<String>();
@@ -116,7 +118,7 @@ public class WSEnv extends PBase {
     private int ftot, fsend, fidx, fTotMov, fIdxMov, fTotMovAlm, fIdxMovAlm,
             mSend, cjCierreTot, cjCierreSend, cjAsist, fTotAnul, cjReporteTot, cjReporteSend,
             cjPagosTot, cjPagosSend, cjFelBita, cStockTot, cStockSend, cfjCxcSend, cCosto,
-            cCorCie,cFELErr,cDepos;
+            cCorCie,cFELErr,cDepos,cOrdStat;
     private boolean factsend, movSend, cjCierreSendB, cjReporteSendB, cjPagosSendB, cStockSendB;
 
     @Override
@@ -165,6 +167,7 @@ public class WSEnv extends PBase {
         P_cjReporteObj = new clsP_cajareporteObj(this, Con, db);
         D_cxcObj=new clsD_cxcObj(this,Con,db);
         P_depositoObj=new clsP_depositoObj(this,Con,db);
+        D_orden_statObj=new clsD_orden_statObj(this,Con,db);
 
         preparaEnvio();
 
@@ -227,7 +230,9 @@ public class WSEnv extends PBase {
                         break;
                     case 2:
                         processFactura();
-                        if (ftot > 0) callMethod("Commit", "SQL", CSQL);
+                        if (ftot > 0) {
+                            callMethod("Commit", "SQL", CSQL);
+                        }
                         break;
                     case 3:
                         processAnul();
@@ -294,6 +299,12 @@ public class WSEnv extends PBase {
                     case 15:
                         processDeposito();
                         if (cDepos > 0) {
+                            callMethod("Commit", "SQL", CSQL);
+                        }
+                        break;
+                    case 16:
+                        processOrdStat();
+                        if (cOrdStat > 0) {
                             callMethod("Commit", "SQL", CSQL);
                         }
                         break;
@@ -389,6 +400,10 @@ public class WSEnv extends PBase {
                     break;
                 case 15:
                     statusDeposito();
+                    execws(16);
+                    break;
+                case 16:
+                    statusOrdStat();
                     processComplete();
                     break;
 
@@ -1694,6 +1709,33 @@ public class WSEnv extends PBase {
     }
 
 
+
+    private void processOrdStat() {
+        clsClasses.clsD_orden_stat item;
+        CSQL = "";
+
+        D_orden_statObj.fill("WHERE STATCOM='N'");
+
+        for (int i = 0; i < D_orden_statObj.count; i++) {
+            item = D_orden_statObj.items.get(i);
+            CSQL = CSQL + addOrdStatItemSql(item) + ";";
+        }
+
+        String ss = CSQL;
+        ss=ss+"";
+
+    }
+
+    private void statusOrdStat() {
+        try {
+            sql = "UPDATE D_orden_stat SET STATCOM='S' WHERE STATCOM='N'";
+            db.execSQL(sql);
+        } catch (Exception e) {
+            msgbox2(e.getMessage());
+        }
+    }
+
+
     //endregion
 
     //region Venta x Hora
@@ -1940,6 +1982,10 @@ public class WSEnv extends PBase {
             cDepos=P_depositoObj.count;
             total_enviar += cDepos;
 
+            D_orden_statObj.fill("WHERE (STATCOM='N')");
+            cOrdStat=D_orden_statObj.count;
+            total_enviar += cOrdStat;
+
             if (total_enviar > 0) {
 
                 lbl1.setText("Pendientes envio : \nFacturas: " + ftot +
@@ -2078,6 +2124,23 @@ public class WSEnv extends PBase {
 
         return ins.sql();
 
+
+    }
+
+    public String addOrdStatItemSql(clsClasses.clsD_orden_stat item) {
+        String fs = "" + du.univfechalong(item.fecha);
+
+        ins.init("D_ORDENSTAT");
+
+        ins.add("EMPRESA",gl.emp);
+        ins.add("COREL",item.corel);
+        ins.add("CODIGO_CAJA",item.caja);
+        ins.add("FECHA",fs);
+        ins.add("COMENSALES",item.comensales);
+        ins.add("ARTICULOS",item.cant);
+        ins.add("TIEMPO",item.tiempo);
+
+        return ins.sql();
 
     }
 

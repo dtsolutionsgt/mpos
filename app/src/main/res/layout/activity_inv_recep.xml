@@ -186,8 +186,9 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="2dp">
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="2dp"
+                android:layout_toEndOf="@+id/relwrap">
 
                 <RelativeLayout
                     android:id="@+id/relKeyBase"
@@ -597,10 +598,10 @@
 
             <RelativeLayout
                 android:id="@+id/relwrap"
-                android:layout_width="wrap_content"
+                android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@id/relKeyb">
+                android:minWidth="50dp">
 
                 <GridView
                     android:id="@+id/grdbtn"

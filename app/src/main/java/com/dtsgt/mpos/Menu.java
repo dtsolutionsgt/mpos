@@ -2079,6 +2079,7 @@ public class Menu extends PBase {
 			listdlg.add("Reporte de Ventas por Cliente");
 			listdlg.add("Pagos de caja");
 			listdlg.add("Cortesia por artículo");
+			listdlg.add("Comensales");
 			listdlg.add("Margen y Beneficio por Producto");
 			listdlg.add("Margen y Beneficio por Familia");
 			listdlg.add("Cierre X");
@@ -2108,6 +2109,8 @@ public class Menu extends PBase {
 					if (ss.equalsIgnoreCase("Cortesias")) gl.reportid=15;
 					if (ss.equalsIgnoreCase("Pagos de caja")) gl.reportid=16;
 					if (ss.equalsIgnoreCase("Cortesia por artículo")) gl.reportid=17;
+					if (ss.equalsIgnoreCase("Comensales")) gl.reportid=18;
+
 
 					gl.titReport = ss;
 
