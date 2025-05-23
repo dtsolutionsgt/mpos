@@ -1322,12 +1322,9 @@ public class WSEnv extends PBase {
             rs = (String) xobj.getSingle("CommitResult", String.class);
 
             if (!rs.equalsIgnoreCase("#")) {
-
                 cjPagosError = rs;
                 cjPagosSendB = true;
-
                 return;
-
             } else {
                 cjPagosSendB = true;
             }
