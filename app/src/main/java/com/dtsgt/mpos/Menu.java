@@ -722,7 +722,7 @@ public class Menu extends PBase {
 			listdlg.add("Ajuste de inventario");
 			if (almacenes) {
 				listdlg.add("Traslado entre almacénes");
-				listdlg.add("Traslado de otro almacén");
+				//listdlg.add("Traslado de otro almacén");
 				//listdlg.add("Egreso de almacén");
 			}
 			//if (exp_stock) listdlg.add("Cambiar version de inventario");

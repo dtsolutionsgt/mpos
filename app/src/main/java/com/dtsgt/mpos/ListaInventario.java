@@ -352,13 +352,29 @@ public class ListaInventario extends PBase {
         try {
 
             if (almacenes) {
-                if (tipo==4 && gl.idalm==idalmdpred) tipo=0;
-                if (tipo==0 && gl.idalm!=idalmdpred) tipo=4;
-                if (tipo==5 && gl.idalm==idalmdpred) tipo=1;
-                if (tipo==1 && gl.idalm!=idalmdpred) tipo=5;
+                if (tipo==4 && gl.idalm==idalmdpred) {
+                    //tipo=0;
+                    tipo=4;
+                }
+                if (tipo==0 && gl.idalm!=idalmdpred) {
+                    //tipo=4;
+                    tipo=0;
+                }
+                if (tipo==5 && gl.idalm==idalmdpred) {
+                    //tipo=1;
+                }
+                if (tipo==1 && gl.idalm!=idalmdpred) {
+                    //tipo=9;
+                }
                 //if (tipo==7 && gl.idalm==idalmdpred) tipo=6;
                 //if (tipo==6 && gl.idalm!=idalmdpred) tipo=7;
-                if (tipo==6) tipo=7;
+                if (tipo==6) {
+                    //tipo=7;
+                    //tipo=6;
+                }
+
+                if (gl.idalm==0) return;
+
             } else {
                 if (tipo==7) tipo=6;
             }
@@ -398,6 +414,11 @@ public class ListaInventario extends PBase {
                             "FROM D_MOV_ALMACEN WHERE (ALMACEN_DESTINO="+gl.idalm+") AND (TIPO='D') " +
                             "AND (ANULADO=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
                             "ORDER BY FECHA DESC ";
+                    sql="SELECT COREL, REFERENCIA, FECHA, 0, IMPRES, CODIGO_PROVEEDOR, 0, 0 "+
+                            "FROM D_MOV_ALMACEN WHERE (ALMACEN_ORIGEN="+gl.idalm+") AND (TIPO='D') " +
+                            "AND (ANULADO=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+                            "ORDER BY FECHA DESC ";
+
                     break;
                 case 6:
                     sql="SELECT COREL, REFERENCIA, FECHA, 0, IMPRES, CODIGO_PROVEEDOR, 0, 0 "+
@@ -418,6 +439,13 @@ public class ListaInventario extends PBase {
                             "AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
                             "ORDER BY FECHA DESC ";
                     break;
+                case 9:
+                    sql="SELECT COREL, REFERENCIA, FECHA, 0, IMPRES, CODIGO_PROVEEDOR, 0, 0 "+
+                            "FROM D_MOV_ALMACEN WHERE (ALMACEN_ORIGEN="+gl.idalm+") AND (TIPO='D') " +
+                            "AND (ANULADO=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+                            "ORDER BY FECHA DESC ";
+                    break;
+
             }
 
             DT=Con.OpenDT(sql);

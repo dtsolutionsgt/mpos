@@ -25,6 +25,7 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_cierreObj;
 import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsP_cajahoraObj;
+import com.dtsgt.classes.clsP_depositoObj;
 import com.dtsgt.classes.clsRepBuilder;
 
 import java.io.BufferedReader;
@@ -72,9 +73,8 @@ public class CierreX extends PBase {
     private ArrayList<clsClasses.clsBonifProd> itemRZ= new ArrayList<>();
     public  ArrayList<String> repl= new ArrayList<>();
 
-    private Double Fondo;
-
-    private String condition,stampstr;
+    private Double Fondo,totdepos;
+    private String condition,stampstr,fdepos;
     private boolean exito, reimpresion=false, esvacio;
     private ProgressDialog progressDialog;
     private String CorreoSucursal="", nombrecopia="";
@@ -193,7 +193,7 @@ public class CierreX extends PBase {
                     bFactAnuxDia=11;
                 }
 
-                if(fillItems()){
+                if (fillItems()){
 
                     if (itemR.size() == 0) {
                         toastlong("No ha realizado ninguna venta desde el último cierre Z.");
@@ -683,7 +683,9 @@ public class CierreX extends PBase {
         String ss;
         double cajapago=0;
 
-        try{
+        try {
+
+            depositos();
 
             if (gl.corelZ!=0){
 
@@ -776,6 +778,25 @@ public class CierreX extends PBase {
 
         } catch (Exception e){
              msgbox("reporteZ: "+e);
+        }
+    }
+
+    private void depositos() {
+        totdepos=0.0;
+
+        try {
+            long fini=du.getActDate();
+
+            clsP_depositoObj P_depositoObj=new clsP_depositoObj(this,Con,db);
+            P_depositoObj.fill("WHERE FECHA>"+fini);
+            if (P_depositoObj.count==0) return;
+
+            for (clsClasses.clsP_deposito itm : P_depositoObj.items) {
+                totdepos+=itm.monto_total;
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -979,6 +1000,7 @@ public class CierreX extends PBase {
                     rep.line();
                     rep.add("");
                     rep.add("Facturas no certificadas: "+gl.fact_sin_cert);
+                    if (totdepos>0)  rep.add("Deposito: "+mu.frmcur(totdepos));
                     rep.add("");
                     rep.line();
                     totalesHonduras();

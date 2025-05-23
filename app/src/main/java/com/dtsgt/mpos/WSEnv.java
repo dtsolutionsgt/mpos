@@ -1335,10 +1335,8 @@ public class WSEnv extends PBase {
             cjPagosSend++;
 
             try {
-
                 sql = "UPDATE P_CAJAPAGOS SET STATCOM='S' WHERE STATCOM='N'";
                 db.execSQL(sql);
-
             } catch (SQLException e) {
                 msgbox2(e.getMessage());
             }
