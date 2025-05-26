@@ -564,7 +564,7 @@ public class clsRepBuilder {
 		s2=cursym+decfrm.format(v2);
 		s3=cursym+decfrm.format(v3);
 		
-		ts=ltrim(s1,prwt)+"  "+rtrim(s2,prwt)+"  "+rtrim(s3,prwt);
+		ts=ltrim(s1,prwt)+" "+rtrim(s2,prwt)+" "+rtrim(s3,prwt);
 		items.add(ts);
 	}
 
