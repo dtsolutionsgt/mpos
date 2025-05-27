@@ -474,12 +474,13 @@ public class Reportes extends PBase {
             }
 
             if (!report) {
-                if (fillItems()){
+                if (fillItems()) {
                     if (gl.reportid<15) {
                         if (itemR.size() == 0) {
                             msgbox("No se ha realizado ninguna venta con los parámetros indicados.");
                             return;
-                        }}
+                        }
+                    }
                     gl.QRCodeStr="";
                     //if (gl.reportid<15)
                     doc.buildPrint("0", 0);
@@ -740,7 +741,12 @@ public class Reportes extends PBase {
                         "GROUP BY PRODUCTO " +
                         "ORDER BY P_PRODUCTO.DESCCORTA";
 
+                case 18:
 
+                    sql="SELECT '','',SUM(CANT),'','','',0,0,0,FECHA FROM D_orden_stat  " +
+                            "GROUP BY FECHA " +
+                            "HAVING  (FECHA>="+ dateini +") AND (FECHA<"+datefin+")  " +
+                            "ORDER BY FECHA";
 
                     break;
 
@@ -783,7 +789,6 @@ public class Reportes extends PBase {
             return true;
 
         } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             msgbox("fillItems: "+e);
             return false;
         }
@@ -880,6 +885,7 @@ public class Reportes extends PBase {
             if(gl.reportid==6) nombre="REPORTE VENTAS POR VENDEDOR";
             if(gl.reportid==11) nombre="REPORTE FACTURAS ANULADAS";
             if(gl.reportid==15) nombre="CORTESIAS";
+            if(gl.reportid==18) nombre="COMENSALES POR DIA";
 
             numero="";
             serie="";
@@ -895,7 +901,7 @@ public class Reportes extends PBase {
             int acc=1;
             String series="", fecha="",cr;
             double costo;
-            String fecha1,fecha2;
+            String fecha1,fecha2,ds;
 
             try {
 
@@ -1347,6 +1353,27 @@ public class Reportes extends PBase {
                         rep.addtotcant( itemR.get(i).descrip,""+itemR.get(i).correl);
 
                         if(i==itemR.size()-1){
+                            rep.line();
+                            int itot=(int) tot;
+                            rep.addtotcant("Total:",""+itot);
+                        }
+                    } else if (gl.reportid==18) {
+
+                        if(acc==1){
+                            tot=0;
+                            rep.addc("REPORTE COMENSALES POR DIA ");
+                            rep.addc(fecharango);
+                            setDatosVersion();
+                            rep.addtotcant("Fecha","Cant");
+                            rep.line();
+                            acc = 2;
+                        }
+
+                        tot+=itemR.get(i).correl;
+                        ds=du.sfecha(itemR.get(i).fecha);
+                        rep.addtotcant( ds,""+itemR.get(i).correl);
+
+                        if (i==itemR.size()-1){
                             rep.line();
                             int itot=(int) tot;
                             rep.addtotcant("Total:",""+itot);

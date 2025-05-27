@@ -19,14 +19,16 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 	private ArrayList<clsMenu> items;
 
 	private int selectedIndex;
+	private boolean ocultaPrimero;
 
 	private LayoutInflater l_Inflater;
 
 
-	public ListAdaptMenuVenta(Context context, ArrayList<clsMenu> results) {
+	public ListAdaptMenuVenta(Context context, ArrayList<clsMenu> results,boolean OcultaPrimero) {
 		items = results;
 		l_Inflater = LayoutInflater.from(context);
 		selectedIndex = -1;
+		ocultaPrimero=OcultaPrimero;
 	}
 
 	public void setSelectedIndex(int ind) {
@@ -128,8 +130,17 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 
 		if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.logo_baktun);
 
+		if (position==0 && ocultaPrimero) {
+			holder.imgEst.setVisibility(View.INVISIBLE);
+			holder.lblName.setVisibility(View.INVISIBLE);
+		}
+
 		if(selectedIndex!= -1 && position == selectedIndex) {
-			convertView.setBackgroundColor(Color.rgb(26,138,198));
+			if (position==0 && ocultaPrimero) {
+				convertView.setBackgroundColor(Color.TRANSPARENT);
+			} else {
+				convertView.setBackgroundColor(Color.rgb(26,138,198));
+			}
         } else {
         	convertView.setBackgroundColor(Color.TRANSPARENT);
         }

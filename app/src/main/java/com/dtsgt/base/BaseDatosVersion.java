@@ -232,6 +232,23 @@ public class BaseDatosVersion {
             sql="CREATE INDEX P_deposito_idx1 ON P_deposito(STATCOM)";db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [D_orden_stat] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "CAJA INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "COMENSALES INTEGER NOT NULL,"+
+                    "CANT INTEGER NOT NULL,"+
+                    "TIEMPO REAL NOT NULL,"+
+                    "STATCOM TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX D_orden_stat_idx1 ON D_orden_stat(FECHA)";db.execSQL(sql);
+            sql="CREATE INDEX D_orden_stat_idx2 ON D_orden_stat(STATCOM)";db.execSQL(sql);
+        } catch (Exception e) { }
+
 
 
         try {

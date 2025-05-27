@@ -807,6 +807,7 @@ public class ListaInventarioT extends PBase {
                         gl.idalm=listdlg.getCodigoInt(position);
                         gl.nom_alm=listdlg.getText(position);
                         lblalm1.setText(gl.nom_alm);
+                        listItems();
                         listdlg.dismiss();
                     } catch (Exception e) {}
                 };
@@ -848,6 +849,7 @@ public class ListaInventarioT extends PBase {
                         gl.idalm2=listdlg.getCodigoInt(position);
                         gl.nom_alm2=listdlg.getText(position);
                         lblalm2.setText(gl.nom_alm2);
+                        listItems();
                         listdlg.dismiss();
                     } catch (Exception e) {}
                 };

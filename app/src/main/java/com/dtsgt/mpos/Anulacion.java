@@ -1228,7 +1228,7 @@ public class Anulacion extends PBase {
 			clsClasses.clsFbStock ritem=clsCls.new clsFbStock();
 
 			ritem.idprod=pcod;
-			ritem.idalm=0;
+			ritem.idalm=gl.idalmpred;
 			ritem.cant=pcant;
 			ritem.um=um.trim();
 			ritem.bandera=0;

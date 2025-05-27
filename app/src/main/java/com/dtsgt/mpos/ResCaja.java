@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsD_orden_statObj;
 import com.dtsgt.classes.clsP_res_mesaObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_ordenObj;
@@ -68,8 +69,9 @@ public class ResCaja extends PBase {
     private clsClasses.clsfbResSesion rsitem;
 
     private String corel,mesa,numpedido,idorden,actidorden;
-    private int cuenta,idmesero,actmesa,counter;
+    private int cuenta,idmesero,actmesa,counter,statcom,statcant;
     private boolean idle=true,horiz,espedido,actorden;
+    private long statmin;
 
 
     @Override
@@ -253,8 +255,34 @@ public class ResCaja extends PBase {
     //region Venta
 
     private void crearVenta() {
-        buildVenta();
+        try {
+            fbrs.getItem(corel, ()->{ datosOrden();} );
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
     }
+
+    private void datosOrden() {
+        try {
+            statcom=0;
+            if (!fbrs.errflag) {
+                try {
+                    statcom=fbrs.item.cantp;
+                    statmin=du.timeDiff(du.getActDateTime(),fbrs.item.fechaini);
+                } catch (Exception e) {
+                    statcom=0;
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+            }
+
+            buildVenta();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
 
     private void buildVenta() {
         double tot;
@@ -298,6 +326,52 @@ public class ResCaja extends PBase {
             if (!fbo.listresult) {
                 msgSync();return;
             }
+
+            statcant=fbo.items.size();
+
+            if (statcom>0) {
+
+                double stam,stcant,stmin;
+                stmin=(double) statmin;
+                stcant=(double) statcant;
+
+                if (statcant>0) {
+
+                    try {
+
+                        stam = stmin / stcant;
+
+                        clsClasses.clsD_orden_stat sitem = clsCls.new clsD_orden_stat();
+
+                        sitem.corel = corel;
+                        sitem.caja = gl.codigo_ruta;
+                        sitem.fecha = du.getActDate();
+                        sitem.comensales = statcom;
+                        sitem.cant = statcant;
+                        sitem.tiempo = stam;
+                        sitem.statcom = "N";
+
+                        clsD_orden_statObj D_orden_statObj=new clsD_orden_statObj(this,Con,db);
+
+                        try {
+                            D_orden_statObj.add(sitem);
+                        } catch (Exception e) {
+                            try {
+                                D_orden_statObj.update(sitem);
+                            } catch (Exception ee) {
+                                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+ee.getMessage());
+                            }
+                        }
+
+                    } catch (Exception ee) {
+                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+ee.getMessage());
+                    }
+                }
+
+            }
+
+
+
 
             tot=0;
             for (int i = 0; i <fbo.items.size(); i++) {
@@ -797,7 +871,8 @@ public class ResCaja extends PBase {
                                     if (app.isOnWifi()!=0) {
                                         menuVenta();
                                     } else {
-                                        msgbox("La cuenta no esta actualizada.");
+                                        toastlong("La cuenta no esta actualizada.");
+                                        menuVenta();
                                     }
                                 } else {
                                     msgbox("Antes de pagar la cuenta debe terminar la venta actual");

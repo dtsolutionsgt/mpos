@@ -30,14 +30,11 @@ import java.util.Calendar;
 
 public class CajaPagos extends PBase {
 
-
-
     private Spinner cboProv, cboCPago;
     private EditText lblDocAsoc,lblMonto,lblDesc;
     private TextView lblDate;
 
     private clsClasses.clsP_cajapagos item=clsCls.new clsP_cajapagos();
-
 
     private ArrayList<String> spincode= new ArrayList<String>();
     private ArrayList<String> spinlist = new ArrayList<String>();
@@ -242,7 +239,7 @@ public class CajaPagos extends PBase {
             item.referencia="";
             item.observacion=desc;
             item.vendedor=gl.codigo_vendedor;
-            item.statcom="P";
+            item.statcom="N";
             item.codigo_cajapagos=gl.ruta+"_"+mu.getCorelBase();
 
             return true;
