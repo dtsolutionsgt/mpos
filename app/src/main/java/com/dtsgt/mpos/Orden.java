@@ -2396,7 +2396,7 @@ public class Orden extends PBase {
 
         if (!db.isOpen()) onResume();
 
-        if (gl.pelOrdenComanda | gl.peNumOrdCommandaVenta) {
+        //if (gl.pelOrdenComanda | gl.peNumOrdCommandaVenta) {
             try {
                 ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
                 if (ordennum % gl.peMaxOrden==0) ordennum++;
@@ -2417,7 +2417,7 @@ public class Orden extends PBase {
 
             lblAlm.setText("#"+ordennum);toastlong("#"+ordennum);
             procesaComanda();
-        }
+        //}
     }
 
     private void numeroOrdenCentral() {
@@ -2767,7 +2767,12 @@ public class Orden extends PBase {
 
                         rep.add(P_impresoraObj.first().tipo_impresora);
                         //P_imprerep.add(soraObj.first().nombre);
-                        rep.add(gl.rutanom);
+                        //rep.add(gl.rutanom);
+
+                        narea="";
+                        if (gl.emp==30) narea = " " + gl.mesa_area;
+                        rep.add("Envio: " +gl.rutanom);
+
                         if (app.impresoraStarLAN(P_impresoraObj.first().codigo_modelo)) {
                             prip=app.ipBypass(P_impresoraObj.first().mac);
                         } else {
@@ -2784,12 +2789,7 @@ public class Orden extends PBase {
 
                         //ordenpedido=numpedido>0;
 
-                        narea="";
-                        if (gl.emp==30) {
-                            narea = " " + gl.mesa_area;
-                        }
 
-                        rep.add("Envio: " +gl.rutanom);
 
                         if (ordenpedido) {
                             if (numpedido!=0) rep.add("ORDEN : #" + numpedido);

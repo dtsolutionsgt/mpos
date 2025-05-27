@@ -1573,7 +1573,7 @@ public class CliPos extends PBase {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    msgbox("Error consulta NIT Infile");
+                    toast("Error consulta NIT Infile");
                 }
             });
 
