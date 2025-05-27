@@ -2766,19 +2766,16 @@ public class Orden extends PBase {
                         rep = new clsRepBuilder(this, gl.prw, true, gl.peMon, gl.peDecImp, "comanda_" + printid + ".txt");
 
                         rep.add(P_impresoraObj.first().tipo_impresora);
-                        //P_imprerep.add(soraObj.first().nombre);
-                        rep.add(gl.rutanom);
+
+                        narea="";
+                        if (gl.emp==30) narea = " " + gl.mesa_area;
+                        rep.add("Envio: " +gl.rutanom);
+
                         if (app.impresoraStarLAN(P_impresoraObj.first().codigo_modelo)) {
                             prip=app.ipBypass(P_impresoraObj.first().mac);
                         } else {
                             prip=app.ipBypass(P_impresoraObj.first().ip);
                         }
-                        //rep.add(gl.rutanom);
-
-
-                        narea="";
-                        if (gl.emp==30) narea = " " + gl.mesa_area;
-                        rep.add("Envio: " +gl.rutanom);
 
                         if (app.impresoraStarLAN(P_impresoraObj.first().codigo_modelo)) {
                             prip=app.ipBypass(P_impresoraObj.first().mac);
