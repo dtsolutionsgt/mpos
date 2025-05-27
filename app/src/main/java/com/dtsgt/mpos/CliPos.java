@@ -144,11 +144,13 @@ public class CliPos extends PBase {
         NitValidadoInfile =false;
 
         /*
+         txtNIT.setText("40921174");
+
         if (gl.codigo_pais.equalsIgnoreCase("SV")) {
             //txtNIT.setText("80002204021234");txtNom.setText("Nombre");
             //txtNIT.setText("166284-5");txtNom.setText("jaroslav pospichal ");txtCorreo.setText("jpospichal@dts.com.gt");
         }
- */
+        */
 
         if (gl.cliente_dom!=0) cargaCliente();
     }
@@ -1001,6 +1003,82 @@ public class CliPos extends PBase {
         int j, mp, sum, d11, m11, r11, cn, ll;
 
         if (N.isEmpty()) return false;
+        //if (NitValidadoInfile) return true;
+
+        try {
+            ll = N.length();
+            if (ll<5) return false;
+
+            if (!N.contains("-")) {
+                P = N.substring(0,ll-1);
+                C = N.substring(ll-1,ll);
+                N=P+"-"+C;
+            }
+
+            N=N.trim();
+            N=N.replaceAll(" ","");
+            if (N.isEmpty()) return false;
+
+            N=N.toUpperCase();
+            if (N.equalsIgnoreCase("CF")) N="C.F.";
+            if (N.equalsIgnoreCase("C/F")) N="C.F.";
+            if (N.equalsIgnoreCase("C.F")) N="C.F.";
+            if (N.equalsIgnoreCase("CF.")) N="C.F.";
+            if (N.equalsIgnoreCase("C.F.")) return true;
+
+            ll = N.length();
+            if (ll<5) return false;
+
+            P = N.substring(0,ll-2);
+            C = N.substring(ll-1, ll);
+
+            ll = ll - 1; sum = 0;
+
+            try {
+
+                for (int i = 0; i <ll-1; i++) {
+                    s =P.substring( i, i+1);
+                    j=Integer.parseInt(s);
+                    mp = ll + 1 - i-1;
+                    sum = sum + j * mp;
+                }
+
+                d11 =(int) Math.floor(sum/11);
+                m11 = d11 * 11;
+                r11 = sum - m11;
+                cn = 11 - r11;
+
+                if (cn == 10) s = "K"; else s=""+cn;
+
+                if (cn>10) {
+                    cn = cn % 11;
+                    s =""+cn;
+                }
+
+                NC = P+"-"+s;
+
+                if (N.equalsIgnoreCase(NC)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (Exception e) {
+                return false;
+            }
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+        return true;
+
+    }
+
+
+    private boolean validaNITOld(String N)  {
+        String P, C, s, NC;
+        int[] v = {0,0,0,0,0,0,0,0,0,0};
+        int j, mp, sum, d11, m11, r11, cn, ll;
+
+        if (N.isEmpty()) return false;
         if (NitValidadoInfile) return true;
         //if (!N.contains("-")) return false;
 
@@ -1572,7 +1650,7 @@ public class CliPos extends PBase {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    msgbox("Error consulta NIT Infile");
+                    toast("Error consulta NIT Infile");
                 }
             });
 

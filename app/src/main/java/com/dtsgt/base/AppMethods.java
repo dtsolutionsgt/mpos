@@ -1268,7 +1268,6 @@ public class AppMethods {
 
 	}
 
-
     public boolean paramCierre(int pid) {
         Cursor dt;
         String sql,val="";
@@ -2144,6 +2143,11 @@ public class AppMethods {
 		return ipb;
 	}
 
+	public boolean impresoraStarLAN(int idimp) {
+		gl.impStarLAN=idimp==8;
+		return gl.impStarLAN;
+	}
+
 	public void qrguatemala(String uuid) {
 		try {
 			//aa
@@ -2160,8 +2164,6 @@ public class AppMethods {
             }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
 		}
 	}
-
-
 
 	//endregion
 

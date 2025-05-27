@@ -871,7 +871,8 @@ public class ResCaja extends PBase {
                                     if (app.isOnWifi()!=0) {
                                         menuVenta();
                                     } else {
-                                        msgbox("La cuenta no esta actualizada.");
+                                        toastlong("La cuenta no esta actualizada.");
+                                        menuVenta();
                                     }
                                 } else {
                                     msgbox("Antes de pagar la cuenta debe terminar la venta actual");
