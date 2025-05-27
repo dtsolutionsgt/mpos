@@ -38,8 +38,9 @@ import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_modo_emergenciaObj;
 import com.dtsgt.classes.clsP_paramextObj;
-import com.dtsgt.classes.clsP_res_sesionObj;
-import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.classes.clsP_productoObj;
+import com.dtsgt.classes.clsP_stockObj;
+import com.dtsgt.classes.clsP_sucursalObj;;
 import com.dtsgt.classes.clsP_vendedor_rolObj;
 import com.dtsgt.classes.clsT_cierreObj;
 import com.dtsgt.classes.clsVendedoresObj;
@@ -47,6 +48,8 @@ import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.classes.extWaitDlg;
 import com.dtsgt.fel.FELVerificacion;
+import com.dtsgt.felesa.FELContingenciaSV;
+import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
 import com.dtsgt.mant.MantConfig;
@@ -84,12 +87,15 @@ public class Menu extends PBase {
 	private ExDialog menudlg;
 	private extWaitDlg waitdlg,waitdlglimp;
 
-    private clsP_cajacierreObj caja;
+	private fbStock fbs;
+	private Runnable rnFbInvCallBack,rnFbVerInv,rnfbsInvCent;
+
+	private clsP_cajacierreObj caja;
     private clsP_modo_emergenciaObj P_modo_emergenciaObj;
     private clsP_paramextObj P_paramextObj;
 	private clsD_facturaObj D_facturaObj;
 
-    private int selId,selIdx,menuid,iicon,idalm,idalmdpred,idcierre,modo_invcent,ci;
+    private int selId,selIdx,menuid,iicon,idalm,idalmdpred,idcierre,modo_invcent,modo_supervis,ci;
 	private String rutatipo,sdoc;
 	private boolean rutapos,horizpos,porcentaje,modo_emerg;
 	private boolean listo=true,almacenes,cortesias;
@@ -146,6 +152,12 @@ public class Menu extends PBase {
 			lblTit.setText("mPos   -   Versión: "+gl.parVer+"   -   Caja: "+gl.rutanom+" [ "+gl.codigo_ruta+" ] ," +
 					       " -  Sucursal: "+gl.tiendanom+" [ "+gl.tienda+" ]");
 
+			rnFbInvCallBack= () -> {fbInvCallBack();};
+			rnFbVerInv= () -> {versionInvFinish();};
+
+			fbs =new fbStock("Stock",gl.tienda);
+			rnfbsInvCent= () -> {fbsInvCent();};
+
 			listItems();
 
 			cajaCerrada();
@@ -159,7 +171,7 @@ public class Menu extends PBase {
 			wscom =new wsCommit(gl.wsurl);
 
 			rnInvCent= () -> {
-				//callbackInvCent();
+				callbackInvCent();
 			};
 			rnNumOrden= () -> {	callBackNumOrden();};
 
@@ -210,7 +222,7 @@ public class Menu extends PBase {
 			if (modosuper) addMenuItem(12,"Reportes");
 			addMenuItem(4,"Anulación");
 			addMenuItem(10,"Cambio usuario");
-			addMenuItem(14,"Modo de emergencia");
+			addMenuItem(14,"Sin conexion");
 
 			adaptergrid=new ListAdaptMenuGrid(this, items,horizpos);
             gridView.setAdapter(adaptergrid);
@@ -344,6 +356,7 @@ public class Menu extends PBase {
 			        showPrintMenuTodo();break;
 				case 4:  // Anulacion
 				    //showVoidMenuTodo();
+					modo_supervis=0;
 					validaSupervisor();
 					break;
 				case 5:  // Consultas
@@ -383,7 +396,9 @@ public class Menu extends PBase {
 				case 13:
 					apagar();break;
                 case 14:
-                    showEmergMenu();break;
+					startActivity(new Intent(this,Nowifi.class));
+					//showEmergMenu();
+					break;
 			}
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -396,13 +411,17 @@ public class Menu extends PBase {
 	//region Reimpresion
 	
 	public void showPrintMenuTodo() {
-
 		try {
+
+			String ddc=gl.peMFact?"Factura":"Ticket";
+			if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+				ddc="Documentos";
+			}
 
 			extListDlg listdlg = new extListDlg();
 			listdlg.buildDialog(Menu.this,"Reimpresión");
 
-     		listdlg.add((gl.peMFact?"Factura":"Ticket"));
+     		listdlg.add(ddc);
 			//listdlg.add("Depósito");
 			//listdlg.add("Pagos");
 			//listdlg.add("Recarga");
@@ -453,50 +472,6 @@ public class Menu extends PBase {
 	
 	//region Anulacion
 
-	private void validaSupervisor() {
-
-		clsClasses.clsVendedores item;
-
-		try {
-		    clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
-			app.fillSuper(VendedoresObj);
-
-			if (VendedoresObj.count==0) {
-				msgbox("No está definido ningún supervisor");return;
-			}
-
-			extListPassDlg listdlg = new extListPassDlg();
-			listdlg.buildDialog(Menu.this,"Autorización","Salir");
-
-			for (int i = 0; i <VendedoresObj.count; i++) {
-				item=VendedoresObj.items.get(i);
-				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
-			}
-
-			listdlg.setOnLeftClick(v -> listdlg.dismiss());
-
-			listdlg.onEnterClick(v -> {
-
-				if (listdlg.getInput().isEmpty()) return;
-
-				if (listdlg.validPassword()) {
-					showVoidMenuTodo();
-					listdlg.dismiss();
-				} else {
-					toast("Contraseña incorrecta");
-				}
-			});
-
-			listdlg.setWidth(350);
-			listdlg.setLines(4);
-
-			listdlg.show();
-
-		} catch (Exception e) {
-			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-		}
-	}
-
 	public void showVoidMenuTodo() {
 
 		try {
@@ -505,8 +480,8 @@ public class Menu extends PBase {
 
 			listdlg.add((gl.peMFact?"Factura":"Ticket"));
 			listdlg.add("Depósito");
-			listdlg.add("Ingreso de mercancía");
-			listdlg.add("Ajuste de inventario");
+			//listdlg.add("Ingreso de mercancía");
+			//listdlg.add("Ajuste de inventario");
 
 			listdlg.setOnItemClickListener(new OnItemClickListener() {
 				@Override
@@ -727,6 +702,15 @@ public class Menu extends PBase {
 	//region Inventario
 	
 	public void showInvMenuVenta() 	{
+		boolean exp_stock=false;
+
+		try {
+			clsP_stockObj P_stockObj=new clsP_stockObj(this,Con,db);
+			P_stockObj.fill();
+			exp_stock=P_stockObj.count>0;
+		} catch (Exception e) {
+			exp_stock=false;
+		}
 
 		try {
 
@@ -738,12 +722,15 @@ public class Menu extends PBase {
 			listdlg.add("Ajuste de inventario");
 			if (almacenes) {
 				listdlg.add("Traslado entre almacénes");
-				listdlg.add("Egreso de almacén");
+				listdlg.add("Traslado de otro almacén");
+				//listdlg.add("Egreso de almacén");
 			}
+			//if (exp_stock) listdlg.add("Cambiar version de inventario");
 
-			//listdlg.add("Orden de compra");
 			//listdlg.add("Barril");
-			//listdlg.add("Inventario centralizado");
+			listdlg.add("Inventario centralizado");
+			listdlg.add("Inicializar inventario");
+
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
@@ -759,9 +746,12 @@ public class Menu extends PBase {
 					if (mt.equalsIgnoreCase("Inventario inicial")) menuInvIni();
 					if (mt.equalsIgnoreCase("Orden de compra")) menuCompra();
 					if (mt.equalsIgnoreCase("Traslado entre almacénes")) menuTraslado();
+					if (mt.equalsIgnoreCase("Cambiar version de inventario")) menuVersInventario();
 					if (mt.equalsIgnoreCase("Egreso de almacén")) menuEgreso();
 					if (mt.equalsIgnoreCase("Barril")) menuBarril();
-					if (mt.equalsIgnoreCase("Inventario centralizado")) validaSuperInvCent();
+					if (mt.equalsIgnoreCase("Inventario centralizado")) msgAskInvCent();
+					if (mt.equalsIgnoreCase("Inicializar inventario")) msgAskAnulInv();
+					if (mt.equalsIgnoreCase("Traslado de otro almacén")) menuIngresoAlmacen();
 
 					listdlg.dismiss();
 				} catch (Exception e) {}
@@ -830,7 +820,14 @@ public class Menu extends PBase {
 		} catch (Exception e){}
     }
 
-    private void menuEgreso() {
+	private void menuIngresoAlmacen() {
+		try {
+			Intent intent = new Intent(Menu.this, InvTransAlm.class);
+			startActivity(intent);
+		} catch (Exception e){}
+	}
+
+	private void menuEgreso() {
 		try {
 
 			gl.tipo=6;
@@ -890,8 +887,51 @@ public class Menu extends PBase {
 		}
 	}
 
+	private void validaSuperAnulInv() {
 
-	public void menuInvCentral() {
+		clsClasses.clsVendedores item;
+
+		try {
+			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+			app.fillSuper(VendedoresObj);
+
+			if (VendedoresObj.count==0) {
+				msgbox("No está definido ningún supervisor");return;
+			}
+
+			extListPassDlg listdlg = new extListPassDlg();
+			listdlg.buildDialog(Menu.this,"Autorización","Salir");
+
+			for (int i = 0; i <VendedoresObj.count; i++) {
+				item=VendedoresObj.items.get(i);
+				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+			}
+
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
+
+			listdlg.onEnterClick(v -> {
+
+				if (listdlg.getInput().isEmpty()) return;
+
+				if (listdlg.validPassword()) {
+					startActivity(new Intent(this,InvAnular.class)); ;
+					listdlg.dismiss();
+				} else {
+					toast("Contraseña incorrecta");
+				}
+			});
+
+			listdlg.setWidth(350);
+			listdlg.setLines(4);
+
+			listdlg.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void menuInvCentral() {
 
 		try {
 
@@ -910,6 +950,8 @@ public class Menu extends PBase {
 			listdlg.setOnLeftClick(v -> listdlg.dismiss());
 
 			listdlg.show();
+
+			startActivity(new Intent(this,InicioInventario.class));
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
@@ -921,6 +963,7 @@ public class Menu extends PBase {
 
 		try {
 
+			/*
 			sql="SELECT CANT FROM P_STOCK";
 			dt=Con.OpenDT(sql);
 			if (dt.getCount()>0) {
@@ -932,6 +975,7 @@ public class Menu extends PBase {
 			if (dt.getCount()>0) {
 				msgbox("Antes de procesar inventario inicial debe iniciar inventario inicial");return;
 			}
+	   	    */
 
 			gl.cajaid=5;
 			if(valida()){
@@ -963,7 +1007,7 @@ public class Menu extends PBase {
 			waitdlg.buildDialog(this,"Recibiendo inventario . . .","Ocultar");
 			waitdlg.show();
 
-			sql="SELECT CODIGO_INVENTARIO_ENC FROM P_STOCK_INVENTARIO_ENC WHERE (CODIGO_SUCURSAL="+gl.tienda+") " +
+			sql="SELECT CODIGO_INVENTARIO_ENC,CODIGO_ALMACEN FROM P_STOCK_INVENTARIO_ENC WHERE (CODIGO_SUCURSAL="+gl.tienda+") " +
 				"AND (ESTADO<2) AND (TIPO='"+gl.invcent_tipo+"') ORDER BY CODIGO_INVENTARIO_ENC";
 			wsic.execute(sql,rnInvCent);
 
@@ -989,6 +1033,7 @@ public class Menu extends PBase {
 
 			wsic.openDTCursor.moveToFirst();
 			gl.invcent_cod=wsic.openDTCursor.getInt(0);
+			gl.invcen_alm=wsic.openDTCursor.getInt(1);
 
 			//gl.invcent_tipo
 			switch (modo_invcent) {
@@ -997,11 +1042,37 @@ public class Menu extends PBase {
 				case 1:
 					;break;
 				case 2:
-					startActivity(new Intent(this,InvCentral.class)); ;break;
+					 fbs.cantExist("/"+gl.tienda+"/",gl.invcen_alm,rnfbsInvCent);break;
 			}
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
+	}
+
+	private void fbsInvCent() {
+		String alm_nom;
+
+		try {
+			if (fbs.errflag) throw new Exception(fbs.error);
+
+			if (fbs.registers>0) {
+				clsP_almacenObj P_almacenObj=new clsP_almacenObj(this,Con,db);
+				P_almacenObj.fill("WHERE CODIGO_ALMACEN="+gl.invcen_alm);
+
+				if (P_almacenObj.count>0) alm_nom=P_almacenObj.first().nombre; else alm_nom="";
+				msgbox("Almacen "+alm_nom+" tiene existencias disponibles.\n"+
+					   "Antes de procesar inventario inicial debe anular inventario actual");return;
+			}
+
+			startActivity(new Intent(this,InvCentral.class));
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void menuVersInventario() {
+		modo_supervis=2;
+		validaSupervisor();
 	}
 
 	//endregion
@@ -1020,6 +1091,7 @@ public class Menu extends PBase {
 			listdlg.add("Tablas");
 			listdlg.add("Actualizar versión");
 			listdlg.add("Enviar base de datos");
+			listdlg.add("Recalcular inventario");
 			listdlg.add("Certificar facturas");
 			listdlg.add("Limpiar tablas");
 			listdlg.add("Prueba de bluetooth");
@@ -1030,7 +1102,7 @@ public class Menu extends PBase {
 			listdlg.add("Consumidor final");
 			listdlg.add("Actualizar fechas erroneas");
 			listdlg.add("Inicio de caja");
-			listdlg.add("Inicializar inventario");
+			//listdlg.add("Inicializar inventario");
 			listdlg.add("Reinicializar numero de orden");
 			listdlg.add("Envio datos por correo");
 			listdlg.add("Actualizar");
@@ -1050,29 +1122,28 @@ public class Menu extends PBase {
 						case 3:
 							uploadDB();break;
 						case 4:
-							msgAskFEL("Certificar facturas pendientes");break;
+							modo_supervis=1;
+							validaSupervisor();break;
 						case 5:
-							msgAskLimpiar("Este proceso se debe ejecutar únicamente antes " +
-									"de abrir la caja o despues de cierre de caja.\n Continuar?");break;
-							//validaSuperLimpia();
+							msgAskFEL("Certificar facturas pendientes");break;
 						case 6:
-							estadoBluTooth();break;
+							validaSuperLimpia();break;
 						case 7:
-							startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
+							estadoBluTooth();break;
 						case 8:
-							msgAskActualizar("Actualizar correlativos de contingencia");break;
+							startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
 						case 9:
-							infoSystem();break;
+							msgAskActualizar("Actualizar correlativos de contingencia");break;
 						case 10:
-							msgAskImprimir();break;
+							infoSystem();break;
 						case 11:
-							msgAskCF();break;
+							msgAskImprimir();break;
 						case 12:
-							msgAskCorregirFechas();break;
+							msgAskCF();break;
 						case 13:
-							inicioDia();break;
+							msgAskCorregirFechas();break;
 						case 14:
-							validaSuperInventario();break;
+							inicioDia();break;
 						case 15:
 							validaSuperNumOrden();break;
 						case 16:
@@ -1113,7 +1184,7 @@ public class Menu extends PBase {
         } catch (Exception e) {
             msgbox("No está instalada aplicación para actualización de versiónes, por favor informe soporte.");
         }
-	}
+    }
 
 	private void askCambUsuario() {
 
@@ -1182,6 +1253,21 @@ public class Menu extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
+	private void inicioInventario() {
+		try {
+			clsP_productoObj P_productoObj=new clsP_productoObj(this,Con,db);
+			P_productoObj.fill("WHERE (CODIGO_TIPO='P')");
+			if (P_productoObj.count>0) {
+				gl.inic_inv_auto=false;
+				startActivity(new Intent(this,InicioInventario.class));
+			} else {
+				msgbox("Inventario inicializado.");
+			}
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
 
 	private void uploadDB() {
 		startActivity(new Intent(this,EnvioNube.class));
@@ -1422,7 +1508,7 @@ public class Menu extends PBase {
 		try {
 			db.beginTransaction();
 
-			sqlfs="SELECT COREL FROM D_FACTURA WHERE FECHA<"+fd;
+			sqlfs="SELECT COREL FROM D_FACTURA WHERE (FECHA<"+fd+") AND (STATCOM='S')";
 
 			db.execSQL("DELETE FROM D_FACTURAD    WHERE COREL IN ("+sqlfs+")");
 			db.execSQL("DELETE FROM D_FACTURA_FEL WHERE COREL IN ("+sqlfs+")");
@@ -1434,7 +1520,7 @@ public class Menu extends PBase {
 			db.execSQL("DELETE FROM D_FACTURAR    WHERE COREL IN ("+sqlfs+")");
 			db.execSQL("DELETE FROM D_FACTURAS    WHERE COREL IN ("+sqlfs+")");
 
-			db.execSQL("DELETE FROM D_FACTURA WHERE FECHA<"+fd);
+			db.execSQL("DELETE FROM D_FACTURA WHERE (FECHA<"+fd+") AND (STATCOM='S')");
 
 			db.setTransactionSuccessful();
 			db.endTransaction();
@@ -1966,6 +2052,16 @@ public class Menu extends PBase {
     //region Reportes
 
 	public void showReportMenu() {
+		boolean flag=false;
+
+		if (gl.peRepLimitado) {
+			if (gl.rol==2) flag=true;
+			if (gl.rol==3) flag=true;
+		} else flag=true;
+
+		if (!flag) {
+			msgbox("Acceso denegado.");return;
+		}
 
 		try {
 
@@ -1981,6 +2077,8 @@ public class Menu extends PBase {
 			listdlg.add("Reporte Ventas por Vendedor");
 			listdlg.add("Consumo materia prima");
 			listdlg.add("Reporte de Ventas por Cliente");
+			listdlg.add("Pagos de caja");
+			listdlg.add("Cortesia por artículo");
 			listdlg.add("Margen y Beneficio por Producto");
 			listdlg.add("Margen y Beneficio por Familia");
 			listdlg.add("Cierre X");
@@ -2008,7 +2106,8 @@ public class Menu extends PBase {
 					if (ss.equalsIgnoreCase("Consumo materia prima")) gl.reportid=13;
 					//if (ss.equalsIgnoreCase("Consumo materia prima por producto")) gl.reportid=14;
 					if (ss.equalsIgnoreCase("Cortesias")) gl.reportid=15;
-
+					if (ss.equalsIgnoreCase("Pagos de caja")) gl.reportid=16;
+					if (ss.equalsIgnoreCase("Cortesia por artículo")) gl.reportid=17;
 
 					gl.titReport = ss;
 
@@ -2169,13 +2268,19 @@ public class Menu extends PBase {
 
 					if (gl.cajaid==5) {
 						listaCierres();
+					} else	if (gl.cajaid==4) {
+						startActivity(new Intent(Menu.this, DepositoLista.class));
 					} else {
 						if (valida()) {
 
 							if (gl.cajaid==2) {
-								startActivity(new Intent(Menu.this, CajaPagos.class));
+								startActivity(new Intent(Menu.this, CajaPagosLista.class));
 							} else {
-								validaCaja();
+								if (gl.cajaid==1) {
+									validaInicioInv();
+								} else {
+									validaCaja();
+								}
 							}
 
 						} else {
@@ -2185,7 +2290,6 @@ public class Menu extends PBase {
 								txt = "La caja no se ha abierto, si desea iniciar turno o realizar pagos debe realizar el inicio de caja.";
 							if (gl.cajaid == 1)
 								txt = "La caja ya está abierta, si desea iniciar otro turno debe realizar el fin de caja.";
-							if (gl.cajaid == 4) txt = "Pendiente implementación.";
 							if (gl.cajaid == 3)
 								txt = "La caja está cerrada, si desea iniciar operaciones o realizar pagos debe realizar el inicio de caja.";
 							msgAskValid(txt);
@@ -2215,7 +2319,7 @@ public class Menu extends PBase {
 	private void validaCaja() {
 
 		try {
-
+			/*
 			long flim = du.addHours(-12);
 			clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
 			P_res_sesionObj.fill("WHERE (Estado>0) AND (FECHAINI>=" + flim + ")");
@@ -2223,11 +2327,12 @@ public class Menu extends PBase {
 			if (P_res_sesionObj.count>0) {
 				msgAskMesas("Existen mesas abiertas.\n¿Continuar?");
 			} else {
+			*/
 				gl.inicio_caja_correcto = false;
 				browse = 1;
 				startActivity(new Intent(Menu.this, Caja.class));
-			}
-			} catch (Exception e) {
+			//}
+		} catch (Exception e) {
 			msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
 		}
 	}
@@ -2245,7 +2350,6 @@ public class Menu extends PBase {
 		dialog.setNegativeButton("No", (dialog1, which) -> {});
 		dialog.show();
 	}
-
 
 	//endregion
 
@@ -2295,8 +2399,6 @@ public class Menu extends PBase {
 		}
 
 	}
-
-
 
 	public void modoSinRed() {
 
@@ -2428,6 +2530,94 @@ public class Menu extends PBase {
 
     //endregion
 
+	//region Firebase
+
+	private void validaInicioInv() {
+		try {
+			//fbs.getIntValue("/config/"+gl.tienda+"/","fecha",rnFbInvCallBack);
+			fbs.getIntValue("/config/",""+gl.tienda,rnFbInvCallBack);
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void fbInvCallBack() {
+		long ff,af=du.getActDate();
+
+		try {
+			ff = fbs.retlongvalue;
+			if (ff==af) {
+				validaCaja();
+			} else {
+				browse=2;
+				startActivity(new Intent(this,InicioInventario.class));
+			}
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	//region Conversion inventario Firebase
+
+	private void existenciasFirebase() {
+		clsClasses.clsFbStock ritem;
+
+		try {
+			clsP_almacenObj P_almacenObj=new clsP_almacenObj(this,Con,db);
+			P_almacenObj.fill("WHERE ACTIVO=1 AND ES_PRINCIPAL=1");
+			if (P_almacenObj.count>0) {
+				idalmdpred=P_almacenObj.first().codigo_almacen;
+			} else {
+				msgbox("No se está definido ningun almacen predeterminado");return;
+			}
+
+			clsP_stockObj P_stockObj=new clsP_stockObj(this,Con,db);
+			P_stockObj.fill();
+
+			fbs.items.clear();
+
+			for (int i = 0; i <P_stockObj.count; i++) {
+
+				ritem=clsCls.new clsFbStock();
+
+				ritem.idprod=P_stockObj.items.get(i).codigo;
+				ritem.idalm=idalmdpred;
+				ritem.cant=P_stockObj.items.get(i).cant;
+				ritem.um=P_stockObj.items.get(i).unidadmedida;
+				ritem.bandera=0;
+
+				fbs.items.add(ritem);
+
+			}
+
+			fbs.transBatchStock(rnFbVerInv);
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void versionInvFinish() {
+
+		if (fbs.transresult) {
+			try {
+				db.execSQL("DELETE FROM P_STOCK");
+				menuExist();
+				toast("Versión de existencias cambiada");
+			} catch (Exception e) {
+				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			}
+		} else {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+ fbs.transerr);
+		}
+	}
+
+	//endregion
+
+
+	//endregion
+
 	//region Aux
 
 	public void CierreZ(){
@@ -2553,7 +2743,7 @@ public class Menu extends PBase {
 			}
 
 			if (fa>fv) {
-				mu.msgbox("Se ha acabado vigencia de autorización de las facturas. No se puede continuar con la venta.");
+				//mu.msgbox("Se ha acabado vigencia de autorización de las facturas. No se puede continuar con la venta.");
 				return false;
 			}
 
@@ -2872,8 +3062,6 @@ public class Menu extends PBase {
 		try{
 			gl.cajaid=5;
 
-			gl.cajaid=5;gl.cajaid=5;gl.cajaid=5;gl.cajaid=5;
-
 			if(!valida()){
 				if (gl.cajaid==5){
 					msgAskIniciarCaja("Caja cerrada. ¿Inicializar?");
@@ -2923,8 +3111,11 @@ public class Menu extends PBase {
 			
 			prtipo=DT.getString(0);
 				
-			if (prtipo.equalsIgnoreCase("DATAMAX")) prid=1;
-			if (prtipo.equalsIgnoreCase("EPSON")) prid=2;
+			if (prtipo.equalsIgnoreCase("DATAMAX")) {
+				prid=1;
+			} else if (prtipo.equalsIgnoreCase("EPSON")) {
+				prid=2;
+			}
 
             if (DT!=null) DT.close();
 		} catch (Exception e) {
@@ -3151,8 +3342,7 @@ public class Menu extends PBase {
 			writer.write("   ");writer.write("\r\n");
 			writer.write(" REIMPRESION CIERRE DIA  ");writer.write("\r\n");
 			writer.write("   ");writer.write("\r\n");
-
-			 */
+			*/
 
             for (int i = 0; i < D_cierreObj.count; i++) {
                 writer.write(D_cierreObj.items.get(i).text);writer.write("\r\n");
@@ -3218,8 +3408,8 @@ public class Menu extends PBase {
         try {
             Point point = new Point();
             getWindowManager().getDefaultDisplay().getRealSize(point);
-            return point.x>point.y;
-        } catch (Exception e) {
+			if (app.horizscr()) return true; else return point.x>point.y;
+		} catch (Exception e) {
             return true;
         }
     }
@@ -3288,7 +3478,60 @@ public class Menu extends PBase {
 
     //region Dialogs
 
-    private void msgAskValid(String msg) {
+	private void validaSupervisor() {
+
+		clsClasses.clsVendedores item;
+
+		try {
+			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+			app.fillSuper(VendedoresObj);
+
+			if (VendedoresObj.count==0) {
+				msgbox("No está definido ningún supervisor");return;
+			}
+
+			extListPassDlg listdlg = new extListPassDlg();
+			listdlg.buildDialog(Menu.this,"Autorización","Salir");
+
+			for (int i = 0; i <VendedoresObj.count; i++) {
+				item=VendedoresObj.items.get(i);
+				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+			}
+
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
+
+			listdlg.onEnterClick(v -> {
+
+				if (listdlg.getInput().isEmpty()) return;
+
+				if (listdlg.validPassword()) {
+
+					switch (modo_supervis) {
+						case 0:
+							showVoidMenuTodo();break;
+						case 1:
+							inicioInventario();break;
+						case 2:
+							msgAskVersInv();break;
+					}
+
+					listdlg.dismiss();
+				} else {
+					toast("Contraseña incorrecta");
+				}
+			});
+
+			listdlg.setWidth(350);
+			listdlg.setLines(4);
+
+			listdlg.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void msgAskValid(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
         dialog.setCancelable(false);
@@ -3306,12 +3549,11 @@ public class Menu extends PBase {
 			if (gl.cajaid==5){
 				gl.cajaid=1;
 				if (valida()){
-
 					if (gl.cajaid!=2){
 						gl.inicio_caja_correcto =false;
-						startActivity(new Intent(Menu.this,Caja.class));
+						validaInicioInv();
+						//startActivity(new Intent(Menu.this,Caja.class));
 					}
-
 				}
 			}
 		});
@@ -3613,7 +3855,7 @@ public class Menu extends PBase {
 				if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
 					startActivity(new Intent(Menu.this, FELVerificacion.class));
 				} else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
-					startActivity(new Intent(Menu.this, FELVerificacion.class));
+					startActivity(new Intent(Menu.this, FELContingenciaSV.class));
 				}
 			} catch (Exception e) {
 				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -3653,6 +3895,34 @@ public class Menu extends PBase {
 		dialog.show();
 	}
 
+	private void msgAskVersInv() {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage("Trasladar existencias a la nueva versión?");
+		dialog.setCancelable(false);
+		dialog.setPositiveButton("Si", (dialog1, which) -> existenciasFirebase());
+		dialog.setNegativeButton("No", (dialog12, which) -> {});
+		dialog.show();
+	}
+
+	private void msgAskInvCent() {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage("Antes de aplicar inventario centralizado, asegure se que ninguno otro dispositivo está activo");
+		dialog.setCancelable(false);
+		dialog.setPositiveButton("Continuar", (dialog1, which) -> validaSuperInvCent());
+		dialog.setNegativeButton("Regresar" , (dialog12, which) -> {});
+		dialog.show();
+	}
+
+	private void msgAskAnulInv() {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage("Antes de inicializar inventario asegure se que ninguno otro dispositivo está activo");
+		dialog.setCancelable(false);
+		dialog.setPositiveButton("Continuar", (dialog1, which) -> validaSuperAnulInv());
+		dialog.setNegativeButton("Regresar", (dialog12, which) -> {});
+		dialog.show();
+	}
+
+
 	private void msgAskUID(String msg) {
 		ExDialog dialog = new ExDialog(this);
 		dialog.setMessage(msg);
@@ -3681,12 +3951,18 @@ public class Menu extends PBase {
 
 			setPrintWidth();
 
-			if(browse==1 && gl.inicio_caja_correcto && !gl.inicia_caja_primera_vez){
+			if (browse==1 && gl.inicio_caja_correcto && !gl.inicia_caja_primera_vez){
 				gl.recibir_automatico = false;
 				browse=0;
+				return;
 			}
 
- 		} catch (Exception e){
+			if (browse==2){
+				browse=0;
+				validaCaja();
+			}
+
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 

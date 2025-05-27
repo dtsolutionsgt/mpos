@@ -1,15 +1,16 @@
 package com.dtsgt.mpos;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsT_comboObj;
+import com.dtsgt.firebase.fbStock;
 
 public class VentaEdit extends PBase {
 
@@ -17,6 +18,9 @@ public class VentaEdit extends PBase {
 
     private clsT_comboObj T_comboObj;
     private clsP_productoObj P_productoObj;
+
+    private fbStock fbs;
+    private Runnable rnFbCallBack;
 
     private int cant, lcant, prodid, disp, dif;
     private String um;
@@ -41,11 +45,27 @@ public class VentaEdit extends PBase {
         P_productoObj = new clsP_productoObj(this, Con, db);
         T_comboObj = new clsT_comboObj(this, Con, db);
 
-        disp = dispProducto();
+        rnFbCallBack = new Runnable() {
+            public void run() {
+                runFbCallBack();
+            }
+        };
+        fbs =new fbStock("Stock",gl.tienda);
+
+        Handler mtimer = new Handler();
+        Runnable mrunner=new Runnable() {
+            @Override
+            public void run() {
+                dispProducto();;
+            }
+        };
+        mtimer.postDelayed(mrunner,200);
+
+
 
         lbl1.setText(gl.gstr);
         lbl2.setText("" + cant);
-        lbl3.setText("Disponible : " + disp);
+        lbl3.setText("Disponible : ");
 
         pstock=isProdStock(prodid);
         if (!pstock) lbl3.setVisibility(View.INVISIBLE);
@@ -120,14 +140,8 @@ public class VentaEdit extends PBase {
 
 
 
-    private int dispProducto() {
-        int cdisp, cstock, cbcombo;
-
-        cstock=cantStock(prodid);
-        cbcombo=cantProdCombo(prodid);
-        cdisp=cstock-cbcombo;
-
-        return cdisp;
+    private void dispProducto() {
+         getFbProdStock(prodid);
     }
 
     private int cantStock(int prodid) {
@@ -184,6 +198,37 @@ public class VentaEdit extends PBase {
             return P_productoObj.first().codigo_tipo.equalsIgnoreCase("P");
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    //endregion
+
+    //region Firebase
+
+    private void runFbCallBack() {
+        int cstock, cbcombo;
+
+        try {
+            cstock=(int) fbs.total;
+            cbcombo=cantProdCombo(prodid);
+            disp=cstock-cbcombo;
+
+            if (disp>0) {
+                lbl3.setText("Disponible: "+mu.frmdecno(disp)+" "+ fbs.unimed);
+            } else {
+                lbl3.setText("Disponible: -");
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void getFbProdStock(int prodid) {
+        try {
+            fbs.calculaTotal("/"+gl.tienda+"/",0,prodid,rnFbCallBack);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 

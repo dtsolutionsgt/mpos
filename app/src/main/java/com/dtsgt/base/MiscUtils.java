@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +19,8 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 
@@ -25,13 +28,13 @@ public class MiscUtils {
 		
 	private Context cCont;
 	private DecimalFormat ffrmdec,ffrmint,ffrmint2,ffrmdec2,ffrmgps;
-	public String curr;
+	public  String curr;
 
 	private PBase pB;
 	
 	public MiscUtils(Context context,String currsymb) {
 
-		cCont=context; 
+		cCont=context;
 		curr=currsymb;
 		
 		ffrmdec = new DecimalFormat("#,##0.00"); 
@@ -41,10 +44,9 @@ public class MiscUtils {
 		ffrmgps = new DecimalFormat("##0.0000000");
 
 	}
-	
-	public MiscUtils(Context context) {
 
-		cCont=context; 
+	public MiscUtils(Context context) {
+		cCont=context;
 		curr="";
 		
 		ffrmdec = new DecimalFormat("#,##0.00"); 
@@ -125,43 +127,23 @@ public class MiscUtils {
 		return ss;
 	}
 	
-	public double round2(double val){
-		int ival;
-		
-		val=(double) (100*val);
-		double rslt=Math.round(val);
-		rslt=Math.floor(rslt);
-		
-		ival=(int) rslt;
-		rslt=(double) ival;
-		
-		return (double) (rslt/100);
+	public double round2(double value){
+		BigDecimal bd = BigDecimal.valueOf(value);
+		bd = bd.setScale(2, RoundingMode.HALF_UP);
+		return bd.doubleValue();
 	}
 
-	public double round2dec(double val){
-		double dval;
-		long ival;
 
-		val=val+0.000001;
-		dval=val*100;
-		ival=Math.round(dval);
-		dval=(double) ival;
-		val=dval*0.01;
-
-		return val;
+	public  double round2dec(double value) {
+		BigDecimal bd = BigDecimal.valueOf(value);
+		bd = bd.setScale(2, RoundingMode.HALF_UP);
+		return bd.doubleValue();
 	}
 
-	public double round6dec(double val){
-		double dval;
-		long ival;
-
-		val=val+0.000001;
-		dval=val*1000000;
-		ival=Math.round(dval);
-		dval=(double) ival;
-		val=dval*0.000001;
-
-		return val;
+	public  double round6dec(double value) {
+		BigDecimal bd = BigDecimal.valueOf(value);
+		bd = bd.setScale(6, RoundingMode.HALF_UP);
+		return bd.doubleValue();
 	}
 
 	public boolean emptystr(String s){
@@ -243,7 +225,24 @@ public class MiscUtils {
 	
 	public void msgbox(double v) {
         msgbox(String.valueOf(v));
-	}   
+	}
+
+	public void msgboxinfo(String msg) {
+		try {
+			ExDialog dialog = new ExDialog(cCont);
+			dialog.setMessage(msg);
+			dialog.setIcon(R.drawable.ic_quest);
+
+			dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+
+				}
+			});
+
+			dialog.show();
+
+		} catch (Exception e){ }
+	}
 
 	public void toast(String msg) {
 		Toast.makeText(cCont,msg, Toast.LENGTH_SHORT).show();
@@ -365,6 +364,25 @@ public class MiscUtils {
 		return str;
 	}
 
+	public  String leftPad(String input, String pChar, int desiredLength) {
+		char padChar=pChar.charAt(0);
+		int currentLength = input.length();
 
+		if (currentLength < desiredLength) {
+			int paddingLength = desiredLength - currentLength;
+			StringBuilder paddedString = new StringBuilder();
+
+			for (int i = 0; i < paddingLength; i++) {
+				paddedString.append(padChar);
+			}
+
+			paddedString.append(input);
+
+			return paddedString.toString();
+		} else {
+			// If the string is already equal or longer than the desired length, return the original string
+			return input;
+		}
+	}
 }
 

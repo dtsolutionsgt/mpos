@@ -9,7 +9,7 @@
     <RelativeLayout
         android:id="@+id/relclipos"
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="270dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="false"
         android:layout_centerVertical="false"
@@ -199,9 +199,9 @@
             android:layout_alignStart="@+id/txt1"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="0dp"
             android:layout_marginEnd="280dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="0dp"
             android:maxLines="2" />
 
         <EditText
@@ -212,7 +212,7 @@
             android:layout_alignStart="@+id/editText2"
             android:layout_alignEnd="@+id/txt1"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
             android:ems="10" />
 
@@ -222,10 +222,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/editText1"
             android:layout_alignStart="@+id/editText1"
-            android:layout_alignRight="@id/progressBar4"
-            android:layout_marginTop="3dp"
-            android:layout_marginEnd="80dp"
-            android:layout_toStartOf="@+id/progressBar4"
+            android:layout_alignEnd="@+id/txt1"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
             android:ems="10"
             android:inputType="textEmailAddress" />
 
@@ -238,7 +237,7 @@
             android:layout_alignEnd="@+id/editTextNumber4"
             android:layout_alignParentRight="true"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="45dp"
             android:layout_marginEnd="170dp"
             android:layout_marginBottom="10dp"
             android:layout_toRightOf="@+id/textView5"
@@ -256,13 +255,13 @@
 
         <TextView
             android:id="@+id/textView6"
-            android:layout_width="166dp"
+            android:layout_width="160dp"
             android:layout_height="48dp"
             android:layout_below="@+id/textView5"
             android:layout_alignStart="@+id/txtCorreo"
             android:layout_alignParentLeft="false"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="45dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="0dp"
             android:layout_toStartOf="@+id/progressBar4"
@@ -312,7 +311,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="false"
             android:layout_marginLeft="50dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="20dp"
             android:text="Identificación"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#000000"
@@ -320,13 +319,13 @@
 
         <EditText
             android:id="@+id/txt1"
-            android:layout_width="500dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/relRoad"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="150dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
             android:layout_toStartOf="@+id/progressBar4"
             android:ems="10"
             android:inputType="textEmailAddress"
@@ -531,16 +530,16 @@
 
         <ImageView
             android:id="@+id/imageView146"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
+            android:layout_width="116dp"
+            android:layout_height="49dp"
             android:layout_below="@+id/textView184"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="false"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="88dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="8dp"
             android:adjustViewBounds="true"
             android:src="@drawable/icono"
             android:visibility="invisible" />

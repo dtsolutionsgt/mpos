@@ -5,6 +5,7 @@ import android.database.Cursor;
 
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.MiscUtils;
+import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsBonifItem;
 
@@ -27,7 +28,7 @@ public class clsBonif {
 	private String prodid,lineaid,slineaid,marcaid;
 	private double cant,monto,vmax;
 	
-	public clsBonif(Context context,String producto,double cantidad,double montoventa) {
+	public clsBonif(Context context, String producto, double cantidad, double montoventa) {
 		
 		cont=context;
 		

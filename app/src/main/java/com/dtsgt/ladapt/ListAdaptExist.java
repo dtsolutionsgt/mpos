@@ -71,6 +71,7 @@ public class ListAdaptExist extends BaseAdapter {
 			holder.lblPeso = (TextView) convertView.findViewById(R.id.lblepeso);
 			holder.lblPesoM = (TextView) convertView.findViewById(R.id.lblepesom);
             holder.lblPesoT = (TextView) convertView.findViewById(R.id.lblepesoT);
+			holder.lblTotal = (TextView) convertView.findViewById(R.id.textView);
 
 			holder.reltitle= (RelativeLayout) convertView.findViewById(R.id.relexitit);
 			holder.relbueno= (RelativeLayout) convertView.findViewById(R.id.relexist);
@@ -86,6 +87,8 @@ public class ListAdaptExist extends BaseAdapter {
 
 		holder.lblDesc.setText(items.get(position).Cod);
 		holder.lblCod.setText(items.get(position).Desc);
+		holder.lblTotal.setText(items.get(position).totaluni);
+
 
 		holder.lblLote.setText(items.get(position).Valor);
         holder.lblLotem.setText(items.get(position).Lote);
@@ -117,7 +120,9 @@ public class ListAdaptExist extends BaseAdapter {
             case 2:
                 holder.relmalo.setVisibility(View.VISIBLE);break;
             case 3:
-                holder.reltot.setVisibility(View.VISIBLE);break;
+                holder.reltot.setVisibility(View.VISIBLE);
+
+				break;
 		}
 		
 		if(selectedIndex!= -1 && position == selectedIndex) {
@@ -131,7 +136,8 @@ public class ListAdaptExist extends BaseAdapter {
 	
 	
 	static class ViewHolder {
-		TextView  lblLote,lblLotem,lblCod,lblDesc,lblValor2,lblValor,lblValorM,lblValorT,lblPeso,lblPesoM,lblPesoT;
+		TextView  lblLote,lblLotem,lblCod,lblDesc,lblValor2,lblValor,lblValorM;
+		TextView  lblValorT,lblPeso,lblPesoM,lblPesoT,lblTotal;
 		RelativeLayout reltitle,relbueno,relmalo,reltot;
 	}
 	

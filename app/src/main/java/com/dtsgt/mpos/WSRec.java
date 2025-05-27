@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -18,6 +19,8 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.XMLObject;
@@ -36,9 +39,12 @@ import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_departamentoObj;
 import com.dtsgt.classes.clsP_descuentoObj;
 import com.dtsgt.classes.clsP_empresaObj;
+import com.dtsgt.classes.clsP_empresa_transObj;
 import com.dtsgt.classes.clsP_encabezado_reporteshhObj;
 import com.dtsgt.classes.clsP_factorconvObj;
+import com.dtsgt.classes.clsP_fel_sv_ambObj;
 import com.dtsgt.classes.clsP_fraseObj;
+import com.dtsgt.classes.clsP_giro_negocioObj;
 import com.dtsgt.classes.clsP_impresoraObj;
 import com.dtsgt.classes.clsP_impresora_marcaObj;
 import com.dtsgt.classes.clsP_impresora_modeloObj;
@@ -85,6 +91,11 @@ import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classesws.*;
 import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -104,18 +115,19 @@ public class WSRec extends PBase {
     private ProgressBar pbar;
 
     private WebServiceHandler ws;
-    private wsCommit wscom;
     private wsOpenDT wso;
+    private Runnable rnFechaContrato;
 
-    private Runnable rnTipoContrib,rnFechaContrato;
+    private wsCommit wscom;
+
+    private Runnable rnTipoContrib;
 
     private XMLObject xobj;
     private ArrayList<String> script = new ArrayList<String>();
     private boolean pbd_vacia = false,nueva_version=false;
     private String plabel, fechasync;
     private String rootdir = Environment.getExternalStorageDirectory() + "/mPosFotos/";
-
-    private String idversion,clave;
+    private String idversion,clave,cod_pais;
     private long ffel;
     public boolean automatico;
 
@@ -145,30 +157,20 @@ public class WSRec extends PBase {
 
             app.getURL();
             app.parametrosExtra();
+            paisEmpresa();
 
             wscom =new wsCommit(gl.wsurl);
             wso=new wsOpenDT(gl.wsurl);
 
             rnTipoContrib = () -> { tipoContrib();};
-            rnFechaContrato = () -> { fechaContrato();};
 
             setHandlers();
 
-            try {
-                if (gl.codigo_pais.equalsIgnoreCase("GT")) {
-                    gl.Sincronizar_Clientes=false;
-                } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-                    gl.Sincronizar_Clientes=true;
-                } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-                    gl.Sincronizar_Clientes=true;
-                }
-            } catch (Exception e) {
-                gl.Sincronizar_Clientes=false;
-            }
-
-
             ws = new WebServiceHandler(WSRec.this, gl.wsurl, gl.timeout);
             xobj = new XMLObject(ws);
+
+            wso=new wsOpenDT(gl.wsurl);
+            rnFechaContrato= () -> { updateFechaContrato();};
 
             long fs = app.getDateRecep();
             if (fs > 0) fs = du.addDays(fs, -1);
@@ -178,7 +180,9 @@ public class WSRec extends PBase {
             if (pbd_vacia) fs=2001010000;
             if (fs==0) fs=2001010000;
 
-            fechasync = "" + fs;
+            // temporalmente carga todos los clientes
+            fs=2001010000;
+            fechasync = ""+fs;
 
             lblIdDispositivo.setText("ID - " + gl.deviceId);
 
@@ -272,8 +276,8 @@ public class WSRec extends PBase {
                         callMethod("GetP_LINEA", "EMPRESA", gl.emp);
                         break;
                     case 10:
-                        if (gl.Sincronizar_Clientes){
-                            callMethod("GetP_CLIENTE", "EMPRESA", gl.emp, "FECHA", fechasync);
+                        if (gl.peCargarClientes){
+                            //callMethod("GetP_CLIENTE", "EMPRESA", gl.emp, "FECHA", fechasync);
                         }
                         break;
                     case 11:
@@ -447,6 +451,9 @@ public class WSRec extends PBase {
                     case 62:
                         callMethod("GetP_IMPRESORA_REDIRECCION", "EMPRESA", gl.emp);
                         break;
+                    case 63:
+                        callMethod("GetP_GIRO_NEGOCIO", "COD_PAIS", cod_pais);
+                        break;
                 }
             } catch (Exception e) {
                 error=e.getMessage();errorflag=true;
@@ -509,8 +516,8 @@ public class WSRec extends PBase {
                     }
                     execws(10);break;
                 case 10:
-                    if (gl.Sincronizar_Clientes) {
-                        processCliente();
+                    if (gl.peCargarClientes) {
+                        //processCliente();
                     }
                     if (ws.errorflag) {
                         processComplete();break;
@@ -830,6 +837,13 @@ public class WSRec extends PBase {
                     if (ws.errorflag) {
                         processComplete();break;
                     }
+                    execws(63);
+                    break;
+                case 63:
+                    processGiroNegocio();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
                     processComplete();
                     break;
             }
@@ -1039,25 +1053,16 @@ public class WSRec extends PBase {
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-                    if ((keyCode == KeyEvent.KEYCODE_ENTER) &&
-                            (event.getAction() == KeyEvent.ACTION_DOWN)) {
+                    if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
 
                         if (txtClave.getText().toString().isEmpty()){
-
                             msgbox("Debe ingresar la clave para recibir los datos");
-
                             showkeyb();
-
                             txtClave.requestFocus();
-
-                        }else{
-
+                        } else {
                             clave = txtClave.getText().toString();
-
                             showkeyb();
-
                             txtURLWS.requestFocus();
-
                         }
 
                         return true;
@@ -1169,7 +1174,7 @@ public class WSRec extends PBase {
 
     }
 
-    private boolean processData() {
+    private void processData() {
 
         try {
 
@@ -1183,30 +1188,45 @@ public class WSRec extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
+        } catch (Exception e) {
+            db.endTransaction();
+            String ss=e.getMessage() + "---" + sql;
+            msgboxwait("DB Commit Error\n" + e.getMessage() + "\n" + sql);
+            return ;
+        }
+
+        try {
             if (validaParametros()) {
                 app.setDateRecep(du.getActDate());
-                msgboxwait("Recepción completa");
+
 
                 fechaActualizacion();
-                llenaTipoContrib();
+
+                iniciaStream();
             } else {
                 msgboxexit("Configuración de tienda o caja incorrecta");
-                //finish();
             }
+        } catch (Exception e) {
+            msgboxwait("Error\n" + e.getMessage());
 
+        }
+    }
+
+    private void processDataFinal() {
+        try {
+            msgboxwait("Recepción completa");
+
+            validaFEL();
             validaCombos();
             printBypass();
             productoPropinaServicio();
+            fechaContratoFEL();
             limpiaArchivosCierre();
 
             if (app.citems.size()>0) mostrarLista();
 
-            return true;
-
         } catch (Exception e) {
-            db.endTransaction();
-            msgboxwait("DB Commit Error\n" + e.getMessage() + "\n" + sql);
-            return false;
+            msgboxwait("Error\n" + e.getMessage() );
         }
     }
 
@@ -1426,6 +1446,123 @@ public class WSRec extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
+    }
+
+    private void fechaContratoFEL() {
+        if (gl.tienda==0) return;
+        try {
+            String wsql="SELECT dbo.AndrDate(FEL_FECHA_VENCE_CONTRATO),FEL_ESA_modo_sandbox,FEL_ESA_Archivo FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+gl.tienda;
+            wso.execute(wsql,rnFechaContrato);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void updateFechaContrato() {
+        long fc;
+        String FELsvcrt;
+        int FELsvmodo;
+
+        try {
+            if (wso.errflag) {
+                throw new Exception(wso.error);
+            }
+
+            if (wso.openDTCursor.getCount()>0) {
+                wso.openDTCursor.moveToFirst();
+
+                try {
+                    fc=wso.openDTCursor.getLong(0);
+                    if (fc<100000000) fc=2000000000+fc;
+                } catch (Exception e) {
+                    fc=2001010000;
+                }
+
+                try {
+                    FELsvmodo=wso.openDTCursor.getInt(1);
+                    FELsvcrt=wso.openDTCursor.getString(2);
+                } catch (Exception e) {
+                    FELsvmodo=-1; FELsvcrt="";
+                }
+
+                sql="UPDATE P_SUCURSAL SET FECHA_CONTR="+fc+"  WHERE CODIGO_SUCURSAL="+gl.tienda;
+                db.execSQL(sql);
+                //validaFechaContrato();
+
+                if (cod_pais.equalsIgnoreCase("SV")) {
+                    aplicaAmbienteSV(FELsvcrt,FELsvmodo);
+                }
+
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void aplicaAmbienteSV( String FELsvcrt, int FELsvmodo) {
+        try {
+
+            if (FELsvmodo<0) return;
+
+            if (FELsvcrt.isEmpty()) {
+                msgbox("Archivo de certificacion FEL ESA incorrecto.");return;
+            }
+
+            if (FELsvcrt.length()<7) {
+                msgbox("Archivo de certificacion FEL ESA incorrecto.");return;
+            }
+
+            clsP_fel_sv_ambObj P_fel_sv_ambObj=new clsP_fel_sv_ambObj(this,Con,db);
+
+            clsClasses.clsP_fel_sv_amb item = clsCls.new clsP_fel_sv_amb();
+
+            item.id=1;
+            item.ambiente=FELsvmodo;
+            item.archivo=FELsvcrt;
+
+            try {
+                P_fel_sv_ambObj.add(item);
+            } catch (Exception e) {
+                P_fel_sv_ambObj.update(item);
+            }
+
+            if (FELsvmodo>=0) {
+                //validaFELESA_archivo(FELsvcrt);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void validaFEL() {
+        boolean flagFEL=false;
+        long fact,f14;
+
+        if (gl.tienda==0) return;
+
+        try {
+
+            if (ffel<0) ffel=0;
+            if (ffel!=0) {
+                fact=du.getActDate();f14=du.addDays(fact,14);
+                if (f14>=ffel)  msgbox("Validéz de Facturación electronica está próxima a expirar.\nAvize a supervisor.");
+            }
+
+            app.parametrosExtra();
+
+            if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
+                flagFEL=true;
+            } else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
+                flagFEL=true;
+            }
+
+            clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
+            P_sucursalObj.fill("WHERE (CODIGO_SUCURSAL="+gl.tienda+")");
+            if (P_sucursalObj.count==0) return;
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     //endregion
@@ -1821,7 +1958,7 @@ public class WSRec extends PBase {
                 var.activa = mu.bool(item.ACTIVA);
                 var.codigo_corel=item.CODIGO_COREL;
 
-                script.add(handler.addItemSql(var));
+                if (var.activa==1) script.add(handler.addItemSql(var));
             }
 
         } catch (Exception e) {
@@ -2709,6 +2846,7 @@ public class WSRec extends PBase {
 
                 item = items.items.get(i);
                 var = clsCls.new clsP_sucursal();
+
                 var.codigo_sucursal = item.CODIGO_SUCURSAL;
                 var.codigo = item.CODIGO;
                 var.empresa = item.EMPRESA;
@@ -2732,6 +2870,7 @@ public class WSRec extends PBase {
                 var.codigo_escenario_iva=item.CODIGO_ESCENARIO_IVA;
                 var.codigo_municipio=item.CODIGO_MUNICIPIO;
                 var.codigo_proveedor=item.CODIGO_PROVEEDOR;
+                var.fecha_contr=0;
 
                 script.add(handler.addItemSql(var));
             }
@@ -3060,7 +3199,7 @@ public class WSRec extends PBase {
             clsBeP_RES_SALA item = new clsBeP_RES_SALA();
             clsClasses.clsP_res_sala var;
 
-            script.add("DELETE FROM P_RES_SALA");
+            script.add("DELETE FROM P_res_sala");
 
             items = xobj.getresult(clsBeP_RES_SALAList.class, "GetP_RES_SALA");
             if (items==null) return;
@@ -3996,10 +4135,53 @@ public class WSRec extends PBase {
         }
     }
 
+    private void processGiroNegocio() {
+        try {
+            clsP_giro_negocioObj handler = new clsP_giro_negocioObj(this, Con, db);
+            clsBeP_GIRO_NEGOCIOList items = new clsBeP_GIRO_NEGOCIOList();
+            clsBeP_GIRO_NEGOCIO item = new clsBeP_GIRO_NEGOCIO();
+            clsClasses.clsP_giro_negocio var;
+
+            script.add("DELETE FROM P_giro_negocio");
+
+            items = xobj.getresult(clsBeP_GIRO_NEGOCIOList.class, "GetP_GIRO_NEGOCIO");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_giro_negocio();
+
+                var.codigo_giro_negocio=item.CODIGO_GIRO_NEGOCIO;
+                var.cod_pais=item.COD_PAIS;
+                var.codigo=item.CODIGO;
+                var.descripcion=item.DESCRIPCION;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage(); ws.errorflag = true;
+        }
+    }
 
     //endregion
 
-    //region Web Service calls
+    //region Web Service Stream
+
+    private void iniciaStream() {
+        llenaTipoContrib();
+    }
+
+    private void terminaStream() {
+        processDataFinal();
+    }
 
     private void llenaTipoContrib() {
         try {
@@ -4012,10 +4194,11 @@ public class WSRec extends PBase {
 
                 sql="SELECT CODIGO_TIPO_CONTRIBUYENTE,TIPO_CONTRIBUYENTE, TIPO_DOCUMENTO " +
                     "FROM P_TIPO_CONTRIBUYENTE WHERE (COD_PAIS='"+cpais+"') AND (ACTIVO=1)";
-                wso.execute(sql,rnTipoContrib);
+                wso.execute(sql,() -> { tipoContrib(); });
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            terminaStream();
         }
     }
 
@@ -4036,7 +4219,7 @@ public class WSRec extends PBase {
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            return;
+            terminaStream();return;
         }
 
         try {
@@ -4065,21 +4248,21 @@ public class WSRec extends PBase {
         } catch (Exception e) {
             db.endTransaction();
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            terminaStream();
         }
 
-        validaFechaContrato();
+        try {
+            sql="SELECT dbo.AndrDate(FEL_FECHA_VENCE_CONTRATO),FEL_ESA_modo_sandbox,FEL_ESA_Archivo FROM P_SUCURSAL WHERE (CODIGO_SUCURSAL="+gl.tienda+")";
+            wso.execute(sql,() -> { validaFechaContrato(); });
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            terminaStream();
+        }
     }
 
     private void validaFechaContrato() {
-        try {
-            sql="SELECT dbo.AndrDate(FEL_FECHA_VENCE_CONTRATO) FROM P_SUCURSAL WHERE (CODIGO_SUCURSAL="+gl.tienda+")";
-            wso.execute(sql,rnFechaContrato);
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
+        int i=2;
 
-    private void fechaContrato() {
         try {
             if (wso.errflag) throw new Exception(wso.error);
 
@@ -4094,44 +4277,66 @@ public class WSRec extends PBase {
             } catch (Exception e) {
                 ffel=0;
             }
+
+            plabel = "EMPRESA TRANSPORTE";updateLabel();
+
+            sql="SELECT CODIGO_EMP_TRANSPORTE, NOMBRE FROM P_EMPRESA_TRANSPORTE " +
+                "WHERE (CODIGO_EMP_TRANSPORTE=1) OR ((EMPRESA="+gl.emp+") AND (ACTIVO=1))";
+            wso.execute(sql,() -> { empresaTransporte(); });
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-        validaFEL();
     }
 
-    private void validaFEL() {
-        boolean flagFEL=false;
-        long fact,f14;
-
-        if (gl.tienda==0) return;
+    private void empresaTransporte() {
+        clsClasses.clsP_empresa_trans item;
 
         try {
+            if (wso.errflag) throw new Exception(wso.error);
 
-            if (ffel<0) ffel=0;
-            if (ffel!=0) {
-                fact=du.getActDate();f14=du.addDays(fact,14);
-                if (f14>=ffel)  {
-                    //msgbox("Validéz de Facturación electronica está próxima a expirar.\nAvize a supervisor.");
+            if (!db.isOpen()) {
+                browse=0;onResume();
+            }
+
+            Cursor dt=wso.openDTCursor;
+
+            try {
+                db.beginTransaction();
+
+                db.execSQL("DELETE FROM P_empresa_trans");
+
+                if (dt.getCount()>0) {
+
+                    clsP_empresa_transObj P_empresa_transObj=new clsP_empresa_transObj(this,Con,db);
+
+                    dt.moveToFirst();
+                    while (!dt.isAfterLast()) {
+
+                        item = clsCls.new clsP_empresa_trans();
+
+                        item.codigo=dt.getInt(0);
+                        item.nombre=dt.getString(1);
+
+                        P_empresa_transObj.add(item);
+
+                        dt.moveToNext();
+                    }
                 }
+
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (Exception e) {
+                db.endTransaction();
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                terminaStream();
             }
-
-            app.parametrosExtra();
-
-            if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
-                flagFEL=true;
-            } else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
-                flagFEL=true;
-            }
-
-            clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
-            P_sucursalObj.fill("WHERE (CODIGO_SUCURSAL="+gl.tienda+")");
-            if (P_sucursalObj.count==0) return;
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
+        terminaStream();
     }
 
     //endregion
@@ -4145,7 +4350,7 @@ public class WSRec extends PBase {
                 handler.post(new Runnable() {
                     public void run() {
                         if (plabel != null)
-                            lbl1.setText(plabel);
+                            lbl1.setText(plabel.toUpperCase());
                     }
                 });
             }
@@ -4346,8 +4551,79 @@ public class WSRec extends PBase {
     private void fechaActualizacion() {
         try {
             String fse = "" + du.univfechahora(du.getActDateTime());
+
             sql="UPDATE P_RUTA SET ULTIMA_ACTUALIZACION='"+fse+"' WHERE CODIGO_RUTA="+gl.codigo_ruta;
             wscom.execute(sql,null);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void paisEmpresa() {
+        cod_pais="SV";
+        try {
+            if (gl.emp==0) return;
+
+            clsP_empresaObj P_empresaObj=new clsP_empresaObj(this,Con,db);
+            P_empresaObj.fill("WHERE (EMPRESA="+gl.emp+")");
+            cod_pais=P_empresaObj.first().cod_pais;
+            if (cod_pais.isEmpty()) cod_pais="-";
+        } catch (Exception e) {
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());cod_pais="SV";
+        }
+    }
+
+    private void validaFELESA_archivo(String FELsvcrt) {
+        String fname,fbname;
+        File file;
+
+        try {
+            fname=Environment.getExternalStorageDirectory()+"/"+FELsvcrt;
+            fbname="fel_esa_cert/"+FELsvcrt;
+            file=new File(fname);
+            Uri localfile = Uri.fromFile(file);
+
+            if (file.exists()) return;
+            if (app.isOnWifi()==0) {
+                msgbox("No se puede descargar la lLave de certificacion por falta de conexión al internet.");
+                return;
+            }
+
+            FirebaseStorage storage;
+            StorageReference storageReference, apkref;
+            storage = FirebaseStorage.getInstance();
+            storageReference = storage.getReference();
+            apkref = storageReference.child(fbname);
+
+            apkref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    String ss=uri.toString();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    msgbox("LLave cert FEL ESA, Error de descarga2: \n"+exception.getMessage());
+                }
+            });
+
+            apkref.getFile(localfile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+
+                    if (file.exists()) {
+                        msgbox("LLave de certificacion descargada");
+                    } else {
+                        msgbox("Error en descarga de la llave de certificacion por falta de conexión al internet.");
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    msgbox("LLave cert FEL ESA,Error de descarga: \n"+exception.getMessage());
+                }
+            });
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

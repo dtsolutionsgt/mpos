@@ -64,6 +64,7 @@ public class Caja extends PBase {
     private double montoDifCred=0,montoCred=0,venta_total;
     private String cap;
     private int acc=1,msgAcc=0,cred=0,corelidx=0;
+    private boolean efflag=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,7 +172,9 @@ public class Caja extends PBase {
             validacionesInicio();
 
         } else if(gl.cajaid==3) { // Cierre de Caja
-            //msgbox("Cierre caja");
+
+            validaFechaContrato();
+
             try {
                 clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
                 caja.fill(" WHERE ESTADO=0 ORDER BY COREL");
@@ -251,6 +254,9 @@ public class Caja extends PBase {
     }
 
     public void doEfectClick(View view) {
+        if (efflag) return;
+        efflag=true;
+
         inputValorEfect();
     }
 
@@ -426,7 +432,7 @@ public class Caja extends PBase {
             }
 
 
-            sql="SELECT SUM(MONTO) FROM P_cajapagos WHERE COREL=0";
+            sql="SELECT SUM(MONTO) FROM P_cajapagos WHERE STATCOM='P'";
             dt = Con.OpenDT(sql);
 
             if(dt.getCount()==0) {
@@ -552,6 +558,15 @@ public class Caja extends PBase {
 
                 writeCorelLog(7,gl.corelZ,"");
 
+                sql="SELECT SUM(MONTO) FROM  P_CAJAPAGOS WHERE (STATCOM='P')";
+                dt=Con.OpenDT(sql);
+                if (dt.getCount()>0) {
+                    dt.moveToFirst();
+                    gl.fd_cajapagos=dt.getDouble(0);
+                } else {
+                    gl.fd_cajapagos=0;
+                }
+
                 //#CKFK 20200711 Agregué la condicion de que sume las que no están anuladas AND F.ANULADO = 0
                 sql=" SELECT P.CODPAGO, P.TIPO, SUM(P.VALOR),M.NIVEL " +
                     " FROM D_FACTURAP P " +
@@ -566,6 +581,8 @@ public class Caja extends PBase {
                 if(dt==null) throw new Exception();
 
                 if (dt.getCount()!=0){
+
+                    factTotHonduras();
 
                     dt.moveToFirst();
 
@@ -591,44 +608,6 @@ public class Caja extends PBase {
                                 }
                             }
                         }
-
-                        /*
-                        if (cred==1) {
-
-                            if(dt.getInt(3)==4){ //#CKFK 20200623 Cuando la forma de pago es Crédito
-
-                                corelidx++;
-
-                                try {
-                                    sql="DROP INDEX IX_P_CAJACIERRE ";
-                                    db.execSQL(sql);
-                                } catch (Exception e) {
-                                    String ss=e.getMessage();
-                                    ss=ss+"";
-                                }
-
-                                sql="SELECT EMPRESA FROM P_cajacierre";
-                                dt2=Con.OpenDT(sql);
-                                if (dt2.getCount()>0) {
-                                    sql="SELECT MAX(EMPRESA) FROM P_cajacierre";
-                                    dt2=Con.OpenDT(sql);
-                                    ecor=dt2.getInt(0)+1;
-                                } else {
-                                    ecor=1;
-                                }
-
-                                itemC.empresa=ecor;
-                                itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase()+"C"+corelidx;
-                                montoIni = mu.round2(dt.getDouble(2));
-                                itemC.montoini = montoIni;
-                                itemC.montofin = montoCred;
-                                itemC.montodif = mu.round2(montoCred - montoIni);
-                                itemC.estado=1;
-
-                                caja.add(itemC);
-                            }
-                        }
-                        */
 
                         dt.moveToNext();
                     }
@@ -715,6 +694,9 @@ public class Caja extends PBase {
                 sql="UPDATE P_CAJACIERRE SET ESTADO=1 WHERE COREL < " + gl.corelZ;
                 db.execSQL(sql);
 
+                sql="UPDATE P_CAJAPAGOS SET STATCOM='N' WHERE (STATCOM='P')";
+                db.execSQL(sql);
+
                 writeCorelLog(9,gl.corelZ,"");
 
                 if (gl.corelZ==0) {
@@ -741,6 +723,7 @@ public class Caja extends PBase {
                 gl.reportid=10;
                 gl.FinMonto=montoFin;
                 gl.fact_sin_cert=pendienteFELHoy();
+
 
                 startActivity(new Intent(this, CierreX.class));
 
@@ -895,6 +878,42 @@ public class Caja extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
+    private void factTotHonduras() {
+        Cursor dt;
+
+        try {
+
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+
+                sql="SELECT SUM(P.EXENTO), SUM(P.GRAVADO), SUM(P.IMP1),SUM(P.IMP2) " +
+                    "FROM  D_facturahn P INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
+                    "WHERE F.KILOMETRAJE=0 AND F.ANULADO=0 AND F.FECHA>="+gl.lastDate;
+                dt=Con.OpenDT(sql);
+
+                if (dt.getCount()>0) {
+                    dt.moveToFirst();
+                    gl.fd_hn_exen=dt.getDouble(0);
+                    gl.fd_hn_grav=dt.getDouble(1);
+                    gl.fd_hn_imp=dt.getDouble(2)+dt.getDouble(3);
+                }
+
+                sql="SELECT MIN(CORELATIVO), MAX(CORELATIVO) FROM  D_FACTURA F " +
+                    "WHERE KILOMETRAJE=0 AND FECHA>="+gl.lastDate;
+                dt=Con.OpenDT(sql);
+
+                if (dt.getCount()>0) {
+                    dt.moveToFirst();
+                    gl.fd_hn_cori=dt.getInt(0);
+                    gl.fd_hn_corf=dt.getInt(1);
+                }
+
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
 
     //endregion
 
@@ -1138,6 +1157,7 @@ public class Caja extends PBase {
             mdlg.setOnLeftClick(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    efflag=false;
                     mdlg.dismiss();
                 }
             });
@@ -1146,6 +1166,7 @@ public class Caja extends PBase {
                 @Override
                 public void onClick(View v) {
                     MontoFin.setText(mdlg.getInput());
+                    efflag=false;
                     mdlg.dismiss();
                 }
             });
@@ -1337,6 +1358,35 @@ public class Caja extends PBase {
             db.execSQL(ss);
         } catch (Exception e) {
         }
+    }
+
+    public void validaFechaContrato() {
+        Cursor DT;
+        long fa,fc,fl,fd;
+
+        if (gl.tienda==0) return;
+
+        try {
+            if (!app.usaFEL()) return;
+
+            String sql="SELECT FECHA_CONTR FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+gl.tienda;
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            fc=DT.getLong(0);fa=du.getActDate();
+            if (DT!=null) DT.close();
+            if (fc<2300000000L) return;
+
+            if (fc<=fa) {
+                msgbox("Su contrato de facturación electrónica ha expirado.\nInforme su contador.");return;
+            }
+
+            fl=du.addDays(fa,14);
+            if (fl>=fc) {
+                msgbox("Su contrato de facturación electrónica va a expirar "+du.sfecha(fc)+".\nInforme su contador.");
+            }
+
+        } catch (Exception e) {}
     }
 
     public int getEstadoLicencia() {

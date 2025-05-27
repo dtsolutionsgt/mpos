@@ -797,7 +797,6 @@ public class clsFELSal {
                 duplicado=false;
 
             } else {
-                updateLabel("Error al certificar: " + responsecode);
                 error=""+ responsecode;errorflag=true;errcert=true;
                 return errorflag;
             }
@@ -807,8 +806,6 @@ public class clsFELSal {
             return errorflag;
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;errcert=true;
-        } finally {
-            //if (connection!=null) connection.disconnect();
         }
         return errorflag;
     }

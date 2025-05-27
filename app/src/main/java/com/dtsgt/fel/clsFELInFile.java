@@ -46,6 +46,8 @@ public class clsFELInFile {
     public Boolean errcert =false;
     public Boolean halt=false;
     public boolean autocancel=false;
+    public boolean factura_credito=false;
+    public String factura_abono_venc;
     public int errlevel, responsecode;
     public long idcontingencia;
 
@@ -97,8 +99,7 @@ public class clsFELInFile {
     private double imp,totmonto,totiva,monto_propina;
     private int linea;
     private boolean firmcomplete,certcomplete;
-    boolean factura_credito=false;
-    
+
     // Configuracion
 
     private double iva=12;
@@ -110,12 +111,18 @@ public class clsFELInFile {
     private TextView lblProgress;
 
     public clsFELInFile(Context context, PBase Parent,int conTimeout) {
+
         cont=context;
         parent=Parent;
         timeout=conTimeout;
-        errlevel=0;error="";errorflag=false;errorcon=false;
 
-        //#EJC202212131153:Tratar de compartir el label que se actualiza.
+        errlevel=0;
+        error="";
+        errorflag=false;
+        errorcon=false;
+
+        factura_credito=false;
+
         try {
             lblProgress = ((Activity)context).findViewById(R.id.msgHeader);
         } catch (Exception e) {
@@ -765,7 +772,12 @@ public class clsFELInFile {
             jsoniu = new JSONObject();
             jsoniu.put("nit_emisor",fnit);
             jsoniu.put("tipo_operacion","CERTIFICACION");
-            jsoniu.put("tipo_documento","FACT");
+
+            if (factura_credito) {
+                jsoniu.put("tipo_documento","FCAM");
+            } else {
+                jsoniu.put("tipo_documento","FACT");
+            }
             jsoniu.put("codigo_establecimiento",""+fel_codigo_establecimiento);
             jsoniu.put("identificador_unico_dte",mpos_identificador_fact);
             jsoniu.put("anio_documento",""+fechaf_y);
@@ -1254,8 +1266,6 @@ public class clsFELInFile {
                 }
             }
         } else { // con contingencia
-
-
             if (factura_credito) {
                 xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" NumeroAcceso=\""+idconting+"\" Tipo=\"FCAM\"></dte:DatosGenerales>";
             } else {
@@ -1264,17 +1274,12 @@ public class clsFELInFile {
                 } else {
                     xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" NumeroAcceso=\""+idconting+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
                 }
-            }
-        }
+             }
+         }
 
     }
 
     public void completar(String serie,long numero) {
-
-        //#CKFK 20200619 puse esto en comentario porque el total del iva no se debe calcular asi
-        //#CKFK 20200619 puse esto en comentario porque el total del iva no se debe calcular asi
-        //totiva=Math.round(totiva*100);
-        //totiva=totiva/100;
 
         String totIvaStr = String.format("%.2f", totiva);
         totIvaStr=totIvaStr.replaceAll(",",".");
@@ -1297,23 +1302,28 @@ public class clsFELInFile {
         xml+="<dte:GranTotal>"+totmontoStr+"</dte:GranTotal>";
         xml+="</dte:Totales>";
 
+        if (factura_credito) {
+            xml+="<dte:Complementos>";
+            xml+="<dte:Complemento NombreComplemento=\"AbonosFacturaCambiaria\" URIComplemento=\"http://www.sat.gob.gt/dte/fel/0.2.0\">";
+            xml+="<cfc:AbonosFacturaCambiaria Version=\"1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/CompCambiaria/0.1.0\" xmlns:cfc=\"http://www.sat.gob.gt/dte/fel/CompCambiaria/0.1.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
+            xml+="<cfc:Abono>";
+            xml+="<cfc:NumeroAbono>1</cfc:NumeroAbono>";
+            xml+="<cfc:FechaVencimiento>"+factura_abono_venc+"</cfc:FechaVencimiento>";
+            xml+="<cfc:MontoAbono>"+totmontoStr+"</cfc:MontoAbono>";
+            xml+="</cfc:Abono>";
+            xml+="</cfc:AbonosFacturaCambiaria>";
+            xml+="</dte:Complemento>";
+            xml+="</dte:Complementos>";
+        }
+
         xml+="</dte:DatosEmision>";
         xml+="</dte:DTE>";
 
-        //#EJC20200706: Colocar If aquí para validar si el documento fue en contingencia.
-        if (monto_propina>0) {
+        if (monto_propina > 0) {
             xml += "<dte:Adenda>";
-            xml+="<Propina>"+str_propina+"</Propina>";
+            xml += "<Propina>" + str_propina + "</Propina>";
             xml += "</dte:Adenda>";
         }
-
-        /*
-        if (idcontingencia==0) {
-            xml+="<Documento>"+serie+"</Documento>";
-        } else {
-            xml+="<Documento>"+idcontingencia+"</Documento>";
-        }
-        */
 
         xml+="</dte:SAT>";
         xml+="</dte:GTDocumento>";

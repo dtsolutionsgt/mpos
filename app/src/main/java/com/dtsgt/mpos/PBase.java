@@ -1,7 +1,10 @@
 package com.dtsgt.mpos;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -9,10 +12,12 @@ import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.view.Gravity;
+import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.FragmentActivity;
 
 import com.dtsgt.base.AppMethods;
@@ -21,6 +26,9 @@ import com.dtsgt.base.DateUtils;
 import com.dtsgt.base.MiscUtils;
 import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.extTextDlg;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -50,8 +58,17 @@ public class PBase extends FragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_plist_base);
+		try {
+			AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+			super.onCreate(savedInstanceState);
+			setContentView(R.layout.activity_plist_base);
+
+			FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+			// Alternativa   appGlobals.OnCreate
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 	}
 
 	public void InitBase(){
@@ -144,6 +161,84 @@ public class PBase extends FragmentActivity {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),"");
         }
     }
+
+	protected void msgmsg(String msg) {
+		try {
+			ExDialog dialog = new ExDialog(this);
+			dialog.setMessage(msg);
+			dialog.setIcon(R.drawable.ic_quest);
+
+			dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {}
+			});
+
+			dialog.show();
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+	}
+
+	public void msgask(int dialogid,String msg){
+		gl.dialogid=dialogid;
+		if (msg==null || msg.isEmpty()) return;
+
+		try {
+			extTextDlg txtdlg = new extTextDlg();
+			txtdlg.buildDialog(PBase.this,"mPos","No","Si");
+
+			txtdlg.setText(msg);
+
+			txtdlg.setOnLeftClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					txtdlg.dismiss();
+				}
+			});
+
+			txtdlg.setOnMiddleClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (gl.dialogr!=null) gl.dialogr.run();
+					txtdlg.dismiss();
+				}
+			});
+
+			txtdlg.show();
+
+		} catch (Exception e){ }
+
+	}
+
+	public void msgaskold(int dialogid,String msg){
+		gl.dialogid=dialogid;
+		if (msg==null || msg.isEmpty()) return;
+
+		gl.dialogid=dialogid;
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+		dialog.setTitle(R.string.app_name);
+		dialog.setMessage(msg);
+
+		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				if (gl.dialogr!=null) {
+					gl.dialogr.run();
+				}
+			}
+		});
+
+		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {}
+		});
+
+		//dialog.show();
+
+		AlertDialog dlg=dialog.create();
+		dlg.show();
+
+		dlg.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+		dlg.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
+
+	}
 
 	protected void toast(String msg) {
 		toastcent(msg);

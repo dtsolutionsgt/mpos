@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -48,7 +49,8 @@ import org.json.JSONObject;
 public class CliPos extends PBase {
 
 	private EditText txtNIT,txtNom,txtRef,txtCorreo,txtTel;
-	private TextView lblPed,lblDom,lblDir,btnNIT,btnCF,lblmuni;
+	private TextView lblPed,lblDom,lblNIT,lblDir,btnNIT,btnCF,lblMuni;
+    private ImageView imgmuni;
     private RelativeLayout relped,relcli;
 	private ProgressBar pbar;
 	private CheckBox cbllevar,cbdomicilio;
@@ -86,10 +88,17 @@ public class CliPos extends PBase {
 		txtRef = (EditText) findViewById(R.id.editText1);txtRef.setText("Ciudad");
         txtCorreo= (EditText) findViewById(R.id.txtCorreo);txtCorreo.setText("");
         txtTel= (EditText) findViewById(R.id.editTextNumber4);txtTel.setText("");
+        lblMuni = (TextView) findViewById(R.id.textView317);lblMuni.setText("");
         lblPed = (TextView) findViewById(R.id.textView177);lblPed.setText("");
         lblDom = (TextView) findViewById(R.id.textView237);
         lblDir= (TextView) findViewById(R.id.textView238);
-        lblmuni= (TextView) findViewById(R.id.textView317);lblmuni.setText("");
+        lblNIT = (TextView) findViewById(R.id.textView1);lblNIT.setText("NIT");
+
+        try {
+            imgmuni= findViewById(R.id.imageView148);imgmuni.setVisibility(View.INVISIBLE);
+        } catch (Exception e) {}
+
+
         relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
         relcli = (RelativeLayout) findViewById(R.id.relclipos);
         pbar = (ProgressBar) findViewById(R.id.progressBar4);pbar.setVisibility(View.INVISIBLE);
@@ -107,10 +116,12 @@ public class CliPos extends PBase {
         P_clienteObj=new clsP_clienteObj(this,Con,db);
 
         gl.pedcorel="";gl.parallevar=false;gl.cf_domicilio=false;
+        gl.mododocesa=-1;
+
         bloqueado=false;
 
-        //domicilio=gl.modo_domicilio;
         domicilio=gl.peVentaDomicilio;
+
         cbllevar.setEnabled(true); cbllevar.setChecked(false);
         cbdomicilio.setEnabled(true); cbdomicilio.setChecked(false);
 
@@ -119,20 +130,25 @@ public class CliPos extends PBase {
         btnCF.setText("Consumidor Final");
         if (gl.codigo_pais.equalsIgnoreCase("GT")) {
             btnNIT.setText("Cliente con NIT");
+            try {
+                imgmuni.setVisibility(View.VISIBLE);
+            } catch (Exception e) {}
         } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
             btnNIT.setText("Cliente con RTN");
         } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
             btnNIT.setText("Cliente con NIT/NRC");
             btnCF.setText("Ticket");
+            lblNIT.setText("NIT/NRC");
         }
 
         NitValidadoInfile =false;
 
         /*
+         txtNIT.setText("40921174");
+
         if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-            //txtNIT.setText("8000-220402-123-4");
-            //txtNIT.setText("8000-6");
-            //txtNom.setText("Nombre");
+            //txtNIT.setText("80002204021234");txtNom.setText("Nombre");
+            //txtNIT.setText("166284-5");txtNom.setText("jaroslav pospichal ");txtCorreo.setText("jpospichal@dts.com.gt");
         }
         */
 
@@ -156,6 +172,8 @@ public class CliPos extends PBase {
                 ddnom =txtNom.getText().toString();if (ddnom.isEmpty()) ddnom="Consumidor final";
                 ddir =txtRef.getText().toString();if (ddir.isEmpty()) ddir="Ciudad";
                 dcor="consumidorfinal@gmail.com";
+
+                gl.mododocesa=0;
 
                 consFinal=true;
                 gl.sal_PER=false;
@@ -191,8 +209,13 @@ public class CliPos extends PBase {
                 msgbox("Identificación incorrecta");return;
             }
 
-            if (sNITCliente.length()>12) {
-                msgbox("Identificación incorrecta");return;
+            if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                if (sNombreCliente.isEmpty()) {
+                    msgbox("Falta definir nombre");return;
+                }
+                if (sNombreCliente.length()<5) {
+                    msgbox("Nombre debe tener minimo 5 letras");return;
+                }
             }
 
             if (sDireccionCliente.isEmpty()) {
@@ -207,12 +230,17 @@ public class CliPos extends PBase {
                 if (sNITCliente.length()>12) {
                     msgbox("Identificación incorrecta");return;
                 }
+                if (sNITCliente.length()!=13) {
+                    if (!validaNIT(sNITCliente)) {
+                        msgbox("NIT incorrecto");txtNIT.selectAll();txtNIT.requestFocus();return;
+                    }
+                }
             }  else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-                if (!validaNITHon(sNITCliente)) {
+                if (!app.validaNITHon(sNITCliente)) {
                     msgbox("RTN incorrecto");return;
                 }
             } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-                if (!validaNITSal(sNITCliente)) {
+                if (!app.validaNITSal(sNITCliente)) {
                     msgbox("NIT/NRC incorrecto");return;
                 }
             }
@@ -238,8 +266,9 @@ public class CliPos extends PBase {
             }
 
             if (flag_NRC) {
-                msgAskCG("Grande contribuyente ");
+                msgAskCG("Gran contribuyente ");
             } else {
+                gl.mododocesa=1;
                 if (!existeCliente()){
                     if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente)) procesaNIT(sNITCliente);
                 } else {
@@ -426,7 +455,6 @@ public class CliPos extends PBase {
 	}
 
 	private void procesaNIT(String snit) {
-
         int codigo=nitnum(snit);
 
 		try {
@@ -473,6 +501,25 @@ public class CliPos extends PBase {
         gl.parallevar=cbllevar.isChecked();
         gl.domicilio =cbdomicilio.isChecked();
 
+        gl.cliente_credito=false;gl.limite_credito=0;gl.dias_credito=0;
+        try {
+            sql="SELECT LIMITECREDITO,DIACREDITO FROM P_CLIENTE WHERE CODIGO_CLIENTE="+gl.codigo_cliente;
+            Cursor dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                gl.limite_credito=dt.getDouble(0);
+                gl.dias_credito=dt.getInt(1);
+
+                if (gl.limite_credito>0 && gl.dias_credito>0)  gl.cliente_credito=true;
+            }
+        } catch (Exception e) {
+            gl.cliente_credito=false;
+        }
+
+        gl.cliente_credito=false;
+
+
         if (gl.peInvCompart) {
             //bloqueado=true;
             //wsi.idstock="";
@@ -510,7 +557,6 @@ public class CliPos extends PBase {
     }
 
     private void cargaCliente() {
-
         Cursor DT;
 
         try{
@@ -532,7 +578,7 @@ public class CliPos extends PBase {
     //region Pedidos Nube
 
     private void iniciaPedidos() {
-
+        /*
         if (gl.pePedidos) {
 
             lblPed.setText("-");
@@ -550,7 +596,7 @@ public class CliPos extends PBase {
                 }
             }, delay, period);
         }
-
+        */
     }
 
     private void cancelaPedidos() {
@@ -856,6 +902,7 @@ public class CliPos extends PBase {
 
     public void menuPedidos() {
         try {
+            /*
             if (gl.peDomEntEnvio | gl.pePedidos) {
                 gl.pedid=pedcorel;
                 startActivity(new Intent(this, PedidoEnviar.class));
@@ -863,6 +910,8 @@ public class CliPos extends PBase {
                 gl.closePedido = false;
                 startActivity(new Intent(this, Pedidos.class));
             }
+
+             */
         } catch (Exception e) {
         }
     }
@@ -1024,73 +1073,6 @@ public class CliPos extends PBase {
 
 	}
 
-    private boolean validaNITHon(String N)  {
-        if (N.isEmpty()) return false;
-        if (N.length()<13) return false;
-
-        try {
-            long l=Long.parseLong(N);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    private boolean validaNITSal(String N) {
-        int guc,val,valm,vald;
-        String NN;
-
-        gl.sal_NIT=false;gl.sal_NRC=false;NN=N;
-
-        try {
-            if (!N.contains("-")) return false;
-            guc = N.length() - NN.replaceAll("-","").length();
-            if (guc==3) {
-                String[] sp = N.split("-");
-
-                if (sp[0].length()!=4) return false;
-                try {
-                    val=Integer.parseInt(sp[0]);
-                } catch (Exception e) { return false; }
-
-                if (sp[1].length()!=6) return false;
-                if (!du.fechaNIT_SV(sp[1])) return false;
-
-                if (sp[2].length()!=3) return false;
-                try {
-                    val=Integer.parseInt(sp[2]);
-                } catch (Exception e) { return false; }
-
-                if (sp[3].length()!=1) return false;
-                try {
-                    val=Integer.parseInt(sp[3]);
-                } catch (Exception e) { return false; }
-
-                gl.sal_NIT=true;return true;
-
-            } else if (guc==1) {
-                String[] sp = N.split("-");
-
-                if (sp[1].length()!=1) return false;
-                try {
-                    val=Integer.parseInt(sp[1]);
-                } catch (Exception e) { return false; }
-
-                if (sp[0].length()>7) return false;
-                if (sp[0].length()<2) return false;
-                try {
-                    val=Integer.parseInt(sp[0]);
-                } catch (Exception e) { return false; }
-
-                gl.sal_NRC=true;return true;
-            } else return false;
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-        return false;
-    }
-
     private void buscarCliente() {
         try {
             String cnit=txtNIT.getText().toString();
@@ -1149,12 +1131,11 @@ public class CliPos extends PBase {
 	}
 
 	private boolean existeCliente() {
-
 		Cursor DT;
         boolean resultado=false;
         int nitcf=gl.emp*10;
 
-		try{
+		try {
 
 			String NIT=txtNIT.getText().toString();
 
@@ -1162,7 +1143,6 @@ public class CliPos extends PBase {
 				txtNIT.requestFocus();
 				resultado=false;
 			} else {
-
 				sql="SELECT CODIGO, NOMBRE,DIRECCION,NIVELPRECIO,DIRECCION, MEDIAPAGO,TIPO_CONTRIBUYENTE,CODIGO_CLIENTE, EMAIL,TELEFONO FROM P_CLIENTE " +
 					"WHERE (NIT='" + NIT + "') AND (CODIGO_CLIENTE<>"+nitcf+")";
 				DT=Con.OpenDT(sql);
@@ -1449,27 +1429,15 @@ public class CliPos extends PBase {
 
     private int nitnumsv(String nit) {
         int guc,val,val1,val2;
-        String NN,N;
-
-        N=nit;NN=N;
 
         try {
-            guc = N.length() - NN.replaceAll("-","").length();
-            String[] sp = N.split("-");
+            val=gl.emp*10;
+            nit =nit.replaceAll("-","");
 
-            if (guc==3) {
-                val1=Integer.parseInt(sp[1]);
-                val2=Integer.parseInt(sp[2]);
-                val=val1*1000+val2;
+            if (nit.length()==14) nit=nit.substring(5);
 
-                return val;
-            } else if (guc==1) {
-                val1=Integer.parseInt(sp[0]);
-                val2=Integer.parseInt(sp[1]);
-                val=val1*10+val2;
-
-                return val;
-            }
+            val=Integer.parseInt(nit);
+            return val;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1552,7 +1520,7 @@ public class CliPos extends PBase {
         try {
             Point point = new Point();
             getWindowManager().getDefaultDisplay().getRealSize(point);
-            return point.x>point.y;
+            if (app.horizscr()) return true; else return point.x>point.y;
         } catch (Exception e) {
             return true;
         }
@@ -1674,10 +1642,13 @@ public class CliPos extends PBase {
             nmuni=DT.getString(0);
         } catch (Exception e) {
             nmuni="";
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-        lblmuni.setText(nmuni);
+        try {
+            lblMuni.setText(nmuni);
+        } catch (Exception e) {  }
+
     }
 
     //endregion
@@ -1687,14 +1658,23 @@ public class CliPos extends PBase {
     private void msgAskCG(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        dialog.setTitle("Credito fiscal");
+        dialog.setTitle("Crédito fiscal");
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                browse=3;
-                gl.sal_idneg=-1;
-                startActivity(new Intent(CliPos.this,ContrGrande.class));
+
+                if (sCorreoCliente.isEmpty()) {
+                    msgbox2("Falta correo");return;
+                }
+
+                if (gl.sal_NRC) {
+                    browse=3;
+                    gl.sal_idneg=-1;
+                    startActivity(new Intent(CliPos.this,ContrGrande.class));
+                } else {
+                    msgbox("NRC incorrecto.");return;
+                }
             }
         });
 
@@ -1771,7 +1751,7 @@ public class CliPos extends PBase {
 
             municipio();
 
-            if (gl.pePedidos) iniciaPedidos();
+            //if (gl.pePedidos) iniciaPedidos();
 
             if (browse==1) {
                 browse=0;
@@ -1820,7 +1800,7 @@ public class CliPos extends PBase {
 
     @Override
     protected void onPause() {
-        if (gl.pePedidos) cancelaPedidos();
+        //if (gl.pePedidos) cancelaPedidos();
         super.onPause();
     }
 

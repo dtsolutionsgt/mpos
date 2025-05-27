@@ -28,22 +28,6 @@ import java.util.ArrayList;
 
 public class extListPassDlg {
 
-    /*
-
-        public void buildDialog(Activity activity,String titletext,String buttontext)
-        public void buildDialog(Activity activity,String titletext)  buttontext="Salir"
-        public void dismiss()
-        public void add(int idresource,String text)  idresource=0  sin imagen
-        public void clear()
-        public void setWidth(int pWidth)   min 100
-        public void setHeight(int pHeight) min 100
-        public void setLines(int pLines)   min 1
-        public void show()
-
-        public void setOnExitListener(@Nullable View.OnClickListener l)
-        public void setOnItemClickListener(@Nullable OnItemClickListener l)
-
-     */
 
     private ListView mList;
     private TextView mTitleLabel,mBtnLeft,mBtnMid,mBtnRight,mLblPass,lblKeyDP;

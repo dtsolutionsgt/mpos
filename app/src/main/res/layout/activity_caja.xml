@@ -9,7 +9,8 @@
     <RelativeLayout
         android:id="@+id/relRoad"
         android:layout_width="match_parent"
-        android:layout_height="48dp">
+        android:layout_height="48dp"
+        android:background="@drawable/frame_rect_blue">
 
         <ImageView
             android:id="@+id/imgTitLogo"
@@ -29,6 +30,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:adjustViewBounds="true"
+            android:background="#FFFFFF"
             android:padding="5dp"
             android:src="@drawable/existencias" />
 
@@ -55,7 +57,7 @@
             android:paddingRight="5dp"
             android:text="Caja"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#1A8AC6"
+            android:textColor="#FFFFFF"
             android:textSize="34sp"
             android:textStyle="bold" />
     </RelativeLayout>

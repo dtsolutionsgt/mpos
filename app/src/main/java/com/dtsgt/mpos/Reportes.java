@@ -185,7 +185,6 @@ public class Reportes extends PBase {
     //region Events
 
     public void printDoc() {
-
         try{
             printEpson();
         }catch (Exception e){
@@ -395,7 +394,7 @@ public class Reportes extends PBase {
                 if (DT.getCount()==0) return;
             }
 
-            if(gl.reportid!=12 && gl.reportid!=14){
+            if (gl.reportid!=12 && gl.reportid!=14){
                 vItem = clsCls.new clsCD();
                 vItem.Cod="Todos";
                 vItem.Desc="";
@@ -432,43 +431,37 @@ public class Reportes extends PBase {
     }
 
     public void GeneratePrint(View view){
-
-        try{
-
+        try {
             if(!report) {
-                AskReport();
-                return;
+                AskReport();return;
             }
 
             if(report) {
-                gl.QRCodeStr="";
-                app.doPrint();
+                gl.QRCodeStr="";app.doPrint();
                 return;
             }
 
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        } catch (Exception e){
             msgbox("GeneratePrint: "+e);
         }
     }
 
     private void AskReport() {
+        try {
 
-        try{
-
-            if(dateini <= 0){
+            if (dateini <= 0){
                 msgbox("Fecha inicial errónea");return;
             }
 
-            if(datefin <= 0){
+            if (datefin <= 0){
                 msgbox("Fecha final errónea");return;
             }
 
-            if(dateini>datefin){
+            if (dateini>datefin){
                 msgbox("La fecha final no puede ser mayor a la inicial");return;
             }
 
-            if(gl.reportid==3 || gl.reportid==4){
+            if (gl.reportid==3 || gl.reportid==4){
                 if(lblProd.getText().toString().trim().isEmpty() && !id_item.equals("Todos")) {
                     if (gl.reportid == 3){
                         msgbox("Escoja un producto");
@@ -480,8 +473,8 @@ public class Reportes extends PBase {
                 }
             }
 
-            if(!report) {
-                if(fillItems()){
+            if (!report) {
+                if (fillItems()){
                     if (gl.reportid<15) {
                         if (itemR.size() == 0) {
                             msgbox("No se ha realizado ninguna venta con los parámetros indicados.");
@@ -520,16 +513,13 @@ public class Reportes extends PBase {
                 text.append('\n');
             }
             br.close() ;
-        }catch (IOException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        } catch (IOException e) {
             msgbox("getTXT: "+e);
-            e.printStackTrace();
         }
 
-        try{
+        try {
             lblFact.setText(text);
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        } catch (Exception e){
             msgbox("getTXT setText: "+e);
         }
 
@@ -725,6 +715,32 @@ public class Reportes extends PBase {
                             "D_FACTURA ON D_FACTURAR.EMPRESA = D_FACTURA.EMPRESA AND D_FACTURAR.COREL = D_FACTURA.COREL " +
                             "WHERE (D_FACTURA.ANULADO=0) AND (D_FACTURA.FECHA >= 2101010000)  " +
                             "GROUP BY P_PRODUCTO.DESCLARGA, D_FACTURAR.UM  ORDER BY P_PRODUCTO.DESCLARGA ";
+
+                    break;
+
+                case 16:
+                    sql="SELECT '','',0,'',P_CAJAPAGOS.NODOCUMENTO,  P_CONCEPTOPAGO.NOMBRE,0,0, P_CAJAPAGOS.MONTO, P_CAJAPAGOS.FECHA " +
+                        "FROM  P_CAJAPAGOS INNER JOIN P_CONCEPTOPAGO ON P_CAJAPAGOS.TIPO=P_CONCEPTOPAGO.CODIGO " +
+                        "WHERE (P_CAJAPAGOS.FECHA BETWEEN "+ dateini +" AND "+datefin+")";
+                    break;
+
+                case 17:
+                    sql="SELECT '','',CANT,'',P_PRODUCTO.DESCCORTA,'',0,PRECIO,TOTAL,D_FACTURA.FECHA FROM D_facturacor " +
+                        "INNER JOIN D_FACTURA ON (D_FACTURA.COREL=D_facturacor.COREL) " +
+                        "INNER JOIN P_PRODUCTO ON (P_PRODUCTO.CODIGO_PRODUCTO=D_facturacor.PRODUCTO) " +
+                        "WHERE (D_FACTURA.ANULADO=0)  AND " +
+                        "(D_facturacor.COREL IN ( SELECT COREL FROM D_FACTURA WHERE (FECHA>="+ dateini +") AND (FECHA<"+datefin+") )) " +
+                        "ORDER BY P_PRODUCTO.DESCCORTA,D_FACTURA.FECHA";
+
+                    sql="SELECT '','',SUM(CANT),'',P_PRODUCTO.DESCCORTA,'',0,0,0,0 FROM D_facturacor " +
+                        "INNER JOIN D_FACTURA ON (D_FACTURA.COREL=D_facturacor.COREL) " +
+                        "INNER JOIN P_PRODUCTO ON (P_PRODUCTO.CODIGO_PRODUCTO=D_facturacor.PRODUCTO) " +
+                        "WHERE (D_FACTURA.ANULADO=0)  AND " +
+                        "(D_facturacor.COREL IN ( SELECT COREL FROM D_FACTURA WHERE (FECHA>="+ dateini +") AND (FECHA<"+datefin+") )) " +
+                        "GROUP BY PRODUCTO " +
+                        "ORDER BY P_PRODUCTO.DESCCORTA";
+
+
 
                     break;
 
@@ -1294,7 +1310,49 @@ public class Reportes extends PBase {
                             rep.line();
                             rep.addmptot(tot);
                         }
+                    } else if (gl.reportid==16) {
+
+                        if(acc==1){
+                            tot=0;
+                            rep.addc("REPORTE PAGOS DE CAJA ");
+                            rep.addc(fecharango);
+                            setDatosVersion();
+                            rep.add3llr("Fecha","Documento","Monto");
+                            rep.line();
+                            acc = 2;
+                        }
+
+                        tot+=itemR.get(i).total;
+                        rep.add3llr(du.sfecha(itemR.get(i).fecha), itemR.get(i).descrip, mu.frmcur(itemR.get(i).total));
+                        rep.add(itemR.get(i).um);
+
+                        if(i==itemR.size()-1){
+                            rep.line();
+                            rep.add3llr("Total:", "", mu.frmcur(tot));
+                        }
+
+                    } else if (gl.reportid==17) {
+
+                        if(acc==1){
+                            tot=0;
+                            rep.addc("REPORTE CORTESIA POR ARTICULO ");
+                            rep.addc(fecharango);
+                            setDatosVersion();
+                            rep.addtotcant("Descripcion","Cant");
+                            rep.line();
+                            acc = 2;
+                        }
+
+                        tot+=itemR.get(i).correl;
+                        rep.addtotcant( itemR.get(i).descrip,""+itemR.get(i).correl);
+
+                        if(i==itemR.size()-1){
+                            rep.line();
+                            int itot=(int) tot;
+                            rep.addtotcant("Total:",""+itot);
+                        }
                     }
+
                 }
 
                 rep.line();
@@ -1465,7 +1523,7 @@ public class Reportes extends PBase {
         try {
             Point point = new Point();
             getWindowManager().getDefaultDisplay().getRealSize(point);
-            return point.x>point.y;
+            if (app.horizscr()) return true; else return point.x>point.y;
         } catch (Exception e) {
             return true;
         }

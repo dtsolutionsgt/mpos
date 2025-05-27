@@ -1,5 +1,6 @@
 package com.dtsgt.mpos;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -23,16 +25,19 @@ import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsRepBuilder;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 
 public class CajaPagos extends PBase {
 
-    private long date;
+
+
+    private Spinner cboProv, cboCPago;
+    private EditText lblDocAsoc,lblMonto,lblDesc;
+    private TextView lblDate;
 
     private clsClasses.clsP_cajapagos item=clsCls.new clsP_cajapagos();
 
-    private Spinner cboProv, cboCPago;
-    private EditText lblDate,lblDocAsoc,lblMonto,lblDesc;
 
     private ArrayList<String> spincode= new ArrayList<String>();
     private ArrayList<String> spinlist = new ArrayList<String>();
@@ -49,37 +54,63 @@ public class CajaPagos extends PBase {
     private printer prn;
     private Runnable printclose;
 
+    //Fecha
+    public final Calendar c = Calendar.getInstance();
+    private static final String BARRA = "/";
+    public int cyear, cmonth, cday, validCB=0;
+    private long date;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_caja_pagos);
+        try {
 
-        cboProv = (Spinner) findViewById(R.id.cboProv);
-        cboCPago = (Spinner) findViewById(R.id.cboCPago);
-        lblDate = (EditText) findViewById(R.id.editText19);lblDate.setFocusable(false);
-        lblDocAsoc = (EditText) findViewById(R.id.editText20);
-        lblMonto = (EditText) findViewById(R.id.editText17);
-        lblDesc = (EditText) findViewById(R.id.editText22);
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_caja_pagos);
 
-        super.InitBase();
-        addlog("CajaPagos",""+du.getActDateTime(),String.valueOf(gl.vend));
+            cboProv = (Spinner) findViewById(R.id.cboProv);
+            cboCPago = (Spinner) findViewById(R.id.cboCPago);
+            lblDate = (TextView) findViewById(R.id.editText19);
+            lblDocAsoc = (EditText) findViewById(R.id.editText20);
+            lblMonto = (EditText) findViewById(R.id.editText17);
+            lblDesc = (EditText) findViewById(R.id.editText22);
 
+            super.InitBase();
 
-        fillSpinner2();
-        getdate();
-        fillSpinner();
-        setHandlers();
+            fillSpinner2();
+            fillSpinner();
+            setHandlers();
 
-        rep=new clsRepBuilder(this,gl.prw,false,gl.peMon,gl.peDecImp, "");
+            rep=new clsRepBuilder(this,gl.prw,false,gl.peMon,gl.peDecImp, "");
 
-        printclose= new Runnable() {
-            public void run() {
-                CajaPagos.super.finish();
-            }
-        };
+            printclose= new Runnable() {
+                public void run() {
+                    CajaPagos.super.finish();
+                }
+            };
 
-        prn=new printer(this,printclose,gl.validimp);
-        doc=new CajaPagos.clsDocExist(this,prn.prw,"");
+            prn=new printer(this,printclose,gl.validimp);
+            doc=new CajaPagos.clsDocExist(this,prn.prw,"");
+
+            date=du.getActDateTime();lblDate.setText(du.sfecha(date));
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //region Events
+
+    public void doSave(View view) {
+        msgask(1,"¿Guardar pago?");
+    }
+
+    public void doDate(View view) {
+        obtenerFecha();
+    }
+
+    public void doExit(View view) {
+        msgAskExit("Salir");
     }
 
     private void setHandlers() {
@@ -90,7 +121,7 @@ public class CajaPagos extends PBase {
                 try {
                     TextView spinlabel = (TextView) parentView.getChildAt(0);
                     spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
-                    spinlabel.setTextSize(21);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+                    spinlabel.setTextSize(30);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
                     String scod = spincode.get(position);
                     proveedor =  Integer.parseInt(scod);
@@ -116,7 +147,7 @@ public class CajaPagos extends PBase {
 
                     if (spinlabel!=null){
                         spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
-                        spinlabel.setTextSize(21);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+                        spinlabel.setTextSize(30);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
                     }
 
                     String scod = spincode1.get(position);
@@ -139,11 +170,64 @@ public class CajaPagos extends PBase {
 
     }
 
+    //endregion
+
     //region Main
+
+    public void save(){
+        try {
+            clsP_cajapagosObj cpago = new clsP_cajapagosObj(this,Con,db);
+
+            docAsoc = lblDocAsoc.getText().toString().trim();
+            montoS = lblMonto.getText().toString().trim();
+            desc = lblDesc.getText().toString().trim();
+
+            if (proveedor==0){
+                msgbox("El proveedor no puede ir vacío");return;
+            }
+
+            if (cPago==0){
+                msgbox("El concepto de pago no puede ir vacío");return;
+            }
+
+            if (docAsoc.isEmpty()) {
+                msgbox("Falta definir documento");return;
+            }
+
+            if(!montoS.isEmpty()) {
+                monto = Double.parseDouble(montoS);
+                if (monto<=0) {
+                    msgbox("Monto incorrecto");return;
+                }
+            } else {
+                msgbox("Falta definir monto");return;
+            }
+
+            if (desc.isEmpty()) desc=" ";
+
+            cpago.fill(" ORDER BY COREL DESC");
+            if (cpago.count==0) corel=1;
+            if (cpago.count >0) corel = cpago.first().corel + 1;
+
+            if (Item()){
+                cpago.add(item);
+                Toast.makeText(this, "Pago realizado correctamente", Toast.LENGTH_LONG).show();
+                super.finish();
+            } else {
+                Toast.makeText(this, "Error al guardar el pago", Toast.LENGTH_LONG).show();
+            }
+
+            doc.buildPrint("0", 0);
+            GeneratePrint();
+
+        } catch (Exception e){
+            msgbox("save: "+e);
+        }
+    }
 
     private boolean Item() {
 
-        try{
+        try {
             item.empresa=gl.emp;
             item.sucursal=gl.tienda;
             item.ruta=gl.codigo_ruta;
@@ -158,66 +242,159 @@ public class CajaPagos extends PBase {
             item.referencia="";
             item.observacion=desc;
             item.vendedor=gl.codigo_vendedor;
-            item.statcom="N";
+            item.statcom="P";
             item.codigo_cajapagos=gl.ruta+"_"+mu.getCorelBase();
 
             return true;
 
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        } catch (Exception e){
             msgbox("Item: "+e);return false;
         }
 
     }
 
-    public void save(View view){
+    //endregion
 
-        clsP_cajapagosObj cpago = new clsP_cajapagosObj(this,Con,db);
 
-        try{
+    //region DocPrint
 
-            docAsoc = lblDocAsoc.getText().toString().trim();
-            montoS = lblMonto.getText().toString().trim();
-            desc = lblDesc.getText().toString().trim();
+    private class clsDocExist extends clsDocument {
+        String fechaR="";
+        int cantF,cantfF;
+        double tot,totF;
+        double porcentaje=0.0, comision;
+        double totSinImp, sinImp,totSinImpF, impF;
 
-            if(!montoS.isEmpty()) monto = Double.parseDouble(montoS); else return;
+        public clsDocExist(Context context, int printwidth, String archivo) {
+            super(context, printwidth,gl.peMon,gl.peDecImp, archivo);
 
-            if(desc.isEmpty()) desc ="Sin Descripción";
+            pass = true;
+            nombre="COMPROBANTE DE PAGO";
+            numero="";
+            serie="";
+            ruta=gl.ruta;
+            vendedor=gl.vendnom;
+            nombre_cliente ="";
+            vendcod=gl.vend;
+            fsfecha=du.getActDateStr();
 
-            if(proveedor==0){
-                msgbox("El proveedor no puede ir vacío");return;
-            }
-
-            if(cPago==0){
-                msgbox("El concepto de pago no puede ir vacío");return;
-            }
-
-            cpago.fill(" ORDER BY COREL DESC");
-
-            if(cpago.count==0) corel=1;
-
-            if(cpago.count>0){
-                corel = cpago.first().corel + 1;
-            }
-
-            if(Item()){
-
-                cpago.add(item);
-
-                Toast.makeText(this, "Pago realizado correctamente", Toast.LENGTH_LONG).show();
-
-                super.finish();
-            }else {
-                Toast.makeText(this, "Error al guardar el pago", Toast.LENGTH_LONG).show();
-            }
-
-            doc.buildPrint("0", 0);
-            GeneratePrint();
-
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            msgbox("save: "+e);
         }
+
+        protected boolean buildDetail() {
+            int acc=1;
+            String series="", fecha="";
+
+            try {
+                tot=0;
+                totF=0;
+                sinImp=0;
+                totSinImpF=0;
+                impF=0;
+                fecharango=dateS;
+
+                rep.empty();
+                rep.empty();
+                rep.addc("COMPROBANTE DE PAGO");
+                rep.empty();
+                rep.add("Proveedor: "+provName);
+                rep.add("Concepto Pago: "+cPagoName);
+                rep.add("Fecha : "+fecharango);
+                rep.empty();
+                rep.add("Documento asociado");
+                rep.line();
+                rep.addtot(item.nodocumento,item.monto);
+                if (!item.observacion.equalsIgnoreCase(" ")) rep.add(item.observacion);
+                rep.line();
+                rep.addtot("Total: ",item.monto);
+
+                return true;
+            } catch (Exception e) {
+                addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                msgbox(e.getMessage());
+                return false;
+            }
+
+        }
+
+        protected boolean buildFooter() {
+
+            try {
+                rep.empty();
+
+                return true;
+            } catch (Exception e) {
+                addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                return false;
+            }
+
+        }
+
+    }
+
+    //endregion
+
+    //region Fecha
+
+    private void obtenerFecha() {
+        try {
+
+            DatePickerDialog recogerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                    final int mesActual = month + 1;
+
+                    String diaFormateado = (dayOfMonth < 10)? "0" + String.valueOf(dayOfMonth):String.valueOf(dayOfMonth);
+                    String mesFormateado = (mesActual < 10)? "0" + String.valueOf(mesActual):String.valueOf(mesActual);
+                    lblDate.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
+
+                    cyear = year;
+                    cmonth = Integer.parseInt(mesFormateado);
+                    cday = Integer.parseInt(diaFormateado);
+                    date = du.cfechaRep(cyear, cmonth, cday, false);
+
+                    lblDate.setText(du.sfecha(date));
+
+                }
+            } , (int) du.getyear(date), (int) du.getmonth(date)-1,  (int) du.getday(date));
+
+            recogerFecha.show();
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    //endregion
+
+    //region Dialogs
+
+    public void dialogswitch() {
+        try {
+            switch (gl.dialogid) {
+                case 0:
+                    finish();break;
+                case 1:
+                    save();break;
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void msgAskExit(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
 
     }
 
@@ -329,10 +506,8 @@ public class CajaPagos extends PBase {
 
     private void getdate(){
 
-        clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
-
         try{
-
+            clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
             caja.fill();
 
             if(caja.count==0) throw new Exception();
@@ -350,12 +525,7 @@ public class CajaPagos extends PBase {
         }
     }
 
-    public void doExit(View view) {
-        msgAskExit("Salir");
-    }
-
-
-    public void GeneratePrint(){
+    private void GeneratePrint(){
         try{
 
             app.doPrint();
@@ -369,103 +539,26 @@ public class CajaPagos extends PBase {
 
     //endregion
 
-    //region msg
+    //region Activity Events
 
-    private void msgAskExit(String msg) {
-        ExDialog dialog = new ExDialog(this);
-        dialog.setMessage("¿" + msg + "?");
+    @Override
+    public void onResume() {
 
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
+        try {
+            super.onResume();
+            gl.dialogr = () -> {dialogswitch();};
 
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
 
-        dialog.show();
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
 
+    @Override
+    public void onBackPressed() {
+        msgask(0,"¿Salir?");
     }
 
     //endregion
-
-    //region DocPrint
-
-
-    private class clsDocExist extends clsDocument {
-        String fechaR="";
-        int cantF,cantfF;
-        double tot,totF;
-        double porcentaje=0.0, comision;
-        double totSinImp, sinImp,totSinImpF, impF;
-
-        public clsDocExist(Context context, int printwidth, String archivo) {
-            super(context, printwidth,gl.peMon,gl.peDecImp, archivo);
-
-            pass = true;
-            nombre="COMPROBANTE DE PAGO";
-            numero="";
-            serie="";
-            ruta=gl.ruta;
-            vendedor=gl.vendnom;
-            nombre_cliente ="";
-            vendcod=gl.vend;
-            fsfecha=du.getActDateStr();
-
-        }
-
-        protected boolean buildDetail() {
-            int acc=1;
-            String series="", fecha="";
-
-            try {
-                tot=0;
-                totF=0;
-                sinImp=0;
-                totSinImpF=0;
-                impF=0;
-                fecharango=dateS;
-                rep.add("Proveedor: "+provName);
-                rep.add("Concepto Pago: "+cPagoName);
-                rep.add("Fecha Inicio Caja: "+fecharango);
-                rep.empty();
-
-                rep.add("DESCRIPCION");
-                rep.add("DOC ASOCIADO                   TOTAL");
-                rep.line();
-                rep.add(item.observacion);
-                rep.addtot(item.nodocumento,item.monto);
-                rep.line();
-                rep.addtot("Total: ",item.monto);
-
-                return true;
-            } catch (Exception e) {
-                addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-                msgbox(e.getMessage());
-                return false;
-            }
-
-        }
-
-        protected boolean buildFooter() {
-
-            try {
-                rep.empty();
-
-                return true;
-            } catch (Exception e) {
-                addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-                return false;
-            }
-
-        }
-
-    }
-
-
-    //endregion
-
 
 }

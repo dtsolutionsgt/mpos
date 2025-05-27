@@ -65,13 +65,7 @@ public class Precio {
 		return prec;
 	}
 
-	public boolean existePrecioEspecial(String prod,
-										double pcant,
-										int cliente,
-										String clitipo,
-										String unimedida,
-										String unimedidapeso,
-										double ppeso) {
+	public boolean existePrecioEspecial(String prod,double pcant,int cliente,String clitipo,String unimedida,String unimedidapeso,double ppeso) {
 		prodid=prod;cant=pcant;um=unimedida;
 		umpeso=unimedidapeso;
 		prec=0;costo=0;descmon=0;imp=0;tot=0;precioespecial=0;
@@ -170,11 +164,17 @@ public class Precio {
 		descmon=(double) (stot*desc/100);descmon=mu.round(descmon,ndec);
 		tot=stot-descmon;
 
-		if (imp==0) precsin=prec; else precsin=prec/(1+imp/100);
+		if (imp==0) {
+			precsin=prec;
+		} else {
+			precsin=prec/(1+imp/100);
+		}
 		precsin=preciobase;
 
 		totsin=mu.round(precsin*cant,ndec);
-		if (cant>0) precsin=(double) (totsin/cant);
+		if (cant>0) {
+			precsin=(double) (totsin/cant);
+		}
 
 		try {
 			sprec=ffrmprec.format(precsin);sprec=sprec.replace(",",".");
@@ -259,12 +259,18 @@ public class Precio {
 		descmon=(double) (stot*desc/100);descmon=mu.round(descmon,ndec);
 		tot=stot-descmon;
 
-		if (imp==0) precsin=prec; else precsin=prec/(1+imp/100);
+		if (imp==0) {
+			precsin=prec;
+		} else {
+			precsin=prec/(1+imp/100);
+		}
 		precsin=preciobase;
 		//Toast.makeText(cont,sprec+" - "+pprec+" / "+prec+" prec sin : "+precsin, Toast.LENGTH_SHORT).show();
 		
 		totsin=mu.round(precsin*cant,ndec);
-		if (cant>0) precsin=(double) (totsin/cant);	
+		if (cant>0) {
+			precsin=(double) (totsin/cant);
+		}
 		
 		try {
 			sprec=ffrmprec.format(precsin);sprec=sprec.replace(",",".");
@@ -302,18 +308,9 @@ public class Precio {
 		vimp=imp*0.01;pr0=pr;
 		pr=pr*(1+vimp);pr=pr+0.000001;
 		stot=pr;
-
 		stot=mu.round2dec(stot);
 
-		/*  //JP20230911
 		if (imp>0) {
-			impval=vimp*pr0;
-			impval=mu.round2dec(impval);
-		} else impval=0;
-		*/
-
-		if (imp>0) {
-			//impval=stot-tsimp;  //JP20230911
 			impval=preciobase*imp/100;  //JP20230911
 			impval=mu.round6dec(impval);   //JP20230911
 		} else {
@@ -336,34 +333,20 @@ public class Precio {
 		if (imp==0) {
 			precsin=prec;
 		} else {
-			//precsin=prec/(1+imp/100);//JP20230911
 			precsin=preciobase;//JP20230911
 		}
 
-		//totsin=mu.round(precsin,ndec);  //JP20230911
 		totsin=mu.round2dec(precsin);  //JP20230911
 		precsin=totsin;
 
-
-		/*  //JP20230911
-		try {
-			sprec=ffrmprec.format(precsin);sprec=sprec.replace(",",".");
-			pprec=Double.parseDouble(sprec);
-			pprec=mu.round(pprec,ndec);
-		} catch (Exception e) {
-			pprec=precsin;
-		}
-
-		double impv=impval;
-
-		precsin=pprec;
-		*/
 	}
 
 	public double prodPrecioBase(int cprod,int nnivel) {
 		Cursor DT;
 		double pr, stot, pprec, tsimp;
 		String sprec = "";
+
+		codprod=cprod;
 
 		try {
 
@@ -419,17 +402,6 @@ public class Precio {
 		//totsin=mu.round(precsin,ndec);  //JP20230911
 		totsin = mu.round2dec(precsin);  //JP20230911
 		precsin = totsin;
-
-		/* //JP20230911
-		try {
-			sprec=ffrmprec.format(precsin);sprec=sprec.replace(",",".");
-			pprec=Double.parseDouble(sprec);
-			pprec=mu.round(pprec,ndec);
-		} catch (Exception e) {
-			pprec=precsin;
-		}
-		precsin=pprec;
-		*/
 
 		return prec;
 	}

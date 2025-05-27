@@ -16,17 +16,13 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
-
 import com.dtsgt.classes.ExDialog;
-import com.dtsgt.classes.clsD_MovDObj;
-import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_facturaObj;
-import com.dtsgt.classes.clsD_mov_almacenObj;
-import com.dtsgt.classes.clsD_movd_almacenObj;
+import com.dtsgt.classes.clsD_factura_fel_paisObj;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsP_prodmenuopcObj;
 import com.dtsgt.classes.clsP_prodmenuopcdetObj;
@@ -36,15 +32,14 @@ import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
-import com.dtsgt.classes.clsT_venta_horaObj;
 import com.dtsgt.classes.clsVendedoresObj;
+import com.dtsgt.firebase.fbOrdenCuenta;
 import com.dtsgt.mpos.PrintView;
 import com.dtsgt.mpos.R;
-
-import org.apache.commons.io.FileUtils;
-
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+import org.apache.commons.io.FileUtils;
 
 
 import java.io.BufferedInputStream;
@@ -60,6 +55,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
@@ -897,6 +893,8 @@ public class AppMethods {
 			gl.peVentaDomicilio = false;
 		}
 
+		if (gl.pePedidos) gl.peVentaDomicilio=false;
+
 		try {
 
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=139";
@@ -911,6 +909,8 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peVentaEntrega = false;
 		}
+
+		if (gl.pePedidos) gl.peVentaEntrega=false;
 
 		try {
 
@@ -1191,6 +1191,19 @@ public class AppMethods {
 		}
 
 		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=163";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) val="S";
+
+			gl.peMesaAtenderTodos = val.equalsIgnoreCase("N");
+		} catch (Exception e) {
+			gl.peMesaAtenderTodos = true;
+		}
+
+		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=164";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
@@ -1217,6 +1230,97 @@ public class AppMethods {
 		}
 
 		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=164";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peFactPropinaAparte = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peFactPropinaAparte = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=165";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.pePrecu1015 = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.pePrecu1015 = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=166";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peCargarClientes = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peCargarClientes = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=167";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.pePagoCredito = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.pePagoCredito = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=168";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peRepLimitado = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peRepLimitado = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=169";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peDescPerc = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peDescPerc = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=170";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peESAComprobante = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peESAComprobante = false;
+		}
+
+		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=171";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
@@ -1227,6 +1331,58 @@ public class AppMethods {
 			gl.peComandaVentaLAN = val.equalsIgnoreCase("S");
 		} catch (Exception e) {
 			gl.peComandaVentaLAN = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=172";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			ival=Integer.parseInt(val);
+
+			gl.peDomTiempo = ival;
+		} catch (Exception e) {
+			gl.peDomTiempo = 15;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=173";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peComandaBorrarPass = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peComandaBorrarPass = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=174";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.paDesc100 = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.paDesc100 = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=175";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.paCortProd = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.paCortProd = false;
 		}
 
 		try {
@@ -1255,10 +1411,6 @@ public class AppMethods {
 			gl.peRepFormaSuper = false;
 		}
 	}
-
-	//                  Params extra
-	// *****************************************************
-
 
     public boolean paramCierre(int pid) {
         Cursor dt;
@@ -1307,19 +1459,18 @@ public class AppMethods {
                 gl.peFEL.equalsIgnoreCase("N") | gl.peFEL.equalsIgnoreCase("SIN FEL")) {
             return false;
         } else {
-            return true;
+			if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) return true;
+			if (gl.peFEL.equalsIgnoreCase(gl.felSal)) return true;
+			return false;
         }
 	}
 
     public void getURL() {
-
         gl.wsurl = "http://52.41.114.122/MPosWS_QA/Mposws.asmx";
         gl.timeout = 6000;
 
         try {
-
             File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
-
             if (file1.exists()) {
 
                 FileInputStream fIn = new FileInputStream(file1);
@@ -1369,7 +1520,6 @@ public class AppMethods {
     //region Productos
 
     public boolean ventaPeso(String cod) {
-
         Cursor DT;
         String umm;
 
@@ -1587,6 +1737,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
+
 
 	}
 
@@ -1875,10 +2026,13 @@ public class AppMethods {
 			if (gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")) {
 
 				if (gl.peImpFactBT) {
-					if (estadoBluTooth()) printEpsonTMBT(copies);else return;
+					if (estadoBluTooth()) {
+						printEpsonTMBT(copies);
+					} else {
+						printEpsonTMBT(copies);
+					}
 				}
 				if (gl.peImpFactLan) print3nstar_print();
-
 				if (gl.peImpFactUSB) {
 
 					if (gl.peImpFactUSBSTAR) {
@@ -1893,7 +2047,6 @@ public class AppMethods {
 						}
 					}
 				}
-
 			}
 
 			if (gl.prtipo.equalsIgnoreCase("HP Engage USB")) {
@@ -2027,14 +2180,22 @@ public class AppMethods {
 		}
 	}
 
+	public void printLANstar() {
+		try {
+			Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.lanprintstar");
+			intent.putExtra("modo","c");
+			cont.startActivity(intent);
+		} catch (Exception e) {
+			toastlong("El controlador de Star LAN no está instalado");
+		}
+	}
+
 	private void HPEngageUSB(int copies) {
         try {
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.hp.retail.test");
             cont.startActivity(intent);
         } catch (Exception e) {
-			//#EJC20200627: Modifique mensaje, menos especifico.
-            msgbox("El controlador de impresiónUSB no está instalado (Ref -> HPEngage?) ");
-            //msgbox("El controlador de HP Engage USB no está instalado\n"+e.getMessage());
+            msgbox("El controlador de impresiónUSB no está instalado (Ref -> HPEngage?) ");//msgbox("El controlador de HP Engage USB no está instalado\n"+e.getMessage());
         }
     }
 
@@ -2115,6 +2276,11 @@ public class AppMethods {
 		return ipb;
 	}
 
+	public boolean impresoraStarLAN(int idimp) {
+		gl.impStarLAN=idimp==8;
+		return gl.impStarLAN;
+	}
+
 	public void qrguatemala(String uuid) {
 		try {
 			String updf="https://report.feel.com.gt/ingfacereport/ingfacereport_documento?uuid="+uuid+"&formato=pdf&tipo_operacion=CERTIFICACION";
@@ -2132,8 +2298,6 @@ public class AppMethods {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
 	}
-
-
 
 	//endregion
 
@@ -2307,7 +2471,7 @@ public class AppMethods {
 		*/
 	}
 
-    //endregion
+	//endregion
 
     //region Caja
 
@@ -2355,13 +2519,11 @@ public class AppMethods {
 		return rslt;
 	}
 
-
     //endregion
 
     //region Cuentas
 
     public int cuentaActiva(String corel) {
-
         try {
 
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(cont,Con,db);
@@ -2384,7 +2546,6 @@ public class AppMethods {
     }
 
 	public void primeraCuenta(String corel) {
-
 		try {
 
 			clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(cont,Con,db);
@@ -2397,18 +2558,19 @@ public class AppMethods {
 		}
 	}
 
-
 	private void agregarCuenta(String corel) {
 
         try {
+			fbOrdenCuenta fboc=new fbOrdenCuenta("OrdenCuenta",gl.tienda);
 
-            clsClasses clsCls = new clsClasses();
+			clsClasses clsCls = new clsClasses();
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(cont,Con,db);
-            clsClasses.clsT_ordencuenta cuenta = clsCls.new clsT_ordencuenta();
 
             int newcid=T_ordencuentaObj.newID("SELECT MAX(ID) FROM T_ordencuenta WHERE (corel='"+corel+"')");
 
-            cuenta.corel=corel;
+			clsClasses.clsT_ordencuenta cuenta = clsCls.new clsT_ordencuenta();
+
+			cuenta.corel=corel;
             cuenta.id=newcid;
             cuenta.cf=1;
             cuenta.nombre="Consumidor final";
@@ -2417,8 +2579,9 @@ public class AppMethods {
             cuenta.correo="";
 
             T_ordencuentaObj.add(cuenta);
+			fboc.setItem(cuenta);
 
-        } catch (Exception e) {
+		} catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
@@ -2587,6 +2750,117 @@ public class AppMethods {
 		}
 
 		return tipodoc;
+	}
+
+	public boolean validaNITHon(String N)  {
+		if (N.isEmpty()) return false;
+		if (N.length()<13) return false;
+
+		try {
+			long l=Long.parseLong(N);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public boolean validaNITSal(String N) {
+		int nlen;
+		String NN;
+
+		gl.sal_NIT=false;gl.sal_NRC=false;
+		NN=N.replaceAll("-","");nlen=NN.length();
+
+		try {
+			if (!TextUtils.isDigitsOnly(NN)) return false;
+
+			if (nlen==14) {
+				gl.sal_NIT=true;return true;
+			} else if (nlen>=2 && nlen<=8) {
+				gl.sal_NRC=true;return true;
+			} else return false;
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+		return false;
+	}
+
+	private boolean validaNITSalOld(String N,DateUtils du) {
+		int guc,val,valm,vald;
+		String NN;
+
+		gl.sal_NIT=false;gl.sal_NRC=false;NN=N;
+
+		try {
+			if (!N.contains("-")) return false;
+			guc = N.length() - NN.replaceAll("-","").length();
+			if (guc==3) {
+				String[] sp = N.split("-");
+
+				if (sp[0].length()!=4) return false;
+				try {
+					val=Integer.parseInt(sp[0]);
+				} catch (Exception e) { return false; }
+
+				if (sp[1].length()!=6) return false;
+				if (!du.fechaNIT_SV(sp[1])) return false;
+
+				if (sp[2].length()!=3) return false;
+				try {
+					val=Integer.parseInt(sp[2]);
+				} catch (Exception e) { return false; }
+
+				if (sp[3].length()!=1) return false;
+				try {
+					val=Integer.parseInt(sp[3]);
+				} catch (Exception e) { return false; }
+
+				gl.sal_NIT=true;return true;
+
+			} else if (guc==1) {
+				String[] sp = N.split("-");
+
+				if (sp[1].length()!=1) return false;
+				try {
+					val=Integer.parseInt(sp[1]);
+				} catch (Exception e) { return false; }
+
+				if (sp[0].length()>7) return false;
+				if (sp[0].length()<2) return false;
+				try {
+					val=Integer.parseInt(sp[0]);
+				} catch (Exception e) { return false; }
+
+				gl.sal_NRC=true;return true;
+			} else return false;
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+		return false;
+	}
+
+	public void qrsalvador(String idfact) {
+		try {
+
+			clsD_factura_fel_paisObj D_factura_fel_paisObj=new clsD_factura_fel_paisObj(cont,Con,db);
+			D_factura_fel_paisObj.fill("WHERE (COREL='"+idfact+"')");
+
+			String updf=D_factura_fel_paisObj.first().sv_pdf_path;
+
+			BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+			Bitmap bitmap = barcodeEncoder.encodeBitmap(updf, BarcodeFormat.QR_CODE, 400, 400);
+
+			File qrfile = new File(Environment.getExternalStorageDirectory(), "/qrmpos.png");
+
+			FileOutputStream fos = new FileOutputStream(qrfile);
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+			fos.flush();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 	}
 
 	//endregion
@@ -2858,6 +3132,7 @@ public class AppMethods {
 
 	public void fillSuper(clsVendedoresObj VendedoresObj) {
 		try {
+
 			sql="WHERE (ACTIVO=1) AND (CODIGO_VENDEDOR IN " +
 					"(SELECT CODIGO_VENDEDOR FROM P_VENDEDOR_ROL WHERE (CODIGO_SUCURSAL="+gl.tienda+") " +
 					"AND (CODIGO_ROL IN (2,3) ) ) ) ORDER BY NOMBRE ";
@@ -2871,12 +3146,111 @@ public class AppMethods {
 		}
 	}
 
+	public boolean horizscr() {
+		try {
+			File file1 = new File(Environment.getExternalStorageDirectory(), "/mposhoriz.txt");
+			if(file1.exists()) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public boolean esCF(int idcli) {
+		return idcli==gl.emp*10;
+	}
+
+	public String purgeEmail(String ss) {
+		try {
+
+			ss=ss.trim();
+
+			ss=ss.replace("!","");
+			ss=ss.replace("#","");
+			ss=ss.replace("$","");
+			ss=ss.replace("%","");
+			ss=ss.replace("/","");
+			ss=ss.replace("(","");
+			ss=ss.replace(")","");
+			ss=ss.replace("=","");
+			ss=ss.replace("?","");
+			ss=ss.replace("'","");
+			ss=ss.replace("+","");
+			ss=ss.replace("*","");
+			ss=ss.replace(":","");
+			ss=ss.replace(";","");
+			ss=ss.replace("&","");
+
+			//ss=ss.replace(".","");
+			//ss=ss.replace("@","");
+			//ss=ss.replace("_","");
+
+			ss=ss.replace("ñ","n");
+			ss=ss.replace("Ñ","N");
+
+			ss=ss.replace("á","a");
+			ss=ss.replace("é","e");
+			ss=ss.replace("í","i");
+			ss=ss.replace("ó","o");
+			ss=ss.replace("ú","u");
+			ss=ss.replace("ü","u");
+			ss=ss.replace("Á","A");
+			ss=ss.replace("É","E");
+			ss=ss.replace("Í","I");
+			ss=ss.replace("Ó","O");
+			ss=ss.replace("Ú","U");
+			ss=ss.replace("Ü","U");
+
+			return ss;
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			return ss;
+		}
+	}
+
+	public String estadoNombre(int idest) {
+		String se="";
+
+		switch (idest) {
+			case 1:
+				se="RECIBIDO";break;
+			case 2:
+				se="NUEVO";break;
+			case 3:
+				se="EN PROCESO";break;
+			case 4:
+				se="ANULADO";break;
+			case 5:
+				se="COMPLETO";break;
+			case 6:
+				se="EN TRANSITO";break;
+			case 7:
+				se="ENTREGADO";break;
+		}
+
+		return se;
+	}
+
+	public static List<String> splitString(String str, int chunkSize) {
+		List<String> chunks = new ArrayList<>();
+		int length = str.length();
+
+		for (int i = 0; i < length; i += chunkSize) {
+			chunks.add(str.substring(i, Math.min(length, i + chunkSize)));
+		}
+
+		return chunks;
+	}
+
 	//endregion
 
     //region Common
-	
+
 	protected void toast(String msg) {
-		Toast toast= Toast.makeText(cont,msg, Toast.LENGTH_SHORT);  
+		Toast toast= Toast.makeText(cont,msg, Toast.LENGTH_SHORT);
 		toast.setGravity(Gravity.TOP, 0, 0);
 		toast.show();
 	}
@@ -2918,7 +3292,7 @@ public class AppMethods {
 		}
 	}
 
-	public int isOnWifi(){
+	public int isOnWifi() {
 		int activo=0;
 
 		try {
@@ -2936,9 +3310,17 @@ public class AppMethods {
 				}
 			}
 
-		} catch (Exception ex){}
+		} catch (Exception ex){	}
 
 		return activo;
+	}
+
+	public boolean sinInternet() {
+		if (isOnWifi()==0) {
+			toast("SIN CONEXION A INTERNET");return true;
+		} else {
+			return false;
+		}
 	}
 
     public void zip(String file, String zipFile) throws IOException {

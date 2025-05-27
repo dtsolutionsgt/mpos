@@ -6,8 +6,7 @@ import java.util.GregorianCalendar;
 
 public class DateUtils {
 	
-	public DateUtils() {
-	}
+	public DateUtils() {}
 	
 	public String sfecha(long f) {
 		long vy,vm,vd;
@@ -226,6 +225,22 @@ public class DateUtils {
 
         return s;
     }
+
+	public String univfecha_vb_net_sinhora(long f) {
+		long vy,vm,vd;
+		String s;
+
+		vy=(long) f/100000000;f=f % 100000000;
+		vm=(long) f/1000000;f=f % 1000000;
+		vd=(long) f/10000;f=f % 10000;
+
+		s="20";
+		if (vy>9) s=s+vy; else s=s+"0"+vy;s=s+"-";
+		if (vm>9) s=s+vm; else s=s+"0"+vm;s=s+"-";
+		if (vd>9) s=s+vd; else s=s+"0"+vd;
+
+		return s;
+	}
 
 	public String univfechasinhora(long f) {
 
@@ -505,7 +520,26 @@ public class DateUtils {
 		return dif;
 		
 	}
-	
+
+	public String sTimeDiff(long v1,long v2) {
+		String st;
+		long h1,m1,h2,m2,vm1,vm2,dif;
+
+		h1=v1 % 10000;m1=h1 % 100;h1=(int) h1/100;
+		vm1=h1*60+m1;
+
+		h2=v2 % 10000;m2=h2 % 100;h2=(int) h2/100;
+		vm2=h2*60+m2;
+
+		dif=vm1-vm2;
+		if (dif<0) dif=-dif;
+
+		h1=dif / 60; m1=dif % 60;
+		st=h1+":";if (m1<10) st=st+"0";st=st+m1;
+
+		return st;
+	}
+
 	public int dayofweek(long f) {
 
 		int y,m,d,dw;
@@ -751,6 +785,37 @@ public class DateUtils {
 
         return s;
     }
+
+	public int getOrdenCorel(int idruta){
+		int oc,ch,cm,cs;
+		final Calendar c = Calendar.getInstance();
+
+		idruta=idruta % 1000;
+
+		ch=c.get(Calendar.HOUR_OF_DAY);
+		cm=c.get(Calendar.MINUTE);
+		cs=c.get(Calendar.SECOND);
+
+		oc=ch*10000+cm*100+cs;
+		oc=idruta*1000000+oc;
+
+		return oc;
+	}
+
+	public int actDate()  {
+		int cyear,cmonth,cday,f;
+
+		Calendar c = Calendar.getInstance();
+		cyear = c.get(Calendar.YEAR);
+		cyear = cyear % 100;
+		cmonth = c.get(Calendar.MONTH) + 1;
+		cday = c.get(Calendar.DAY_OF_MONTH);
+
+		f = cyear*10000 + cmonth * 100 + cday;
+		return f;
+	}
+
+
 
 	//region Fecha larga
 

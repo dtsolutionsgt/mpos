@@ -1,5 +1,6 @@
 package com.dtsgt.ladapt;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -49,13 +50,11 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 		return position;
 	}
 
+	@SuppressLint("SuspiciousIndentation")
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder;
-		int iconid;
 
 		if (convertView == null) {
-			convertView = l_Inflater.inflate(R.layout.activity_list_view_menuventa, null);
-
             convertView = l_Inflater.inflate(R.layout.activity_list_view_menuventa, null);
 
 			holder = new ViewHolder();
@@ -68,7 +67,7 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
-			
+
 		holder.lblName.setText(items.get(position).Name);
 
 		if (items.get(position).cant>0) {
@@ -76,12 +75,10 @@ public class ListAdaptMenuVenta extends BaseAdapter {
             holder.lblCant.setText(""+items.get(position).cant);
         } else {
             holder.lblCant.setVisibility(View.INVISIBLE);
-        }
+		}
 			
 		holder.imgEst.setImageResource(R.drawable.blank256);
 
-
-		
 		if (items.get(position).Icon==1) holder.imgEst.setImageResource(R.drawable.pedidos_3);
 		if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.pedidos_3);
 		if (items.get(position).Icon==102) holder.imgEst.setImageResource(R.drawable.pedidos_2);
@@ -99,7 +96,9 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 		if (items.get(position).Icon==13) holder.imgEst.setImageResource(R.drawable.venta_switch);
         if (items.get(position).Icon==14) holder.imgEst.setImageResource(R.drawable.recibir_rapido);
         if (items.get(position).Icon==15) holder.imgEst.setImageResource(R.drawable.fel);
-        if (items.get(position).Icon==16) holder.imgEst.setImageResource(R.drawable.dom);
+        if (items.get(position).Icon==16) holder.imgEst.setImageResource(R.drawable.iconodelivery);
+		if (items.get(position).Icon==17) holder.imgEst.setImageResource(R.drawable.dom_add);
+		if (items.get(position).Icon==18) holder.imgEst.setImageResource(R.drawable.dom);
 
         if (items.get(position).Icon==50) holder.imgEst.setImageResource(R.drawable.btn_search);
         if (items.get(position).Icon==51) holder.imgEst.setImageResource(R.drawable.barcode_btn);
@@ -125,7 +124,9 @@ public class ListAdaptMenuVenta extends BaseAdapter {
         if (items.get(position).Icon==71) holder.imgEst.setImageResource(R.drawable.bot_desc);
         if (items.get(position).Icon==72) holder.imgEst.setImageResource(R.drawable.bot_desc_total);
 
-        if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.logo_baktun);
+		if (items.get(position).Icon==99) holder.imgEst.setImageResource(R.drawable.nowifi3);
+
+		if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.logo_baktun);
 
 		if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));

@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.MiscUtils;
+import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
 
 import java.net.PortUnreachableException;
@@ -30,7 +31,7 @@ public class clsBonifSave {
 	
 	private String corel,venped;
 	
-	public clsBonifSave(Context context,String corelativo,String ventaped) {
+	public clsBonifSave(Context context, String corelativo, String ventaped) {
 		
 		cont=context;
 		corel=corelativo;
@@ -41,7 +42,7 @@ public class clsBonifSave {
 	    opendb();
 	    ins=Con.Ins;upd=Con.Upd;
 	    
-	    mu=new MiscUtils(context);	
+	    mu=new MiscUtils(context);
 	}
 
 	public void save() {

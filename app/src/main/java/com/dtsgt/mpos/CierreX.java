@@ -78,6 +78,7 @@ public class CierreX extends PBase {
     private boolean exito, reimpresion=false, esvacio;
     private ProgressDialog progressDialog;
     private String CorreoSucursal="", nombrecopia="";
+    private int rep1ln;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -240,9 +241,8 @@ public class CierreX extends PBase {
                 //msgAsk("Enviar correo a: "+CorreoSucursal);
             }
 
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            msgbox("GeneratePrint: "+e);
+        } catch (Exception e){
+             msgbox("GeneratePrint: "+e);
         }
     }
 
@@ -393,7 +393,7 @@ public class CierreX extends PBase {
 
         Cursor dt;
 
-        try{
+        try {
 
             itemR.clear();
 
@@ -417,23 +417,28 @@ public class CierreX extends PBase {
                 switch (sw){
 
                     case 0:
-
                         sql="00";
                         break;
-
                     case 1:
-
-                        if(gl.reportid==9){
+                        if (gl.reportid==9) {
                             condition =" WHERE ANULADO=0 AND KILOMETRAJE = 0 ";
-                        }else if(gl.reportid==10){
+                        } else if(gl.reportid==10){
                             condition=" WHERE ANULADO=0 AND KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
-                        sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), CAST(FECHA/10000 AS INTEGER) " +
-                                "FROM D_FACTURA "+
-                                condition+
+                        if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                            sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), CAST(FECHA/10000 AS INTEGER) " +
+                                "FROM D_FACTURA " +
+                                condition +
                                 "GROUP BY SERIE, IMPMONTO, CAST(FECHA/10000 AS INTEGER) " +
                                 "ORDER BY CAST(FECHA/10000 AS INTEGER)";
+                        } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                            sql="SELECT '', SERIE, 0, AYUDANTE, '', '', COUNT(COREL), SUM(IMPMONTO), SUM(TOTAL), CAST(FECHA/10000 AS INTEGER) " +
+                                "FROM D_FACTURA " +
+                                condition +
+                                "GROUP BY AYUDANTE, SERIE, CAST(FECHA/10000 AS INTEGER) " +
+                                "ORDER BY CAST(FECHA/10000 AS INTEGER)";
+                        }
                         break;
 
                     case 2:
@@ -465,24 +470,35 @@ public class CierreX extends PBase {
                                 condition+
                                 " GROUP BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA "+
                                 " ORDER BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA ";
+
                         break;
 
                     case 4:
                         if(gl.reportid==9){
-                            //condition =" WHERE ANULADO=0 AND KILOMETRAJE = 0 ";
                             condition =" AND D_FACTURA.KILOMETRAJE = 0 ";
                         } else if(gl.reportid==10){
-                            //condition=" WHERE ANULADO=0 AND KILOMETRAJE = "+gl.corelZ+" ";
                             condition =" AND KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
-                        sql="SELECT '', '', 0, '', P_MEDIAPAGO.NOMBRE, '', COUNT(DISTINCT D_FACTURA.COREL), 0,SUM(D_FACTURAP.VALOR), 0 " +
+                        /*  sql="SELECT '', '', 0, '', P_MEDIAPAGO.NOMBRE, '', COUNT(DISTINCT D_FACTURA.COREL), 0,SUM(D_FACTURAP.VALOR), 0 " +
                                 "FROM D_FACTURA INNER JOIN " +
                                 "D_FACTURAP ON D_FACTURA.COREL = D_FACTURAP.COREL INNER JOIN " +
                                 "P_MEDIAPAGO ON D_FACTURAP.CODPAGO = P_MEDIAPAGO.CODIGO " +
                                 "WHERE D_FACTURA.ANULADO=0  "+condition+" " +
-                                "GROUP BY P_MEDIAPAGO.NOMBRE";
+                                "GROUP BY P_MEDIAPAGO.NOMBRE";   */
 
+                        sql="SELECT '', '', 0, '', P_MEDIAPAGO.NOMBRE AS NOM, '', COUNT(DISTINCT D_FACTURA.COREL), 0,SUM(D_FACTURAP.VALOR), 0 " +
+                                "FROM D_FACTURA INNER JOIN " +
+                                "D_FACTURAP ON D_FACTURA.COREL = D_FACTURAP.COREL INNER JOIN " +
+                                "P_MEDIAPAGO ON D_FACTURAP.CODPAGO = P_MEDIAPAGO.CODIGO " +
+                                "WHERE (D_FACTURA.ANULADO=0) AND (D_FACTURAP.TIPO<>'P')  "+condition+" " +
+                                "GROUP BY NOM";
+                        sql+=" UNION ";
+                        sql+="SELECT '', '', 0, '', 'PENDIENTE PAGO' AS NOM, '', COUNT(DISTINCT D_FACTURA.COREL), 0,SUM(D_FACTURAP.VALOR), 0 " +
+                                "FROM D_FACTURA INNER JOIN " +
+                                "D_FACTURAP ON D_FACTURA.COREL = D_FACTURAP.COREL  " +
+                                "WHERE (D_FACTURA.ANULADO=0) AND (D_FACTURAP.TIPO='P')  "+condition+" " +
+                                "GROUP BY NOM ";
 
                         break;
 
@@ -599,11 +615,10 @@ public class CierreX extends PBase {
                         msgbox("Ocurrió un error, vuelva a intentarlo");return false;
                     } else {
 
-                        if (sw==4) {
-                            esvacio=dt.getCount()==0;
-                        }
+                        if (sw==1) rep1ln=dt.getCount();
+                        if (sw==4) esvacio=dt.getCount()==0;
 
-                        if(dt.getCount()!=0){
+                        if (dt.getCount()!=0){
 
                             dt.moveToFirst();
 
@@ -664,19 +679,25 @@ public class CierreX extends PBase {
     }
 
     private void reporteZ(){
-
         Cursor dt;
         String ss;
+        double cajapago=0;
 
         try{
 
             if (gl.corelZ!=0){
+
+                cajapago=gl.fd_cajapagos;
 
                 sql="SELECT M.CODIGO, M.NOMBRE, C.FONDOCAJA, 0, 0, C.MONTOINI, C.MONTOFIN, C.MONTODIF, 0,C.COREL " +
                         "FROM P_CAJACIERRE C " +
                         "INNER JOIN P_MEDIAPAGO M ON C.CODPAGO = M.CODIGO " +
                         "WHERE C.COREL = "+ gl.corelZ +" " +
                         "GROUP BY M.CODIGO";
+
+                sql="SELECT M.CODIGO, M.NOMBRE, C.FONDOCAJA, 0, 0, C.MONTOINI, C.MONTOFIN, C.MONTODIF, 0,C.COREL, M.NIVEL " +
+                        "FROM P_CAJACIERRE C INNER JOIN P_MEDIAPAGO M ON C.CODPAGO = M.CODIGO " +
+                        "WHERE C.COREL = "+ gl.corelZ +" GROUP BY M.CODIGO";
 
                 dt = Con.OpenDT(sql);
 
@@ -690,7 +711,7 @@ public class CierreX extends PBase {
 
                 itemRZ.clear();
 
-                if(dt.getCount()!=0){
+                if (dt.getCount()!=0){
 
                     dt.moveToFirst();
 
@@ -707,10 +728,20 @@ public class CierreX extends PBase {
                         itemZ.prstr="";
                         itemZ.flag=dt.getInt(3);
                         itemZ.cant=dt.getDouble(4);
-                        itemZ.cantmin=dt.getDouble(5);
-                        itemZ.disp=dt.getDouble(6);
-                        itemZ.precio=dt.getDouble(7);
+                        itemZ.cantmin=dt.getDouble(5);  //Efectivo
+                        itemZ.disp=dt.getDouble(6);  // Monto Final
+
                         itemZ.costo=dt.getDouble(8);
+
+                        if (dt.getInt(10)==1) {
+                            itemZ.cajapago=cajapago;   //Caja
+                        } else {
+                            itemZ.cajapago=0;
+                        }
+
+                        //itemZ.precio=dt.getDouble(7)-itemZ.cajapago;
+                        itemZ.precio=itemZ.cantmin-itemZ.cajapago-itemZ.disp;
+
                         itemRZ.add(itemZ);
                         dt.moveToNext();
                     }
@@ -732,19 +763,19 @@ public class CierreX extends PBase {
                     itemZ.cant=0;
                     itemZ.cantmin=gl.fondoCaja;
                     itemZ.disp=gl.FinMonto;
-                    itemZ.precio=gl.fondoCaja-gl.FinMonto;
+                    itemZ.precio=gl.fondoCaja-cajapago-gl.FinMonto;
                     itemZ.costo=0;
                     counter=1;
+
                     itemRZ.add(itemZ);
                 }
 
-            }else{
+            } else {
                 msgAskOk("Aún no se ha realizado ningún cierre Z.");
             }
 
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            msgbox("reporteZ: "+e);
+        } catch (Exception e){
+             msgbox("reporteZ: "+e);
         }
     }
 
@@ -768,17 +799,15 @@ public class CierreX extends PBase {
 
             br.close() ;
 
-        }catch (IOException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            msgbox("getTXT: "+e);
+        } catch (IOException e) {
+           msgbox("getTXT: "+e);
             e.printStackTrace();
         }
 
         try{
             lblFact.setText(text);
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            msgbox("getTXT setText: "+e);
+        } catch (Exception e){
+           msgbox("getTXT setText: "+e);
         }
 
     }
@@ -833,7 +862,7 @@ public class CierreX extends PBase {
         String test,horaini;
         int cantF,cantfF,SumaCant;
         int count1, count2, count3, count4, count5, count6, count7, count8, count9, count10, count11;
-        double tot,totF;
+        double tot,totF,totC;
         double porcentaje=0.0, comision;
         double totSinImp, sinImp,totSinImpF, impF;
 
@@ -909,34 +938,42 @@ public class CierreX extends PBase {
                 count10 += count9;
                 count11 += count10;
 
-                if(gl.reportid==10){
+                if (gl.reportid==10){
                     rep.add("Fondo caja : "+gl.peMon+Fondo);
                     rep.empty();
                     rep.addc("REPORTE DE CUADRE");
                     rep.line();
                     rep.add("CODIGO  M.PAGO");
-                    rep.add("MONT.INI        MONT.FIN       DIF.");
+                    //rep.add("MONT.INI        MONT.FIN       DIF.");
+                    rep.add4rrrr("MONT.INI","PAGO CAJA","MONT.FIN","DIF.");
                     rep.line();
 
-                    tot=0;totF=0;totSinImp=0;
+                    tot=0;totF=0;totC=0;totSinImp=0;
 
                     for (int j=0; j<itemRZ.size(); j++){
                         //rep.addtot(itemRZ.get(j).id,itemRZ.get(j).nombre);
                         rep.add(itemRZ.get(j).nombre);
-                        rep.add4lrrTotZ(itemRZ.get(j).cantmin,itemRZ.get(j).disp,itemRZ.get(j).precio);
+
+                        //rep.add4lrrTotZ(itemRZ.get(j).cantmin,itemRZ.get(j).disp,itemRZ.get(j).precio);
+                        itemRZ.get(j).precio=itemRZ.get(j).precio*(-1);
+                        rep.add4rrrr(itemRZ.get(j).cantmin,itemRZ.get(j).cajapago,itemRZ.get(j).disp,itemRZ.get(j).precio);
+
                         tot+= mu.round2(itemRZ.get(j).cantmin);
                         totF+=mu.round2(itemRZ.get(j).disp);
+                        totC+=mu.round2(itemRZ.get(j).cajapago);
+
                         totSinImp+=mu.round2(itemRZ.get(j).precio);
                     }
 
-                    for(int a=0; a<itemRZ.size(); a++){
+                    for (int a=0; a<itemRZ.size(); a++){
                         if(itemRZ.get(a).id.equals("1")){
                             counter+=1;
                         }
                     }
 
                     rep.line();
-                    rep.add4lrrTotZ(tot,totF,totSinImp);
+                    //rep.add4lrrTotZ(tot,totF,totSinImp);
+                    rep.add4rrrr(tot,totC,totF,totSinImp);
                     rep.add("");
                     rep.add("");
                     rep.line();
@@ -944,6 +981,7 @@ public class CierreX extends PBase {
                     rep.add("Facturas no certificadas: "+gl.fact_sin_cert);
                     rep.add("");
                     rep.line();
+                    totalesHonduras();
                     rep.add("");
                     tot=0;totF=0;totSinImp=0;
                     rep.empty();
@@ -955,7 +993,7 @@ public class CierreX extends PBase {
                     if(itemR.get(i).tipo==1){
 
                         test = "Reporte 1";
-                        if(acc1==1){
+                        if (acc1==1){
 
                             tot=0;
                             totF=0;
@@ -971,14 +1009,28 @@ public class CierreX extends PBase {
                             rep.add("Vesion MPos : "+gl.parVer);
                             rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
                             rep.line();
-                            rep.add("Cant.Fact   Costo  Impuesto    Total");
+
+                            if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                                rep.add("Cant.Fact   Costo  Impuesto    Total");
+                            } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                                rep.add("Cant.   Subtotal    Impuesto       Total");
+                            }
+
                             rep.line();
                             rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
                             acc1 = 2;
                         }
 
-                        if(!series.equals(itemR.get(i).serie)){
-                            rep.add("--------(    Serie "+itemR.get(i).serie+"    )------------");
+                        if (!series.equals(itemR.get(i).serie)){
+                            if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                                rep.add("Serie "+itemR.get(i).serie);
+                            } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                                String dn="Ticket";
+                                if (itemR.get(i).codProd.equalsIgnoreCase("N")) {
+                                    dn="Factura";
+                                } else if(itemR.get(i).codProd.equalsIgnoreCase("C")) dn="Credito fiscal";
+                                rep.add(dn);
+                            }
                         }
 
                         series=itemR.get(i).serie;
@@ -991,15 +1043,17 @@ public class CierreX extends PBase {
                         impF += itemR.get(i).imp;
                         cantF += itemR.get(i).cant;
 
-                        if (i+1==itemR.size()){
+                        //if (i+1>=itemR.size()){
+                        if (i+1>=rep1ln) {
 
                             rep.line();
-                            //rep.add3Tot(SumaCant, totSinImpF, impF, totF);
-                            //rep.add3Tot2(cantF, sinImp, impF, tot);
+                            rep.add3Tot2(cantF, sinImp, impF, tot);
 
                             totF += tot;
                             SumaCant += cantF;
                             totSinImpF += sinImp;
+                            rep.line();
+                            rep.empty();
 
                         } else {
 
@@ -1022,7 +1076,7 @@ public class CierreX extends PBase {
                             }
                         }
 
-                    }else if(itemR.get(i).tipo==11){
+                    } else if(itemR.get(i).tipo==11){
 
                         test = "Reporte 10";
                         if(acc11==1){
@@ -1072,7 +1126,7 @@ public class CierreX extends PBase {
                             SumaCant += cantF;
                             totSinImpF += sinImp;
 
-                        }else {
+                        } else {
 
                             String fecha1=String.valueOf(itemR.get(i).fecha).substring(0,6);
                             String fecha2=String.valueOf(itemR.get(i + 1).fecha).substring(0,6);
@@ -1128,7 +1182,7 @@ public class CierreX extends PBase {
                             }
                         }
 
-                        if(i!=0){
+                        if (i!=0){
 
                             String fecha1=String.valueOf(itemR.get(i).fecha).substring(0,6);
                             String fecha2=String.valueOf(itemR.get(i - 1).fecha).substring(0,6);
@@ -1241,7 +1295,7 @@ public class CierreX extends PBase {
                             rep.empty();
                         }
 
-                    }else if(itemR.get(i).tipo==5){
+                    } else if(itemR.get(i).tipo==5){
 
                         test = "Reporte 5";
                         if(acc5==1){
@@ -1488,9 +1542,9 @@ public class CierreX extends PBase {
             rep.add("Empresa: " + gl.empnom);
             rep.add("Sucursal: " + gl.tiendanom);
             rep.add("Caja: " + gl.rutanom);
-            rep.add("Impresión: "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
-            rep.add("Vesión MPos: "+gl.parVer);
-            rep.add("Generó: "+gl.vendnom);
+            rep.add("Impresion: "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+            rep.add("Vesion MPos: "+gl.parVer);
+            rep.add("Genero: "+gl.vendnom);
             rep.line();
             rep.empty();
         }
@@ -1511,6 +1565,24 @@ public class CierreX extends PBase {
                 return false;
             }
 
+        }
+
+        private void totalesHonduras() {
+            if (!gl.codigo_pais.equalsIgnoreCase("HN")) return;
+
+            try {
+
+                rep.add("");
+                rep.addtot("Total exentos: ",gl.fd_hn_exen);
+                rep.addtot("Total gravado: ",gl.fd_hn_grav);
+                rep.addtot("Total impuestos: ",gl.fd_hn_imp);
+                rep.add("Correlativos: "+gl.fd_hn_cori+" a "+gl.fd_hn_corf );
+                rep.add("");
+                rep.line();
+                rep.add("");
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
         }
 
     }
@@ -1695,7 +1767,7 @@ public class CierreX extends PBase {
         try {
             Point point = new Point();
             getWindowManager().getDefaultDisplay().getRealSize(point);
-            return point.x>point.y;
+            if (app.horizscr()) return true; else return point.x>point.y;
         } catch (Exception e) {
             return true;
         }
@@ -1822,7 +1894,7 @@ public class CierreX extends PBase {
     }
     //endregion
 
-    // Activity Events
+    //region Activity Events
 
     @Override
     public void onResume() {
@@ -1833,5 +1905,7 @@ public class CierreX extends PBase {
             msgbox(e.getMessage());
         }
     }
+
+    //endregion
 
 }

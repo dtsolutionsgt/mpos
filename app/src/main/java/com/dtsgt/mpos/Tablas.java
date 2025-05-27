@@ -63,7 +63,6 @@ public class Tablas extends PBase {
 
     }
 
-
     // Events
 
     public void doClear(View view) {
@@ -181,7 +180,6 @@ public class Tablas extends PBase {
         }
 
     }
-
 
     // Main
 

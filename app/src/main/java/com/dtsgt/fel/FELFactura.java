@@ -83,107 +83,115 @@ public class FELFactura extends PBase {
     private ArrayList<String> rutas= new ArrayList<String>();
 
     private String felcorel,corel,ffcorel,scorel,CSQL,endstr,idfact,prod_BS;
-    private boolean ddemomode,multiflag,factsend,contmode;
+    private boolean ddemomode,multiflag,factsend,contmode,pendflag=false;
+    ;
     private int ftot,ffail,fidx,cliid,felnivel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fel_factura);
-
-        super.InitBase();
-
-        lbl1 = findViewById(R.id.msgHeader);lbl1.setText("");
-        lbl2 = findViewById(R.id.lblWS);lbl2.setText("");
-        lbl3 = findViewById(R.id.textView152);lbl3.setText("");
-        lblHalt = findViewById(R.id.textView218);lblHalt.setVisibility(View.VISIBLE);
-        pbar = findViewById(R.id.progressBar);
-        pbar.setVisibility(View.INVISIBLE);
-
-        felcorel=gl.felcorel;ffcorel=felcorel;
-        multiflag=felcorel.isEmpty();
-        gl.feluuid="";
-
-        getURL();
-
-        fel=new clsFELInFile(this,this,gl.timeout);
-        fel.halt=false;
-        fel.autocancel=true;
-        fel.owner=FELFactura.this;
-
-        ws = new WebServiceHandler(FELFactura.this, gl.wsurl, gl.timeout);
-        xobj = new XMLObject(ws);
-
-        clsP_sucursalObj sucursal=new clsP_sucursalObj(this,Con,db);
-        sucursal.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
-        clsClasses.clsP_sucursal suc=sucursal.first();
-
-        fel.fel_llave_certificacion =suc.fel_llave_certificacion; // fel_llavews ="E5DC9FFBA5F3653E27DF2FC1DCAC824D"
-        fel.fel_llave_firma=suc.fel_llave_firma; // fel_token ="5b174fb0e23645b65ef88277d654603d"
-        fel.fel_codigo_establecimiento=suc.fel_codigo_establecimiento;  //  1
-        fel.fel_usuario_certificacion=suc.fel_usuario_certificacion; // COMERGUA
-
-        //fel.fel_usuario_firma=suc.fel_usuario_firma; //JP2020071
-        fel.fel_usuario_firma=suc.texto;
-
-        fel.codigo_postal =suc.codigo_postal;
-        fel.fel_nit=suc.nit.toUpperCase(); // NIT  96038888
-        fel.fel_correo=suc.correo;  //
-
-        //fel.fel_nombre_comercial = gl.tiendanom;  //JP2020071
-        fel.fel_nombre_comercial = suc.nombre;
-
-        fel.fraseIVA=suc.codigo_escenario_iva;
-        fel.fraseISR=suc.codigo_escenario_isr;
-
-        fel.fel_afiliacion_iva=suc.fel_afiliacion_iva;
-        fel.fel_tipo_documento=app.felTipoDocumento(fel.fel_afiliacion_iva);
-        fel.iduniflag=false;fel.halt=false;
-
-        D_facturaObj=new clsD_facturaObj(this,Con,db);
-        D_facturadObj=new clsD_facturadObj(this,Con,db);
-        D_facturafObj=new clsD_facturafObj(this,Con,db);
-        D_facturapObj=new clsD_facturapObj(this,Con,db);
-        D_facturarObj=new clsD_facturarObj(this,Con,db);
-        D_facturacObj=new clsD_facturacObj(this,Con,db);
-        D_facturaprObj=new clsD_facturaprObj(this,Con,db);
-        D_factura_felObj=new clsD_factura_felObj(this,Con,db);
-
-        D_fel_bitacoraObj=new clsD_fel_bitacoraObj(this,Con,db);
-
-        prod=new clsP_productoObj(this,Con,db);
-
-        app.parametrosExtra();
-        lbl2.setText("CERTIFICADOR: "+gl.peFEL);
-        pbar.setVisibility(View.VISIBLE);
-
-        facts.add(felcorel);
-
-        ffail=0;fidx=0;
-
         try {
 
-            if (facts.size()>0) {
-                Handler mtimer = new Handler();
-                Runnable mrunner= () -> {
-                    if (multiflag) {
-                        multipleFacturas();
-                    } else {
-                        Date currentTime = Calendar.getInstance().getTime();
-                        procesaFirma();
-                    }
-                };
-                mtimer.postDelayed(mrunner,100);
-            } else {
-                finish();
-                return;
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_fel_factura);
+
+            super.InitBase();
+
+            lbl1 = findViewById(R.id.msgHeader);lbl1.setText("");
+            lbl2 = findViewById(R.id.lblWS);lbl2.setText("");
+            lbl3 = findViewById(R.id.textView152);lbl3.setText("");
+            lblHalt = findViewById(R.id.textView218);lblHalt.setVisibility(View.VISIBLE);
+            pbar = findViewById(R.id.progressBar);
+            pbar.setVisibility(View.INVISIBLE);
+
+            felcorel=gl.felcorel;ffcorel=felcorel;
+            multiflag=felcorel.isEmpty();
+            gl.feluuid="";
+
+            getURL();
+
+            fel=new clsFELInFile(this,this,gl.timeout);
+            fel.halt=false;
+            fel.autocancel=true;
+            fel.owner=FELFactura.this;
+
+            ws = new WebServiceHandler(FELFactura.this, gl.wsurl, gl.timeout);
+            xobj = new XMLObject(ws);
+
+            clsP_sucursalObj sucursal=new clsP_sucursalObj(this,Con,db);
+            sucursal.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
+            clsClasses.clsP_sucursal suc=sucursal.first();
+
+            fel.fel_llave_certificacion =suc.fel_llave_certificacion; // fel_llavews ="E5DC9FFBA5F3653E27DF2FC1DCAC824D"
+            fel.fel_llave_firma=suc.fel_llave_firma; // fel_token ="5b174fb0e23645b65ef88277d654603d"
+            fel.fel_codigo_establecimiento=suc.fel_codigo_establecimiento;  //  1
+            fel.fel_usuario_certificacion=suc.fel_usuario_certificacion; // COMERGUA
+
+            //fel.fel_usuario_firma=suc.fel_usuario_firma; //JP2020071
+            fel.fel_usuario_firma=suc.texto;
+
+            fel.codigo_postal =suc.codigo_postal;
+            fel.fel_nit=suc.nit.toUpperCase(); // NIT  96038888
+            fel.fel_correo=suc.correo;  //
+
+            //fel.fel_nombre_comercial = gl.tiendanom;  //JP2020071
+            fel.fel_nombre_comercial = suc.nombre;
+
+            fel.fraseIVA=suc.codigo_escenario_iva;
+            fel.fraseISR=suc.codigo_escenario_isr;
+
+            if(fel.fraseIVA==3) fel.fraseIVA=1;
+
+            fel.fel_afiliacion_iva=suc.fel_afiliacion_iva;
+            fel.fel_tipo_documento=app.felTipoDocumento(fel.fel_afiliacion_iva);
+            fel.iduniflag=false;fel.halt=false;
+
+            D_facturaObj=new clsD_facturaObj(this,Con,db);
+            D_facturadObj=new clsD_facturadObj(this,Con,db);
+            D_facturafObj=new clsD_facturafObj(this,Con,db);
+            D_facturapObj=new clsD_facturapObj(this,Con,db);
+            D_facturarObj=new clsD_facturarObj(this,Con,db);
+            D_facturacObj=new clsD_facturacObj(this,Con,db);
+            D_facturaprObj=new clsD_facturaprObj(this,Con,db);
+            D_factura_felObj=new clsD_factura_felObj(this,Con,db);
+
+            D_fel_bitacoraObj=new clsD_fel_bitacoraObj(this,Con,db);
+
+            prod=new clsP_productoObj(this,Con,db);
+
+            app.parametrosExtra();
+            lbl2.setText("CERTIFICADOR: "+gl.peFEL);
+            pbar.setVisibility(View.VISIBLE);
+
+            facts.add(felcorel);
+
+            ffail=0;fidx=0;
+
+            try {
+
+                if (facts.size()>0) {
+                    Handler mtimer = new Handler();
+                    Runnable mrunner= () -> {
+                        if (multiflag) {
+                            multipleFacturas();
+                        } else {
+                            Date currentTime = Calendar.getInstance().getTime();
+                            procesaFirma();
+                        }
+                    };
+                    mtimer.postDelayed(mrunner,100);
+                } else {
+                    finish();
+                    return;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
     }
 
     //region Events
@@ -469,7 +477,7 @@ public class FELFactura extends PBase {
 
             if (!fel.errorflag) {
                 gl.feluuid=fel.fact_uuid;
-                toastlong("Envio completo "+ gl.feluuid);
+                //toastlong("Envio completo "+ gl.feluuid);
                 if (gl.peEnvio) {
                     if (!gl.feluuid.isEmpty()) {
                         if (gl.feluuid.length()>10) {
@@ -507,6 +515,21 @@ public class FELFactura extends PBase {
 
             D_facturaObj.fill("WHERE Corel='"+corel+"'");
             fact=D_facturaObj.first();
+
+            fel.factura_credito=false;
+            try {
+                D_facturapObj.fill("WHERE Corel='"+corel+"'");
+                if (D_facturapObj.count>0) {
+                    if (D_facturapObj.first().tipo.equalsIgnoreCase("C")) {
+                        fel.factura_credito=true;
+                        fel.factura_abono_venc=D_facturapObj.first().desc3+"";
+                        if (fel.factura_abono_venc.isEmpty()) fel.factura_credito=false;
+                    }
+                }
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                fel.factura_credito=false;
+            }
 
             fel.idcontingencia=0;
 
@@ -814,6 +837,9 @@ public class FELFactura extends PBase {
             }
 
             for (int i = 0; i < D_facturapObj.count; i++) {
+                if (D_facturapObj.items.get(i).tipo.equalsIgnoreCase("P")) {
+                    pendflag=true;return;
+                }
                 CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
             }
 
@@ -961,7 +987,7 @@ public class FELFactura extends PBase {
 
             try {
                 sql="UPDATE D_Factura SET STATCOM='S' WHERE COREL='"+corel+"'";
-                db.execSQL(sql);
+                if (!pendflag) db.execSQL(sql);
             } catch (SQLException e) {
             }
 
@@ -978,7 +1004,7 @@ public class FELFactura extends PBase {
         if (ws.errorflag) {
             toastlong("Error de envio");
         } else {
-            toastlong("Envio completo "+ gl.feluuid);
+            //toastlong("Envio completo "+ gl.feluuid);
         }
         finish();
     }
@@ -1112,7 +1138,7 @@ public class FELFactura extends PBase {
                 switch (ws.callback) {
                     case 1:
                         processFactura();
-                        callMethod("Commit", "SQL", CSQL);
+                        if (!pendflag) callMethod("Commit", "SQL", CSQL);
                         break;
                     case 2:
                         processMultiFactura();

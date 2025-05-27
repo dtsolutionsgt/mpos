@@ -98,6 +98,7 @@ public class clsP_sucursalObj {
         ins.add("CODIGO_ESCENARIO_IVA",item.codigo_escenario_iva);
         ins.add("CODIGO_MUNICIPIO",item.codigo_municipio);
         ins.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
+        ins.add("FECHA_CONTR",item.fecha_contr);
 
         db.execSQL(ins.sql());
 
@@ -129,6 +130,7 @@ public class clsP_sucursalObj {
         upd.add("CODIGO_ESCENARIO_IVA",item.codigo_escenario_iva);
         upd.add("CODIGO_MUNICIPIO",item.codigo_municipio);
         upd.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
+        upd.add("FECHA_CONTR",item.fecha_contr);
 
         upd.Where("(CODIGO_SUCURSAL="+item.codigo_sucursal+")");
 
@@ -161,6 +163,7 @@ public class clsP_sucursalObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsP_sucursal();
+
             item.codigo_sucursal=dt.getInt(0);
             item.codigo=dt.getString(1);
             item.empresa=dt.getInt(2);
@@ -184,6 +187,7 @@ public class clsP_sucursalObj {
             item.codigo_escenario_iva=dt.getInt(20);
             item.codigo_municipio=dt.getString(21);
             item.codigo_proveedor=dt.getInt(22);
+            item.fecha_contr=dt.getLong(23);
 
             items.add(item);
 
@@ -219,13 +223,13 @@ public class clsP_sucursalObj {
         ins.add("CODIGO",item.codigo);
         ins.add("EMPRESA",item.empresa);
         ins.add("CODIGO_NIVEL_PRECIO",item.codigo_nivel_precio);
-        ins.add("DESCRIPCION",item.descripcion+"");
-        ins.add("NOMBRE",item.nombre+"");
-        ins.add("DIRECCION",item.direccion+"");
-        ins.add("TELEFONO",item.telefono+"");
-        ins.add("CORREO",item.correo+"");
-        ins.add("NIT",item.nit+"");
-        ins.add("TEXTO",item.texto+"");
+        ins.add("DESCRIPCION",item.descripcion);
+        ins.add("NOMBRE",item.nombre);
+        ins.add("DIRECCION",item.direccion);
+        ins.add("TELEFONO",item.telefono);
+        ins.add("CORREO",item.correo);
+        ins.add("NIT",item.nit);
+        ins.add("TEXTO",item.texto);
         ins.add("ACTIVO",item.activo);
         ins.add("FEL_CODIGO_ESTABLECIMIENTO",item.fel_codigo_establecimiento);
         ins.add("FEL_USUARIO_FIRMA",item.fel_usuario_firma);
@@ -238,6 +242,7 @@ public class clsP_sucursalObj {
         ins.add("CODIGO_ESCENARIO_IVA",item.codigo_escenario_iva);
         ins.add("CODIGO_MUNICIPIO",item.codigo_municipio);
         ins.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
+        ins.add("FECHA_CONTR",item.fecha_contr);
 
         return ins.sql();
 
@@ -269,6 +274,7 @@ public class clsP_sucursalObj {
         upd.add("CODIGO_ESCENARIO_IVA",item.codigo_escenario_iva);
         upd.add("CODIGO_MUNICIPIO",item.codigo_municipio);
         upd.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
+        upd.add("FECHA_CONTR",item.fecha_contr);
 
         upd.Where("(CODIGO_SUCURSAL="+item.codigo_sucursal+")");
 

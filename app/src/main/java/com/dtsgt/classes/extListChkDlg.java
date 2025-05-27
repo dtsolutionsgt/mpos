@@ -203,7 +203,6 @@ public class extListChkDlg {
         if (mlines>0) mheight=0;
     }
 
-
     public void setMinLines(int pLines) {
         mminlines=pLines;
         if (mminlines<1) mminlines=1;

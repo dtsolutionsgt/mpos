@@ -24,15 +24,17 @@ public class clsDocument {
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felISR2,fraseIVA,fraseISR;
     public String felcont,contacc,nitsuc,sfticket;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero;
-    public String pais="",nomdepto,nommuni,nomtipo;
-	public clsRepBuilder rep;
-	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod,felISR2impr;
-	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden;
+    public String pais="",nomdepto,nommuni,nomtipo,tiendanom,tiendanit;
+    public clsRepBuilder rep;
+	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
+	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden,felISR2impr;
 	public boolean parallevar,domicilio,factsinpropina,modorest,LANPrint,PropinaAparte,precuenta1015;
-	public long ffecha;
-    public int pendiente,diacred,pagoefectivo,empid,tipo_doc;
+    public boolean qrsalvador;
+    public long ffecha;
+    public int pendiente,diacred,pagoefectivo,empid,tipo_doc,corel_doc;
 	public String TipoCredito, NoAutorizacion,LAN_IP;
-	public double ptotal,pdesc,pprop,propvalor,propperc;
+	public double ptotal,pdesc,pprop,propvalor,propperc,sv_subt;
+    public String svcf_nit,svcf_dep,svcf_muni,svcf_neg;
 
     public boolean es_pickup, es_delivery;
 
@@ -45,12 +47,13 @@ public class clsDocument {
 	protected String sql;
 	
 	protected ArrayList<String> lines= new ArrayList<String>();
-	
-	protected Context cont;
+    protected ArrayList<String> domlines= new ArrayList<String>();
+
+    protected Context cont;
 	protected DateUtils DU;
 	protected DecimalFormat decfrm;
 	
-	protected String clicod,clidir,pemodo;
+	protected String clicod,clidir,clicorreo,pemodo;
 	protected String vendcod,vendnom;
 
 	protected int prw;
@@ -65,6 +68,8 @@ public class clsDocument {
 		decfrm = new DecimalFormat("#,##0.00");
 
 	}
+
+    //region Impresion
 
 	public boolean buildPrint(String corel,int reimpres) {
 
@@ -280,7 +285,9 @@ public class clsDocument {
 		return true;
 	}
 
-	// Methods Prototypes
+    //endregion
+
+	//region Metodos principales
 	
 	protected boolean buildDetail() {
 		return true;
@@ -330,7 +337,7 @@ public class clsDocument {
             }
 
             if (s.contains("%%")) {
-                rep.addc(" ");
+                //rep.addc(" ");
                 if (banderafel) rep.addc("DOCUMENTO TRIBUTARIO ELECTRÓNICO");
                 rep.addc(nombre);
                 s=s.replace("%%","");
@@ -429,13 +436,13 @@ public class clsDocument {
 		}
 
         if (docfactura) rep.add("Version: "+fversion);
-        rep.add("");
+        //rep.add("");
         //if (es_pickup) rep.add("------ (RECOGER EN SITIO)  -------");
         //if (es_delivery) rep.add("-------  (DELIVERY)  -------");
 
         if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
 
-			rep.add("");
+			//rep.add("");
 			if (docfactura && (reimpres==1)) rep.add("-------  R E I M P R E S I Ó N  -------");
 			if (docfactura && (reimpres==10)) rep.add("-------  R E I M P R E S I Ó N  -------");
 			if (docfactura && (reimpres==2)) rep.add("------  C O P I A  ------");
@@ -446,7 +453,7 @@ public class clsDocument {
 				pendiente = reimpres;
 			}
 			if (docfactura && (reimpres==5)) rep.add("------  C O N T A B I L I D A D  ------");
-			rep.add("");
+			//rep.add("");
 
 		}else if ((docdevolucion || docpedido) && !(modofact.equalsIgnoreCase("TOL"))){
 
@@ -512,7 +519,7 @@ public class clsDocument {
                     //rep.addc(l);
                     s=l;
                 } else {
-                    sfticket=serie+l;l="";
+                    sfticket=serie+"-"+l;l="";
                     //rep.addc(sfticket);
                     s=sfticket;
                 }
@@ -631,10 +638,9 @@ public class clsDocument {
 
     }
 
-    protected void saveHeadLinesSV(int reimpres) {
-        String s,ss,ss2,su,l;
+    protected void saveHeadLinesSVFactura(int reimpres) {
+        String s,ss2,su,l;
         String[] s2;
-        int nidx;
 
         if (LANPrint) lanheader();
         rep.empty();rep.empty();
@@ -645,38 +651,27 @@ public class clsDocument {
 
             try {
                 s=encabezadoSV(s);
-                ss=s.toUpperCase();
-                nidx=ss.indexOf("NIT");
-                //if (nidx>=0) s="DUI/NIT: ";
             } catch (Exception e) {
                 s="##";
             }
 
             if (s.contains("%%")) {
-                if (banderafel) rep.addc("DOCUMENTO TRIBUTARIO ELECTRONICO");
 
-                if (facturaflag) {
-                    //rep.addc(nombre);
-                    rep.addc("FACTURA");
+                rep.addc("FACTURA");
+
+                if (felcont.length()>5) {
+                    rep.addc("Generado en modo contingencia");
                 } else {
-                    rep.addc("TICKET");
+                    rep.addc("Numero de control DTE:");
+                    rep.addc( numero);
+                    rep.addc("Codigo de Generacion:");
+                    rep.addc(feluuid);
                 }
 
-                if (numero.length()<8) {
-                    long nn=100000000+Long.parseLong(numero);
-                    l=""+nn;l=l.substring(1,9);
-                } else l=numero;
-
-                if (facturaflag) {
-                    l=serie +"-"+l;
-                    //rep.addc(l);
-                    s=l;
-                } else {
-                    sfticket=serie+l;l="";
-                    //rep.addc(sfticket);
-                    s=sfticket;
-                }
-
+                rep.addc("Tipo de Transmision: Normal");
+                rep.addc("Version: 1");
+                rep.addc("Tipo de documento: 01");
+                s="";
             }
 
             if (!s.equalsIgnoreCase("##") && !s.equalsIgnoreCase("@@")) {
@@ -697,7 +692,6 @@ public class clsDocument {
                 }
             }
 
-
         }
 
         if (docfactura) {
@@ -705,41 +699,6 @@ public class clsDocument {
             if (facturaflag) {
                 if (!nit_cliente.isEmpty()) rep.add(sal_nit + nit_cliente);
                 rep.add("Fecha: " + fsfecha);
-
-            /*
-            if (!emptystr(clidir)) {
-
-                clidir="Dir.: "+clidir;
-
-                if (clidir.length()>prw) {
-
-                    String nuevaCadena = "", cadena = "";
-
-                    cadena = clidir;
-                    nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
-                    cadena = cadena.substring(prw);
-                    if (cadena.length() > prw) {
-                        nuevaCadena =cadena.substring(0, prw);rep.add(nuevaCadena);
-                        cadena = cadena.substring(prw);
-                        if (cadena.length() > prw) {
-                            nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
-                        } if (cadena.length()>0) rep.add(cadena);
-                    } else {
-                        if (cadena.length()>0) rep.add(cadena);
-                    }
-                } else rep.add(clidir);
-            }
-            */
-
-            /*
-            if (docfactura) {
-                if (!facturaflag) {
-                    rep.add("");
-                    rep.add("Esto no es una factura fiscal");
-                    rep.add("");
-                }
-            }
-            */
             } else {
                 rep.add("DUI/NIT: C/F");
                 rep.add("Fecha: " + fsfecha);
@@ -784,10 +743,29 @@ public class clsDocument {
 
     }
 
-    protected void saveHeadLinesSVCred(int reimpres) {
+    protected void saveHeadLinesSVTicket(int reimpres) {
         String s,ss,ss2,su,l;
         String[] s2;
         int nidx;
+
+        if (LANPrint) lanheader();
+        rep.empty();rep.empty();
+
+        rep.addc(tiendanom);
+        rep.add("");
+        //rep.add("NIT: " + tiendanit);
+        //rep.add("");
+        rep.add("Fecha: " + fsfecha);
+        rep.add("");
+
+        //if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
+        //if (es_delivery) rep.add("-------  (DELIVERY)  -------");
+
+    }
+
+    protected void saveHeadLinesSVCred(int reimpres) {
+        String s,ss2,su,l;
+        String[] s2;
 
         if (LANPrint) lanheader();
         rep.empty();rep.empty();
@@ -798,32 +776,27 @@ public class clsDocument {
 
             try {
                 s=encabezadoSV(s);
-                ss=s.toUpperCase();
-                nidx=ss.indexOf("NIT");
-                //if (nidx>=0) s="DUI/NIT: ";
             } catch (Exception e) {
                 s="##";
             }
 
             if (s.contains("%%")) {
-                if (banderafel) rep.addc("DOCUMENTO TRIBUTARIO ELECTRONICO");
 
                 rep.addc("COMPROBANTE DE CREDITO FISCAL");
 
-                if (numero.length()<8) {
-                    long nn=100000000+Long.parseLong(numero);
-                    l=""+nn;l=l.substring(1,9);
-                } else l=numero;
-
-                if (facturaflag) {
-                    l=serie +"-"+l;
-                    //rep.addc(l);
-                    s=l;
+                if (felcont.length()>5) {
+                    rep.addc("Generado en modo contingencia");
                 } else {
-                    sfticket=serie+l;l="";
-                    //rep.addc(sfticket);
-                    s=sfticket;
+                    rep.addc("Numero de control DTE:");
+                    rep.addc( numero);
+                    rep.addc("Codigo de Generacion:");
+                    rep.addc(feluuid);
                 }
+
+                rep.addc("Tipo de Transmision: Normal");
+                rep.addc("Version: 1");
+                rep.addc("Tipo de documento: 03");
+                s="";
 
             }
 
@@ -848,12 +821,15 @@ public class clsDocument {
 
         }
 
-        if (!nit_cliente.isEmpty()) rep.add(sal_nit + nit_cliente);
-        rep.add("Fecha: " + fsfecha);
-
+        rep.add("NRC: " + nit_cliente);
+        rep.add("NIT: " + svcf_nit);
         rep.add("Municipio: "+nomdepto);
         rep.add("Departamento: "+nommuni);
-        rep.add("Giro: "+nomtipo);
+        rep.add("Dir: "+clidir);
+        rep.add("Correo: "+clicorreo);
+        rep.add("Actividad: "+nomtipo);
+        rep.add("");
+        rep.add("Fecha: " + fsfecha);
         rep.add("");
 
         //if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
@@ -1378,7 +1354,9 @@ public class clsDocument {
         return l;
     }
 
-    // Private
+    //endregion
+
+    //region Private
 
 	private boolean buildHeader(String corel,int reimpres) {
 		lines.clear();
@@ -1418,16 +1396,16 @@ public class clsDocument {
 
             if ( tipo_doc==1) {
                 facturaflag = true;
-                saveHeadLinesSV(reimpres);
+                saveHeadLinesSVFactura(reimpres);
             } else if ( tipo_doc==2) {
                 facturaflag = true;
                 saveHeadLinesSVCred(reimpres);
             } else if ( tipo_doc==3) {
                 facturaflag = false;
-                saveHeadLinesSV(reimpres);
+                saveHeadLinesSVTicket(reimpres);
             } else {
                 facturaflag = false;
-                saveHeadLinesSV(reimpres);
+                saveHeadLinesSVTicket(reimpres);
             }
 
        } else {
@@ -1481,7 +1459,9 @@ public class clsDocument {
         return true;
     }
 
-    // Aux
+    //endregion
+
+    //region Aux
 	
 	private boolean loadHeadLines() {
 
@@ -1536,9 +1516,9 @@ public class clsDocument {
                         if (!fraseIVA.isEmpty()) felIVA=fraseIVA;
                         if (!fraseISR.isEmpty()) felISR=fraseISR;
 
-                        if (felISR2impr) {
-                             felISR2="";
-                        }
+                        //if (felISR2impr) {
+                        //     felISR2="";
+                        //}
 
                         //#EJC202301040807AM: Corregir a futuro.
                         switch (empid) {
@@ -1745,6 +1725,8 @@ public class clsDocument {
 			setAddlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 
 		}
-	}	
-		
+	}
+
+    //endregion
+
 }

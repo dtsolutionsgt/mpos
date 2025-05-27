@@ -5,6 +5,7 @@ import android.database.Cursor;
 
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.MiscUtils;
+import com.dtsgt.base.appGlobals;
 
 import java.util.ArrayList;
 
@@ -28,7 +29,7 @@ public class clsDescuento {
 	private double cant,vmax,dmax;
 	private boolean acum;
 	
-	public clsDescuento(Context context,String producto,double cantidad,double descmax) {
+	public clsDescuento(Context context, String producto, double cantidad, double descmax) {
 		
 		cont=context;
 		

@@ -90,6 +90,9 @@ public class clsD_MovObj {
         ins.add("CODIGO_PROVEEDOR",item.CODIGO_PROVEEDOR);
         ins.add("TOTAL",item.TOTAL);
 
+
+        String sq=ins.sql();
+
         db.execSQL(ins.sql());
 
     }

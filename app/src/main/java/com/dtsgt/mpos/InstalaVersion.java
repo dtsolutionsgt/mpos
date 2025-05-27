@@ -94,7 +94,7 @@ public class InstalaVersion extends PBase {
 
             String dir= Environment.getExternalStorageDirectory()+"";
             fname=dir+"/mpos.apk";
-            fbname="mpos.apk";
+            fbname="mpos550.apk";
 
             StorageReference ref = storageReference.child(fbname);
 

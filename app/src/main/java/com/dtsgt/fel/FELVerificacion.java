@@ -196,11 +196,9 @@ public class FELVerificacion extends PBase {
         } catch (Exception e) {
             throw e;
         }
-
     }
 
     private void contingenciaFactura() {
-
         try {
             if(!fel.errcert){
                 buildFactXML();
@@ -209,7 +207,6 @@ public class FELVerificacion extends PBase {
         } catch (Exception e) {
             throw e;
         }
-
     }
 
     private void contingencia() {
@@ -232,9 +229,7 @@ public class FELVerificacion extends PBase {
 
     @Override
     public void felCallBack()  {
-
         try {
-
             int ii=0;
 
             if (fel.errorcon) {

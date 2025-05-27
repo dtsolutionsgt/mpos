@@ -36,7 +36,9 @@ public class Comensales extends PBase {
                 toast("Cantidad incorrecta");
             } else {
                 if (khand.isValid) {
-                    gl.comensales=(int) khand.value;finish();
+                    gl.comensales=(int) khand.value;
+                    gl.nueva_mesa=true;
+                    finish();
                 }
             }
         }

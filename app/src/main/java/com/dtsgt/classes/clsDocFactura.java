@@ -10,6 +10,8 @@ import android.widget.Toast;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+
+
 public class clsDocFactura extends clsDocument {
 
 	private ArrayList<itemData> items= new ArrayList<itemData>();
@@ -68,7 +70,7 @@ public class clsDocFactura extends clsDocument {
 				DT.moveToFirst();
 
 				serie=DT.getString(0);
-				numero=""+DT.getInt(1);
+				numero=""+DT.getInt(1);corel_doc=DT.getInt(1);
 				ruta=DT.getString(2);codigo_ruta=ruta;
 
 				vend=DT.getString(3);
@@ -93,7 +95,7 @@ public class clsDocFactura extends clsDocument {
 				impres=DT.getInt(12);
 				cantimpres=0;
 
-                feluuid=DT.getString(14);
+                feluuid=DT.getString(14);if (feluuid.isEmpty()) feluuid=" ";
                 feldcert=sfecha(DT.getLong(15));
                 s1=DT.getString(16);if (!s1.isEmpty() && !s1.equalsIgnoreCase(" ")) serie=s1;
                 s2=DT.getString(17);if (!s2.isEmpty() && !s2.equalsIgnoreCase(" ")) numero=s2;
@@ -174,22 +176,15 @@ public class clsDocFactura extends clsDocument {
                 ff = DT.getLong(2);
                 resvence = "Fecha limite: " + sfecha_dos(ff);
                 //#EJC20181130: Se cambió el mensaje por revisión de auditor de SAT.
+
                 resrangot = "Rango autorizado del";
-                String numini = "" + DT.getLong(4);
-                String numfin = "" + DT.getLong(5);
-                String li, lf;
+                String li, lf,l;
+                long nn;
 
-                if (numini.length() < 8) {
-                    long nn = 100000000 + Long.parseLong(numini);
-                    li = "" + nn;
-                    li = li.substring(1, 9);
-                } else li = numini;
-
-                if (numfin.length() < 8) {
-                    long nn = 100000000 + Long.parseLong(numfin);
-                    lf = "" + nn;
-                    lf = lf.substring(1, 9);
-                } else lf = numfin;
+                nn=100000000+DT.getLong(4);
+                l=""+nn;li=l.substring(1,9);
+                nn=100000000+DT.getLong(5);
+                l=""+nn;lf=l.substring(1,9);
 
                 resrango = DT.getString(3) + "-" + li + " al " + lf;
 
@@ -242,6 +237,8 @@ public class clsDocFactura extends clsDocument {
 		val=vend;
 		vendedor=val;
 
+        svcf_nit="";svcf_dep="";svcf_muni="";svcf_neg="";
+
         if (pais.equalsIgnoreCase("SV")) {
             String ss="";
 
@@ -267,7 +264,7 @@ public class clsDocFactura extends clsDocument {
                 }
 
                 ss=""+DT.getInt(2);
-                sql="SELECT DESCRIPCION FROM P_tiponeg WHERE CODIGO_TIPO_NEGOCIO="+ss;
+                sql="SELECT DESCRIPCION FROM P_giro_negocio WHERE (CODIGO="+ss+") AND (COD_PAIS='SV')";
                 DTt=Con.OpenDT(sql);
                 if (DTt.getCount()>0) {
                     DTt.moveToFirst();
@@ -276,12 +273,12 @@ public class clsDocFactura extends clsDocument {
             } else {
                 nomdepto="";nommuni="";nomtipo="";
             }
+
+            svcf_dep=nomdepto;svcf_muni=nommuni;svcf_neg=nomtipo;
         }
 
-
 		try {
-
-			sql="SELECT NOMBRE,PERCEPCION,TIPO_CONTRIBUYENTE,DIRECCION,NIT,DIACREDITO " +
+			sql="SELECT NOMBRE,PERCEPCION,TIPO_CONTRIBUYENTE,DIRECCION,NIT,DIACREDITO,EMAIL " +
 				"FROM P_CLIENTE WHERE CODIGO_CLIENTE ='"+cli+"'";
 
 			DT=Con.OpenDT(sql);	
@@ -298,10 +295,23 @@ public class clsDocFactura extends clsDocument {
 			clidir=DT.getString(3);
 			nit_cliente =DT.getString(4);
 			diacred=DT.getInt(5);
+            clicorreo=DT.getString(6);
 			
 		} catch (Exception e) {
 			val=cli;
 	    }
+
+        if (pais.equalsIgnoreCase("SV")) {
+            String ss = "";
+
+            sql="SELECT NIT FROM P_gran_cont WHERE (NRC='"+nit_cliente+"') ";
+            DT=Con.OpenDT(sql);
+            if (DT.getCount()>0) {
+                DT.moveToFirst();
+                svcf_nit=DT.getString(0);
+            }
+
+        }
 
 		try {
 
@@ -347,37 +357,41 @@ public class clsDocFactura extends clsDocument {
 
         plines.clear();
 
-        sql="SELECT P.DESC2, SUM(P.VALOR) " +
-                "FROM P_MEDIAPAGO M INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
-                "WHERE (COREL='" +corel+ "') GROUP BY P.DESC2";
+        if (pais.equalsIgnoreCase("GT")) {
 
-        sql="SELECT P.DESC2, P.VALOR, P.DESC1, P.TIPO " +
-                "FROM P_MEDIAPAGO M INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
-                "WHERE (COREL='" +corel+ "') ";
-        try {
-            DT=Con.OpenDT(sql);
+            sql = "SELECT P.DESC2, SUM(P.VALOR) " +
+                    "FROM P_MEDIAPAGO M INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
+                    "WHERE (COREL='" + corel + "') GROUP BY P.DESC2";
 
-            if (DT.getCount()>0) {
-                DT.moveToFirst();
-                while (!DT.isAfterLast()) {
-                    s1=DT.getString(0);
-                    s3=DT.getString(2);
-                    tp=DT.getString(3);
-                    //if (s1.isEmpty()) s1="Contado";
-                    if (tp.equalsIgnoreCase("E")) s1="Contado";
-                    plines.add(addtotsptic(s1,DT.getDouble(1)));
-                    if (tp.equalsIgnoreCase("K")) {
-                        if (!s3.equalsIgnoreCase("NO_AUT_20221022")) {
-                            plines.add("Autorizacion: "+s3);
+            sql = "SELECT P.DESC2, P.VALOR, P.DESC1, P.TIPO " +
+                    "FROM P_MEDIAPAGO M INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
+                    "WHERE (COREL='" + corel + "') ";
+            try {
+                DT = Con.OpenDT(sql);
+
+                if (DT.getCount() > 0) {
+                    DT.moveToFirst();
+                    while (!DT.isAfterLast()) {
+                        s1 = DT.getString(0);
+                        s3 = DT.getString(2);
+                        tp = DT.getString(3);
+                        //if (s1.isEmpty()) s1="Contado";
+                        if (tp.equalsIgnoreCase("E")) s1 = "Contado";
+                        plines.add(addtotsptic(s1, DT.getDouble(1)));
+                        if (tp.equalsIgnoreCase("K")) {
+                            if (!s3.equalsIgnoreCase("NO_AUT_20221022")) {
+                                plines.add("Autorizacion: " + s3);
+                            }
                         }
+                        DT.moveToNext();
                     }
-                    DT.moveToNext();
                 }
+
+            } catch (Exception e) {
             }
-
-        } catch (Exception e) {
+        } else   if (pais.equalsIgnoreCase("SV")) {
+            if (pagoefectivo==1) plines.add("Contado");else plines.add("A credito");
         }
-
 
         propina=0;
         try {
@@ -440,36 +454,26 @@ public class clsDocFactura extends clsDocument {
 
         if (pais.equalsIgnoreCase("GT")) {
             nit_cliente=nit_cliente.replace("-","");
-        } else {
-
         }
 
         nit_cliente=nit_cliente.replace(".","");
         nit_cliente=nit_cliente.replace(" ","");
         nit_cliente=nit_cliente.toUpperCase();
 
-        QRCodeStr= "https://felpub.c.sat.gob.gt/verificador-web/publico/vistas/verificacionDte.jsf?tipo=autorizacion&" +
-                "numero="+ Numero_Factura + "&emisor="+ nit_emisor +"&receptor="+ nit_cliente +"&monto=" + stot;
-/*
-        if (!QRCodeStr.isEmpty()) {
-            try {
-                qrgEncoder = new QRGEncoder(QRCodeStr, null, QRGContents.Type.TEXT, 350);
-                bitmap = qrgEncoder.encodeAsBitmap();
-                if (!QRGSaver.save(qrpath, "qr", bitmap, QRGContents.ImageType.IMAGE_JPEG)) {
-                    throw new Exception("Error al guardar la barra");
-                }
-            } catch (Exception e) {
-                Toast.makeText(cont, "Error QR : " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+        if (pais.equalsIgnoreCase("GT")) {
+            QRCodeStr= "https://felpub.c.sat.gob.gt/verificador-web/publico/vistas/verificacionDte.jsf?tipo=autorizacion&" +
+                    "numero="+ Numero_Factura + "&emisor="+ nit_emisor +"&receptor="+ nit_cliente +"&monto=" + stot;
+        } else {
+            QRCodeStr="";
         }
-*/
+
 		return true;
 	}
 
 	protected boolean loadDocData(String corel) {
 		Cursor DT;
 		itemData item,bon,pag;
-		String corNota,idcombo;
+		String corNota,idcombo,dls;
 		int corrl;
 
 		ccorel=corel;
@@ -478,8 +482,6 @@ public class clsDocFactura extends clsDocument {
 		items.clear();bons.clear();pagos.clear();totalsinimp=0;
 
 		try {
-
-           //#CKFK 20200520 quité la consulta que buscaba en las notas de crédito porque aquí no existe esa tabla
 
 			sql="SELECT D_FACTURAD.PRODUCTO,P_PRODUCTO.DESCLARGA,D_FACTURAD.CANT,D_FACTURAD.PRECIODOC,D_FACTURAD.IMP, " +
 				"D_FACTURAD.DES,D_FACTURAD.DESMON, D_FACTURAD.TOTAL, D_FACTURAD.UMVENTA, D_FACTURAD.UMPESO, " +
@@ -522,7 +524,6 @@ public class clsDocFactura extends clsDocument {
             }
 
 			try {
-				//#CKFK 20200520 Quité el union con D_BONIFBARRA porque esa tabla no existe en el MPOS
 				sql = "SELECT D_BONIF.PRODUCTO,P_PRODUCTO.DESCLARGA AS NOMBRE,D_BONIF.CANT, D_BONIF.UMVENTA, " +
 					  "D_BONIF.CANT*D_BONIF.FACTOR AS TPESO " +
 					  "FROM D_BONIF INNER JOIN P_PRODUCTO ON D_BONIF.PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO " +
@@ -574,6 +575,24 @@ public class clsDocFactura extends clsDocument {
                 Toast.makeText(cont,"Impresion pagos : "+e.getMessage(), Toast.LENGTH_LONG).show();
             }
 
+            // Direccion de domicilio
+            try {
+                domlines.clear();
+
+                sql="SELECT TEXTO FROM D_factura_dom WHERE (COREL='"+ccorel+"') ORDER BY LINEA";
+                DT=Con.OpenDT(sql);
+                if (DT.getCount()>0) DT.moveToFirst();
+
+                while (!DT.isAfterLast()) {
+                    dls = DT.getString(0);
+                    domlines.add(dls);
+                    DT.moveToNext();
+                }
+
+            } catch (Exception e) {
+                Toast.makeText(cont,"Direccion de domicilio : "+e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+
         } catch (Exception e) {
             Toast.makeText(cont,e.getMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -614,41 +633,6 @@ public class clsDocFactura extends clsDocument {
 
     }
 
-    private void detalleComboOrig(String idcombo ) {
-
-        clsD_facturasObj D_facturasObj=new clsD_facturasObj(cont,Con,db);
-        clsP_productoObj P_productoObj=new clsP_productoObj(cont,Con,db);
-        String prid,nombre;
-        itemData item;
-
-        D_facturasObj.fill("WHERE (COREL='"+ccorel+"') AND (ID="+idcombo+")");
-
-        for (int i = 0; i <D_facturasObj.count; i++) {
-
-            prid=D_facturasObj.items.get(i).producto;
-            P_productoObj.fill("WHERE (CODIGO_PRODUCTO="+prid+")");
-            nombre=P_productoObj.first().desclarga;
-
-            item = new itemData();
-
-            item.cod = prid;
-            item.nombre = nombre;
-            item.cant = 1;
-            item.prec =0;
-            item.imp = 0;
-            item.descper = 0;
-            item.desc = 0;
-            item.tot = 0;
-            item.um ="";
-            item.ump ="";
-            item.peso =0 ;
-            item.flag=true;
-
-            items.add(item);
-        }
-
-    }
-
     //region Detalle por pais
 
     @Override
@@ -667,7 +651,7 @@ public class clsDocFactura extends clsDocument {
             if ( tipo_doc==1) {
                 return detailFacturaSV();
             } else if ( tipo_doc==2) {
-                return detailBaseSV();
+                return detailCreditoSV();
             } else if ( tipo_doc==3) {
                 return detailTicketSV();
             } else {
@@ -758,32 +742,116 @@ public class clsDocFactura extends clsDocument {
     protected boolean detailFacturaSV() {
         itemData item;
         double pr,imp,tot,totval,dval1,dval2;
-        String ps,cu,cp;
+        String ps,cu,cp,s1,sp;
+        int nl;
 
-        rep.add("Cant Descripcion");
-        rep.add3sss("Precio","No sujeto","Gravado");
+        rep.add("Descripcion");
+        rep.add3sss("Cant","Precio","Gravado");
         rep.line();
 
+        sv_subt=0;
         for (int i = 0; i <items.size(); i++) {
             item=items.get(i);
             if (!item.flag) {
 
-                ps=item.nombre;if (ps.length()>prw-5) ps=ps.substring(0,prw-6);
-                ps=rep.ltrim(""+((int) item.cant),4)+" "+ps;
+                nl=i+1;
+                ps=item.nombre;if (ps.length()>prw-3) ps=ps.substring(0,prw-3);
+                //rep.add(nl+" "+ps);
                 rep.add(ps);
 
-                imp=item.imp;
-                //pr=item.prec-imp;
+                sp=item.cant+" "+item.um;
                 pr=item.prec_orig;
                 pr=round2(pr);
-                tot=pr*item.cant;
-                tot=round2(tot);
 
-                ps=rep.frmdec(item.prec_orig);
                 dval1=0;dval2=0;
-                if (imp==0) dval1=tot; else dval2=tot;
+                s1=rep.frmdec(dval1);
+                tot=pr*item.cant;
+                tot=round2(tot);sv_subt+=tot;
 
-                rep.add3lrr(ps,dval1,dval2);
+                rep.add3lrr(sp,pr,tot);
+
+            } else {
+                rep.add("   - "+item.nombre);
+            }
+        }
+
+        rep.line();
+
+        return true;
+    }
+
+    protected boolean detailFacturaSVOrig() {
+        itemData item;
+        double pr,imp,tot,totval,dval1,dval2;
+        String ps,cu,cp,s1;
+        int nl;
+
+        rep.add("# Descripcion");
+        rep.add3sss("Cant","Descuento","Precio");
+        rep.add3sss("Exento","No sujeto","Gravado");
+        rep.line();
+
+        sv_subt=0;
+        for (int i = 0; i <items.size(); i++) {
+            item=items.get(i);
+            if (!item.flag) {
+
+                nl=i+1;
+                ps=item.nombre;if (ps.length()>prw-3) ps=ps.substring(0,prw-3);
+                rep.add(nl+" "+ps);
+
+                s1=item.cant+" "+item.um;
+                pr=item.prec_orig;
+                pr=round2(pr);
+                rep.add3lrr(s1,item.desc,pr);
+
+                dval1=0;dval2=0;
+                s1=rep.frmdec(dval1);
+                tot=pr*item.cant;
+                tot=round2(tot);sv_subt+=tot;
+                rep.add3lrr(s1,dval2,tot);
+
+            } else {
+                rep.add("   - "+item.nombre);
+            }
+        }
+
+        rep.line();
+
+        return true;
+    }
+
+    protected boolean detailCreditoSV() {
+        itemData item;
+        double pr,imp,tot,totval,dval1,dval2;
+        String ps,cu,cp,s1;
+        int nl;
+
+        rep.add("# Descripcion");
+        rep.add3sss("Cant","Descuento","Precio");
+        rep.add3sss("Exento","No sujeto","Gravado");
+        rep.line();
+
+        sv_subt=0;
+        for (int i = 0; i <items.size(); i++) {
+            item=items.get(i);
+            if (!item.flag) {
+
+                nl=i+1;
+                ps=item.nombre;if (ps.length()>prw-3) ps=ps.substring(0,prw-3);
+                rep.add(nl+" "+ps);
+
+                s1=item.cant+" "+item.um;
+                pr=item.prec;
+                pr=round2(pr);
+                rep.add3lrr(s1,item.desc,pr);
+
+                dval1=0;dval2=0;
+                s1=rep.frmdec(dval1);
+                tot=pr*item.cant;
+                tot=round2(tot);sv_subt+=tot;
+                rep.add3lrr(s1,dval2,tot);
+
             } else {
                 rep.add("   - "+item.nombre);
             }
@@ -803,6 +871,7 @@ public class clsDocFactura extends clsDocument {
 
         rep.line();
 
+        sv_subt=0;
         for (int i = 0; i <items.size(); i++) {
             item=items.get(i);
             if (!item.flag) {
@@ -817,7 +886,7 @@ public class clsDocFactura extends clsDocument {
                 pr=item.prec_orig;
                 pr=round2(pr);
                 tot=pr*item.cant;
-                tot=round2(tot);
+                tot=round2(tot);sv_subt+=tot;
 
                 ps=rep.frmdec(pr);
                 dval2=tot;
@@ -977,41 +1046,6 @@ public class clsDocFactura extends clsDocument {
         }
 	}
 
-    private void agregaDomicilio() {
-        if (!domicilio) return;
-
-        rep.add("");
-        rep.addc("D O M I C I L I O");
-        rep.add("");
-        rep.add(nombre_cliente);
-
-        if (!emptystr(clidir)) {
-            //clidir="Dir.: "+clidir;
-            if (clidir.length()>prw) {
-
-                String nuevaCadena = "", cadena = "";
-
-                cadena = clidir;
-                nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
-                cadena = cadena.substring(prw);
-                if (cadena.length() > prw) {
-                    nuevaCadena =cadena.substring(0, prw);rep.add(nuevaCadena);
-                    cadena = cadena.substring(prw);
-                    if (cadena.length() > prw) {
-                        nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
-                    } if (cadena.length()>0) rep.add(cadena);
-                } else {
-                    if (cadena.length()>0) rep.add(cadena);
-                }
-            } else rep.add(clidir);
-        }
-
-        try {
-            if (!clitel.isEmpty()) rep.add("Tel.: "+clitel);
-        } catch (Exception e) {}
-
-    }
-
     //region Guatemala
 
     private boolean footerBaseGUATicket() {
@@ -1129,7 +1163,7 @@ public class clsDocFactura extends clsDocument {
         }
 
         if (plines.size()>0) {
-            rep.add("");
+            //rep.add("");
             rep.add("Desglose de pago:");
             for (int ii= 0; ii <plines.size(); ii++) {
                 rep.add(plines.get(ii));
@@ -1144,8 +1178,10 @@ public class clsDocFactura extends clsDocument {
         }
 
         if (modorest) {
-            rep.add("");
-            rep.add("Le atendió: "+nommesero);
+            if (!nommesero.isEmpty()) {
+                rep.add("");
+                rep.add("Le atendió: "+nommesero);
+            }
         }
 
         rep.add("");
@@ -1184,7 +1220,7 @@ public class clsDocFactura extends clsDocument {
                 }
             }
 
-            rep.add("");
+            //rep.add("");
             rep.add(felcert);
             rep.add(felnit);
             rep.add("");
@@ -1216,11 +1252,12 @@ public class clsDocFactura extends clsDocument {
         }
 
         agregaDomicilio();
+        direccionDomicilio();
 
         if (!feluuid.isEmpty()) {
-            rep.add("");
+            //rep.add("");
             rep.add("@@pic qrmpos.png");
-            rep.add("");
+            //rep.add("");
         }
 
 
@@ -1243,23 +1280,32 @@ public class clsDocFactura extends clsDocument {
         //stot=stot-imp;
         stot=fh_grav+fh_exent+fh_exon;
         totperc=stot*(percep/100);totperc=round2(totperc);
-        totimp=tot-stot;
-        difimp=fh_imp1+fh_imp2-totimp;
 
-        //totalsinimp
-        if (fh_imp1>0) {
-            vimp1=fh_imp1-difimp;
-        } else {
-            vimp2=fh_imp2-difimp;
+        vimp1=round2(fh_imp1);vimp2=round2(fh_imp2);
+
+        if (vimp1>0) {
+            double vimphn=tot/(1+0.01*fh_val1);
+            vimphn=vimphn*0.01*fh_val1;
+            vimphn=vimphn-vimp2;
         }
+
+        //JP20241106 Correcion de totales
+        double totsinex=tot-fh_exon-fh_exent;
+        double stotsinex=totsinex/1.15;
+        double impsinext=stotsinex*0.15;
+        fh_grav=stotsinex;
+        vimp1=impsinext;
+        stot=fh_grav+fh_exon+fh_exent;
+        //
 
         rep.addtotsph("Subtotal: ", stot);
         rep.addtotsph("Descuento y rebajas: ", -desc);
         rep.addtotsph("Importe exonerado: ", fh_exon);
         rep.addtotsph("Importe exento: ", fh_exent);
         rep.addtotsph("Importe gravado: ", fh_grav);
-        rep.addtotsph("Impuesto "+frmdecimal(fh_val1,2)+" %", vimp1);
-        rep.addtotsph("Impuesto "+frmdecimal(fh_val2,2)+" %", vimp2);
+        rep.addtotsph("Impuesto 15 %", vimp1);
+        //rep.addtotsph("Impuesto "+frmdecimal(fh_val1,2)+" %", vimp1);
+        //rep.addtotsph("Impuesto "+frmdecimal(fh_val2,2)+" %", vimp2);
         rep.addtotsph("TOTAL : ", tot);
 
         montoLetra();
@@ -1361,6 +1407,7 @@ public class clsDocFactura extends clsDocument {
         }
 
         agregaDomicilio();
+        direccionDomicilio();
 
         rep.add("");
         rep.add("");
@@ -1393,33 +1440,34 @@ public class clsDocFactura extends clsDocument {
         totperc=stot*(percep/100);totperc=round2(totperc);
         totimp=imp-totperc;
 
-        rep.addtotsp("Sumas: ", stot);
-        //rep.addtotsp("Venta sujeta: ", fh_grav);
+        if (Math.abs(fh_grav-sv_subt)<0.02) fh_grav=sv_subt;
+
+        rep.addtotsp("Sumas: ", fh_grav);
         //rep.addtotsp("Venta no sujeta: ", fh_exent);
-        //rep.addtotsp("Importe exonerado: ", fh_exon);
-        if (desc>=0.01) {
-            rep.addtotsp("Descuento: ", -desc);
-        }
+        //rep.addtotsp("Venta exenta: ", fh_exon);
+        //rep.addtotsp("Subtotal: ", stot);
+        //if (desc>=0.01) rep.addtotsp("Descuento: ", -desc);
         if (fh_val1>0) rep.addtotsp("IVA Retenido: ", fh_imp1);
-        //if (fh_val2>0) rep.addtotsp("IVA Retenido: ", fh_imp2);
-        rep.addtotsp("Venta total : ", tot);
+        //rep.addtotsp("Venta total: ", tot);
+        rep.addtotsp("Total a pagar: ", tot);
 
         montoLetra();
 
+        /*
         if (plines.size()>0) {
-            rep.add("Formas de pago:");
+            rep.add("Condiciones de la operación: ");
             for (int ii= 0; ii <plines.size(); ii++) {
                 rep.add(plines.get(ii));
             }
         }
 
-        /*
-        rep.add("");
-        rep.add("No. OC exenta ");
-        rep.add("No. cons. registro exonerado");
-        rep.add("No. registro SAG");
-        rep.add("");
-        */
+        if (!serie.isEmpty()) {
+            rep.add("Sello de recepcion: ");
+            rep.add(serie);
+            rep.add("");
+        }
+
+         */
 
         if (modorest) {
             rep.add("");
@@ -1427,62 +1475,6 @@ public class clsDocFactura extends clsDocument {
         }
 
         rep.add("");
-
-        /*
-        try {
-            rep.addc("Original: Cliente");
-            rep.addc("Copia: Obligado Tributario Emisor");
-            rep.addc("La factura es beneficio de todos exija la.");
-            rep.add("");
-            if (!textopie.isEmpty()) {
-                rep.addc(textopie);
-            }
-        } catch (Exception e) {}
-        */
-
-        //banderafel=true;
-        if (banderafel) {
-
-            if (feluuid.equalsIgnoreCase(" ")) {
-                rep.add("");
-                rep.add("Factura generada en modo de contingencia");
-                rep.add("Numero de Acceso: "+contacc);
-                rep.add("Su factura pueden encontrar en el portal");
-                rep.add("SAT bajo identificacion: "+serie+numero);
-            }
-
-            if (!feluuid.equalsIgnoreCase(" ")) {
-                rep.add("");
-                rep.add("Número de autorización: ");
-                rep.add(feluuid);
-                rep.add("Fecha de certificación: "+feldcert);
-            }
-
-            if (!felIVA.isEmpty()) {
-                rep.add(felIVA);
-            }
-            if (!felISR.isEmpty()) {
-                rep.add(felISR);
-                if (!felISR2.isEmpty()) {
-                    rep.add(felISR2);
-                }
-            }
-
-            rep.add("");
-            rep.add(felcert);
-            rep.add(felnit);
-            rep.add("");
-            rep.add("Powered by DTSolutions, S.A.");
-            rep.addc("dts.com.gt");
-        }
-
-        //#HS_20181212 Validación para factura pendiente de pago
-        if (pendiente == 4){
-            rep.add("");
-            rep.add("ESTE NO ES UN DOCUMENTO LEGAL");
-            rep.add("EXIJA SU FACTURA ORIGINAL");
-            rep.add("");
-        }
 
         /*
         if (parallevar){
@@ -1505,14 +1497,26 @@ public class clsDocFactura extends clsDocument {
         } else {
             rep.add("");
         }
-        */
 
         agregaDomicilio();
 
+        */
+
+        rep.add("");
+        rep.addc("Powered by DTSolutions, S.A.");
+        rep.addc("dts.com.gt");
         rep.add("");
         rep.add("");
-        rep.add("");
-        rep.add("");
+
+        direccionDomicilio();
+
+        if (qrsalvador) {
+            rep.add("DESCARGA TU DOCUMENTO EN ESTE ENLACE");
+            rep.add("");
+            rep.add("@@pic qrmpos.png");
+            rep.add("");
+            rep.add("");
+        }
 
         return super.buildFooter();
     }
@@ -1520,36 +1524,37 @@ public class clsDocFactura extends clsDocument {
     private boolean footerCredSV() {
         double totimp,totperc;
 
-        stot=stot-imp;
+        //stot=stot-imp;
+        stot=stot;
         totperc=stot*(percep/100);totperc=round2(totperc);
         totimp=imp-totperc;
 
-        rep.addtotsp("Sumas: ", stot);
-        if (fh_val1>0) rep.addtotsp(((int) fh_val1)+"% IVA: ", fh_imp1);
-        rep.addtotsp("Subtotal: ", stot+fh_imp1);
-        //rep.addtotsp("Venta sujeta: ", fh_grav);
-        //rep.addtotsp("Venta no sujeta: ", fh_exent);
-        //rep.addtotsp("Importe exonerado: ", fh_exon);
-        rep.addtotsp("IVA Percibido: ", fh_imp2);
+        if (Math.abs(fh_grav-sv_subt)<0.02) fh_grav=sv_subt;
+
+        rep.addtotsp("Suma total de operaciones: ", sv_subt);
+        rep.addtotsp("Sub total: ", fh_grav);
+        rep.addtotsp("Impuesto al valor agregado: ", fh_imp1);
+        rep.addtotsp("Venta no sujeta: ", fh_exent);
+        //rep.addtotsp("Venta exenta: ", fh_exon);
+        //rep.addtotsp("Subtotal: ", sv_subt);
         if (desc>=0.01) rep.addtotsp("Descuento: ", -desc);
-        rep.addtotsp("TOTAL : ", tot);
+        rep.addtotsp("Monto total de operacion: ", tot);
+        rep.addtotsp("Total a pagar: ", tot);
 
         montoLetra();
 
         if (plines.size()>0) {
-            rep.add("Formas de pago:");
+            rep.add("Condiciones de la operación: ");
             for (int ii= 0; ii <plines.size(); ii++) {
                 rep.add(plines.get(ii));
             }
         }
 
-        /*
-        rep.add("");
-        rep.add("No. OC exenta ");
-        rep.add("No. cons. registro exonerado");
-        rep.add("No. registro SAG");
-        rep.add("");
-        */
+        if (!serie.isEmpty()) {
+            rep.add("Sello de recepcion: ");
+            rep.add(serie);
+            rep.add("");
+        }
 
         if (modorest) {
             rep.add("");
@@ -1557,62 +1562,6 @@ public class clsDocFactura extends clsDocument {
         }
 
         rep.add("");
-
-        /*
-        try {
-            rep.addc("Original: Cliente");
-            rep.addc("Copia: Obligado Tributario Emisor");
-            rep.addc("La factura es beneficio de todos exija la.");
-            rep.add("");
-            if (!textopie.isEmpty()) {
-                rep.addc(textopie);
-            }
-        } catch (Exception e) {}
-        */
-
-        //banderafel=true;
-        if (banderafel) {
-
-            if (feluuid.equalsIgnoreCase(" ")) {
-                rep.add("");
-                rep.add("Factura generada en modo de contingencia");
-                rep.add("Numero de Acceso: "+contacc);
-                rep.add("Su factura pueden encontrar en el portal");
-                rep.add("SAT bajo identificacion: "+serie+numero);
-            }
-
-            if (!feluuid.equalsIgnoreCase(" ")) {
-                rep.add("");
-                rep.add("Número de autorización: ");
-                rep.add(feluuid);
-                rep.add("Fecha de certificación: "+feldcert);
-            }
-
-            if (!felIVA.isEmpty()) {
-                rep.add(felIVA);
-            }
-            if (!felISR.isEmpty()) {
-                rep.add(felISR);
-                if (!felISR2.isEmpty()) {
-                    rep.add(felISR2);
-                }
-            }
-
-            rep.add("");
-            rep.add(felcert);
-            rep.add(felnit);
-            rep.add("");
-            rep.add("Powered by DTSolutions, S.A.");
-            rep.addc("dts.com.gt");
-        }
-
-        //#HS_20181212 Validación para factura pendiente de pago
-        if (pendiente == 4){
-            rep.add("");
-            rep.add("ESTE NO ES UN DOCUMENTO LEGAL");
-            rep.add("EXIJA SU FACTURA ORIGINAL");
-            rep.add("");
-        }
 
         if (parallevar){
             rep.add("");
@@ -1635,57 +1584,82 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
         }
 
-        agregaDomicilio();
+        //agregaDomicilio();
 
         rep.add("");
+        rep.addc("Powered by DTSolutions, S.A.");
+        rep.addc("dts.com.gt");
         rep.add("");
         rep.add("");
-        rep.add("");
+
+        direccionDomicilio();
+
+        if (qrsalvador) {
+            rep.add("DESCARGA TU DOCUMENTO EN ESTE ENLACE");
+            rep.add("");
+            rep.add("@@pic qrmpos.png");
+            rep.add("");
+            rep.add("");
+        }
 
         return super.buildFooter();
     }
 
     private boolean footerTicketSV() {
-        double totimp,totperc;
+        double totimp,totperc,sst;
 
         //stot=stot-imp;
         totperc=stot*(percep/100);totperc=round2(totperc);
         totimp=imp-totperc;
 
-        rep.addtotsp("Subtotal: ", fh_grav+fh_exent);
+        sst=fh_grav+fh_exent;
+        if (Math.abs(sst-sv_subt)<0.02) sst=sv_subt;
+
+        if (desc>=0.01 | propina>=0.01) rep.addtotsp("Subtotal: ", sst);
         //rep.addtotsp("Subtotal: ", stot);
-        rep.addtotsp("Total gravado: ", fh_grav);
+        //rep.addtotsp("Total gravado: ", fh_grav);
         //rep.addtotsp("Subtotal: ", fh_grav+fh_exent+fh_imp1);
         //rep.addtotsp("Total Gravado: ", fh_grav+fh_imp1);
-        rep.addtotsp("Total exento: ", 0);
-        rep.addtotsp("Venta no sujeta: ", fh_exent);
+        //rep.addtotsp("Total exento: ", 0);
+        //rep.addtotsp("Venta no sujeta: ", fh_exent);
         //rep.addtotsp("Importe exonerado: ", fh_exon);
         if (desc>=0.01) rep.addtotsp("Descuento: ", -desc);
-        rep.addtotsp("Total : ", tot);
+        if (propina>=0.01) rep.addtotsp("Propina: ", propina);
 
-        montoLetra();
+        rep.addtotsp("Total a pagar: ", tot);
 
-        if (plines.size()>0) {
-            rep.add("Formas de pago:");
-            for (int ii= 0; ii <plines.size(); ii++) {
-                rep.add(plines.get(ii));
-            }
-        }
+        // montoLetra();
+
 
         if (modorest) {
-            rep.add("");
-            rep.add("Le atendio: "+nommesero);
+            //rep.add("");
+            //rep.add("Le atendio: "+nommesero);
         }
 
-        agregaDomicilio();
+        if (parallevar){
+            rep.add("");
+            rep.addc("P A R A  L L E V A R");
+            rep.add("");
+        }
 
-        rep.add("");
+        if (domicilio) {
+            rep.add("");
+            rep.addc("D O M I C I L I O");
+            rep.add("");
+        }
+
         //rep.add("Datos del Cliente");
         //rep.add("Nombre: Consumidor Final");
         //rep.add("DUI/NIT: C/F");
+
+        rep.add("");
+        rep.addc("Powered by DTSolutions, S.A.");
+        rep.addc("dts.com.gt");
         rep.add("");
         rep.add("");
         rep.add("");
+
+        direccionDomicilio();
 
         return super.buildFooter();
 
@@ -1811,6 +1785,7 @@ public class clsDocFactura extends clsDocument {
         */
 
         agregaDomicilio();
+        direccionDomicilio();
 
         rep.add("");
         rep.add("");
@@ -1821,6 +1796,69 @@ public class clsDocFactura extends clsDocument {
     }
 
     //endregion
+
+    //region Aux
+
+    private void direccionDomicilio() {
+        String sd;
+
+        try {
+            if (domlines.size()==0) return;
+
+            rep.add("");
+            rep.add("");
+            rep.line();
+            rep.add("");
+
+            for (int i = 0; i <domlines.size(); i++) {
+                sd=domlines.get(i);
+                rep.add(sd);
+            }
+
+            rep.add("");
+            rep.line();
+            rep.add("");
+            rep.add("");
+
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void agregaDomicilio() {
+        if (!domicilio) return;
+
+        rep.add("");
+        rep.addc("D O M I C I L I O");
+        rep.add("");
+        rep.add(nombre_cliente);
+
+        if (!emptystr(clidir)) {
+            //clidir="Dir.: "+clidir;
+            if (clidir.length()>prw) {
+
+                String nuevaCadena = "", cadena = "";
+
+                cadena = clidir;
+                nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
+                cadena = cadena.substring(prw);
+                if (cadena.length() > prw) {
+                    nuevaCadena =cadena.substring(0, prw);rep.add(nuevaCadena);
+                    cadena = cadena.substring(prw);
+                    if (cadena.length() > prw) {
+                        nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
+                    } if (cadena.length()>0) rep.add(cadena);
+                } else {
+                    if (cadena.length()>0) rep.add(cadena);
+                }
+            } else rep.add(clidir);
+        }
+
+        try {
+            if (!clitel.isEmpty()) rep.add("Tel.: "+clitel);
+        } catch (Exception e) {}
+
+    }
 
     private void montoLetra() {
         clsNumALetra NLet=new clsNumALetra();
@@ -1850,78 +1888,6 @@ public class clsDocFactura extends clsDocument {
         rep.add("");
     }
 
-	private boolean footerToledano() {
-		double totimp, totperc,totalNotaC;
-
-		stot = stot - imp;
-		totperc = stot * (percep / 100);
-		totperc = round2(totperc);
-		totimp = imp - totperc;
-		totalNotaC =   tot - totNotaC;
-
-		rep.addtotsp("Subtotal", stot);
-
-		if (corelF.equals(asignacion)) {
-
-			rep.addtotsp("Nota de Credito", totNotaC);
-			rep.addtotsp("ITBM:", totimp);
-			rep.addtotsp("Total:", totalNotaC);
-			rep.add("");
-			rep.add("");
-			rep.add("Total de items: "+totitems);
-			rep.add("");
-			bonificaciones();
-			rep.add("");
-			rep.line();
-			rep.addc("Firma Cliente");
-			rep.add("");
-			rep.addc("Se aplico nota de crédito: "+corelNotaC);
-			rep.add("");
-			rep.addc("DE SER UNA VENTA AL CREDITO, SOLAMEN");
-			rep.addc("TE NUESTRO CORRESPONDIENTE RECIBO SE");
-			rep.addc("CONSIDERARA COMO EVIDENCIA  DE  PAGO");
-			rep.add("");
-
-			rep.add("Serial : "+deviceid);
-			rep.add(resol);
-			rep.add(resfecha);
-			rep.add("");
-
-		} else {
-
-			rep.addtotsp("ITBM", totimp);
-			rep.addtotsp("Total", tot);
-			rep.add("");
-			rep.add("");
-			rep.add("Total de items: "+totitems);
-			rep.add("");
-			bonificaciones();
-			rep.add("");
-			rep.line();
-			rep.addc("Firma Cliente");
-			rep.add("");
-
-			if (pendiente!=4){
-				rep.addc("DE SER UNA VENTA AL CREDITO, SOLAMEN");
-				rep.addc("TE NUESTRO CORRESPONDIENTE RECIBO SE");
-				rep.addc("CONSIDERARA COMO EVIDENCIA  DE  PAGO");
-				rep.add("");
-			}
-
-			rep.add("Serial : "+deviceid);
-			rep.add(resol);
-			rep.add(resfecha);
-			rep.add("");
-
-		}
-
-		return super.buildFooter();
-	}
-
-    //endregion
-
-	//region Aux
-	
 	public double round2(double val){
 		int ival;
 		

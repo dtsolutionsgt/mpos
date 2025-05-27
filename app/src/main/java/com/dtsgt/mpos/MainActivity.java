@@ -3,11 +3,14 @@ package com.dtsgt.mpos;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -19,6 +22,7 @@ import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -35,16 +39,18 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RemoteViews;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatosVersion;
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.base.clsFont3x5;
+import com.dtsgt.classes.clsFont3x5;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsKeybHandler;
@@ -53,11 +59,25 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
+import com.dtsgt.firebase.fbBase;
+import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.LA_Login;
-import com.dtsgt.webservice.startMainTimer;
+import com.dtsgt.webservice.srvBase;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import com.google.zxing.BarcodeFormat;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
+
 
 public class MainActivity extends PBase {
 
@@ -65,24 +85,36 @@ public class MainActivity extends PBase {
     private TextView lblDts,lblRuta, lblRTit, lblVer, lblEmp, lblPass, lblKeyDP;
     private ImageView imgLogo;
     private Spinner spin;
+
     private BaseDatosVersion dbVers;
     private LA_Login adapter;
+
+    private fbStock fbs;
+
+    private fbBase fbdom;
+    private DatabaseReference fbdomref;
+    private ValueEventListener pedidoEventListener;
+
+    private NotificationManager notificationManager;
+
     private ArrayList<clsClasses.clsMenu> mitems = new ArrayList<>();
     private ArrayList<String> spincode = new ArrayList<>();
     private ArrayList<String> spinlist = new ArrayList<>();
+
     private clsKeybHandler khand;
+
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
 
-    private String  parVer = "4.11.3.2";
+    private String parVer = "5.5.7.2";
     private boolean bloqueo_venta=false;
 
     private Typeface typeface;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         try {
 
             super.onCreate(savedInstanceState);
@@ -100,8 +132,14 @@ public class MainActivity extends PBase {
                 modopantalla = 2;
             }
 
+            try {
+                fbs =new fbStock("Stock",0);
+            } catch (Exception e) {
+                String se=e.getMessage();
+                se=se+"";
+            }
+
             grantPermissions();
-            //typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.inconsolata);
 
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
@@ -117,7 +155,7 @@ public class MainActivity extends PBase {
         }
 
         if (pantallaHorizontal()) {
-            if (scrdim > 8) {
+            if (scrdim >7) {
                 setContentView(R.layout.activity_main);
                 modopantalla = 1;
             } else {
@@ -149,7 +187,8 @@ public class MainActivity extends PBase {
                         && checkCallingOrSelfPermission(Manifest.permission.WAKE_LOCK) == PackageManager.PERMISSION_GRANTED
                         && checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
                         && checkSelfPermission(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
-                        && checkSelfPermission("android.permission.BLUETOOTH_CONNECT") == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission("android.permission.BLUETOOTH_CONNECT") == PackageManager.PERMISSION_GRANTED
                         && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
                         startApplication();
                     } else {
@@ -160,6 +199,7 @@ public class MainActivity extends PBase {
                                 Manifest.permission.CAMERA,
                                 Manifest.permission.WAKE_LOCK,
                                 Manifest.permission.BLUETOOTH,
+                                Manifest.permission.POST_NOTIFICATIONS,
                                 "android.permission.BLUETOOTH_CONNECT",
                                 Manifest.permission.READ_PHONE_STATE
                         }, 1);
@@ -168,12 +208,13 @@ public class MainActivity extends PBase {
                 } else {
 
                     if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                        && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                        && checkSelfPermission(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
-                        && checkCallingOrSelfPermission(Manifest.permission.WAKE_LOCK) == PackageManager.PERMISSION_GRANTED
-                        && checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-                        && checkSelfPermission(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
-                        && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                            && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
+                            && checkCallingOrSelfPermission(Manifest.permission.WAKE_LOCK) == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
                         startApplication();
                     } else {
                         ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -182,6 +223,7 @@ public class MainActivity extends PBase {
                                 Manifest.permission.CAMERA,
                                 Manifest.permission.WAKE_LOCK,
                                 Manifest.permission.BLUETOOTH,
+                                Manifest.permission.POST_NOTIFICATIONS,
                                 Manifest.permission.READ_PHONE_STATE
                         }, 1);
                     }
@@ -200,6 +242,7 @@ public class MainActivity extends PBase {
             super.InitBase();
 
             gl.bloqueo_venta=bloqueo_venta;
+            gl.pedido_dom_import=false;
 
             this.setTitle("MPos");
             gl.parVer = parVer;
@@ -244,16 +287,14 @@ public class MainActivity extends PBase {
                 gl.debug = false;
             }
 
-            /*
-            if (!validaLicencia()) {
-                startActivity(new Intent(this, comWSLic.class));
-                return;
-            } else
-            {
-                supervisorRuta();
-            } */
-
             app.setScreenDim(this);
+
+            try {
+                fbs.listExist("/"+gl.tienda+"/",0,null);
+            } catch (Exception e) {
+                String se=e.getMessage();
+                se=se+"";
+            }
 
         } catch (Exception e) {
             msgbox(new Object() {
@@ -378,7 +419,20 @@ public class MainActivity extends PBase {
     }
 
     public void doFPTest(View view) {
-        //startActivity(new Intent(this, FingPTest.class));
+        //startActivity(new Intent(this, FBTest.class));
+        try {
+            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.mposupd");
+            intent.putExtra("filename","mpos.apk");
+            this.startActivity(intent);
+        } catch (Exception e) {
+            msgbox("No está instalada aplicación para actualización de versiónes, por favor informe soporte.");
+        }
+    }
+
+    public void doFELESA(View view) {
+        dodwn();
+        //startActivity(new Intent(this, FELESATest.class));
+        //felESA();
     }
 
     public void doFragTest(View view) {
@@ -447,7 +501,6 @@ public class MainActivity extends PBase {
     private void initSession() {
         Cursor DT;
         String s, rn = "";
-        String vCellCom = "";
 
         if (dbVacia()) {
             gl.emp = 3;
@@ -478,7 +531,6 @@ public class MainActivity extends PBase {
                 gl.sucur = DT.getString(2);
                 gl.codigo_ruta = DT.getInt(3);
 
-                vCellCom = "";
                 gl.CellCom = false;
 
                 rutapos = true;
@@ -571,8 +623,6 @@ public class MainActivity extends PBase {
 
             mu.curr = gl.peMon;
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             msgbox(e.getMessage());
         }
 
@@ -588,12 +638,17 @@ public class MainActivity extends PBase {
 
         llenaUsuarios();
 
-        if (gl.pePedidos | gl.pelCajaRecep) {
+        if (gl.pePedidos) iniciaDomicilio();
+
+
+
+        /*
+
+         if (gl.pePedidos | gl.pelCajaRecep) {
             String params = gl.wsurl + "#" + gl.emp + "#" + gl.tienda;
             startMainTimer.startService(this, params);
         }
 
-        /*
         if (gl.pePedidos) {
             String params = gl.wsurl + "#" + gl.emp + "#" + gl.tienda;
             startPedidosImport.startService(this, params);
@@ -607,7 +662,7 @@ public class MainActivity extends PBase {
         }
         */
 
-        //ubicacion();
+
 
 
     }
@@ -835,6 +890,93 @@ public class MainActivity extends PBase {
 
     //endregion
 
+    //region Domicilio
+
+    private void iniciaDomicilio() {
+        try {
+            gl.domicilio_notif=-1;
+
+            fbdom= new fbBase("DomicilioLog");
+            fbdomref= fbdom.fdb.getReference("DomicilioLog/"+gl.emp+"/"+gl.tienda+"/"+du.actDate()+"/");
+            notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+            registerEventListener();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void registerEventListener() {
+        try {
+
+            pedidoEventListener=fbdomref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (gl.domicilio_notif>0) {
+                        notifyMsg();
+                    }
+                    gl.domicilio_notif++;
+
+                    Intent intent = new Intent("com.dtsgt.PEDIDO_RECIBIDO");
+                    sendBroadcast(intent);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    toastlong("Error leer pedidos ");
+                }
+            });
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public void notifyMsg() {
+        int notificationId = createID();
+        String channelId = "channel-id",channelName = "Channel Name";
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(mChannel);
+        }
+
+        Intent fullScreenIntent = new Intent(this, srvBase.class);
+        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(this, 0,
+                fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        RemoteViews notificationLayout = new RemoteViews(getPackageName(), R.layout.notification_dom);
+
+        notificationLayout.setTextViewText(R.id.title, "Nuevo pedidio a domicilio");
+
+        Bitmap bm=Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.icono));
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.drawable.blank48)
+                .setLargeIcon(bm)
+                .setContentTitle("MPos")
+                .setVibrate(new long[]{100, 250})
+                .setAutoCancel(true)
+                .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                .setContent(notificationLayout)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_CALL)
+                .setFullScreenIntent(fullScreenPendingIntent, true)
+                .setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.sonarsub))
+                .setColor(Color.parseColor("#6200EE"));
+
+        notificationManager.notify(notificationId, mBuilder.build());
+
+    }
+
+    private int createID() {
+        Date now = new Date();
+        int id = Integer.parseInt(new SimpleDateFormat("ddHHmmss", Locale.ENGLISH).format(now));
+        return id;
+    }
+
+    //endregion
+
     //region Aux
 
     private void accesoAdmin() {
@@ -1015,25 +1157,13 @@ public class MainActivity extends PBase {
 
             if (gl.tienda != 0) {
                 try {
-                    sql = "SELECT DESCRIPCION, FEL_USUARIO_CERTIFICACION, FEL_LLAVE_CERTIFICACION,CODIGO_MUNICIPIO FROM P_SUCURSAL WHERE CODIGO_SUCURSAL='" + gl.tienda + "'";
+                    sql ="SELECT DESCRIPCION, FEL_USUARIO_CERTIFICACION, FEL_LLAVE_CERTIFICACION, NIT " + "FROM P_SUCURSAL WHERE CODIGO_SUCURSAL='" + gl.tienda + "'";
                     DT = Con.OpenDT(sql);
                     DT.moveToFirst();
                     gl.tiendanom = DT.getString(0);
                     gl.felUsuarioCertificacion = DT.getString(1);
                     gl.felLlaveCertificacion = DT.getString(2);
-
-                    try {
-                        gl.cli_muni_suc= DT.getString(3);
-
-                        sql = "SELECT codigo_departamento FROM P_municipio WHERE CODIGO='" + gl.cli_muni_suc + "'";
-                        DT = Con.OpenDT(sql);
-                        DT.moveToFirst();
-                        gl.cli_depto_suc=DT.getString(0);
-                    } catch (Exception e) {
-                        gl.cli_muni_suc="";gl.cli_depto_suc="";
-                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . Muni: "+e.getMessage());
-                    }
-
+                    gl.tiendanit = DT.getString(3);
                 } catch (Exception e) {
                     gl.tiendanom = "";
                 }
@@ -1215,11 +1345,26 @@ public class MainActivity extends PBase {
             scrdim = (int) screenInches;
             boolean horiz = point.x > point.y;
 
+            if (horizscr()) horiz=true;
+
             return horiz;
         } catch (Exception e) {
             return true;
         }
 
+    }
+
+    public boolean horizscr() {
+        try {
+            File file1 = new File(Environment.getExternalStorageDirectory(), "/mposhoriz.txt");
+            if(file1.exists()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     protected void toasthoriz(String msg) {
@@ -1282,6 +1427,24 @@ public class MainActivity extends PBase {
 
     }
 
+    private void dodwn() {
+        try {
+            String updf="https://sandbox-certificador.infile.com.sv/api/v1/reporte/reporte_documento?uuid=FDCA3C52-741D-4387-8449-53C042C76169&formato=pdf";
+
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap bitmap = barcodeEncoder.encodeBitmap(updf, BarcodeFormat.QR_CODE, 400, 400);
+
+            File qrfile = new File(Environment.getExternalStorageDirectory(), "/qrmpos.png");
+
+            FileOutputStream fos = new FileOutputStream(qrfile);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Dialogs
@@ -1339,8 +1502,6 @@ public class MainActivity extends PBase {
 
     //region Test Button
 
-    //region Font3x5
-
     private void test3x5() {
         try {
             clsFont3x5 ft=new clsFont3x5(36);
@@ -1349,7 +1510,6 @@ public class MainActivity extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
-
 
     //endregion
 
@@ -1588,8 +1748,6 @@ public class MainActivity extends PBase {
 
     //endregion
 
-    //endregion
-
     //region Activity Events
 
     protected void onResume() {
@@ -1614,6 +1772,13 @@ public class MainActivity extends PBase {
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
+    }
+
+    protected void onDestroy() {
+        try {
+            fbdomref.removeEventListener(pedidoEventListener);
+        } catch (Exception e) {  }
+        super.onDestroy();
     }
 
     //endregion

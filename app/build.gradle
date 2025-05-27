@@ -10,10 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.dtsgt.mpos"
-        minSdkVersion 23
-        //noinspection ExpiredTargetSdkVersion
-      23
-
+        minSdkVersion 24
     }
 
     sourceSets {
@@ -70,6 +67,7 @@ dependencies {
     implementation files('libs/do_androidsdk.jar')
     implementation files('libs/ZSDK_ANDROID_API.jar')
     implementation files('libs/ePOS2.jar')
+    implementation files('libs/Generador.jar')
     implementation files('src/main/jniLibs/httpcore-4.4.10.jar')
     implementation files('src/main/jniLibs/httpclient-4.5.6.jar')
     implementation files('src/main/jniLibs/ksoap2-android-assembly-3.0.0-jar-with-dependencies.jar')
@@ -81,7 +79,13 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    //implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.3'
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0' // Usa la última versión de Retrofit
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1' // Usa la última versión de OkHttp
+    implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
+
     implementation platform('com.google.firebase:firebase-bom:29.0.3')
     implementation 'com.google.firebase:firebase-analytics'
     implementation('org.simpleframework:simple-xml:2.7.1') {
@@ -90,11 +94,18 @@ dependencies {
     }
 
     // Zxing libraries
+    implementation 'com.google.zxing:core:3.5.1'
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
     //compile 'com.embarkmobile:zxing-android-minimal:2.0.0@aar'
     //compile 'com.embarkmobile:zxing-android-integration:2.0.0@aar'
     //compile 'com.google.zxing:core:3.0.1'
     implementation 'com.google.zxing:core:3.2.0'
+
     implementation 'androidx.core:core:1.9.0'
+    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'androidx.work:work-runtime:2.7.1'
+    implementation 'com.android.volley:volley:1.2.1'
+    implementation files('libs/javax.mail.jar')
     implementation 'com.google.zxing:core:3.5.1'
     implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
 
@@ -109,19 +120,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-perf:20.2.0'
     implementation 'com.google.firebase:firebase-messaging:23.1.0'
     implementation 'com.google.firebase:firebase-iid:21.1.0'
+    implementation 'com.google.firebase:firebase-perf'
     implementation 'com.google.firebase:firebase-storage'
 
-    implementation 'androidx.work:work-runtime:2.7.1'
-    // Import the BoM for the Firebase platform
-    implementation platform('com.google.firebase:firebase-bom:29.0.3')
-    // Declare the dependency for the Performance Monitoring library
-    // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation 'com.google.firebase:firebase-perf'
-    implementation 'com.android.volley:volley:1.2.1'
-    implementation 'com.google.android.material:material:1.7.0'
-    //implementation 'com.sun.mail:android-mail:1.6.2'
-    //implementation 'com.sun.mail:android-activation:1.6.2'
-
-    implementation files('libs/javax.mail.jar')
+    implementation 'com.google.code.gson:gson:2.10'
 
 }

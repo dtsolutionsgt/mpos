@@ -3,15 +3,20 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dtsgt.base.AppMethods;
@@ -27,7 +32,9 @@ import com.dtsgt.classes.clsDocCajaPagos;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsDocMov;
 import com.dtsgt.classes.clsDocPedido;
+import com.dtsgt.classes.clsP_gran_contObj;
 import com.dtsgt.classes.clsRepBuilder;
+import com.dtsgt.classes.extListDlg;
 import com.dtsgt.ladapt.ListAdaptCFDV;
 
 import org.apache.commons.lang.StringUtils;
@@ -38,7 +45,9 @@ import java.util.Calendar;
 public class Reimpresion extends PBase {
 
 	private ListView listView;
-	private TextView lblTipo;
+	private TextView lblTipo,lblfiltro;
+	private EditText txtfiltro;
+	private RelativeLayout relflt;
 	
 	private ArrayList<clsClasses.clsCFDV> items= new ArrayList<clsClasses.clsCFDV>();
 	private ListAdaptCFDV adapter;
@@ -49,7 +58,7 @@ public class Reimpresion extends PBase {
 	private printer prn_nc;
 	private printer  prn_can,prn_paseante;
 	private Runnable printclose,printcallback,printvoid;
-	public clsRepBuilder rep;
+	private clsRepBuilder rep;
 	
 	private clsDocFactura fdoc;
 	private clsDocMov mdoc;
@@ -81,8 +90,8 @@ public class Reimpresion extends PBase {
 	private String pserie,pnumero,pruta,pvend,pcli,presol,presfecha,pfser,pfcor;
 	private String presvence,presrango,pvendedor,pcliente,pclicod,pclidir;
 	private double ptot;
-	private boolean imprimecan=false;
-	private int residx,ncFact;
+	private boolean imprimecan=false,modo_sv,modo_gt;
+	private int residx,ncFact,docidx=0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,12 +100,14 @@ public class Reimpresion extends PBase {
 			setContentView(R.layout.activity_reimpresion);
 
 			super.InitBase();
-			addlog("Reimpresion",""+du.getActDateTime(),gl.vend);
 
-			listView = (ListView) findViewById(R.id.listView1);
-			lblTipo= (TextView) findViewById(R.id.lblFecha);
-			lblDateini = (TextView) findViewById(R.id.lblDateini2);
-			lblDatefin = (TextView) findViewById(R.id.lblDatefin2);
+			listView = findViewById(R.id.listView1);
+			lblTipo= findViewById(R.id.lblFecha);
+			lblDateini = findViewById(R.id.lblDateini2);
+			lblDatefin = findViewById(R.id.lblDatefin2);
+			lblfiltro = findViewById(R.id.textView334);lblfiltro.setVisibility(View.INVISIBLE);
+			txtfiltro = findViewById(R.id.editTextText3);
+			relflt = findViewById(R.id.relfilters);relflt.setVisibility(View.INVISIBLE);
 
 			app = new AppMethods(this, gl, Con, db);
 			gl.validimp=app.validaImpresora();
@@ -110,6 +121,14 @@ public class Reimpresion extends PBase {
 			setHandlers();
 
 			setFechaAct();
+
+			modo_sv=false;modo_gt=false;
+			if (gl.codigo_pais.equalsIgnoreCase("GT")) modo_gt=true;
+			if (gl.codigo_pais.equalsIgnoreCase("SV")) modo_sv=true;
+
+			if (modo_sv) {
+				lblfiltro.setVisibility(View.VISIBLE);
+			}
 
 			listItems();
 
@@ -140,68 +159,69 @@ public class Reimpresion extends PBase {
 				} catch (Exception e) {
 				}
 			}
-		};
+			};
 
-		printvoid= new Runnable() {
-			public void run() {
-			}
-		};
-
-		printcallback = new Runnable() {
-			public void run() {
-
-				try {
-					//#CKFK_20190401 03:43 PM Agregué esto para imprimir la NC cuando la factura está asociada a una
-					corelNC = getCorelNotaCred(itemid);
-
-					if (!corelNC.isEmpty()) {
-
-						fdev.buildPrint(corelNC, 1, "TOL");
-						prn_nc.printnoask(printvoid, "printnc.txt");
-					}
-
-					if (imprimecan){
-						prn_can.printnoask(printclose, "printdevcan.txt");
-						imprimecan=false;
-					}
-
-					askPrint();
-				} catch (Exception e) {
-					msgbox(e.getMessage());
+			printvoid= new Runnable() {
+				public void run() {
 				}
+			};
 
+			printcallback = new Runnable() {
+				public void run() {
+
+					try {
+						//#CKFK_20190401 03:43 PM Agregué esto para imprimir la NC cuando la factura está asociada a una
+						corelNC = getCorelNotaCred(itemid);
+
+						if (!corelNC.isEmpty()) {
+
+							fdev.buildPrint(corelNC, 1, "TOL");
+							prn_nc.printnoask(printvoid, "printnc.txt");
+						}
+
+						if (imprimecan){
+							prn_can.printnoask(printclose, "printdevcan.txt");
+							imprimecan=false;
+						}
+
+						askPrint();
+					} catch (Exception e) {
+						msgbox(e.getMessage());
+					}
+
+				}
+			};
+
+
+			switch (tipo) {
+				case 2:
+					ddoc=new clsDocDepos(this,prn.prw,gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
+					lblTipo.setText("Depósito");break;
+				case 3:
+					fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"",gl.peComboDet);
+					lblTipo.setText((gl.peMFact?"Factura":"Ticket"));
+					relflt.setVisibility(View.VISIBLE);
+					break;
+				case 4:
+					mdoc=new clsDocMov(this,prn.prw,"Recarga",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
+					lblTipo.setText("Recarga");break;
+				case 5:
+					mdoc=new clsDocMov(this,prn.prw,"Dvolucion a bodega",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
+					lblTipo.setText("Devolución a bodega");break;
+				case 7:
+					fcpag=new clsDocCajaPagos(this,prn.prw,"Pago de caja",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
+					fcpag.deviceid =gl.deviceId;
+					lblTipo.setText("Pagos de Caja");break;
+				case 99:
+					lblTipo.setText("Cierre de día");break;
 			}
-		};
 
-		switch (tipo) {
-			//#CKFK 20200520 Quité la reimpresión de 1-recibos, 0-pedidos y 6-notas de crédito
-			case 2:
-				ddoc=new clsDocDepos(this,prn.prw,gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
-				lblTipo.setText("Depósito");break;
-			case 3:
-				fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"",gl.peComboDet);
-				lblTipo.setText((gl.peMFact?"Factura":"Ticket"));break;
-			case 4:
-				mdoc=new clsDocMov(this,prn.prw,"Recarga",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
-				lblTipo.setText("Recarga");break;
-			case 5:
-				mdoc=new clsDocMov(this,prn.prw,"Dvolucion a bodega",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
-				lblTipo.setText("Devolución a bodega");break;
-			case 7:
-				fcpag=new clsDocCajaPagos(this,prn.prw,"Pago de caja",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
-				fcpag.deviceid =gl.deviceId;
-				lblTipo.setText("Pagos de Caja");break;
-			case 99:
-				lblTipo.setText("Cierre de día");break;
-		}
-
-		}catch (Exception ex){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),"");
+		} catch (Exception ex){
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName() + " " + ex.getMessage());
 		}
 	}
 
-	// Events
+	//region Events
 	
 	public void printDoc(View view){
 		try{
@@ -214,6 +234,18 @@ public class Reimpresion extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
+	}
+
+	public void doClear(View view) {
+		txtfiltro.setText("");
+	}
+
+	public void doDocuments(View view) {
+		showMenu();
+	}
+
+	public void regresar(View v) {
+		finish();
 	}
 
 	private void setHandlers(){
@@ -264,20 +296,35 @@ public class Reimpresion extends PBase {
 					return true;
 				}
 			});
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+
+			txtfiltro.addTextChangedListener(new TextWatcher() {
+
+				public void afterTextChanged(Editable s) {}
+
+				public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+				public void onTextChanged(CharSequence s, int start, int before, int count) {
+					listItems();
+				}
+			});
+
+		} catch (Exception e){
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+": "+e.getMessage());
 		}
 	}
 
-	// Main
+	//endregion
+
+	//region Main
 
 	public void listItems() {
 		Cursor DT = null;
 		clsClasses.clsCFDV vItem;	
 		int vP,f;
 		double val;
-		String id,sf,sval,tm;
-		long ff;
+		String id,sf,sval,tm,td,cont,flt,ft;
+		long ff,nd;
+		boolean cont_flag;
 
 		items.clear();
 		
@@ -297,12 +344,33 @@ public class Reimpresion extends PBase {
 				case 3:
 					progress.setMessage("Cargando lista de facturas...");
 					progress.show();
-					//(D_FACTURA.STATCOM='N') AND
+
+					flt="";
+					switch (docidx) {
+						case 1:
+							flt=" AND (D_FACTURA.AYUDANTE='N') ";break;
+						case 2:
+							flt=" AND (D_FACTURA.AYUDANTE='T') ";break;
+						case 3:
+							flt=" AND (D_FACTURA.AYUDANTE='C') ";break;
+					}
+
+					ft=txtfiltro.getText().toString();
+					if (!ft.isEmpty()) {
+						flt+=" AND ((P_CLIENTE.NOMBRE LIKE '%"+ft+"%') ";
+						try {
+							nd=Long.parseLong(ft);
+							flt+=" OR (D_FACTURA.CORELATIVO ="+nd+") ";
+						} catch (Exception e) {}
+						flt+=" OR (D_FACTURA.FEELUUID LIKE '%"+ft+"%')) ";
+					}
+
 					sql = "SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO," +
-						  "D_FACTURA.IMPRES, D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR " +
+						  "D_FACTURA.IMPRES, D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR,D_FACTURA.FEELCONTINGENCIA, D_FACTURA.AYUDANTE " +
 						  "FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE " +
 						  "WHERE (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
-						  "ORDER BY D_FACTURA.COREL DESC";
+						  flt+
+						  " ORDER BY D_FACTURA.COREL DESC";
 					break;
 				case 4:
 					progress.setMessage("Cargando lista de recargas de inventario...");
@@ -340,18 +408,35 @@ public class Reimpresion extends PBase {
 
 							vItem =clsCls.new clsCFDV();
 
-							vItem.Cod=DT.getString(0);
+							vItem.Cod=DT.getString(0);vItem.tipodoc="";cont_flag=false;
+							vItem.colflag=-1;
+
 							vItem.Desc=DT.getString(1);
 							if (tipo==2) vItem.Desc+=" - "+DT.getString(4);
 
 							if (tipo==3) {
 								sf=DT.getString(2)+ StringUtils.right("000000" + Integer.toString(DT.getInt(4)), 6);;
+								if (tipo==3 && modo_sv) {
+									td=DT.getString(9);vItem.tipodoc="F";
+									if (td.equalsIgnoreCase("T")) vItem.tipodoc="T";
+									if (td.equalsIgnoreCase("C")) vItem.tipodoc="C";
+								}
+
+								vItem.UUID=DT.getString(6)+"";
+								cont=DT.getString(8)+"";
+								if (vItem.UUID.length()<5) {
+									vItem.colflag=1;cont_flag=true;
+								} else {
+									vItem.colflag=2;
+								}
+
 							} else if (tipo==1||tipo==6||tipo==7){
 								sf=DT.getString(0);
-							}else {
+							} else {
 								f=DT.getInt(2);sf=du.sfecha(f)+" "+du.shora(f);
 							}
 
+							vItem.flag=cont_flag;
 							vItem.Fecha=sf;
 
 							val=DT.getDouble(3);sval=""+val;
@@ -455,8 +540,6 @@ public class Reimpresion extends PBase {
 
 	}
 
-	//#CKFK 20200520 Quité la funciones para reimpresión de 1-recibos, 0-pedidos y 6-notas de crédito
-
 	private void imprDeposito() {
 		try {
 			if (prn.isEnabled()){
@@ -522,10 +605,14 @@ public class Reimpresion extends PBase {
 			fdoc.PropinaAparte=gl.peFactPropinaAparte;
 			fdoc.felISR2impr=gl.peReg4impr;
 
+			fdoc.tiendanom=gl.tiendanom;
+			fdoc.tiendanit=gl.tiendanit;
+
 			if (gl.codigo_pais.equalsIgnoreCase("HN")) cargaTotalesHonduras();
 			if (gl.codigo_pais.equalsIgnoreCase("SV")) {
 				cargaTotalesSalvador();
 				fdoc.sal_nit="NIT: ";
+				fdoc.svcf_nit="";fdoc.svcf_dep="";fdoc.svcf_muni="";fdoc.svcf_neg="";
 				if (svnit.equalsIgnoreCase("C")) fdoc.sal_nit="NRC: ";
 			}
 
@@ -534,7 +621,10 @@ public class Reimpresion extends PBase {
 
 			if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura,gl.peMFact)) {
                 gl.QRCodeStr = fdoc.QRCodeStr;
-                app.doPrint();
+				if (gl.codigo_pais.equalsIgnoreCase("HN")) gl.QRCodeStr="";
+				if (gl.codigo_pais.equalsIgnoreCase("SV")) gl.QRCodeStr="";
+
+				app.doPrint();
 
 				try {
 					sql="UPDATE D_FACTURA SET IMPRES=2 WHERE COREL='"+itemid+"'";
@@ -660,8 +750,6 @@ public class Reimpresion extends PBase {
 		}
 	}
 
-	//CM_20190506: Valida si tiene canastas y devolución
-
 	private String tieneCanasta(String vCorel){
 
 		Cursor DT;
@@ -722,9 +810,11 @@ public class Reimpresion extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox(e.getMessage());
 		}
-	}	
+	}
 
-	//Fecha
+	//endregion
+
+	//region Fecha
 
 	public void showDateDialog1(View view) {
 		try{
@@ -815,7 +905,10 @@ public class Reimpresion extends PBase {
 		}
 	}
 
-	// Ultima factura
+	//endregion
+
+	//region  Ultima factura
+
 	private void imprUltFactura() {
 		Cursor dt;
 		String id,serie;
@@ -1033,24 +1126,7 @@ public class Reimpresion extends PBase {
 		return uniqueID;
 	}
 
-	public void regresar(View v) {
 
-		ExDialog dialog = new ExDialog(this);
-		dialog.setMessage("¿Salir?");
-
-		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				finish();
-			}
-		});
-
-		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {}
-		});
-
-		dialog.show();
-
-	}
 
 	private void msgAskExit(String msg) {
 		ExDialog dialog = new ExDialog(this);
@@ -1069,5 +1145,42 @@ public class Reimpresion extends PBase {
 		dialog.show();
 
 	}
+
+	//endregion
+
+	//region Aux
+
+	private void showMenu() {
+
+		try {
+
+			extListDlg listdlg = new extListDlg();
+			listdlg.buildDialog(Reimpresion.this,"Documentos");
+
+			listdlg.add("Todos los documentos");
+			listdlg.add("Factura");
+			listdlg.add("Ticket");
+			listdlg.add("Crédito fiscal");
+
+			listdlg.setOnItemClickListener((parent, view, position, id) -> {
+
+				try {
+					docidx=position;
+					listItems();
+
+					listdlg.dismiss();
+				} catch (Exception e) {}
+			});
+
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
+			listdlg.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+	}
+
+	//endregion
 
 }

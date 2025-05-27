@@ -69,7 +69,7 @@ public class ListAdaptCFDV extends BaseAdapter {
 			holder = (ViewHolder) convertView.getTag();
 		}
 
-		holder.lblFecha.setText(itemDetailsrrayList.get(position).Fecha);
+		holder.lblFecha.setText(itemDetailsrrayList.get(position).Fecha+" "+itemDetailsrrayList.get(position).tipodoc);
 		holder.lblDesc.setText(itemDetailsrrayList.get(position).Desc);
 		holder.lblValor.setText(itemDetailsrrayList.get(position).Valor);
 
@@ -83,7 +83,15 @@ public class ListAdaptCFDV extends BaseAdapter {
 			holder.lblFechaFactura.setVisibility(View.VISIBLE);
 		}
 
-		if(selectedIndex!= -1 && position == selectedIndex) {
+		if (itemDetailsrrayList.get(position).colflag==1) {
+			holder.lblFecha.setBackgroundColor(Color.parseColor("#F39375"));
+		} else if (itemDetailsrrayList.get(position).colflag==2) {
+			holder.lblFecha.setBackgroundColor(Color.parseColor("#95ED97"));
+		} else {
+			holder.lblFecha.setBackgroundColor(Color.TRANSPARENT);
+		}
+
+		if (selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
 		} else {
 			convertView.setBackgroundColor(Color.TRANSPARENT);

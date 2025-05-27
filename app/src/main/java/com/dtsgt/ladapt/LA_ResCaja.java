@@ -73,7 +73,7 @@ public class LA_ResCaja extends BaseAdapter {
             holder.lbl4 = convertView.findViewById(R.id.lblV4);
             holder.lbl5 = convertView.findViewById(R.id.lblV5);
             holder.lbl6 = convertView.findViewById(R.id.textView273);
-            holder.img1 =  convertView.findViewById(R.id.imageView102);
+            holder.img1 = convertView.findViewById(R.id.imageView102);
 
             convertView.setTag(holder);
         } else {
@@ -81,9 +81,9 @@ public class LA_ResCaja extends BaseAdapter {
         }
 
         holder.lbl2.setText(""+items.get(position).f2);
-        holder.lbl4.setText(""+items.get(position).f4);
+        holder.lbl4.setText(""+items.get(position).f7);
         holder.lbl5.setText(""+items.get(position).pk);
-        holder.lbl6.setText(""+items.get(position).f7);
+        holder.lbl6.setText(""+items.get(position).f4);
 
         holder.img1.setImageResource(R.drawable.mesa_ocupada);
         if (items.get(position).f3.equalsIgnoreCase("2")) {

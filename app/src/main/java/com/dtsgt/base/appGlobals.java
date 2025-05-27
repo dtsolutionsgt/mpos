@@ -1,6 +1,5 @@
 package com.dtsgt.base;
 
-import android.app.Activity;
 import android.app.Application;
 
 import com.dtsgt.base.clsClasses.clsBonifItem;
@@ -11,51 +10,72 @@ import com.epson.eposdevice.printer.Printer;
 import java.util.ArrayList;
 
 public class appGlobals extends Application {
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		try {
+			//FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+		} catch (Exception e) {
+			String ss=e.getMessage();
+		}
+	}
+
 	public boolean bloqueo_venta;
 	public String rutanom,sucur,rutatipo, rutatipog,  vendnom, gstr, gstr2, prod, um, umpres, umstock, clitipo;
 	public String ubas, empnom,imgpath,umpeso,lotedf,impresora, tipoImpresora, codSupervisor, ayudante,
-			ayudanteID, vehiculo, vehiculoID;
+			ayudanteID, vehiculo, vehiculoID,idtrasalmacen;
 	public String bonprodid,bonbarid,bonbarprod,pprodname,contrib,ateninistr,tcorel,CodDev,tipoprodcod;
 	public int prodcod,prodmenu,itemid,gint,tipo,nivel,nivel_sucursal,rol,prodtipo,prw,boldep,vnivel,vnivprec,media;
 	public boolean EsVentaDelivery,EsNivelPrecioDelivery = false;
-	public int autocom,pagomodo,filtrocli,prdlgmode,mantid,retcant,limcant,reportid,cajaid;
+	public int autocom,pagomodo,filtrocli,prdlgmode,mantid,retcant,limcant,reportid,cajaid,cred_dia;
 	public long nuevaFecha,atentini,lastDate;
-	public double dval,dpeso,pagoval,pagolim,bonprodcant,percepcion,costo,credito,umfactor,prectemp,fondoCaja,FinMonto;
+	public double dval,dpeso,pagoval,pagolim,bonprodcant,percepcion,costo,credito,cred_lim,
+			umfactor,prectemp,fondoCaja,FinMonto;
 	public boolean CellCom,closeDevBod,modoinicial,newmenuitem,validDate,comquickrec;
 	public String ref1,ref2,ref3,escaneo,corel_d_mov,barra,parVer,gcods,prtipo,prpar;
 	public String gNITCliente, gDirCliente, gNombreCliente, gCorreoCliente,gTelCliente;
 	public String felcorel,felserie,felnum,feluuid,prodid,pedid,pedcorel,idorden,mesanom,nom_est;
-	public String tiendanom,cajanom,urlglob,menuitemid,titReport,pickcode,pickname,wsurl;
-	public int tiponcredito,validarCred,gpsdist,gcodi,savemantid,salaid,idmesero,modoclave;
+	public String tiendanom,tiendanit,cajanom,urlglob,menuitemid,titReport,pickcode,pickname,wsurl;
+	public int tiponcredito,validarCred,gpsdist,gcodi,savemantid,salaid,idmesero,modoclave,mododocesa;
     public boolean vcredito,vcheque,vchequepost,validimp,dev,banco,disc,iniciaVenta,listaedit,exitflag;
 	public boolean closeCliDet, closeVenta,closePedido, promapl, pagado, pagocobro, sinimp, rutapos, devol, modoadmin,
 			    reportList, usarpeso, banderafindia, depparc, incNoLectura, cobroPendiente, findiaactivo,
-	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular,checksuper,gNITcf;
+	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular,checksuper,gNITcf,
+				inic_inv_auto;
 	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,idmodgr,
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid,mesero_venta,mesacodigo,
                 comensales, cliente_dom, idclidir, idalm, idalm2, idalmpred,mesa_grupo,
-			    uidingrediente, idgrres, idgrsel, idgrpos, usuario_cortesia,bar_prod,cuenta_borrar,
-				mesa_vend,mesa_codigo,invcent_cod,sal_idneg,desc_tipo_apl,servidor_anio,fact_sin_cert,
-			    idcombo,set_cant,set_cant_max;
+			    uidingrediente, idgrres, idgrsel, idgrpos, usuario_cortesia,bar_prod,cuenta_borrar,cuenta_pagar,
+				mesa_vend,mesa_codigo,invcent_cod,invcen_alm,sal_idneg,desc_tipo_apl,prcu_mesa,
+			    prcu_vend,precuenta_cuenta,combo_cuenta,dias_credito,precuenta_modo,domicilio_notif,
+			    servidor_anio,idcombo,set_cant,set_cant_max,fact_sin_cert,fd_hn_cori,fd_hn_corf,
+				dom_est_val,repartidor_codigo,ped_dom_empresa;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel,
                 corelmov, linea_sel="",mesa_alias,nummesapedido, nombre_cortesia,bar_um,bar_idbarril;
 	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir,sal_iddep,sal_idmun,sal_neg,sal_mun,sal_dep,
-			     caja_est_pago,caja_est_pago_cmd,caja_est_pago_cue,cli_muni,cli_depto,cli_muni_suc,cli_depto_suc,
-			     nom_alm,nom_alm2,mesa_area,nit_tipo,invcent_tipo;
+			     prcu_corel,nom_alm,nom_alm2,mesa_area,nit_tipo,invcent_tipo,FEL_llave_cont,
+  	             cli_muni,cli_muni_suc,cli_depto,cli_depto_suc,dom_det_cod,
+			     ped_dom_corel,ped_dom_orden,ped_dom_cliente,ped_dom_dir,ped_dom_texto,ped_dom_tel,ped_dom_cambio;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,
-			      dom_total,bar_cant,descadd,monto_propina,preccombo;
+			      dom_total,bar_cant,descadd,monto_propina,limite_credito,preccombo,
+				  fd_hn_imp,fd_hn_exen,fd_hn_grav,ped_dom_monto,fd_cajapagos;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,paraentrega,
                    impresion_comanda, modo_domicilio, cf_domicilio, cierra_clave, mesero_lista ,
                    ingreso_mesero,after_login,modo_prec,mesero_precuenta,sin_propina,modo_upd_venta,
-			       modo_cortesia,modo_apertura,imp_inventario,sal_NIT,sal_NRC,sal_PER;
+			       modo_cortesia,modo_apertura,imp_inventario,sal_NIT,sal_NRC,sal_PER,nueva_mesa,
+				   combo_edit,cliente_credito=false,pedido_dom_import,repartidor_select,impStarLAN;
 
 	//FEL Identificacion
 	public String felSIN="SIN FEL";
 	public String felInfile="INFILE";
-	public String felSal="FELSAL";
+	public String felSal="INFILESV";
+
+	//FEL Salvador
+	public boolean sv_flag_nit,sv_flag_ncr,sv_cli_nue;
 
 	//Tamaño de pantalla
     public int scrx,scry,scrdim;
@@ -87,6 +107,7 @@ public class appGlobals extends Application {
 	public String peFraseIVA,peFraseISR,peImpFactIP;
 	public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps,peAvizoFEL;
 	public int peCajaPricipal,peNumImp,peLineaIngred,pePorConsumo,peMaxOrden;
+	public int peDomTiempo;
     public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,pePedidos;
 	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio,peInvCompart;
     public Boolean peImprFactCorrecta,peMCent,peImpOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;
@@ -94,9 +115,10 @@ public class appGlobals extends Application {
     public Boolean peAgregarCombo,peComboLimite,peComboDet,peFactSinPropina,peRedondPropina;
 	public Boolean peVentaDomicilio,peVentaEntrega,peDomEntEnvio,peNoCerrarMesas,peActOrdenMesas;
 	public Boolean peCafeTicket,peNoEnviar,peUsaSoloBOF,peAcumDesc, peNumOrdCommandaVenta;
-	public Boolean peImpFactBT,peImpFactLan,peImpFactUSB,peImpFactUSBSTAR,peNumOrdCentral,peCajaMesasManual;
-	public Boolean peFactPropinaAparte,pePrecu1015,peComandaVentaLAN,peReg4impr,peRepFormaSuper;
-    public double  pePropinaPerc,pePropinaCarta,peDescMax;
+	public Boolean peImpFactBT,peImpFactLan,peImpFactUSB,peImpFactUSBSTAR,peNumOrdCentral,peCajaMesasManual,peMesaAtenderTodos;
+	public Boolean peFactPropinaAparte,pePrecu1015,peCargarClientes,pePagoCredito,peRepLimitado,peRepFormaSuper;
+	public Boolean peDescPerc,peESAComprobante,peComandaVentaLAN,peComandaBorrarPass,peReg4impr,paDesc100,paCortProd;
+	public double  pePropinaPerc,pePropinaCarta,peDescMax;
 
     // Parametros Extra Local
     public Boolean pelCaja,pelCajaRecep,pelDespacho, pelOrdenComanda;
@@ -136,10 +158,15 @@ public class appGlobals extends Application {
 	public String felUsuarioCertificacion, felLlaveCertificacion;
 
 	public ArrayList<String> peditems = new ArrayList<String>();
+	public ArrayList<clsClasses.clsP_empresa_trans> emptrans= new ArrayList<clsClasses.clsP_empresa_trans>();
+
 
 	//#EJC202301020908AM: Parámetro para saber si se sincronizan o no
 	//todos los clientes.
 	public Boolean Sincronizar_Clientes = false;
 	public double auxCantVenta = 0;
+
+	public Runnable dialogr;
+	public int dialogid;
 
 }

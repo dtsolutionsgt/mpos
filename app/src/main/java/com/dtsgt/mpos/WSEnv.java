@@ -18,10 +18,13 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
+import com.dtsgt.classes.clsD_cxcObj;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_factura_felObj;
+import com.dtsgt.classes.clsD_factura_fel_paisObj;
 import com.dtsgt.classes.clsD_factura_svObj;
 import com.dtsgt.classes.clsD_facturacObj;
+import com.dtsgt.classes.clsD_facturacorObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturahnObj;
 import com.dtsgt.classes.clsD_facturapObj;
@@ -36,6 +39,7 @@ import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_cajapagosObj;
 import com.dtsgt.classes.clsP_cajareporteObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
+import com.dtsgt.classes.clsP_depositoObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsP_stock_almacenObj;
@@ -72,6 +76,11 @@ public class WSEnv extends PBase {
     private clsD_facturarObj D_facturarObj;
     private clsD_facturaprObj D_facturaprObj;
     private clsD_factura_felObj D_factura_felObj;
+    private clsD_factura_svObj D_factura_svObj;
+    private clsD_facturahnObj D_facturahnObj;
+    private clsD_factura_fel_paisObj D_factura_fel_paisObj;
+    private clsD_facturacorObj D_facturacorObj;
+
     private clsD_MovObj D_MovObj;
     private clsD_MovDObj D_MovDObj;
     private clsD_mov_almacenObj D_mov_almacenObj;
@@ -81,9 +90,10 @@ public class WSEnv extends PBase {
     private clsP_cajareporteObj P_cjReporteObj;
     private clsT_costoObj T_costoObj;
     private clsD_fel_errorObj D_fel_errorObj;
-    private clsD_factura_svObj D_factura_svObj;
-    private clsD_facturahnObj D_facturahnObj;
     private clsT_venta_horaObj T_venta_horaObj;
+    private clsD_cxcObj D_cxcObj;
+    private clsP_depositoObj P_depositoObj;
+
 
     private ArrayList<String> clients = new ArrayList<String>();
     private ArrayList<String> rutas = new ArrayList<String>();
@@ -105,7 +115,8 @@ public class WSEnv extends PBase {
             corelCjCierre, cjCierreError, corelCjReporte, cjReporteError, corelCjPagos, cjPagosError, cStockError;
     private int ftot, fsend, fidx, fTotMov, fIdxMov, fTotMovAlm, fIdxMovAlm,
             mSend, cjCierreTot, cjCierreSend, cjAsist, fTotAnul, cjReporteTot, cjReporteSend,
-            cjPagosTot, cjPagosSend, cjFelBita, cStockTot, cStockSend, cCosto, cCorCie,cFELErr;
+            cjPagosTot, cjPagosSend, cjFelBita, cStockTot, cStockSend, cfjCxcSend, cCosto,
+            cCorCie,cFELErr,cDepos;
     private boolean factsend, movSend, cjCierreSendB, cjReporteSendB, cjPagosSendB, cStockSendB;
 
     @Override
@@ -131,7 +142,6 @@ public class WSEnv extends PBase {
         wso=new wsOpenDT(gl.wsurl);
         rnVentaHora= () -> { ventaHoraCallback();};
 
-
         D_facturaObj = new clsD_facturaObj(this, Con, db);
         D_facturadObj = new clsD_facturadObj(this, Con, db);
         D_facturapObj = new clsD_facturapObj(this, Con, db);
@@ -139,18 +149,22 @@ public class WSEnv extends PBase {
         D_facturacObj = new clsD_facturacObj(this, Con, db);
         D_facturaprObj = new clsD_facturaprObj(this, Con, db);
         D_factura_felObj = new clsD_factura_felObj(this, Con, db);
+        D_factura_fel_paisObj = new clsD_factura_fel_paisObj(this, Con, db);
+        D_facturahnObj=new clsD_facturahnObj(this,Con,db);
+        D_factura_svObj = new clsD_factura_svObj(this, Con, db);
+        D_facturacorObj=new clsD_facturacorObj(this,Con,db);
         D_MovObj = new clsD_MovObj(this, Con, db);
         D_MovDObj = new clsD_MovDObj(this, Con, db);
         D_mov_almacenObj = new clsD_mov_almacenObj(this, Con, db);
         D_movd_almacenObj = new clsD_movd_almacenObj(this, Con, db);
         T_costoObj = new clsT_costoObj(this, Con, db);
         D_fel_errorObj=new clsD_fel_errorObj(this,Con,db);
-        D_factura_svObj=new clsD_factura_svObj(this,Con,db);
-        D_facturahnObj=new clsD_facturahnObj(this,Con,db);
         T_venta_horaObj=new clsT_venta_horaObj(this,Con,db);
         P_cjCierreObj = new clsP_cajacierreObj(this, Con, db);
         P_cjPagosObj = new clsP_cajapagosObj(this, Con, db);
         P_cjReporteObj = new clsP_cajareporteObj(this, Con, db);
+        D_cxcObj=new clsD_cxcObj(this,Con,db);
+        P_depositoObj=new clsP_depositoObj(this,Con,db);
 
         preparaEnvio();
 
@@ -239,8 +253,7 @@ public class WSEnv extends PBase {
                         break;
                     case 7:
                         processStock();
-                        cStockTot = cStock.size();
-                        if (cStockTot > 0) callMethod("Commit", "SQL", CSQL);
+                        callMethod("Commit", "SQL", CSQL);
                         break;
                     case 8:
                         processFelBita();
@@ -272,6 +285,19 @@ public class WSEnv extends PBase {
                         processFELErr();
                         if (cFELErr > 0) callMethod("Commit", "SQL", CSQL);
                         break;
+                    case 14:
+                        if (cfjCxcSend > 0) {
+                            processCxC();
+                            callMethod("Commit", "SQL", CSQL);
+                        }
+                        break;
+                    case 15:
+                        processDeposito();
+                        if (cDepos > 0) {
+                            callMethod("Commit", "SQL", CSQL);
+                        }
+                        break;
+
                 }
             } catch (Exception e) {
                 error = e.getMessage();
@@ -355,8 +381,17 @@ public class WSEnv extends PBase {
                     break;
                 case 13:
                     statusFELErr();
+                    execws(14);
+                    break;
+                case 14:
+                    statusCxC();
+                    execws(15);
+                    break;
+                case 15:
+                    statusDeposito();
                     processComplete();
                     break;
+
             }
 
         } catch (Exception e) {
@@ -394,16 +429,28 @@ public class WSEnv extends PBase {
                 plabel = "Enviando Stock";
                 break;
             case 8:
-                plabel = "Bitácora FEL.";
+                plabel = "Enviando Bitácora FEL.";
                 break;
             case 9:
-                plabel = "Asistencias de usuario.";
+                plabel = "Enviando Asistencias de usuario.";
                 break;
             case 10:
-                plabel = "Política de costo.";
+                plabel = "Enviando Política de costo.";
                 break;
             case 11:
-                plabel = "Enviando Movimientos de almacenes ( " + (fIdxMovAlm + 1) + " )";
+                plabel = "Enviando Movimientos de almacenes ";
+                break;
+            case 12:
+                plabel = "Enviando Movimientos de almacenes ( " + (fIdxMovAlm + 1) + " )";;
+                break;
+            case 13:
+                plabel = "Enviando Estados de FEL.";
+                break;
+            case 14:
+                plabel = "Enviando Cobros";
+                break;
+            case 15:
+                plabel = "Enviando Depositos.";
                 break;
         }
 
@@ -418,7 +465,6 @@ public class WSEnv extends PBase {
     }
 
     private void processComplete() {
-
         try {
 
             try {
@@ -458,7 +504,7 @@ public class WSEnv extends PBase {
                     }
                 }
 
-                ss = "Envío completo\n";
+                ss = "Envío completo - \n";
 
                 ss += "Facturas total: " + ftot + "\n";
                 ss += "Facturas sin envio: " + (ftot - fsend) + "\n";
@@ -503,26 +549,28 @@ public class WSEnv extends PBase {
     }
 
     private void limpiaTablas() {
-        long ff=du.getActDate();
+        long ff=du.getActDate(),fm=du.getActDate();
 
         ff=du.addDays(ff,-7);
+        fm=du.addDays(fm,-30);
 
         try {
             sql="DELETE FROM D_fel_bitacora WHERE fecha<"+ff;
-            db.execSQL(sql);
+            //db.execSQL(sql);
         } catch (Exception e) {
             //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
         try {
             sql="DELETE FROM D_fel_error WHERE fecha<"+ff;
-            db.execSQL(sql);
+            //db.execSQL(sql);
         } catch (Exception e) {
             //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
         try {
-
+            sql="DELETE FROM T_fel_sv_error WHERE fecha<"+fm;
+            db.execSQL(sql);
         } catch (Exception e) {
             //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -582,6 +630,9 @@ public class WSEnv extends PBase {
         D_factura_felObj.fill("WHERE COREL='" + corel + "'");
         D_factura_svObj.fill("WHERE COREL='" + corel + "'");
         D_facturahnObj.fill("WHERE COREL='" + corel + "'");
+        D_factura_fel_paisObj.fill("WHERE COREL='"+corel+"'");
+        D_facturacorObj.fill("WHERE COREL='" + corel + "'");
+
 
         idfact = D_facturaObj.first().serie + "-" + D_facturaObj.first().corelativo;
         int cliid = D_facturaObj.first().cliente;
@@ -598,6 +649,10 @@ public class WSEnv extends PBase {
         CSQL = CSQL + "DELETE FROM D_FACTURAP WHERE COREL='" + corel + "';";
         CSQL = CSQL + "DELETE FROM D_FACTURAC WHERE COREL='" + corel + "';";
         CSQL = CSQL + "DELETE FROM D_FACTURAPR WHERE COREL='" + corel + "';";
+        CSQL = CSQL + "DELETE FROM D_FACTURAHN WHERE COREL='"+corel+"';";
+        CSQL = CSQL + "DELETE FROM D_FACTURA_SV WHERE COREL='"+corel+"';";
+        CSQL = CSQL + "DELETE FROM D_FACTURA_FEL_PAIS WHERE COREL='"+corel+"';";
+        CSQL = CSQL + "DELETE FROM D_FACTURACOR WHERE COREL='" + corel + "';";
 
         CSQL = CSQL + addFactheader(D_facturaObj.first()) + ";";
 
@@ -655,6 +710,14 @@ public class WSEnv extends PBase {
 
         for (int i = 0; i < D_facturahnObj.count; i++) {
             CSQL = CSQL + D_facturahnObj.addItemSql(D_facturahnObj.items.get(i)) + ";";
+        }
+
+        for (int i = 0; i < D_factura_fel_paisObj.count; i++) {
+            CSQL=CSQL+D_fact_fel_paisItemSql(D_factura_fel_paisObj.items.get(i)) + ";";
+        }
+
+        for (int i = 0; i < D_facturacorObj.count; i++) {
+            CSQL = CSQL + addFacturaCorItem(D_facturacorObj.items.get(i)) + ";";
         }
 
 
@@ -784,6 +847,25 @@ public class WSEnv extends PBase {
 
     }
 
+    public String addFacturaCorItem(clsClasses.clsD_facturacor item) {
+
+        ins.init("D_facturacor");
+
+        //ins.add("ID",item.id);
+        ins.add("EMPRESA",item.empresa);
+        ins.add("COREL",item.corel);
+        ins.add("ANULADO",item.anulado);
+        ins.add("PRODUCTO",item.producto);
+        ins.add("UM",item.um);
+        ins.add("CANT",item.cant);
+        ins.add("PRECIO",item.precio);
+        ins.add("TOTAL",item.total);
+        ins.add("AUTORIZO",item.autorizo);
+
+        return ins.sql();
+
+    }
+
     public String D_factCaddItemSql(clsClasses.clsD_facturac item) {
 
         ins.init("D_facturac");
@@ -808,6 +890,46 @@ public class WSEnv extends PBase {
         ins.add("PRODUCTO", item.producto);
         ins.add("CANT", item.cant);
         ins.add("UM", item.um);
+        return ins.sql();
+
+    }
+
+    public String D_fact_fel_paisItemSql(clsClasses.clsD_factura_fel_pais item) {
+
+        ins.init("D_factura_fel_pais");
+
+        ins.add("empresa",item.empresa);
+        ins.add("corel",item.corel);
+        ins.add("codigo_pais",item.codigo_pais);
+        ins.add("codigo_moneda",item.codigo_moneda);
+        ins.add("SV_mensaje",item.sv_mensaje);
+        ins.add("SV_pdf_path",item.sv_pdf_path);
+        ins.add("SV_identificador",item.sv_identificador);
+        ins.add("SV_codigoGeneracion",item.sv_codigogeneracion);
+        ins.add("SV_selloRecepcion",item.sv_sellorecepcion);
+        ins.add("SV_numeroControl",item.sv_numerocontrol);
+        ins.add("SV_status",item.sv_status);
+        ins.add("SV_fechaEmision",item.sv_fechaemision);
+        ins.add("SV_estado",item.sv_estado);
+        ins.add("SV_totalNoSuj",item.sv_totalnosuj);
+        ins.add("SV_totalExenta",item.sv_totalexenta);
+        ins.add("SV_totalGravada",item.sv_totalgravada);
+        ins.add("SV_subTotalVentas",item.sv_subtotalventas);
+        ins.add("SV_descuNoSuj",item.sv_descunosuj);
+        ins.add("SV_descuExenta",item.sv_descuexenta);
+        ins.add("SV_descuGravada",item.sv_descugravada);
+        ins.add("SV_porcentajeDescuento",item.sv_porcentajedescuento);
+        ins.add("SV_totalDescu",item.sv_totaldescu);
+        ins.add("SV_subTotal",item.sv_subtotal);
+        ins.add("SV_ivaRete1",item.sv_ivarete1);
+        ins.add("SV_reteRenta",item.sv_reterenta);
+        ins.add("SV_montoTotalOperacion",item.sv_montototaloperacion);
+        ins.add("SV_totalNoGravado",item.sv_totalnogravado);
+        ins.add("SV_totalPagar",item.sv_totalpagar);
+        ins.add("SV_totalLetras",item.sv_totalletras);
+        ins.add("SV_saldoFavor",item.sv_saldofavor);
+        ins.add("SV_totalIva",item.sv_totaliva);
+
         return ins.sql();
 
     }
@@ -929,36 +1051,8 @@ public class WSEnv extends PBase {
 
             item = D_MovDObj.items.get(i);
 
-            CSQL = CSQL + D_MovDObj.addItemSqlWS(D_MovDObj.items.get(i)) + ";";
+            CSQL = CSQL + D_MovDObj.addItemSqlWS(D_MovDObj.items.get(i), gl.codigo_proveedor) + ";";
 
-            /*
-            AppMethods f = new AppMethods(this, null, Con, db);
-            String tipo_producto = f.prodTipo(item.producto);
-
-            if (Send_Stocks_Updates) {
-                if (tipo_producto.equalsIgnoreCase("P")) {
-                    vsql = "UPDATE P_STOCK SET CANT = CANT - " + item.cant;
-                    vsql += " WHERE (EMPRESA=" + gl.emp + ")  AND (CODIGO_PRODUCTO=" + item.producto + ") " +
-                            " AND (UNIDADMEDIDA='" + item.unidadmedida + "')" + "AND (SUCURSAL='" + gl.tienda + "')";
-                    CSQL = CSQL + vsql;
-                }
-            }
-
-             */
-
-            /*
-            if (gl.peInvCompart && tipo_producto.equalsIgnoreCase("P")) {
-                for (int r = 0; r < rutas.size(); r++) {
-                    ucant = item.cant;
-                    if (tipomov.equalsIgnoreCase("D")) ucant = -ucant;
-                    uruta = Integer.parseInt(rutas.get(r));
-
-                    vsql = addUpdateItem(uruta, item.producto, ucant, item.unidadmedida);
-                    CSQL = CSQL + vsql;
-                }
-            }
-
-             */
 
         }
 
@@ -1314,9 +1408,10 @@ public class WSEnv extends PBase {
             clsP_stock_almacenObj P_stock_almacenObj = new clsP_stock_almacenObj(this, Con, db);
 
             //P_stockObj.fill("WHERE enviado=1");
-            P_stockObj.fill();
+            //P_stockObj.fill();
             CSQL = "DELETE FROM P_STOCK WHERE SUCURSAL=" + gl.tienda + ";";
 
+            /*
             for (int i = 0; i < P_stockObj.count; i++) {
 
                 sitem = clsCls.new clsP_stockbof();
@@ -1339,15 +1434,18 @@ public class WSEnv extends PBase {
                 cStock.add("" + i);
 
             }
+             */
 
-            P_stock_almacenObj.fill();
+            //P_stock_almacenObj.fill();
             CSQL = CSQL + "DELETE FROM P_stock_almacen WHERE CODIGO_SUCURSAL=" + gl.tienda + ";";
 
+            /*
             for (int i = 0; i < P_stock_almacenObj.count; i++) {
                 ss = P_stock_almacenObj.addItemSqlBOF(P_stock_almacenObj.items.get(i));
                 CSQL = CSQL + ss + ";";
                 //cStock.add(""+i);
             }
+             */
 
         } catch (Exception e) {
             String ss = e.getMessage();
@@ -1503,7 +1601,7 @@ public class WSEnv extends PBase {
             CSQL = CSQL + addCostoUpdProdSql(item) + ";";
         }
 
-        String ss = CSQL;
+        String ss=CSQL;
     }
 
     private void statusCosto() {
@@ -1538,6 +1636,63 @@ public class WSEnv extends PBase {
             msgbox2(e.getMessage());
         }
     }
+
+    private void processCxC() {
+        clsClasses.clsD_cxc item;
+        CSQL = "";
+
+        D_cxcObj.fill("WHERE Estado='C'");
+
+        for (int i = 0; i < D_cxcObj.count; i++) {
+            item = D_cxcObj.items.get(i);
+            CSQL = CSQL + addCxCItemSql(item) + ";";
+        }
+
+        String ss = CSQL;
+        ss=ss+"";
+    }
+
+    private void statusCxC() {
+        try {
+            sql = "UPDATE D_cxc SET Estado='P' WHERE Estado='C'";
+            db.execSQL(sql);
+        } catch (Exception e) {
+            msgbox2(e.getMessage());
+        }
+    }
+
+    private void processDeposito() {
+        clsClasses.clsP_deposito item;
+        CSQL = "";
+
+        int cod_moneda=6;  // Quetzal
+        if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+            cod_moneda=1;  // Dolar
+        } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+            cod_moneda=14; // Lempira
+        }
+
+        P_depositoObj.fill("WHERE STATCOM='N'");
+
+        for (int i = 0; i < P_depositoObj.count; i++) {
+            item = P_depositoObj.items.get(i);
+            CSQL = CSQL + addDepositoItemSql(item,cod_moneda) + ";";
+        }
+
+        String ss = CSQL;
+        ss=ss+"";
+
+    }
+
+    private void statusDeposito() {
+        try {
+            sql = "UPDATE P_deposito SET STATCOM='S' WHERE STATCOM='N'";
+            db.execSQL(sql);
+        } catch (Exception e) {
+            msgbox2(e.getMessage());
+        }
+    }
+
 
     //endregion
 
@@ -1625,12 +1780,12 @@ public class WSEnv extends PBase {
     private void preparaEnvio() {
 
         int ccant, total_enviar = 0;
-        String uuid;
+        String uuid,fCorel;
 
         ferr = "";
         movErr = "";
 
-        //limpiaTablas();
+        limpiaTablas();
 
         try {
 
@@ -1648,17 +1803,21 @@ public class WSEnv extends PBase {
             ccant = P_clienteObj.count;
             total_enviar += ccant;
 
+            clsP_sucursalObj suc=new clsP_sucursalObj(this,Con,db);
+            suc.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
+            gl.codigo_proveedor=suc.first().codigo_proveedor;
+
             String idfel = gl.peFEL;
 
             if (app.usaFEL()) {
-                D_facturaObj.fill("WHERE (STATCOM='N') AND ((ANULADO=1) OR (FEELUUID<>' ')) AND (FECHA>2200000000) ");
+                D_facturaObj.fill("WHERE (STATCOM='N') AND ((ANULADO=1) OR (FEELUUID<>' ')) AND (FECHA>2200000000) ORDER BY COREL");
             } else {
-                D_facturaObj.fill("WHERE (STATCOM='N') AND (FECHA>2200000000) ");
+                D_facturaObj.fill("WHERE (STATCOM='N') AND (FECHA>2200000000) ORDER BY COREL");
             }
 
-            ftot = 0;
-            fsend = 0;
+            if (D_facturaObj.count>0) fCorel=D_facturaObj.first().corel;else fCorel="";
 
+            ftot = 0;fsend = 0;
             fact.clear();
 
             for (int i = 0; i < D_facturaObj.count; i++) {
@@ -1678,13 +1837,28 @@ public class WSEnv extends PBase {
                 }
             }
 
+            if (fact.size()>0) {
+                D_facturapObj.fill("WHERE (COREL>='"+fCorel+"') AND (TIPO='P')");
+                if  (D_facturapObj.count>0) {
+                    for (clsClasses.clsD_facturap itm:D_facturapObj.items) {
+                        fCorel=itm.corel;
+                        if (fact.contains(fCorel)) {
+                            fact.remove(fCorel);ftot--;
+                        }
+                    }
+                }
+
+            }
+
             if (ftot > 0) fidx = -1;
             else fidx = 0;
-            total_enviar += ftot;
+            //total_enviar += ftot;
 
-            long fan = du.addDays(du.getActDate(), -5);
-            D_facturaObj.fill("WHERE (ANULADO=1) AND (FECHA>" + fan + ") ");
-            total_enviar += D_facturaObj.count;
+            //long fan = du.addDays(du.getActDate(), -5);
+            //D_facturaObj.fill("WHERE (ANULADO=1) AND (FECHA>" + fan + ") ");
+            //total_enviar += D_facturaObj.count;
+            total_enviar += fact.size();
+            ftot=fact.size();
 
             clsD_MovObj D_MovObj = new clsD_MovObj(this, Con, db);
             D_MovObj.fill("WHERE STATCOM = 'N'");
@@ -1703,8 +1877,6 @@ public class WSEnv extends PBase {
             clsD_mov_almacenObj D_mov_almacenObj = new clsD_mov_almacenObj(this, Con, db);
             D_mov_almacenObj.fill("WHERE STATCOM = 'N'");
             fTotMovAlm = D_mov_almacenObj.count;
-
-            fTotMovAlm = 0;
 
             total_enviar += fTotMovAlm;
 
@@ -1741,6 +1913,11 @@ public class WSEnv extends PBase {
             cjFelBita = D_fel_bitacoraObj.count;
             total_enviar += cjFelBita;
 
+            clsD_cxcObj D_cxcObj=new clsD_cxcObj(this,Con,db);
+            D_cxcObj.fill("WHERE Estado='C'");
+            cfjCxcSend=D_cxcObj.count;
+            total_enviar += cfjCxcSend;
+
             long f0 = du.ffecha00(du.getActDate());
             clsD_usuario_asistenciaObj D_usuario_asistenciaObj = new clsD_usuario_asistenciaObj(this, Con, db);
             D_usuario_asistenciaObj.fill("WHERE (BANDERA=0) AND (FECHA<" + f0 + ")");
@@ -1759,6 +1936,9 @@ public class WSEnv extends PBase {
             cFELErr=D_fel_errorObj.count;
             total_enviar += cFELErr;
 
+            P_depositoObj.fill("WHERE (STATCOM='N')");
+            cDepos=P_depositoObj.count;
+            total_enviar += cDepos;
 
             if (total_enviar > 0) {
 
@@ -1768,7 +1948,7 @@ public class WSEnv extends PBase {
                         "\nCierres de caja: " + cjCierreTot +
                         "\nPagos de caja: " + cjPagosTot +
                         "\nReportes caja: " + cjReporteTot +
-                        "\nStock: " + cStockTot);
+                        "\n " );
 
             } else {
                 msgboxwait("No hay datos pendientes de envío");
@@ -1811,7 +1991,6 @@ public class WSEnv extends PBase {
     }
 
     public String addCostoItemSql(clsClasses.clsT_costo item) {
-
         String fs = "" + du.univfechalong(du.getActDateTime());
 
         ins.init("D_costo");
@@ -1826,11 +2005,33 @@ public class WSEnv extends PBase {
 
     }
 
+    public String addCxCItemSql(clsClasses.clsD_cxc item) {
+        String fs = "" + du.univfechalong(du.getActDateTime());
+
+        ins.init("D_cxc");
+
+        ins.add("NoFactura",item.nofactura);
+        ins.add("Empresa",item.empresa);
+        ins.add("IdCliente",item.idcliente);
+        //ins.add("Fecha",item.fecha);
+        ins.add("Fecha",fs);
+        ins.add("Monto_Total",item.monto_total);
+        ins.add("Saldo",item.saldo);
+        ins.add("IdMoneda",item.idmoneda);
+        ins.add("Tipo_Cambio",item.tipo_cambio);
+        ins.add("Estado",item.estado);
+        ins.add("Referencia",item.referencia);
+        ins.add("IdUsuario",item.idusuario);
+        ins.add("DiasCredito",item.diascredito);
+
+        return ins.sql();
+
+    }
+
     public String addCostoUpdProdSql(clsClasses.clsT_costo item) {
         String  fs="UPDATE P_PRODUCTO SET COSTO="+item.costo+" WHERE (CODIGO_PRODUCTO="+item.codigo_producto+")";
         return fs;
     }
-
 
     public String addFELErrItemSql(clsClasses.clsD_fel_error item) {
         String fs = "" + du.univfechalong(du.getActDateTime()),err;
@@ -1851,6 +2052,32 @@ public class WSEnv extends PBase {
         ins.add("ENVIADO",item.enviado);
 
         return ins.sql();
+
+    }
+
+    public String addDepositoItemSql(clsClasses.clsP_deposito item,int cod_moneda) {
+        String fs = "" + du.univfechalong(item.fecha);
+
+        ins.init("P_deposito");
+
+        //ins.add("CODIGO_DEPOSITO",item.codigo_deposito);
+        ins.add("EMPRESA",item.empresa);
+        ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
+        ins.add("CODIGO_RUTA",item.codigo_ruta);
+        ins.add("FECHA",fs);
+        ins.add("CODIGO_BANCO",item.codigo_banco);
+        ins.add("CUENTA",item.cuenta);
+        ins.add("BOLETA",item.boleta);
+        ins.add("MONTO_EFECTIVO",item.monto_efectivo);
+        ins.add("MONTO_CHEQUES",item.monto_cheques);
+        ins.add("MONTO_TOTAL",item.monto_total);
+        ins.add("CODIGO_VENDEDOR",item.codigo_vendedor);
+        ins.add("STATCOM",item.statcom);
+        ins.add("REFERENCIA",item.referencia);
+        ins.add("CODIGO_MONEDA",cod_moneda);
+
+        return ins.sql();
+
 
     }
 

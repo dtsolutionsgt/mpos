@@ -44,7 +44,6 @@ public class ListaInventario extends PBase {
 
     private ListView listView;
     private TextView lblTipo,lblalm;
-    private ProgressBar pbar;
     private RelativeLayout relalm;
 
     private ArrayList<clsClasses.clsCFDV> items= new ArrayList<clsClasses.clsCFDV>();
@@ -87,7 +86,6 @@ public class ListaInventario extends PBase {
         lblDateini = findViewById(R.id.lblDateini2);
         lblDatefin = findViewById(R.id.lblDatefin2);
         relalm= findViewById(R.id.relalm1);
-        pbar=findViewById(R.id.progressBar6);pbar.setVisibility(View.INVISIBLE);
 
         app = new AppMethods(this, gl, Con, db);
 
@@ -133,14 +131,14 @@ public class ListaInventario extends PBase {
             public void run() {
                 bloqueado=false;
                 if (wsi.errflag) msgbox(wsi.error); else confirmaInventario();
-                pbar.setVisibility(View.INVISIBLE);
-            }
+             }
         };
 
         bloqueado=false;
+
+        /*
         if (gl.peInvCompart) {
-            pbar.setVisibility(View.VISIBLE);
-            Handler mtimer = new Handler();
+             Handler mtimer = new Handler();
             Runnable mrunner=new Runnable() {
                 @Override
                 public void run() {
@@ -150,6 +148,7 @@ public class ListaInventario extends PBase {
             };
             mtimer.postDelayed(mrunner,200);
         }
+        */
 
     }
 
