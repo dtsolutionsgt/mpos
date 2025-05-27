@@ -2769,6 +2769,7 @@ public class Orden extends PBase {
                         //P_imprerep.add(soraObj.first().nombre);
                         //rep.add(gl.rutanom);
 
+
                         narea="";
                         if (gl.emp==30) narea = " " + gl.mesa_area;
                         rep.add("Envio: " +gl.rutanom);
