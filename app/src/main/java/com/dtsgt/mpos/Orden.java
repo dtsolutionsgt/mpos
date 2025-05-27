@@ -2775,8 +2775,6 @@ public class Orden extends PBase {
                         //rep.empty();
                         //rep.empty();
                         //rep.empty();
-                        //rep.empty();
-                        //rep.empty();
 
                         //ordenpedido=numpedido>0;
 
