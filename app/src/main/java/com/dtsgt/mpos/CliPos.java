@@ -927,7 +927,6 @@ public class CliPos extends PBase {
 
         if (N.isEmpty()) return false;
         //if (NitValidadoInfile) return true;
-        //if (!N.contains("-")) return false;
 
         try {
             ll = N.length();
