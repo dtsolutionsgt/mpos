@@ -997,7 +997,7 @@
             android:layout_marginTop="1dp">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recFam"
+                android:id="@+id/recfam"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
@@ -1024,7 +1024,15 @@
                 android:layout_marginStart="0dp"
                 android:layout_marginBottom="0dp"
                 android:horizontalSpacing="10dp"
-                android:numColumns="3" />
+                android:numColumns="3"
+                android:visibility="invisible" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recProd"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#a0a0f0" />
+
         </RelativeLayout>
     </RelativeLayout>
 

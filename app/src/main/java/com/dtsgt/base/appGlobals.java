@@ -69,7 +69,8 @@ public class appGlobals extends Application {
                    ingreso_mesero,after_login,modo_prec,mesero_precuenta,sin_propina,modo_upd_venta,
 			       modo_cortesia,modo_apertura,imp_inventario,sal_NIT,sal_NRC,sal_PER,nueva_mesa,
 				   combo_edit,cliente_credito=false,pedido_dom_import,repartidor_select,
-			       impStarLAN,impStarLANFact,impStarCutPaper,desc_acceso,reinicia_venta;
+			       impStarLAN,impStarLANFact,impStarCutPaper,desc_acceso,
+			       reinicia_venta=false,autostart_venta=false;
 
 	//FEL Identificacion
 	public String felSIN="SIN FEL";
@@ -120,7 +121,8 @@ public class appGlobals extends Application {
 	public Boolean peImpFactBT,peImpFactLan,peImpFactUSB,peImpFactUSBSTAR,peNumOrdCentral,peCajaMesasManual,peMesaAtenderTodos;
 	public Boolean peFactPropinaAparte,pePrecu1015,peCargarClientes,pePagoCredito,peRepLimitado,peRepFormaSuper;
 	public Boolean peDescPerc,peESAComprobante,peComandaVentaLAN,peComandaBorrarPass,
-			       peReg4impr,paDesc100,paCortProd,peFactCantProd,peDescPassSimple,peModoSupermercado,peComensalesComanda,peOcultarPagoMeseros,peLlevarSinPropina;
+			       peReg4impr,paDesc100,paCortProd,peFactCantProd,peDescPassSimple,
+			       peModoSupermercado,peComensalesComanda,peOcultarPagoMeseros,peLlevarSinPropina;
 	public double  pePropinaPerc,pePropinaCarta,peDescMax;
 
     // Parametros Extra Local

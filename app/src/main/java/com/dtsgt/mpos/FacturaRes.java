@@ -974,6 +974,9 @@ public class FacturaRes extends PBase {
 
 			completaEstadoOrden();
 
+			gl.reinicia_venta=false;
+			if (gl.peModoSupermercado)  gl.reinicia_venta=true;
+
 			gl.cliposflag=false;
 			gl.InvCompSend=false;
 			//gl.delivery =false;

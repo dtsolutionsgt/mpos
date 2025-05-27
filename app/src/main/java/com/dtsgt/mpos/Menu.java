@@ -273,10 +273,12 @@ public class Menu extends PBase {
 	}
 
 	private void showMenuItem() {
-
 		int prtype;
 		boolean epssetflag = false;
 		Float cantidad;
+
+		gl.reinicia_venta=false;
+		gl.autostart_venta=false;
 
 		//JP 20200527
 		if (!listo) return;
@@ -3999,6 +4001,12 @@ public class Menu extends PBase {
 				browse=0;
 				validaCaja();
 				return;
+			}
+
+			if (gl.autostart_venta) {
+				toastlong("Restart");
+				menuid=1;
+				showMenuItem();
 			}
 
 		} catch (Exception e){

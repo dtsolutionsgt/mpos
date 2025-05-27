@@ -108,7 +108,7 @@ public class AppMethods {
 	//region Public
 
 	public void parametrosExtra() {
-		Cursor dt;
+		Cursor dt=null;
 		String sql,val="";
 		int ival;
 		double dval;
@@ -373,6 +373,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peMCent=false;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=101";
@@ -386,6 +387,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peImpOrdCos =false;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=102";
@@ -399,6 +401,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peMImg=false;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=103";
@@ -412,6 +415,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peMMod="0";
         }
+		if (dt!=null) dt.close();
 
         try {
 
@@ -427,6 +431,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peMFact=false;
         }
+		if (dt!=null) dt.close();
 
         try {
 
@@ -442,6 +447,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peFEL="";
         }
+		if (dt!=null) dt.close();
 
         try {
 
@@ -456,6 +462,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peFotoBio=true;
         }
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=107";
@@ -469,6 +476,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.cierreDiario=true;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=108";
@@ -483,6 +491,7 @@ public class AppMethods {
 		} catch (Exception e) {
             gl.dias_anul=5;
 		}
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=109";
@@ -496,6 +505,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peEnvio=true;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=110";
@@ -509,6 +519,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peAvizoFEL=3;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=111";
@@ -522,6 +533,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peCajaRec=false;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=112";
@@ -536,6 +548,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peInvCompart =false;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=113";
@@ -549,6 +562,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.pePedidos =false;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=114";
@@ -563,6 +577,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peNumImp=1;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=115";
@@ -576,6 +591,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peRepVenCod =false;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=116";
@@ -589,6 +605,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peAnulSuper=false;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=117";
@@ -602,6 +619,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.pePropinaFija =true;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=118";
@@ -615,6 +633,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peRest =false;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=119";
@@ -628,6 +647,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peModifPed=false;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=120";
@@ -642,6 +662,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.pePropinaPerc=0;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=121";
@@ -655,6 +676,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peBotComanda = false;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=122";
@@ -665,7 +687,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peComNoAplic = "NO APLICA";
         }
-
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=123";
@@ -679,6 +701,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peEditTotCombo = false;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=124";
@@ -692,6 +715,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peAgregarCombo = false;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=125";
@@ -705,6 +729,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peComboLimite = false;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=126";
@@ -718,6 +743,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peComboDet = false;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=127";
@@ -732,6 +758,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.pePropinaCarta=0;
         }
+		if (dt!=null) dt.close();
 
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=128";
@@ -745,6 +772,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peFactSinPropina = false;
         }
+		if (dt!=null) dt.close();
 
 		try {
 
@@ -760,6 +788,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.pelComandaBT = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=130";
@@ -773,6 +802,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.pelPrefijoOrden = "";
 		}
+		if (dt!=null) dt.close();
 
 		try {
 
@@ -788,6 +818,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.pelCaja = false;
 		}
+		if (dt!=null) dt.close();
 
         try {
 
@@ -803,6 +834,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.pelCajaRecep = false;
         }
+		if (dt!=null) dt.close();
 
         try {
 
@@ -818,6 +850,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.pelDespacho = false;
         }
+		if (dt!=null) dt.close();
 
         try {
 
@@ -832,6 +865,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.pelOrdenComanda = false;
         }
+		if (dt!=null) dt.close();
 
         try {
 
@@ -846,6 +880,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.pelClaveMes = false;
         }
+		if (dt!=null) dt.close();
 
         try {
 
@@ -861,6 +896,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.pelClaveCaja = false;
         }
+		if (dt!=null) dt.close();
 
         try {
 
@@ -876,6 +912,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.pelMeseroCaja = false;
         }
+		if (dt!=null) dt.close();
 
 		try {
 
@@ -891,6 +928,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peVentaDomicilio = false;
 		}
+		if (dt!=null) dt.close();
 
 		if (gl.pePedidos) gl.peVentaDomicilio=false;
 
@@ -908,6 +946,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peVentaEntrega = false;
 		}
+		if (dt!=null) dt.close();
 
 		if (gl.pePedidos) gl.peVentaEntrega=false;
 
@@ -925,6 +964,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peDomEntEnvio = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=141";
@@ -938,6 +978,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peNoCerrarMesas = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=142";
@@ -951,6 +992,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peActOrdenMesas = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=143";
@@ -964,6 +1006,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peLineaIngred = 0;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=147";
@@ -975,6 +1018,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peTextoPie = "";
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=148";
@@ -988,6 +1032,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peRedondPropina = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=149";
@@ -1001,6 +1046,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peCajaPricipal = 34;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=150";
@@ -1014,6 +1060,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peFraseIVA = "";
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=151";
@@ -1027,6 +1074,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peFraseISR = "";
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=152";
@@ -1040,6 +1088,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peCafeTicket = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=153";
@@ -1053,6 +1102,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.pePorConsumo = 0;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=154";
@@ -1066,6 +1116,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peNoEnviar = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=155";
@@ -1079,6 +1130,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peUsaSoloBOF = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=156";
@@ -1092,9 +1144,9 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peAcumDesc = false;
 		}
+		if (dt!=null) dt.close();
 		// temporalmente deshabilitada acumulacion
 		gl.peAcumDesc = false;
-
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=157";
@@ -1109,6 +1161,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peDescMax=50;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=158";
@@ -1122,6 +1175,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peNumOrdCommandaVenta = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			gl.peImpFactBT=true;gl.peImpFactLan=false;gl.peImpFactUSB=false;gl.peImpFactIP="";
@@ -1150,6 +1204,7 @@ public class AppMethods {
 			gl.peImpFactBT=true;
 			gl.peImpFactLan=false;gl.peImpFactUSB=false;gl.peImpFactIP="";
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=160";
@@ -1163,6 +1218,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peMaxOrden = 1000;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=161";
@@ -1176,6 +1232,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peNumOrdCentral = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=162";
@@ -1189,6 +1246,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peCajaMesasManual = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=163";
@@ -1202,6 +1260,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peMesaAtenderTodos = true;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=164";
@@ -1215,6 +1274,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peFactPropinaAparte = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=165";
@@ -1228,6 +1288,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.pePrecu1015 = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=164";
@@ -1241,6 +1302,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peFactPropinaAparte = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=165";
@@ -1254,6 +1316,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.pePrecu1015 = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=166";
@@ -1267,6 +1330,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peCargarClientes = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=167";
@@ -1280,6 +1344,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.pePagoCredito = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=168";
@@ -1293,6 +1358,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peRepLimitado = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=169";
@@ -1306,6 +1372,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peDescPerc = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=170";
@@ -1319,6 +1386,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peESAComprobante = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=171";
@@ -1332,6 +1400,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peComandaVentaLAN = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=172";
@@ -1345,6 +1414,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peDomTiempo = 15;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=173";
@@ -1358,6 +1428,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peComandaBorrarPass = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=174";
@@ -1371,6 +1442,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.paDesc100 = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=175";
@@ -1384,6 +1456,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.paCortProd = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=176";
@@ -1397,6 +1470,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peReg4impr = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=178";
@@ -1410,6 +1484,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peRepFormaSuper = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=179";
@@ -1424,6 +1499,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peFactCantProd = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=180";
@@ -1437,6 +1513,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peFactCantProd = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=181";
@@ -1450,6 +1527,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peDescPassSimple = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=182";
@@ -1463,6 +1541,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peModoSupermercado = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=183";
@@ -1476,6 +1555,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peComensalesComanda = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=184";
@@ -1489,6 +1569,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peOcultarPagoMeseros = false;
 		}
+		if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=185";
@@ -1502,12 +1583,17 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peLlevarSinPropina = false;
 		}
+		if (dt!=null) dt.close();
 
 
+
+
+
+		if (dt!=null) dt.close();
 	}
 
     public boolean paramCierre(int pid) {
-        Cursor dt;
+        Cursor dt=null;
         String sql,val="";
 
         try {
@@ -1516,6 +1602,7 @@ public class AppMethods {
             dt.moveToFirst();
 
             val=dt.getString(0);
+			if (dt!=null) dt.close();
             return val.equalsIgnoreCase("S");
         } catch (Exception e) {
             return false;

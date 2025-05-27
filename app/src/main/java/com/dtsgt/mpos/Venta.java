@@ -108,7 +108,7 @@ import java.util.Objects;
 
 public class Venta extends PBase {
 
-    private RecyclerView recfam;
+    private RecyclerView recfam,recprod;
     private ListView listView,listMas;
     private GridView gridViewOpciones,grdbtn,grdprod;
     private TextView lblTot,lblTit,lblAlm,lblVend, lblCambiarNivelPrecio,lblCant,lblBarra;
@@ -1936,6 +1936,170 @@ public class Venta extends PBase {
         }
     }
 
+    private void setVisual() {
+        if (imgflag) {
+            if (horiz) {
+                grdprod.setNumColumns(3);
+            } else {
+                grdprod.setNumColumns(3);
+            }
+        } else {
+            grdprod.setNumColumns(1);
+        }
+
+        listFamily();
+    }
+
+    private void initValues(){
+        Cursor DT;
+
+        app.parametrosExtra();
+        usarbio=gl.peMMod.equalsIgnoreCase("1");
+
+        tiposcan="*";
+
+        lblTit.setText(gl.cajanom);
+        lblPokl.setText(gl.vendnom);
+
+        try {
+            sql="SELECT TIPO_HH FROM P_ARCHIVOCONF WHERE RUTA='"+gl.ruta+"'";
+            DT=Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            tiposcan=DT.getString(0);
+            if (DT!=null) DT.close();
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            tiposcan="*";
+        }
+
+        usarscan=false;softscanexist=false;
+        if (!mu.emptystr(tiposcan)) {
+            if (tiposcan.equalsIgnoreCase("SOFTWARE")) {
+                softscanexist=detectBarcodeScanner();
+                usarscan=true;
+            }
+            if (!tiposcan.equalsIgnoreCase("SIN ESCANER")) usarscan=true;
+        }
+
+        if (usarscan) {
+            imgscan.setVisibility(View.VISIBLE);
+        } else {
+            imgscan.setVisibility(View.INVISIBLE);
+        }
+
+        if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+            sinimp = true;
+        } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+            sinimp = true;
+        } else {
+            sinimp=false;
+        }
+
+		/*
+		contrib=gl.contrib;
+		if (contrib.equalsIgnoreCase("C")) sinimp=true;
+		if (contrib.equalsIgnoreCase("F")) sinimp=false;
+		*/
+
+        gl.sinimp=sinimp;
+
+        try {
+            sql="DELETE FROM T_VENTA";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_VENTA_COR";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_COMBO";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_ORDEN WHERE COREL='VENTA'";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_ORDENCOMBO WHERE COREL='VENTA'";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_ORDENCOMBOAD WHERE COREL='VENTA'";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_ORDENCOMBODET WHERE COREL='VENTA'";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_ORDENCOMBOPRECIO WHERE COREL='VENTA'";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_BARRA";
+            db.execSQL(sql);
+
+            //sql="DELETE FROM T_BARRA_BONIF";
+            //db.execSQL(sql);
+
+            sql="DELETE FROM T_BONIFFALT";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_PRODMENU";
+            db.execSQL(sql);
+
+        } catch (SQLException e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            mu.msgbox("Error : " + e.getMessage());
+        }
+
+        try {
+            sql="DELETE FROM T_PAGO";
+            db.execSQL(sql);
+        } catch (SQLException e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            mu.msgbox("Error : " + e.getMessage());
+        }
+
+        try {
+            sql="DELETE FROM T_BONIFFALT";
+            db.execSQL(sql);
+        } catch (SQLException e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            mu.msgbox("Error : " + e.getMessage());
+        }
+
+        try {
+            sql="DELETE FROM T_BONITEM";
+            db.execSQL(sql);
+        } catch (SQLException e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            mu.msgbox("Error : " + e.getMessage());
+        }
+
+        gl.ref1="";lblAlm.setText("");
+        gl.ref2="";
+        gl.ref3="";
+
+        gl.nit_tipo="N";
+
+        //#CKFK 20210706
+        gl.domicilio =false;
+        gl.delivery=false;
+
+        //numeroOrden();
+
+        clsDescFiltro clsDFilt=new clsDescFiltro(this,gl.codigo_ruta,gl.codigo_cliente);
+
+        clsBonFiltro clsBFilt=new clsBonFiltro(this,gl.codigo_ruta,gl.codigo_cliente);
+
+        imgfold= Environment.getExternalStorageDirectory()+ "/mPosFotos/";
+
+        dweek=mu.dayofweek();
+
+        lblTot.setText("Total : "+mu.frmcur(0));
+        lblVend.setText("");
+        gl.mododocesa=-1;
+        lbldocesa.setVisibility(View.INVISIBLE);
+
+        khand.clear(true);khand.enable();
+
+        uid="0";
+    }
+
     //endregion
 
     //region Barras
@@ -2436,7 +2600,7 @@ public class Venta extends PBase {
             }
 
             if (imgflag) {
-                radapterf=new RV_GridFam(fitems);
+                radapterf=new RV_GridFam(fitems,imgfold);
                 recfam.setAdapter(radapterf);
 
                 //adapterf=new ListAdaptGridFam(this,fitems,imgfold,horiz);
@@ -4354,10 +4518,11 @@ public class Venta extends PBase {
     private void setControls(){
 
         try{
-            recfam = findViewById(R.id.recFam);
+            recfam = findViewById(R.id.recfam);
             recfam.setLayoutManager(new GridLayoutManager(this, 3));
-            //recfam.setLayoutManager(new LinearLayoutManager(this));
 
+            recprod = findViewById(R.id.recProd);
+            recprod.setLayoutManager(new GridLayoutManager(this, 3));
 
             listView = findViewById(R.id.listView1);
             listMas= findViewById(R.id.listMas);
@@ -4396,170 +4561,6 @@ public class Venta extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
-    }
-
-    private void setVisual() {
-        if (imgflag) {
-            if (horiz) {
-                grdprod.setNumColumns(3);
-            } else {
-                grdprod.setNumColumns(3);
-            }
-        } else {
-            grdprod.setNumColumns(1);
-        }
-
-        listFamily();
-    }
-
-    private void initValues(){
-        Cursor DT;
-
-        app.parametrosExtra();
-        usarbio=gl.peMMod.equalsIgnoreCase("1");
-
-        tiposcan="*";
-
-        lblTit.setText(gl.cajanom);
-        lblPokl.setText(gl.vendnom);
-
-        try {
-            sql="SELECT TIPO_HH FROM P_ARCHIVOCONF WHERE RUTA='"+gl.ruta+"'";
-            DT=Con.OpenDT(sql);
-            DT.moveToFirst();
-
-            tiposcan=DT.getString(0);
-            if (DT!=null) DT.close();
-        } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            tiposcan="*";
-        }
-
-        usarscan=false;softscanexist=false;
-        if (!mu.emptystr(tiposcan)) {
-            if (tiposcan.equalsIgnoreCase("SOFTWARE")) {
-                softscanexist=detectBarcodeScanner();
-                usarscan=true;
-            }
-            if (!tiposcan.equalsIgnoreCase("SIN ESCANER")) usarscan=true;
-        }
-
-        if (usarscan) {
-            imgscan.setVisibility(View.VISIBLE);
-        } else {
-            imgscan.setVisibility(View.INVISIBLE);
-        }
-
-        if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-            sinimp = true;
-        } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-            sinimp = true;
-        } else {
-            sinimp=false;
-        }
-
-		/*
-		contrib=gl.contrib;
-		if (contrib.equalsIgnoreCase("C")) sinimp=true;
-		if (contrib.equalsIgnoreCase("F")) sinimp=false;
-		*/
-
-        gl.sinimp=sinimp;
-
-        try {
-            sql="DELETE FROM T_VENTA";
-            db.execSQL(sql);
-
-            sql="DELETE FROM T_VENTA_COR";
-            db.execSQL(sql);
-
-            sql="DELETE FROM T_COMBO";
-            db.execSQL(sql);
-
-            sql="DELETE FROM T_ORDEN WHERE COREL='VENTA'";
-            db.execSQL(sql);
-
-            sql="DELETE FROM T_ORDENCOMBO WHERE COREL='VENTA'";
-            db.execSQL(sql);
-
-            sql="DELETE FROM T_ORDENCOMBOAD WHERE COREL='VENTA'";
-            db.execSQL(sql);
-
-            sql="DELETE FROM T_ORDENCOMBODET WHERE COREL='VENTA'";
-            db.execSQL(sql);
-
-            sql="DELETE FROM T_ORDENCOMBOPRECIO WHERE COREL='VENTA'";
-            db.execSQL(sql);
-
-            sql="DELETE FROM T_BARRA";
-            db.execSQL(sql);
-
-            //sql="DELETE FROM T_BARRA_BONIF";
-            //db.execSQL(sql);
-
-            sql="DELETE FROM T_BONIFFALT";
-            db.execSQL(sql);
-
-            sql="DELETE FROM T_PRODMENU";
-            db.execSQL(sql);
-
-        } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox("Error : " + e.getMessage());
-        }
-
-        try {
-            sql="DELETE FROM T_PAGO";
-            db.execSQL(sql);
-        } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox("Error : " + e.getMessage());
-        }
-
-        try {
-            sql="DELETE FROM T_BONIFFALT";
-            db.execSQL(sql);
-        } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox("Error : " + e.getMessage());
-        }
-
-        try {
-            sql="DELETE FROM T_BONITEM";
-            db.execSQL(sql);
-        } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox("Error : " + e.getMessage());
-        }
-
-        gl.ref1="";lblAlm.setText("");
-        gl.ref2="";
-        gl.ref3="";
-
-        gl.nit_tipo="N";
-
-        //#CKFK 20210706
-        gl.domicilio =false;
-        gl.delivery=false;
-
-        //numeroOrden();
-
-        clsDescFiltro clsDFilt=new clsDescFiltro(this,gl.codigo_ruta,gl.codigo_cliente);
-
-        clsBonFiltro clsBFilt=new clsBonFiltro(this,gl.codigo_ruta,gl.codigo_cliente);
-
-        imgfold= Environment.getExternalStorageDirectory()+ "/mPosFotos/";
-
-        dweek=mu.dayofweek();
-
-        lblTot.setText("Total : "+mu.frmcur(0));
-        lblVend.setText("");
-        gl.mododocesa=-1;
-        lbldocesa.setVisibility(View.INVISIBLE);
-
-        khand.clear(true);khand.enable();
-
-        uid="0";
     }
 
     private boolean hasProducts(){
@@ -6665,6 +6666,13 @@ public class Venta extends PBase {
             } catch (Exception e) {}
 
             if (gl.iniciaVenta) {
+
+                if (gl.reinicia_venta) {
+                    gl.reinicia_venta=false;
+                    gl.autostart_venta=true;
+                    finish();
+                    return;
+                }
 
                 browse=0;
                 lblVend.setText(" ");lbldocesa.setVisibility(View.INVISIBLE);
