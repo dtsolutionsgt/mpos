@@ -1385,10 +1385,11 @@ public class AppMethods {
         } catch (Exception e) {
             gl.pePropinaFELconIVA = false;
         }
-
         if (dt!=null) dt.close();
 
-        if (dt!=null) dt.close();
+
+
+
 
 
 		if (dt!=null) dt.close();

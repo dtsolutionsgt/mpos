@@ -1030,8 +1030,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recProd"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#a0a0f0" />
+                android:layout_height="match_parent" />
 
         </RelativeLayout>
     </RelativeLayout>

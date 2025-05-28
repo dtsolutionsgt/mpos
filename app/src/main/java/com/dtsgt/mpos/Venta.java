@@ -93,6 +93,8 @@ import com.dtsgt.ladapt.ListAdaptMenuVenta;
 import com.dtsgt.ladapt.ListAdaptVenta;
 import com.dtsgt.ladapt.RV_GridFam;
 import com.dtsgt.ladapt.RV_GridFamList;
+import com.dtsgt.ladapt.RV_GridProd;
+import com.dtsgt.ladapt.RV_GridProdList;
 import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
 
@@ -110,7 +112,7 @@ public class Venta extends PBase {
 
     private RecyclerView recfam,recprod;
     private ListView listView,listMas;
-    private GridView gridViewOpciones,grdbtn,grdprod;
+    private GridView gridViewOpciones,grdbtn,grdprodx;
     private TextView lblTot,lblTit,lblAlm,lblVend, lblCambiarNivelPrecio,lblCant,lblBarra;
     private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir, lbldocesa, lblprcant;
     private EditText txtBarra,txtFilter;
@@ -131,6 +133,8 @@ public class Venta extends PBase {
 
     private RV_GridFam radapterf;
     private RV_GridFamList radapterfl;
+    private RV_GridProd radapterp;
+    private RV_GridProdList radapterpl;
 
     private ArrayList<clsClasses.clsMenu> mitems= new ArrayList<clsClasses.clsMenu>();
     private ArrayList<clsClasses.clsMenu> mmitems= new ArrayList<clsClasses.clsMenu>();
@@ -555,6 +559,76 @@ public class Venta extends PBase {
                     })
             );
 
+            recprod.addOnItemTouchListener(new RecyclerItemClickListener((Context) this, recfam,
+                    new RecyclerItemClickListener.OnItemClickListener() {
+
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            clsClasses.clsMenu item;
+                            int kcant,ppos;
+
+                            try {
+
+                                if (imgflag) {
+                                    item=radapterp.items.get(position);
+                                    radapterp.setSelectedIndex(position);
+                                } else {
+                                    item=radapterpl.items.get(position);
+                                    radapterpl.setSelectedIndex(position);
+                                }
+
+                                prodid=item.Cod;
+                                gl.prodid=prodid;
+                                gl.prodcod=item.icod;
+                                gl.gstr=prodid;
+                                gl.prodmenu=gl.prodcod;
+                                gl.pprodname=item.Name;
+                                ppos=gl.pprodname.indexOf("[");
+                                if (ppos<=1) pprodname=gl.pprodname;else pprodname=gl.pprodname.substring(0,ppos-1);
+
+                                gl.um=app.umVenta(gl.prodid);
+                                gl.menuitemid=prodid;
+                                menuitemadd=true;
+
+                                if (khand.val.isEmpty()) {
+                                    processItem(false);
+                                } else {
+                                    try {
+                                        kcant=Integer.parseInt(khand.val);
+                                        if (kcant>0) processItem(kcant);
+                                    } catch (Exception e) { }
+                                    khand.clear();
+                                }
+
+                            } catch (Exception e) {}
+                        }
+
+                        @Override
+                        public void onLongItemClick(View view, int position) {
+                            clsClasses.clsMenu item;
+
+                            try {
+
+                                if (imgflag) {
+                                    item=radapterp.items.get(position);
+                                    radapterp.setSelectedIndex(position);
+                                } else {
+                                    item=radapterpl.items.get(position);
+                                    radapterpl.setSelectedIndex(position);
+                                }
+
+                                prodid=item.Cod;
+                                gl.gstr=prodid;//gl.prodmenu=prodid;
+                                gl.pprodname=item.Name;
+
+                                msgAskAdd(item.Name);
+                            } catch (Exception e) {}
+
+                        }
+                    })
+            );
+
+            /*
             grdprod.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
@@ -617,6 +691,8 @@ public class Venta extends PBase {
                     return true;
                 }
             });
+
+             */
 
             gridViewOpciones.setOnItemClickListener(new OnItemClickListener() {
                 @Override
@@ -1937,6 +2013,7 @@ public class Venta extends PBase {
     }
 
     private void setVisual() {
+        /*
         if (imgflag) {
             if (horiz) {
                 grdprod.setNumColumns(3);
@@ -1946,6 +2023,7 @@ public class Venta extends PBase {
         } else {
             grdprod.setNumColumns(1);
         }
+        */
 
         listFamily();
     }
@@ -2704,11 +2782,17 @@ public class Venta extends PBase {
         }
 
         if (imgflag) {
-            adapterp=new ListAdaptGridProd(this,pitems,imgfold,horiz);
-            grdprod.setAdapter(adapterp);
+            radapterp=new RV_GridProd(pitems,imgfold);
+            recprod.setAdapter(radapterp);
+
+            //adapterp=new ListAdaptGridProd(this,pitems,imgfold,horiz);
+            //grdprod.setAdapter(adapterp);
         } else {
-            adapterpl=new ListAdaptGridProdList(this,pitems,imgfold,horiz);
-            grdprod.setAdapter(adapterpl);
+            radapterpl=new RV_GridProdList(pitems);
+            recprod.setAdapter(radapterpl);
+
+            //adapterpl=new ListAdaptGridProdList(this,pitems,imgfold,horiz);
+            //grdprod.setAdapter(adapterpl);
         }
 
     }
@@ -4527,7 +4611,6 @@ public class Venta extends PBase {
         try{
             recfam = findViewById(R.id.recfam);
             recfam.setLayoutManager(new GridLayoutManager(this, 3));
-
             recprod = findViewById(R.id.recProd);
             recprod.setLayoutManager(new GridLayoutManager(this, 3));
 
@@ -4535,7 +4618,7 @@ public class Venta extends PBase {
             listMas= findViewById(R.id.listMas);
             gridViewOpciones = findViewById(R.id.gridView2);
             gridViewOpciones.setEnabled(true);
-            grdprod = findViewById(R.id.grdProd);
+            //grdprod = findViewById(R.id.grdProd);
             grdbtn = findViewById(R.id.grdbtn);
 
             lblTot= findViewById(R.id.lblTot);
