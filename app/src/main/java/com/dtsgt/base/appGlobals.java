@@ -106,7 +106,7 @@ public class appGlobals extends Application {
 
 	// Parametros Extra
 	public String peModal,peMon,peFormatoFactura,peMMod,peFEL,peComNoAplic,peTextoPie;
-	public String peFraseIVA,peFraseISR,peImpFactIP;
+	public String peFraseIVA,peFraseISR,peImpFactIP,impStarLANFactMac;
 	public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps,peAvizoFEL;
 	public int peCajaPricipal,peNumImp,peLineaIngred,pePorConsumo,peMaxOrden;
 	public int peDomTiempo;
@@ -121,7 +121,7 @@ public class appGlobals extends Application {
 	public Boolean peFactPropinaAparte,pePrecu1015,peCargarClientes,pePagoCredito,peRepLimitado,peRepFormaSuper;
 	public Boolean peDescPerc,peESAComprobante,peComandaVentaLAN,peComandaBorrarPass,
 			       peReg4impr,paDesc100,paCortProd,peFactCantProd,peComensalesComanda,peOcultarPagoMeseros,
-			       peLlevarSinPropina, pePropinaFELconIVA;
+			       peLlevarSinPropina, pePropinaFELconIVA,peDescPassSimple,peModoSupermercado,impStarCutPaper;
 	public double  pePropinaPerc,pePropinaCarta,peDescMax;
 
     // Parametros Extra Local
