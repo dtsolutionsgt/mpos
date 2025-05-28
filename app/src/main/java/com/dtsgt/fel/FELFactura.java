@@ -83,8 +83,7 @@ public class FELFactura extends PBase {
     private ArrayList<String> rutas= new ArrayList<String>();
 
     private String felcorel,corel,ffcorel,scorel,CSQL,endstr,idfact,prod_BS;
-    private boolean ddemomode,multiflag,factsend,contmode,pendflag=false;
-    ;
+    private boolean ddemomode,multiflag,factsend,contmode,pendflag=false,propinaconIva;
     private int ftot,ffail,fidx,cliid,felnivel;
 
     @Override
@@ -107,6 +106,7 @@ public class FELFactura extends PBase {
             felcorel=gl.felcorel;ffcorel=felcorel;
             multiflag=felcorel.isEmpty();
             gl.feluuid="";
+            propinaconIva=gl.pePropinaFELconIVA;
 
             getURL();
 
@@ -651,9 +651,14 @@ public class FELFactura extends PBase {
                             prod_BS);
             }
 
-            //if (propina>0) {
-                fel.detalle_propina(propina);
-            //}
+            if (propina>0) {
+                if (propinaconIva) {
+                    fel.detalle_propina(0);
+                    fel.detalle("Propina",1,"UNI", propina,propina,0,"","UNI");
+                } else {
+                    fel.detalle_propina(propina);
+                }
+            }
 
             fel.completar(fact.serie,fact.corelativo);
 
