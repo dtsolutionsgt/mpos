@@ -66,7 +66,7 @@ public class FELVerificacion extends PBase {
     private ArrayList<String> facts = new ArrayList<String>();
 
     private String felcorel,corel,ffcorel,scorel,CSQL,endstr,idfact,lcombo,prod_BS;
-    private boolean conerrflag,ddemomode,multiflag,factsend,contmode;
+    private boolean conerrflag,ddemomode,multiflag,factsend,contmode,propinaconIva;
     private int ftot,ffail,fidx,cliid,felnivel;
 
     @Override
@@ -86,6 +86,7 @@ public class FELVerificacion extends PBase {
         felcorel=gl.felcorel;ffcorel=felcorel;
         multiflag=felcorel.isEmpty();
         gl.feluuid="";
+        propinaconIva=gl.pePropinaFELconIVA;
 
         getURL();
 
@@ -438,8 +439,14 @@ public class FELVerificacion extends PBase {
                             prod_BS);
             }
 
+
             if (propina>0) {
-                fel.detalle_propina(propina);
+                if (propinaconIva) {
+                    fel.detalle_propina(0);
+                    fel.detalle("Propina",1,"UNI", propina,propina,0,"","UNI");
+                } else {
+                    fel.detalle_propina(propina);
+                }
             }
 
             fel.completar(fact.serie,
