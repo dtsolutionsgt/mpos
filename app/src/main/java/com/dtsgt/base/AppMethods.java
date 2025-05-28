@@ -53,9 +53,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -1375,7 +1373,22 @@ public class AppMethods {
 		if (dt!=null) dt.close();
 
 
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=186";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
 
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.pePropinaFELconIVA = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.pePropinaFELconIVA = false;
+        }
+
+        if (dt!=null) dt.close();
+
+        if (dt!=null) dt.close();
 
 
 		if (dt!=null) dt.close();
