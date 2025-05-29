@@ -35,6 +35,7 @@ import android.widget.TextView;
 import android.widget.ListView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dtsgt.base.AppMethods;
@@ -95,6 +96,7 @@ import com.dtsgt.ladapt.RV_GridFam;
 import com.dtsgt.ladapt.RV_GridFamList;
 import com.dtsgt.ladapt.RV_GridProd;
 import com.dtsgt.ladapt.RV_GridProdList;
+import com.dtsgt.ladapt.RV_Venta;
 import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
 
@@ -110,9 +112,9 @@ import java.util.Objects;
 
 public class Venta extends PBase {
 
-    private RecyclerView recfam,recprod;
-    private ListView listView,listMas;
-    private GridView gridViewOpciones,grdbtn,grdprodx;
+    private RecyclerView recfam,recprod,recventa;
+    private ListView listMas;
+    private GridView gridViewOpciones,grdbtn;
     private TextView lblTot,lblTit,lblAlm,lblVend, lblCambiarNivelPrecio,lblCant,lblBarra;
     private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir, lbldocesa, lblprcant;
     private EditText txtBarra,txtFilter;
@@ -131,6 +133,7 @@ public class Venta extends PBase {
     private ListAdaptGridProdList adapterpl;
     private ListAdaptMasVendidos adaptermv;
 
+    private RV_Venta radapterv;
     private RV_GridFam radapterf;
     private RV_GridFamList radapterfl;
     private RV_GridProd radapterp;
@@ -430,67 +433,64 @@ public class Venta extends PBase {
 
         try {
 
-            listView.setOnTouchListener(new SwipeListener(this) {
-                public void onSwipeRight() {
-                    onBackPressed();
-                }
-                public void onSwipeLeft() {
-                    //finishOrder(null);
-                }
-            });
+            recventa.addOnItemTouchListener(new RecyclerItemClickListener((Context) this, recventa,
+                    new RecyclerItemClickListener.OnItemClickListener() {
 
-            listView.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                    try {
-                        Object lvObj = listView.getItemAtPosition(position);
-                        vitem = (clsVenta)lvObj;
+                        @Override
+                        public void onItemClick(View view, int position) {
 
-                        prodid=vitem.Cod;gl.prodid=prodid;
-                        gl.prodmenu=app.codigoProducto(prodid);//gl.prodmenu=prodid;
-                        uprodid=prodid;
-                        prodtotlin=vitem.Total;
-                        uid=vitem.emp;
-                        gl.menuitemid=uid;
-                        seluid=uid;// identificador unico de linea de T_VENTA ( Campo EMPRESA )
-                        descuid=uid;
+                            try {
+                                vitem=radapterv.items.get(position);
+                                radapterv.setSelectedIndex(position);
 
-                        try {
-                            gl.produid=Integer.parseInt(uid);
-                        } catch (Exception e) {
-                            gl.produid=0;
-                        }
-                        adapter.setSelectedIndex(position);
+                                prodid=vitem.Cod;gl.prodid=prodid;
+                                gl.prodmenu=app.codigoProducto(prodid);//gl.prodmenu=prodid;
+                                uprodid=prodid;
+                                prodtotlin=vitem.Total;
+                                uid=vitem.emp;
+                                gl.menuitemid=uid;
+                                seluid=uid;// identificador unico de linea de T_VENTA ( Campo EMPRESA )
+                                descuid=uid;
 
-                        gl.gstr=vitem.Nombre;
-                        menuitemadd=false;
-                        fbcallmode=1;
-                        gl.retcant=(int) vitem.Cant;desccant=vitem.Cant;
-                        gl.limcant=getDisp(prodid);
+                                try {
+                                    gl.produid=Integer.parseInt(uid);
+                                } catch (Exception e) {
+                                    gl.produid=0;
+                                }
 
-                        if (!gl.ventalock) {
-                            //tipo=prodTipo(gl.prodcod);
-                            tipo=prodTipo(prodid);
-                            gl.tipoprodcod=tipo;
-                            gl.idmodgr=codigoModificador(app.codigoProducto(gl.prodid));
+                                gl.gstr=vitem.Nombre;
+                                menuitemadd=false;
+                                fbcallmode=1;
+                                gl.retcant=(int) vitem.Cant;desccant=vitem.Cant;
+                                gl.limcant=getDisp(prodid);
 
-                            if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S") || tipo.equalsIgnoreCase("PB")) {
-                                browse=6;
-                                gl.menuitemid=prodid;
-                                showVentaItemMenu(0);
-                                //startActivity(new Intent(Venta.this,VentaEdit.class));
-                            } else if (tipo.equalsIgnoreCase("M")) {
-                                gl.newmenuitem=false;
-                                gl.menuitemid=vitem.emp;
-                                browse=7;
-                                showVentaItemMenu(1);
+                                if (!gl.ventalock) {
+                                    //tipo=prodTipo(gl.prodcod);
+                                    tipo=prodTipo(prodid);
+                                    gl.tipoprodcod=tipo;
+                                    gl.idmodgr=codigoModificador(app.codigoProducto(gl.prodid));
+
+                                    if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S") || tipo.equalsIgnoreCase("PB")) {
+                                        browse=6;
+                                        gl.menuitemid=prodid;
+                                        showVentaItemMenu(0);
+                                        //startActivity(new Intent(Venta.this,VentaEdit.class));
+                                    } else if (tipo.equalsIgnoreCase("M")) {
+                                        gl.newmenuitem=false;
+                                        gl.menuitemid=vitem.emp;
+                                        browse=7;
+                                        showVentaItemMenu(1);
+                                    }
+                                }
+                            } catch (Exception e) {
+                                mu.msgbox( e.getMessage());
                             }
                         }
-                    } catch (Exception e) {
-                        mu.msgbox( e.getMessage());
-                    }
-                };
-            });
+
+                        @Override
+                        public void onLongItemClick(View view, int position) { }
+                    })
+            );
 
             txtBarra.addTextChangedListener(new TextWatcher() {
 
@@ -515,24 +515,6 @@ public class Venta extends PBase {
 
                 }
             });
-
-            /*
-            recyclerView?.addOnItemTouchListener(
-                    RecyclerItemClickListener(this, recyclerView!!,
-                    object : RecyclerItemClickListener.OnItemClickListener {
-                override fun onItemClick(view: View, position: Int) {
-                    val productoSeleccionado = items[position]
-                    //msgbox("Producto seleccionado: ${productoSeleccionado.desclarga}")()
-
-                    gl?.gint=productoSeleccionado.codigo_producto
-                    gl?.gstr=productoSeleccionado.desclarga
-                    ingresoCantidad()
-                }
-
-                override fun onItemLongClick(view: View?, position: Int) {}
-            })
-            )
-             */
 
             recfam.addOnItemTouchListener(new RecyclerItemClickListener((Context) this, recfam,
                     new RecyclerItemClickListener.OnItemClickListener() {
@@ -559,48 +541,12 @@ public class Venta extends PBase {
                     })
             );
 
-            recprod.addOnItemTouchListener(new RecyclerItemClickListener((Context) this, recfam,
+            recprod.addOnItemTouchListener(new RecyclerItemClickListener((Context) this, recprod,
                     new RecyclerItemClickListener.OnItemClickListener() {
 
                         @Override
                         public void onItemClick(View view, int position) {
-                            clsClasses.clsMenu item;
-                            int kcant,ppos;
-
-                            try {
-
-                                if (imgflag) {
-                                    item=radapterp.items.get(position);
-                                    radapterp.setSelectedIndex(position);
-                                } else {
-                                    item=radapterpl.items.get(position);
-                                    radapterpl.setSelectedIndex(position);
-                                }
-
-                                prodid=item.Cod;
-                                gl.prodid=prodid;
-                                gl.prodcod=item.icod;
-                                gl.gstr=prodid;
-                                gl.prodmenu=gl.prodcod;
-                                gl.pprodname=item.Name;
-                                ppos=gl.pprodname.indexOf("[");
-                                if (ppos<=1) pprodname=gl.pprodname;else pprodname=gl.pprodname.substring(0,ppos-1);
-
-                                gl.um=app.umVenta(gl.prodid);
-                                gl.menuitemid=prodid;
-                                menuitemadd=true;
-
-                                if (khand.val.isEmpty()) {
-                                    processItem(false);
-                                } else {
-                                    try {
-                                        kcant=Integer.parseInt(khand.val);
-                                        if (kcant>0) processItem(kcant);
-                                    } catch (Exception e) { }
-                                    khand.clear();
-                                }
-
-                            } catch (Exception e) {}
+                            applyItem(position);
                         }
 
                         @Override
@@ -621,78 +567,12 @@ public class Venta extends PBase {
                                 gl.gstr=prodid;//gl.prodmenu=prodid;
                                 gl.pprodname=item.Name;
 
-                                msgAskAdd(item.Name);
+                                msgAskAdd(item.Name,position);
                             } catch (Exception e) {}
 
                         }
                     })
             );
-
-            /*
-            grdprod.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                    int kcant,ppos;
-
-                    try {
-                        Object lvObj = grdprod.getItemAtPosition(position);
-                        clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
-
-                        if (imgflag) {
-                            adapterp.setSelectedIndex(position);
-                        } else {
-                            adapterpl.setSelectedIndex(position);
-                        }
-
-                        prodid=item.Cod;
-                        gl.prodid=prodid;
-                        gl.prodcod=item.icod;
-                        gl.gstr=prodid;
-                        gl.prodmenu=gl.prodcod;
-                        gl.pprodname=item.Name;
-                        ppos=gl.pprodname.indexOf("[");
-                        if (ppos<=1) pprodname=gl.pprodname;else pprodname=gl.pprodname.substring(0,ppos-1);
-
-                        gl.um=app.umVenta(gl.prodid);
-                        gl.menuitemid=prodid;
-                        menuitemadd=true;
-
-                        if (khand.val.isEmpty()) {
-                            processItem(false);
-                        } else {
-                            try {
-                                kcant=Integer.parseInt(khand.val);
-                                if (kcant>0) processItem(kcant);
-                            } catch (Exception e) { }
-                            khand.clear();
-                        }
-
-                    } catch (Exception e) {
-                        String ss=e.getMessage();
-                    }
-                };
-            });
-
-            grdprod.setOnItemLongClickListener(new OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                    try {
-                        Object lvObj = grdprod.getItemAtPosition(position);
-                        clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
-
-                        adapterp.setSelectedIndex(position);
-
-                        prodid=item.Cod;
-                        gl.gstr=prodid;//gl.prodmenu=prodid;
-                        gl.pprodname=item.Name;
-
-                        msgAskAdd(item.Name);
-                    } catch (Exception e) {}
-                    return true;
-                }
-            });
-
-             */
 
             gridViewOpciones.setOnItemClickListener(new OnItemClickListener() {
                 @Override
@@ -785,6 +665,12 @@ public class Venta extends PBase {
                     "FROM T_VENTA INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=T_VENTA.PRODUCTO "+
                     "ORDER BY P_PRODUCTO.DESCCORTA ";
 
+            sql="SELECT T_VENTA.PRODUCTO, P_PRODUCTO.DESCCORTA, T_VENTA.TOTAL, T_VENTA.CANT, T_VENTA.PRECIODOC, " +
+                    "T_VENTA.DES, T_VENTA.IMP, T_VENTA.PERCEP, T_VENTA.UM, T_VENTA.PESO, T_VENTA.UMSTOCK, " +
+                    "T_VENTA.DESMON, T_VENTA.EMPRESA, T_VENTA.VAL2  " +
+                    "FROM T_VENTA INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=T_VENTA.PRODUCTO "+
+                    "ORDER BY T_VENTA.PESO ";
+
             DT=Con.OpenDT(sql);
 
             if (DT.getCount()>0) {
@@ -843,11 +729,15 @@ public class Venta extends PBase {
 
             if (DT!=null) DT.close();
 
-            adapter=new ListAdaptVenta(this,this, items);
-            adapter.cursym=gl.peMon;
-            listView.setAdapter(adapter);
+            //adapter=new ListAdaptVenta(this,this, items);
+            //adapter.cursym=gl.peMon;
+            //listView.setAdapter(adapter);
 
-            lblprcant.setText("( "+adapter.getCount()+" )");
+            radapterv=new RV_Venta(items);
+            radapterv.cursym=gl.peMon;
+            recventa.setAdapter(radapterv);
+
+            lblprcant.setText("( "+radapterv.items.size()+" )");
 
             if (sinimp) {
                 ttsin=tot-ttimp-ttperc;
@@ -878,6 +768,11 @@ public class Venta extends PBase {
                 lblStot.setText("Subt : "+mu.frmcur(stot));
             }
 
+            int lastPosition = radapterv.getItemCount() - 1;
+            recventa.scrollToPosition(lastPosition);
+            if (lastPosition>=0) radapterv.setSelectedIndex(lastPosition);
+
+            /*
             if (selidx>-1) {
                 adapter.setSelectedIndex(selidx);
                 try {
@@ -891,9 +786,9 @@ public class Venta extends PBase {
 
                 listView.smoothScrollToPosition(selidx);
             } else seluid="";
+            */
 
         } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox( e.getMessage());
         }
 
@@ -1444,7 +1339,8 @@ public class Venta extends PBase {
             ins.add("TOTAL",prodtot);
             //if (porpeso) ins.add("PRECIODOC",gl.prectemp); else ins.add("PRECIODOC",precdoc);
             ins.add("PRECIODOC",precdoc);
-            ins.add("PESO",peso);
+            //ins.add("PESO",peso);
+            ins.add("PESO",counter);
 
             if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                 ins.add("VAL1", pimp);
@@ -2178,6 +2074,46 @@ public class Venta extends PBase {
         uid="0";
     }
 
+    private void applyItem(int position) {
+        clsClasses.clsMenu item;
+        int kcant,ppos;
+
+        try {
+
+            if (imgflag) {
+                item=radapterp.items.get(position);
+                radapterp.setSelectedIndex(position);
+            } else {
+                item=radapterpl.items.get(position);
+                radapterpl.setSelectedIndex(position);
+            }
+
+            prodid=item.Cod;
+            gl.prodid=prodid;
+            gl.prodcod=item.icod;
+            gl.gstr=prodid;
+            gl.prodmenu=gl.prodcod;
+            gl.pprodname=item.Name;
+            ppos=gl.pprodname.indexOf("[");
+            if (ppos<=1) pprodname=gl.pprodname;else pprodname=gl.pprodname.substring(0,ppos-1);
+
+            gl.um=app.umVenta(gl.prodid);
+            gl.menuitemid=prodid;
+            menuitemadd=true;
+
+            if (khand.val.isEmpty()) {
+                processItem(false);
+            } else {
+                try {
+                    kcant=Integer.parseInt(khand.val);
+                    if (kcant>0) processItem(kcant);
+                } catch (Exception e) { }
+                khand.clear();
+            }
+
+        } catch (Exception e) {}
+    }
+
     //endregion
 
     //region Barras
@@ -2512,22 +2448,20 @@ public class Venta extends PBase {
         }
     }
 
-    private void msgAskAdd(String msg) {
+    private void msgAskAdd(String msg,int position) {
         try{
 
             ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg);
             dialog.setIcon(R.drawable.ic_quest);
 
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            dialog.setPositiveButton("Agregar", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-
+                    applyItem(position);
                 }
             });
 
-            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {}
-            });
+            dialog.setNegativeButton("Regresar", (dialog1, which) -> {});
 
             dialog.show();
         }catch (Exception e){
@@ -4613,8 +4547,9 @@ public class Venta extends PBase {
             recfam.setLayoutManager(new GridLayoutManager(this, 3));
             recprod = findViewById(R.id.recProd);
             recprod.setLayoutManager(new GridLayoutManager(this, 3));
+            recventa = findViewById(R.id.recventa);
+            recventa.setLayoutManager(new LinearLayoutManager (this));
 
-            listView = findViewById(R.id.listView1);
             listMas= findViewById(R.id.listMas);
             gridViewOpciones = findViewById(R.id.gridView2);
             gridViewOpciones.setEnabled(true);

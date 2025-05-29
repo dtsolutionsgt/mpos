@@ -4007,7 +4007,6 @@ public class Menu extends PBase {
 			}
 
 			if (gl.autostart_venta) {
-				toastlong("Restart");
 				menuid=1;
 				showMenuItem();
 			}
