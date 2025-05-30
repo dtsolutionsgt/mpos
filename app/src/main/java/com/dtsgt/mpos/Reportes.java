@@ -1131,40 +1131,40 @@ public class Reportes extends PBase {
 
                     } else if(gl.reportid==6) {
 
-                        if(acc==1){
+                        if (acc==1){
 
                             for (int a = 0; a <itemR.size(); a++) {
-
                                 totF += itemR.get(a).total;
                             }
-
 
                             rep.addc("REPORTE VENTAS POR VENDEDOR");
                             rep.addc(fecharango);
                             setDatosVersion();
-                            if(validCB==1) rep.addc("CONSOLIDADO");
-                            if(validCB==0) rep.add("Codigo     Nombre");
-                            if(validCB==0) rep.add("Cant       %       Total    Comision");
-                            if(validCB==1) rep.add("Codigo     Nombre             Total");
+                            //if(validCB==1) rep.addc("CONSOLIDADO");
+                            //if(validCB==0) rep.add("Codigo     Nombre");
+                            //if(validCB==0) rep.add("Cant       %       Total    Comision");
+                            //if(validCB==1) rep.add("Codigo     Nombre             Total");
+
+                            rep.add("Nombre                    Cant          Total");
+
                             rep.line();
                             acc = 2;
                         }
 
                         comision = (itemR.get(i).total * itemR.get(i).imp) / 100;
 
-                        if(validCB==0){
-                            rep.addtot(itemR.get(i).corel, itemR.get(i).descrip);
-
-                            rep.add4lrrTotV(Integer.toString(itemR.get(i).cant), itemR.get(i).imp+"%", itemR.get(i).total, comision);
-                        }else {
-                            rep.addtot3(itemR.get(i).corel, itemR.get(i).descrip, itemR.get(i).total);
+                        if (validCB==0){
+                            //rep.addtot(itemR.get(i).corel, itemR.get(i).descrip);
+                            //rep.add4lrrTotV(Integer.toString(itemR.get(i).cant), itemR.get(i).imp+"%", itemR.get(i).total, comision);
+                            rep.addtot33(itemR.get(i).descrip, ""+itemR.get(i).cant, itemR.get(i).total);
+                        } else {
+                            rep.addtot33t(itemR.get(i).total);
                         }
 
                         SumaCant = SumaCant + itemR.get(i).cant;
                         totSinImpF += comision;
 
                     } else if(gl.reportid==7 || gl.reportid==8){
-
                         if(acc==1){
 
                             for (int a = 0; a <itemR.size(); a++) {
@@ -1435,7 +1435,8 @@ public class Reportes extends PBase {
                 if(gl.reportid==4 || gl.reportid==5) rep.add4rrrTotPorc("",Integer.toString(SumaCant),totF,0.0);
                 if(gl.reportid==6) {
                     if(validCB==0){
-                        rep.add4lrrTotV(""+SumaCant, "",totF, totSinImpF);
+                        rep.addtot33t(totF);
+                        //rep.add4lrrTotV(""+SumaCant, "",totF, totSinImpF);
                     }else {
                         rep.addtot3("","",totF);
                     }

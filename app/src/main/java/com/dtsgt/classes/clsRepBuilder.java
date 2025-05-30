@@ -686,6 +686,24 @@ public class clsRepBuilder {
         items.add(ts);
     }
 
+	public void addtot33(String s1,String s2,double val) {
+		String sval;
+
+		sval = cursym+decfrm.format(val);
+
+		ts=ltrim(s1,prwt+8)+rtrim(s2,prwt-8)+rtrim(sval,prwt);
+		items.add(ts);
+	}
+
+	public void addtot33t(double val) {
+		String sval;
+
+		sval = cursym+decfrm.format(val);
+
+		ts=ltrim(" ",prwt+8)+rtrim(" ",prwt-8)+rtrim(sval,prwt);
+		items.add(ts);
+	}
+
 	public void addtotint(String s1,int val) {
 		ts=ltrim(s1,prw-13)+" "+rtrim(Integer.toString(val),12);
 		items.add(ts);
