@@ -108,6 +108,7 @@ public class FELFactura extends PBase {
             gl.feluuid="";
             propinaconIva=gl.pePropinaFELconIVA;
 
+
             getURL();
 
             fel=new clsFELInFile(this,this,gl.timeout);
