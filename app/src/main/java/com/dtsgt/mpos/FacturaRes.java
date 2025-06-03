@@ -3992,7 +3992,7 @@ public class FacturaRes extends PBase {
 						rep = new clsRepBuilder(this, gl.prw, true, gl.peMon, gl.peDecImp, "comanda_" + printid + ".txt");
 
 						rep.add(P_impresoraObj.first().tipo_impresora);
-						rep.add(" ");
+						rep.add("Caja :"+gl.cajanom);
 						if (app.impresoraStarLAN(P_impresoraObj.first().codigo_modelo)) {
 							prip=app.ipBypass(P_impresoraObj.first().mac);
 						} else {
@@ -4015,7 +4015,7 @@ public class FacturaRes extends PBase {
 
 						rep.line24();
 						rep.add("");
-						rep.add("Caja :"+gl.cajanom);
+						//rep.add("Caja :"+gl.cajanom);
 						rep.add("Cajero : "+gl.vendnom);
 
 						if (gl.peNumOrdCommandaVenta) {
