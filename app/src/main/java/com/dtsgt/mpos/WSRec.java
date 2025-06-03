@@ -1198,9 +1198,8 @@ public class WSRec extends PBase {
         try {
             if (validaParametros()) {
                 app.setDateRecep(du.getActDate());
-
-
                 fechaActualizacion();
+                if (gl.emp==55) ajusteRedireccion();
 
                 iniciaStream();
             } else {
@@ -1534,6 +1533,15 @@ public class WSRec extends PBase {
         }
     }
 
+    private void ajusteRedireccion() {
+        try {
+            sql="DELETE FROM P_linea_impresora WHERE codigo_impresora=45";
+            db.execSQL(sql);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     private void validaFEL() {
         boolean flagFEL=false;
         long fact,f14;
@@ -1564,6 +1572,8 @@ public class WSRec extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
+
 
     //endregion
 
