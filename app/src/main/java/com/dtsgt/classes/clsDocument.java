@@ -24,7 +24,7 @@ public class clsDocument {
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felISR2,fraseIVA,fraseISR;
     public String felcont,contacc,nitsuc,sfticket;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero;
-    public String pais="",nomdepto,nommuni,nomtipo,tiendanom,tiendanit,impStarLANFaMac;
+    public String pais="",nomdepto,nommuni,nomtipo,tiendanom,tiendanit, impStarLANFactMac;
     public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden,felISR2impr;
@@ -1730,9 +1730,9 @@ public class clsDocument {
     }
 
     public void starlanheader() {
-        rep.add(" ");
-        rep.add(" ");
-            rep.add(impStarLANFaMac);
+        rep.add("-");
+        rep.add("-");
+        rep.add(impStarLANFactMac);
     }
 
 	private void opendb() {

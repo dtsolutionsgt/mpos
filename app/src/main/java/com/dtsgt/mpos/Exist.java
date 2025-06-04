@@ -658,7 +658,7 @@ public class Exist extends PBase {
 
             rep.save();
 
-            app.doPrint(1,0);
+            app.doPrint(1,0,false);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

@@ -171,6 +171,10 @@ public class CierreX extends PBase {
                 doc.nombre_reporte ="Reporte de cierre Z";
             }
 
+            doc.impStarLANFact=gl.impStarLANFact;
+            doc.impStarLANFactMac =gl.impStarLANFactMac;
+
+
             stampstr="Generado : "+du.sfecha(du.getActDateTime())+" : "+du.shora(du.getActDateTime())+" ("+gl.corelZ+")";
 
             if (!report) {
@@ -892,7 +896,7 @@ public class CierreX extends PBase {
 
             pass = true;
 
-            if(enc){
+            if (enc){
                 nombre = "REPORTE DE CIERRE";enc=false;
             }
 

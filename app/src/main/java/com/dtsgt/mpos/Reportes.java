@@ -920,6 +920,13 @@ public class Reportes extends PBase {
                 /*rep.empty();
                 rep.line();*/
 
+                if  (gl.impStarLANFact) {
+                    rep.add("-");
+                    rep.add("-");
+                    rep.add(gl.impStarLANFactMac);
+                }
+
+
                 if (gl.reportid==15) {
                     return reporteCortesias();
                 }

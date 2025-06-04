@@ -1284,7 +1284,8 @@ public class AppMethods {
 			gl.impStarLANFactMac = val;
 			gl.impStarLANFact = val.length()==17;
 		} catch (Exception e) {
-			gl.peFactCantProd = false;
+			gl.impStarLANFactMac = "";
+            gl.impStarLANFact= false;
 		}
 		if (dt!=null) dt.close();
 
@@ -1975,11 +1976,11 @@ public class AppMethods {
     //region Impresion
 
     public void doPrint() {
-        doPrint(0,0);
+        doPrint(0,0,false);
     }
 
     public void doPrint(int prtipo) {
-        doPrint(0,prtipo);
+        doPrint(0,prtipo,false);
     }
 
 	public void doPrintLANMulti() {
@@ -1987,8 +1988,10 @@ public class AppMethods {
 	}
 
     @SuppressLint("SuspiciousIndentation")
-	public void doPrint(int copies, int tipoimpr) {
+	public void doPrint(int copies, int tipoimpr,boolean cutpaper) {
 		try {
+
+            gl.impStarCutPaper=cutpaper;
 
 			if (copies<1) copies=1;
 
@@ -2181,6 +2184,7 @@ public class AppMethods {
 			if (gl.impStarCutPaper) intent.putExtra("drawer","open");
 			cont.startActivity(intent);
 		} catch (Exception e) {
+            String se=e.getMessage();
 			toastlong("El controlador de Star LAN no está instalado");
 		}
 	}
