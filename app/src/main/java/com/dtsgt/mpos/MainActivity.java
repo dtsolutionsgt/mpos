@@ -110,9 +110,6 @@ public class MainActivity extends PBase {
     private String parVer = "5.5.10.1";
     private boolean bloqueo_venta=false;
 
-    private Typeface typeface;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {

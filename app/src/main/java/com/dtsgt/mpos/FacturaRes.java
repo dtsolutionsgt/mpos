@@ -1108,9 +1108,7 @@ public class FacturaRes extends PBase {
 				if (gl.codigo_pais.equalsIgnoreCase("HN")) gl.QRCodeStr="";
 				if (gl.codigo_pais.equalsIgnoreCase("SV")) gl.QRCodeStr="";
 
-				gl.impStarCutPaper=true;
-
-				app.doPrint(gl.peNumImp,0);
+				app.doPrint(gl.peNumImp,0,true);
 
             }
 
@@ -3046,7 +3044,7 @@ public class FacturaRes extends PBase {
 
 				rep.save();
 
-				app.doPrint(gl.peNumImp,0);
+				app.doPrint(gl.peNumImp,0,false);
 			} catch (Exception e) {
 				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 			}
@@ -4351,7 +4349,7 @@ public class FacturaRes extends PBase {
 			gl.QRCodeStr="";
 			gl.impStarCutPaper=false;
 
-			app.doPrint(1,0);
+			app.doPrint(1,0,false);
 
 			try {
 				db.execSQL("DELETE FROM T_VENTA");
