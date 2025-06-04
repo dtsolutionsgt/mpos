@@ -69,7 +69,7 @@ public class appGlobals extends Application {
                    ingreso_mesero,after_login,modo_prec,mesero_precuenta,sin_propina,modo_upd_venta,
 			       modo_cortesia,modo_apertura,imp_inventario,sal_NIT,sal_NRC,sal_PER,nueva_mesa,
 				   combo_edit,cliente_credito=false,pedido_dom_import,repartidor_select,
-			       impStarLAN,impStarLANFact,impStarCutPaper,desc_acceso,
+			       impStarLAN,impStarLANFact,desc_acceso,
 			       reinicia_venta=false,autostart_venta=false;
 
 	//FEL Identificacion

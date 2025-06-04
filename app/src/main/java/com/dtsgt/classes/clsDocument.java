@@ -1499,18 +1499,6 @@ public class clsDocument {
         }
     }
 
-    public void lanheader() {
-        rep.add(" ");
-        rep.add("IMPRESORA DE CAJA");
-        rep.add(LAN_IP);
-    }
-
-    public void starlanheader() {
-        rep.add("STAR LAN");
-        rep.add("...");
-        rep.add(impStarLANFactMac);
-    }
-
     //endregion
 
     //region Private
