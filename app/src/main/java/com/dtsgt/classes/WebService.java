@@ -70,85 +70,85 @@ public class WebService {
 
     public void callMethod(String methodName, Object... args) throws Exception {
 
-       try{
+        try{
 
-           String ss = "",line="";
+            String ss = "",line="";
 
-           mMethodName = methodName;mResult = "";xmlresult="";
+            mMethodName = methodName;mResult = "";xmlresult="";
 
-           URLConnection conn = mUrl.openConnection();
-           conn.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
-           conn.addRequestProperty("SOAPAction", "http://tempuri.org/" + methodName);
+            URLConnection conn = mUrl.openConnection();
+            conn.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
+            conn.addRequestProperty("SOAPAction", "http://tempuri.org/" + methodName);
 
-           //#EJC 20200601: Set Timeout
-           conn.setConnectTimeout(mTimeOut);
-           conn.setReadTimeout(mTimeOut * 4);
-           conn.setDoInput(true);
-           conn.setDoOutput(true);
-           conn.connect();
+            //#EJC 20200601: Set Timeout
+            conn.setConnectTimeout(mTimeOut);
+            conn.setReadTimeout(mTimeOut * 4);
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.connect();
 
-           OutputStream ostream = conn.getOutputStream();
+            OutputStream ostream = conn.getOutputStream();
 
-           OutputStreamWriter wr = new OutputStreamWriter(ostream);
+            OutputStreamWriter wr = new OutputStreamWriter(ostream);
 
-           String body = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-                   "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:" +
-                   "xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:" +
-                   "soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
-                   "<soap:Body>" +
-                   "<" + methodName + " xmlns=\"http://tempuri.org/\">";
-           body += buildArgs(args);
-           body= Strings.replace(body,"&","Y");
-           body += "</" + methodName + ">" +
-                   "</soap:Body>" +
-                   "</soap:Envelope>";
-           body= Strings.replace(body,"&","Y");
-           wr.write(body);
-           wr.flush();
+            String body = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                    "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:" +
+                    "xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:" +
+                    "soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                    "<soap:Body>" +
+                    "<" + methodName + " xmlns=\"http://tempuri.org/\">";
+            body += buildArgs(args);
+            body= Strings.replace(body,"&","Y");
+            body += "</" + methodName + ">" +
+                    "</soap:Body>" +
+                    "</soap:Envelope>";
+            body= Strings.replace(body,"&","Y");
+            wr.write(body);
+            wr.flush();
 
-           int responsecode = ((HttpURLConnection) conn).getResponseCode();
+            int responsecode = ((HttpURLConnection) conn).getResponseCode();
 
-           //#EJC20200702:Capturar excepcion de SQL (No se sabe el error pero sabemos que no se proceso)
-           if (responsecode==500) {
-               //JP 20210201 Este error tira tambien cuando la consulta no regresa ninguno registro, por eso lo deshabilite
+            //#EJC20200702:Capturar excepcion de SQL (No se sabe el error pero sabemos que no se proceso)
+            if (responsecode==500) {
+                //JP 20210201 Este error tira tambien cuando la consulta no regresa ninguno registro, por eso lo deshabilite
                /*
                throw new Exception("Error 500: Esto es poco usual pero algún problema ocurrió del lado del motor de BD al ejecutar sentencia SQL: \n" +
                        "\n[" +methodName+"] , "+ args[1].toString());
                */
-           } else if (responsecode!=299 && responsecode!=400  && responsecode!=404 && responsecode!=500) {
+            } else if (responsecode!=299 && responsecode!=400  && responsecode!=404 && responsecode!=500) {
 
-               BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-               while ((line = rd.readLine()) != null) mResult += line;
-               rd.close();rd.close();
+                while ((line = rd.readLine()) != null) mResult += line;
+                rd.close();rd.close();
 
-               mResult=mResult.replace("ñ","n");
-               xmlresult=mResult;
+                mResult=mResult.replace("ñ","n");
+                xmlresult=mResult;
 
-           } if (responsecode==299) {
+            } if (responsecode==299) {
 
-               BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-               while ((line = rd.readLine()) != null) mResult += line;
-               rd.close();rd.close();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                while ((line = rd.readLine()) != null) mResult += line;
+                rd.close();rd.close();
 
-               mResult=mResult.replace("ñ","n");
-               xmlresult=mResult;
+                mResult=mResult.replace("ñ","n");
+                xmlresult=mResult;
 
-               throw new Exception("Error al procesar la solicitud :\n " + parseError());
+                throw new Exception("Error al procesar la solicitud :\n " + parseError());
 
-           } if (responsecode==404) {
-               throw new Exception("Error 404: No se obtuvo acceso a: \n" + mUrl.toURI() +
-                       "\n" + "Verifique que el WS Existe y es accesible desde el explorador.");
-           } if (responsecode==400) {
-               throw new Exception("Error 400:  \n\n" + mUrl.toURI()  );
-           }
+            } if (responsecode==404) {
+                throw new Exception("Error 404: No se obtuvo acceso a: \n" + mUrl.toURI() +
+                        "\n" + "Verifique que el WS Existe y es accesible desde el explorador.");
+            } if (responsecode==400) {
+                throw new Exception("Error 400:  \n\n" + mUrl.toURI()  );
+            }
 
-           ((HttpURLConnection) conn).disconnect();
+            ((HttpURLConnection) conn).disconnect();
 
-       } catch (Exception e) {
-           errorflag=true;error=e.getMessage();
-           throw new Exception(error);
-       }
+        } catch (Exception e) {
+            errorflag=true;error=e.getMessage();
+            throw new Exception(error);
+        }
     }
 
     private String buildArgs(Object... args) throws IllegalArgumentException, IllegalAccessException    {
