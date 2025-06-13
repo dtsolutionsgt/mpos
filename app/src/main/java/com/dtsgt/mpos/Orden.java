@@ -58,6 +58,7 @@ import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsT_ordenerrorObj;
 import com.dtsgt.classes.clsT_ordenpendObj;
+import com.dtsgt.classes.clsT_res_sessionObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
@@ -170,7 +171,7 @@ public class Orden extends PBase {
     private boolean prodflag=true,listflag=true,horiz,wsoidle=true,ordenpedido,barril;
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2,idtransbar;
     private String idorden,cliid,saveprodid, brtcorel, idresorig, idresdest;
-    private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo;
+    private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo,idsuper;
     private int IdCuentaAMover =0;
 
     private int maxitems=100;
@@ -4425,6 +4426,19 @@ public class Orden extends PBase {
             db.execSQL("DELETE FROM T_orden WHERE (COREL='" + idorden + "')");
             db.execSQL("DELETE FROM T_ordencuenta WHERE (COREL='" + idorden + "')");
 
+            try {
+                clsT_res_sessionObj T_res_sessionObj=new clsT_res_sessionObj(this,Con,db);
+                T_res_sessionObj.fill("WHERE (ID='"+idorden+"')");
+                if (T_res_sessionObj.count>0) {
+                    clsClasses.clsT_res_session titem=T_res_sessionObj.first();
+                    titem.fechafin=-1L;
+                    titem.mesa=""+idsuper;
+                    T_res_sessionObj.update(titem);
+                }
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
             db.setTransactionSuccessful();
             db.endTransaction();
 
@@ -6232,6 +6246,7 @@ public class Orden extends PBase {
                     if (listdlg.getInput().isEmpty()) return;
 
                     if (listdlg.validPassword()) {
+                        idsuper=listdlg. validUserId();
                         if (valsupermodo==0) {
                             msgBorrarOrden("Cerrar todas las cuentas de la órden");
                         } else if (valsupermodo==1) {

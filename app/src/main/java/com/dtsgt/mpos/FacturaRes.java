@@ -71,6 +71,7 @@ import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_factrecetaObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
+import com.dtsgt.classes.clsT_res_sessionObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
@@ -1807,6 +1808,25 @@ public class FacturaRes extends PBase {
             } catch (Exception e) {
                 msgbox2(e.getMessage());return false;
             }
+
+			//endregion
+
+			//region Log de ordenes de mesa
+
+			try {
+				if (!gl.ordcorel.isEmpty()) {
+					clsT_res_sessionObj T_res_sessionObj = new clsT_res_sessionObj(this, Con, db);
+					T_res_sessionObj.fill("WHERE (ID='" + gl.ordcorel + "')");
+					if (T_res_sessionObj.count > 0) {
+						clsClasses.clsT_res_session titem = T_res_sessionObj.first();
+						titem.fechafin = du.getActDateTime();
+						titem.mesa = "" + gl.codigo_vendedor;
+						T_res_sessionObj.update(titem);
+					}
+				}
+			} catch (Exception e) {
+				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			}
 
 			//endregion
 

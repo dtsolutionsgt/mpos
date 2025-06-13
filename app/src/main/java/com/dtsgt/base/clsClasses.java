@@ -1629,6 +1629,14 @@ public class clsClasses {
         public String codigo_tipo_producto;
     }
 
+    public class clsT_res_session {
+        public String id;
+        public int  codigo_mesa;
+        public String mesa;
+        public long fechafin;
+        public long fechaini;
+    }
+
     public class clsT_sv_gcont {
         public int  id;
         public String iddep;
