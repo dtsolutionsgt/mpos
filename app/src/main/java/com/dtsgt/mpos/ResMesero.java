@@ -660,6 +660,7 @@ public class ResMesero extends PBase {
         }
     }
 
+
     private void PutCorelCallback() {
         try {
             if (wso.errflag) {
