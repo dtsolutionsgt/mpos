@@ -2054,6 +2054,19 @@ public class BaseDatosVersion {
             db.execSQL(sql);
 
         } catch (Exception e) { }
+        try {
+            sql="CREATE TABLE [T_res_session] ("+
+                    "ID TEXT NOT NULL,"+
+                    "CODIGO_MESA INTEGER NOT NULL,"+
+                    "MESA TEXT NOT NULL,"+
+                    "FECHAFIN INTEGER NOT NULL,"+
+                    "FECHAINI INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX T_res_session_idx1 ON T_res_session(CODIGO_MESA)";db.execSQL(sql);
+        } catch (Exception e) { }
 
         try {
             //db.execSQL("DROP TABLE T_movd_almacen");
