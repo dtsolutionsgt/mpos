@@ -31,6 +31,7 @@ import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsT_ordenpendObj;
+import com.dtsgt.classes.clsT_res_sessionObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
@@ -74,6 +75,7 @@ public class ResMesero extends PBase {
     private clsP_mesa_nombreObj P_mesa_nombreObj;
     private clsT_ordenpendObj T_ordenpendObj;
     private clsVendedoresObj VendedoresObj;
+    private clsT_res_sessionObj T_res_sessionObj;
 
     private wsOpenDT wso;
     private wsCommit wscom;
@@ -121,6 +123,7 @@ public class ResMesero extends PBase {
             P_mesa_nombreObj=new clsP_mesa_nombreObj(this,Con,db);
             T_ordenpendObj=new clsT_ordenpendObj(this,Con,db);
             VendedoresObj=new clsVendedoresObj(this,Con,db);
+            T_res_sessionObj=new clsT_res_sessionObj(this,Con,db);
 
             actorden=gl.peActOrdenMesas;
 
@@ -477,6 +480,20 @@ public class ResMesero extends PBase {
 
             fboc.setItem(cuenta);
             T_ordencuentaObj.add(cuenta);
+
+
+            clsClasses.clsT_res_session torden= clsCls.new clsT_res_session();
+
+            torden.id=item.id;
+            torden.codigo_mesa=item.codigo_mesa;
+            torden.mesa=""+item.vendedor;
+            torden.fechaini=item.fechaini;
+            torden.fechafin=0;
+
+            T_res_sessionObj.add(torden);
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
 
             gl.idorden=item.id;idorden=item.id;
             //if (actorden) envioOrden(); else validaMesaAbierta();
@@ -1312,6 +1329,7 @@ public class ResMesero extends PBase {
             P_mesa_nombreObj.reconnect(Con,db);
             T_ordenpendObj.reconnect(Con,db);
             VendedoresObj.reconnect(Con,db);
+            T_res_sessionObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }
