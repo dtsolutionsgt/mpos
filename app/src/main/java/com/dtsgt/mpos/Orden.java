@@ -193,7 +193,7 @@ public class Orden extends PBase {
     private boolean prodflag=true,listflag=true,horiz,wsoidle=true,ordenpedido,barril,escombo;
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2,idtransbar;
     private String idorden,cliid,saveprodid, brtcorel, idresorig, idresdest;
-    private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo,idsuper;
+    private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo;
     private int IdCuentaAMover =0;
     private String idorden_movcue,mesnom_movcue;
     private int maxprodid, maxcuenta=1,movcue_nueva,movcue_orig,movcue_maxdest,comensales;
