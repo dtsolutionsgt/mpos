@@ -184,7 +184,6 @@ public class BaseDatosVersion {
 
         } catch (Exception e) { }
 
-
         try {
             sql="CREATE TABLE [P_deposito] ("+
                     "CODIGO_DEPOSITO INTEGER NOT NULL,"+
@@ -207,7 +206,6 @@ public class BaseDatosVersion {
 
             sql="CREATE INDEX P_deposito_idx1 ON P_deposito(STATCOM)";db.execSQL(sql);
         } catch (Exception e) { }
-
 
         try {
             sql="CREATE TABLE [P_deposito] ("+
@@ -249,7 +247,19 @@ public class BaseDatosVersion {
             sql="CREATE INDEX D_orden_stat_idx2 ON D_orden_stat(STATCOM)";db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [T_res_session] ("+
+                    "ID TEXT NOT NULL,"+
+                    "CODIGO_MESA INTEGER NOT NULL,"+
+                    "MESA TEXT NOT NULL,"+
+                    "FECHAFIN INTEGER NOT NULL,"+
+                    "FECHAINI INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            db.execSQL(sql);
 
+            sql="CREATE INDEX T_res_session_idx1 ON T_res_session(CODIGO_MESA)";db.execSQL(sql);
+        } catch (Exception e) { }
 
         try {
 
