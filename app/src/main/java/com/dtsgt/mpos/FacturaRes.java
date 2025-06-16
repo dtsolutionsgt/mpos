@@ -1730,7 +1730,8 @@ public class FacturaRes extends PBase {
 				if (gl.parallevar | gl.domicilio) {
 					ins.add("NOMBRE",gl.dom_nom);
 				} else {
-					ins.add("NOMBRE","Consumidor Final");
+					//ins.add("NOMBRE","Consumidor Final");
+					ins.add("NOMBRE",gl.dom_nom);
 				}
 				ins.add("NIT","CF");
 				if (!gl.gDirCliente.isEmpty()) {
@@ -2072,7 +2073,7 @@ public class FacturaRes extends PBase {
 					}
 				}
 			} catch (Exception e) {
-				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+				//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 			}
 
 			//endregion
