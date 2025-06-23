@@ -2061,8 +2061,15 @@ public class FacturaRes extends PBase {
 
 			//region Log de ordenes de mesa
 
+			int ocl;
 			try {
-				if (!gl.ordcorel.isEmpty()) {
+				ocl=gl.ordcorel.length();
+			} catch (Exception e) {
+				ocl=0;
+			}
+
+			try {
+				if (ocl>0) {
 					clsT_res_sessionObj T_res_sessionObj = new clsT_res_sessionObj(this, Con, db);
 					T_res_sessionObj.fill("WHERE (ID='" + gl.ordcorel + "')");
 					if (T_res_sessionObj.count > 0) {
