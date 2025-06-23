@@ -2790,8 +2790,6 @@ public class Orden extends PBase {
 
                         //ordenpedido=numpedido>0;
 
-
-
                         if (ordenpedido) {
                             if (numpedido!=0) rep.add("ORDEN : #" + numpedido);
                             rep.empty();

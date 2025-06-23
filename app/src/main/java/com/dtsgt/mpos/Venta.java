@@ -3558,7 +3558,7 @@ public class Venta extends PBase {
                         rep = new clsRepBuilder(this, gl.prw, true, gl.peMon, gl.peDecImp, "comanda_" + printid + ".txt");
 
                         rep.add(P_impresoraObj.first().tipo_impresora);
-                        rep.add(" ");
+                        rep.add("..");
 
                         if (app.impresoraStarLAN(P_impresoraObj.first().codigo_modelo)) {
                             prip=app.ipBypass(P_impresoraObj.first().mac);
@@ -3587,6 +3587,14 @@ public class Venta extends PBase {
                         rep.add("      ORDEN # "+gl.ref1.toUpperCase());
                         rep.add("");
                         rep.add("");
+
+                        if ( gl.parallevar) {
+                            rep.addc(" P A R A   L L E V A R ");rep.add("");
+                        }
+
+                        if ( gl.domicilio) {
+                            rep.addc(" D O M I C I L I O ");rep.add("");
+                        }
 
                         ln = rep.items.size();
                         if (ln < 20) {
