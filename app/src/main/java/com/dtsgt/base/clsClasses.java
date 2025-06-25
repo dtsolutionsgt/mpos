@@ -1058,6 +1058,13 @@ public class clsClasses {
         public String nit;
     }
 
+    public class clsP_hotel_brazalete {
+        public int  codigo;
+        public String barra;
+        public String habitacion;
+        public int  codigo_cliente;
+    }
+
     public class clsP_impuesto {
         public int codigo_impuesto;
         public int codigo;

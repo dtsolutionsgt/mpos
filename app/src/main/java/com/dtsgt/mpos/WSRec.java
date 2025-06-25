@@ -45,6 +45,7 @@ import com.dtsgt.classes.clsP_factorconvObj;
 import com.dtsgt.classes.clsP_fel_sv_ambObj;
 import com.dtsgt.classes.clsP_fraseObj;
 import com.dtsgt.classes.clsP_giro_negocioObj;
+import com.dtsgt.classes.clsP_hotel_brazaleteObj;
 import com.dtsgt.classes.clsP_impresoraObj;
 import com.dtsgt.classes.clsP_impresora_marcaObj;
 import com.dtsgt.classes.clsP_impresora_modeloObj;
@@ -517,7 +518,7 @@ public class WSRec extends PBase {
                     execws(10);break;
                 case 10:
                     if (gl.peCargarClientes) {
-                        //processCliente();
+                        processCliente();
                     }
                     if (ws.errorflag) {
                         processComplete();break;
@@ -1573,8 +1574,6 @@ public class WSRec extends PBase {
         }
     }
 
-
-
     //endregion
 
     //region Tablas
@@ -2244,7 +2243,6 @@ public class WSRec extends PBase {
                 script.add(handler.addItemSql(var));
 
                 try {
-
                     String img = var.imagen;
 
                     if (img != null) {
@@ -4329,6 +4327,66 @@ public class WSRec extends PBase {
                         item.nombre=dt.getString(1);
 
                         P_empresa_transObj.add(item);
+
+                        dt.moveToNext();
+                    }
+                }
+
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (Exception e) {
+                db.endTransaction();
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                terminaStream();
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        try {
+            sql="SELECT  CODIGO_P_HOTEL_BRAZALETE, BARRA, HABITACION, CODIGO_CLIENTE  " +
+                "FROM  P_HOTEL_BRAZALETE WHERE (EMPRESA="+gl.emp+") " +
+                "AND (CODIGO_SUCURSAL="+gl.tienda+") AND (ACTIVO=1)";
+            wso.execute(sql,() -> { hotelBrazalete(); });
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            terminaStream();
+        }
+    }
+
+    private void hotelBrazalete() {
+        clsClasses.clsP_hotel_brazalete item;
+
+        try {
+            if (wso.errflag) throw new Exception(wso.error);
+
+            if (!db.isOpen()) {
+                browse=0;onResume();
+            }
+
+            Cursor dt=wso.openDTCursor;
+
+            try {
+                db.beginTransaction();
+
+                db.execSQL("DELETE FROM P_hotel_brazalete");
+
+                if (dt.getCount()>0) {
+
+                    clsP_hotel_brazaleteObj P_hotel_brazaleteObj=new clsP_hotel_brazaleteObj(this,Con,db);
+
+                    dt.moveToFirst();
+                    while (!dt.isAfterLast()) {
+
+                        item = clsCls.new clsP_hotel_brazalete();
+
+                        item.codigo=dt.getInt(0);
+                        item.barra=dt.getString(1);
+                        item.habitacion=dt.getString(2);
+                        item.codigo_cliente=dt.getInt(3);
+
+                        P_hotel_brazaleteObj.add(item);
 
                         dt.moveToNext();
                     }
