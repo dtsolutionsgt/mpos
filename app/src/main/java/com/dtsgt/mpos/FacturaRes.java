@@ -1734,7 +1734,8 @@ public class FacturaRes extends PBase {
 				if (gl.parallevar | gl.domicilio) {
 					ins.add("NOMBRE",gl.dom_nom);
 				} else {
-					ins.add("NOMBRE","Consumidor Final");
+					//ins.add("NOMBRE","Consumidor Final");
+					ins.add("NOMBRE",gl.dom_nom);
 				}
 				ins.add("NIT","CF");
 				if (!gl.gDirCliente.isEmpty()) {
@@ -2064,8 +2065,15 @@ public class FacturaRes extends PBase {
 
 			//region Log de ordenes de mesa
 
+			int ocl;
 			try {
-				if (!gl.ordcorel.isEmpty()) {
+				ocl=gl.ordcorel.length();
+			} catch (Exception e) {
+				ocl=0;
+			}
+
+			try {
+				if (ocl>0) {
 					clsT_res_sessionObj T_res_sessionObj = new clsT_res_sessionObj(this, Con, db);
 					T_res_sessionObj.fill("WHERE (ID='" + gl.ordcorel + "')");
 					if (T_res_sessionObj.count > 0) {
@@ -2076,7 +2084,7 @@ public class FacturaRes extends PBase {
 					}
 				}
 			} catch (Exception e) {
-				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+				//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 			}
 
 			//endregion
@@ -4077,9 +4085,9 @@ public class FacturaRes extends PBase {
 							}
 						}
 
-						rep.add("");
-						rep.add("");
-						rep.add("");
+						rep.add("..");
+						rep.add("   ");
+						rep.add("..");
 
 						rep.save();
 						rep.clear();
