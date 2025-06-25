@@ -1417,11 +1417,6 @@ public class AppMethods {
 
         if (dt!=null) dt.close();
 
-
-
-
-
-
 		if (dt!=null) dt.close();
 	}
 
