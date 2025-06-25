@@ -4276,6 +4276,8 @@ public class Orden extends PBase {
     private void anulaItem() {
         try {
 
+            db.beginTransaction();
+
             fbResSesion  fbrs=new fbResSesion("ResSesion",gl.tienda);
             fbOrdenCombo fbocb=new fbOrdenCombo("OrdenCombo",gl.tienda);
             fbOrdenComboPrecio fbop=new fbOrdenComboPrecio("OrdenComboPrecio",gl.tienda);

@@ -492,7 +492,6 @@ public class FacturaRes extends PBase {
 			msgbox("Total incorrecto");return;
 		}
 
-
 		try {
 			if (fcorel==0) {
 				msgbox("No existe un correlativo disponible, no se puede emitir factura");return;
@@ -1727,6 +1726,12 @@ public class FacturaRes extends PBase {
 
 			gl.gNITCliente=gl.gNITCliente.replace(".","");
 
+			try {
+				if (gl.dom_nom.isEmpty()) gl.dom_nom=" ";
+			} catch (Exception e) {
+				gl.dom_nom=" ";
+			}
+
 			if (gl.gNITCliente.equalsIgnoreCase("CF")) {
 
 				ins.init("D_FACTURAF");
@@ -1735,7 +1740,15 @@ public class FacturaRes extends PBase {
 					ins.add("NOMBRE",gl.dom_nom);
 				} else {
 					//ins.add("NOMBRE","Consumidor Final");
-					ins.add("NOMBRE",gl.dom_nom);
+					try {
+						if (gl.dom_nom.length()>0) {
+							ins.add("NOMBRE",gl.dom_nom);
+						} else {
+							ins.add("NOMBRE","CF");
+						}
+					} catch (Exception e) {
+						ins.add("NOMBRE","CF");
+					}
 				}
 				ins.add("NIT","CF");
 				if (!gl.gDirCliente.isEmpty()) {
@@ -1746,6 +1759,12 @@ public class FacturaRes extends PBase {
 				ins.add("CORREO",vCorreoDefecto);
 
             } else {
+
+				try {
+					if (gl.gNombreCliente.isEmpty()) gl.gNombreCliente=" ";
+				} catch (Exception e) {
+					gl.gNombreCliente=" ";
+				}
 
 				ins.init("D_FACTURAF");
 				ins.add("COREL",corel);

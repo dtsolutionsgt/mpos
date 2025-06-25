@@ -337,7 +337,7 @@
             android:name=".CliPos"
             android:label="@string/title_activity_cli_pos"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:windowSoftInputMode="stateVisible" />
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".CliGPS"
             android:label="@string/title_activity_cli_gps" />

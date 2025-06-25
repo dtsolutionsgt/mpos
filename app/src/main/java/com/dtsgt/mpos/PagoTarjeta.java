@@ -3,6 +3,7 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -218,6 +219,11 @@ public class PagoTarjeta extends PBase {
                             finish();
                         }
 
+                        if (P_mediapagoObj.items.get(position).nivel==8) {
+                            codigoBrazalete();
+                            return;
+                        }
+
                         P_mediapagoObj.fill("WHERE (codigo="+cpago+")");
                         String lbnivel="Nota";
                         pnivel=P_mediapagoObj.first().nivel;
@@ -284,6 +290,72 @@ public class PagoTarjeta extends PBase {
             dialog.show();
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void codigoBrazalete() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Identificación");
+
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        input.setText("");
+        input.requestFocus();
+
+        alert.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                try {
+                    String s=input.getText().toString();
+                    if (s.length()<4) throw new Exception();
+                    procesaBrazalete(s);
+                } catch (Exception e) {
+                    mu.msgbox("Identificación incorrecta");return;
+                }
+            }
+        });
+
+        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {}
+        });
+
+        AlertDialog dialog = alert.create();
+        dialog.show();
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
+    }
+
+    private void procesaBrazalete(String cb) {
+        try {
+            s="Habitación 103 \n" +
+              "Limite credito: 0.00\n" +
+              "Credito disponible: 0.00\n" +
+              "Monto a pagar: 0.00   \n ";
+            msgAskPagoHabitacion(s);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
+    private void msgAskPagoHabitacion(String msg) {
+        try {
+            ExDialog dialog = new ExDialog(this);
+            dialog.setTitle("Credito habitación");
+            dialog.setMessage(msg);
+            dialog.setCancelable(false);
+
+            dialog.setPositiveButton("Si", (dialog12, which) -> {
+
+            });
+
+            dialog.setNegativeButton("No", (dialog1, which) -> {});
+
+            dialog.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 

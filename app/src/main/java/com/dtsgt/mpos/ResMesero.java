@@ -452,6 +452,7 @@ public class ResMesero extends PBase {
     private void addOrden() {
 
         try {
+            db.beginTransaction();
 
             clsClasses.clsfbResSesion item = clsCls.new clsfbResSesion();
 

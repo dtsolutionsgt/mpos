@@ -9,7 +9,9 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dtsgt.mpos.R;
@@ -33,14 +35,22 @@ public class ExDialog extends  AlertDialog.Builder {
 
         AlertDialog adg=super.show();
 
+        adg.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
         TextView textView = (TextView) adg.getWindow().findViewById(android.R.id.message);
         textView.setTextColor(Color.BLACK);
+        textView.setBackgroundColor(Color.WHITE);
+
+        textView.setPadding(0, 0, 0, 0); // Sin padding
+
+
         textView.setTextSize(24);
         textView.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
         textView.setGravity(Gravity.CENTER);
 
         int btntextsize=24;
-        int btnbackcolor=Color.parseColor("#63CE60");
+        int btnbackcolor=Color.parseColor("404040");
+        //int btnbackcolor=Color.parseColor("#63CE60");
 
         try {
             btnPos=adg.getButton(DialogInterface.BUTTON_POSITIVE);

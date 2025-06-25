@@ -23,7 +23,7 @@ public class FELmsgbox extends PBase {
             lbl1 = (TextView) findViewById(R.id.textView169);
 
             String fm=gl.FELmsg;
-            if (fm.length()>150) fm=fm.substring(0,149)+"...";
+            if (fm.length()>500) fm=fm.substring(0,499)+"...";
 
             lbl1.setText(fm);
 
