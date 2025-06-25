@@ -1346,6 +1346,34 @@ public class AppMethods {
 		if (dt!=null) dt.close();
 
 		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=187";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peAnulFact = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peAnulFact = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=188";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peNoModInv = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peNoModInv = false;
+		}
+
+	}
+
+		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=184";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
