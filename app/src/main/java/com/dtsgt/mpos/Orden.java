@@ -2846,6 +2846,10 @@ public class Orden extends PBase {
 
                         if (gl.peComensalesComanda) rep.add("Comensales: "+comensales);
 
+                        rep.add(".");
+                        rep.add(".");
+                        rep.add(".");
+
                         /*
                         ln = rep.items.size();
                         if (ln < 20) {
