@@ -1345,7 +1345,50 @@ public class AppMethods {
 		}
 		if (dt!=null) dt.close();
 
-		try {
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=184";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peOcultarPagoMeseros = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peOcultarPagoMeseros = false;
+        }
+        if (dt!=null) dt.close();
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=185";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peLlevarSinPropina = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peLlevarSinPropina = false;
+        }
+        if (dt!=null) dt.close();
+
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=186";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.pePropinaFELconIVA = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.pePropinaFELconIVA = false;
+        }
+
+
+        try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=187";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
@@ -1371,49 +1414,6 @@ public class AppMethods {
 			gl.peNoModInv = false;
 		}
 
-	}
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=184";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peOcultarPagoMeseros = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peOcultarPagoMeseros = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=185";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peLlevarSinPropina = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peLlevarSinPropina = false;
-		}
-		if (dt!=null) dt.close();
-
-
-        try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=186";
-            dt=Con.OpenDT(sql);
-            dt.moveToFirst();
-
-            val=dt.getString(0);
-            if (emptystr(val)) throw new Exception();
-
-            gl.pePropinaFELconIVA = val.equalsIgnoreCase("S");
-        } catch (Exception e) {
-            gl.pePropinaFELconIVA = false;
-        }
 
         if (dt!=null) dt.close();
 
