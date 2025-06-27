@@ -1234,6 +1234,7 @@ public class Exist extends PBase {
     private void imprimirInventario() {
         clsClasses.clsExist item;
         String s1,s2;
+        double tc=0;
 
         try {
             rep.clear();
@@ -1249,10 +1250,14 @@ public class Exist extends PBase {
                     s1 = item.Desc;
                     s2 = item.rcant;
                     rep.addtotrs(s1, s2);
+
+                    tc+=item.cant;
                 }
             }
 
             rep.line();
+            rep.addtotrs("Total reporte:", mu.frmint2((int) tc) +"   ");
+            rep.empty();
             rep.addc("FIN DE REPORTE");
             rep.empty();
             rep.empty();

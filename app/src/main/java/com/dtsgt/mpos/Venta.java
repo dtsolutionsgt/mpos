@@ -2855,6 +2855,9 @@ public class Venta extends PBase {
                         //msgbox("Su licencia ha expirado.\nNo puede realizar ninguna venta.");return;
                     }
                     if (!validaMinimoCF()) return;
+
+                    if (!validaMinimoCF()) return;
+
                     if (!disponibleCorel()) return;
                     finalizarOrden();break;
                 case 3:
