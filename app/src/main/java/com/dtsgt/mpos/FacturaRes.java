@@ -438,9 +438,12 @@ public class FacturaRes extends PBase {
 
 	}
 
+	@SuppressLint("SuspiciousIndentation")
 	public void paySelect(View view) {
+
 		if (!validaMontoMaximo()) return;
         pendiente=false;
+
 		try{
 
 			if (fcorel==0) {

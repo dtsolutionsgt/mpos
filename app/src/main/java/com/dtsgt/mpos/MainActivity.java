@@ -32,6 +32,7 @@ import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -416,7 +417,11 @@ public class MainActivity extends PBase {
     }
 
     public void doFPTest(View view) {
+
+        testaskdlg();
+
         //startActivity(new Intent(this, FBTest.class));
+        /*
         try {
             Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.mposupd");
             intent.putExtra("filename","mpos.apk");
@@ -424,6 +429,8 @@ public class MainActivity extends PBase {
         } catch (Exception e) {
             msgbox("No está instalada aplicación para actualización de versiónes, por favor informe soporte.");
         }
+
+         */
     }
 
     public void doFELESA(View view) {
@@ -1498,6 +1505,39 @@ public class MainActivity extends PBase {
     //endregion
 
     //region Test Button
+
+    private void testaskdlg() {
+        try {
+            showCustomDialog();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void showCustomDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.extaskdlg, null);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent); // Ensures no extra rounded background
+        dialog.show();
+
+        TextView buttonCancel = dialogView.findViewById(R.id.button_cancel);
+        TextView buttonOk = dialogView.findViewById(R.id.button_ok);
+
+        buttonCancel.setOnClickListener(v -> {
+            Toast.makeText(this, "Cancel clicked", Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+        });
+
+        buttonOk.setOnClickListener(v -> {
+            // Handle OK
+            Toast.makeText(this, "OK clicked", Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+        });
+    }
 
     private void test3x5() {
         try {
