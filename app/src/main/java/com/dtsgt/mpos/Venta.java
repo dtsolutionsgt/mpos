@@ -2860,9 +2860,11 @@ public class Venta extends PBase {
                 case 3:
                     menuImprDoc(3);break;
                 case 4:
-                    validaSupervisor();break;
-                    //gl.tipo=3;menuAnulDoc();break;
-                case 14:
+                    if (gl.peAnulFact) {
+                        gl.tipo=3;menuAnulDoc();
+                    } else validaSupervisor();
+                    break;
+                 case 14:
                     showQuickRecep();break;
                 case 15:
                     msgAskFEL("Certificar ("+pendienteFEL()+") factura(s) pendiente(s)");break;
