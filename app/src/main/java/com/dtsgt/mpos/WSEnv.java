@@ -2060,9 +2060,10 @@ public class WSEnv extends PBase {
         ins.add("Saldo",item.saldo);
         ins.add("IdMoneda",item.idmoneda);
         ins.add("Tipo_Cambio",item.tipo_cambio);
-        ins.add("Estado",item.estado);
+        ins.add("Estado","P");
         ins.add("Referencia",item.referencia);
-        ins.add("IdUsuario",item.idusuario);
+        //ins.add("IdUsuario",item.idusuario);
+        ins.add("IdUsuario",16);
         ins.add("DiasCredito",item.diascredito);
 
         return ins.sql();

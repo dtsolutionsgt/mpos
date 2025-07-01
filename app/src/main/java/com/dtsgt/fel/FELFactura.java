@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.XMLObject;
+import com.dtsgt.classes.clsD_cxcObj;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_factura_felObj;
 import com.dtsgt.classes.clsD_facturacObj;
@@ -68,6 +69,7 @@ public class FELFactura extends PBase {
     private clsD_factura_felObj D_factura_felObj;
     private clsP_productoObj prod;
     private clsD_fel_bitacoraObj D_fel_bitacoraObj;
+    private clsD_cxcObj D_cxcObj;
 
     private clsClasses.clsD_factura fact=clsCls.new clsD_factura();
     private clsClasses.clsD_facturad factd=clsCls.new clsD_facturad();
@@ -154,6 +156,7 @@ public class FELFactura extends PBase {
             D_facturacObj=new clsD_facturacObj(this,Con,db);
             D_facturaprObj=new clsD_facturaprObj(this,Con,db);
             D_factura_felObj=new clsD_factura_felObj(this,Con,db);
+            D_cxcObj=new clsD_cxcObj(this,Con,db);
 
             D_fel_bitacoraObj=new clsD_fel_bitacoraObj(this,Con,db);
 
@@ -869,12 +872,21 @@ public class FELFactura extends PBase {
                         "WHERE (ACTIVA=1) AND (RESGUARDO=1) AND (RUTA=" + gl.codigo_ruta + ");";
             }
 
+            /*
             P_clienteObj.fill("WHERE CODIGO_CLIENTE="+cliid);
-
             ss="DELETE FROM P_CLIENTE WHERE (Empresa="+gl.emp+") AND (CODIGO_CLIENTE="+cliid+")";
             CSQL = CSQL + ss + ";";
             ss=P_clienteObj.addItemSql(P_clienteObj.first(),gl.emp);
             CSQL = CSQL + ss + ";";
+            */
+
+            clsClasses.clsD_cxc cxcitem;
+            D_cxcObj.fill("WHERE NoFactura='"+corel+"'");
+            if (D_cxcObj.count>0) {
+                cxcitem = D_cxcObj.first();
+                ss=addCxCItemSql(cxcitem);
+                CSQL = CSQL + ss + ";";
+            }
 
         } catch (Exception e) {
             msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -979,6 +991,30 @@ public class FELFactura extends PBase {
 
     }
 
+    public String addCxCItemSql(clsClasses.clsD_cxc item) {
+        String fs = "" + du.univfechalong(du.getActDateTime());
+
+        ins.init("D_cxc");
+
+        ins.add("NoFactura",item.nofactura);
+        ins.add("Empresa",item.empresa);
+        ins.add("IdCliente",item.idcliente);
+        //ins.add("Fecha",item.fecha);
+        ins.add("Fecha",fs);
+        ins.add("Monto_Total",item.monto_total);
+        ins.add("Saldo",item.saldo);
+        ins.add("IdMoneda",item.idmoneda);
+        ins.add("Tipo_Cambio",item.tipo_cambio);
+        ins.add("Estado","P");
+        ins.add("Referencia",item.referencia);
+        //ins.add("IdUsuario",item.idusuario);
+        ins.add("IdUsuario",16);
+        ins.add("DiasCredito",item.diascredito);
+
+        return ins.sql();
+
+    }
+
     private void statusFactura() {
 
         try {
@@ -993,6 +1029,12 @@ public class FELFactura extends PBase {
             try {
                 sql="UPDATE D_Factura SET STATCOM='S' WHERE COREL='"+corel+"'";
                 if (!pendflag) db.execSQL(sql);
+            } catch (SQLException e) {
+            }
+
+            try {
+                sql = "UPDATE D_cxc SET Estado='P' WHERE NoFactura='"+corel+"'";
+                db.execSQL(sql);
             } catch (SQLException e) {
             }
 
@@ -1418,6 +1460,8 @@ public class FELFactura extends PBase {
             D_facturafObj.reconnect(Con,db);
             D_facturapObj.reconnect(Con,db);
             D_fel_bitacoraObj.reconnect(Con,db);
+            D_cxcObj.reconnect(Con,db);
+
             prod.reconnect(Con,db);
         } catch (Exception e) {
             msgbox2(e.getMessage());
