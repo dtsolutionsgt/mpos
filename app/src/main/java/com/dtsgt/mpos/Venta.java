@@ -568,7 +568,54 @@ public class Venta extends PBase {
                                 gl.pprodname=item.Name;
 
                                 msgAskAdd(item.Name,position);
+
+/*
+                                prodid=item.Cod;
+                        gl.prodid=prodid;
+                        gl.prodcod=item.icod;
+                        gl.gstr=prodid;
+                        gl.prodmenu=gl.prodcod;
+                        gl.pprodname=item.Name;
+                        ppos=gl.pprodname.indexOf("[");
+                        if (ppos<=1) pprodname=gl.pprodname;else pprodname=gl.pprodname.substring(0,ppos-1);
+
+                        gl.um=app.umVenta(gl.prodid);
+                        gl.menuitemid=prodid;
+                        menuitemadd=true;
+
+                        if (khand.val.isEmpty()) {
+                            processItem(false);
+                        } else {
+                            try {
+                                kcant=Integer.parseInt(khand.val);
+                                if (kcant>0) {
+                                    processItem(kcant);
+                                }
+                            } catch (Exception e) { }
+                            khand.clear();
+                        }
+
+                    } catch (Exception e) {
+                        String ss=e.getMessage();
+                    }
+                };
+            });
+
+            grdprod.setOnItemLongClickListener(new OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    try {
+                        Object lvObj = grdprod.getItemAtPosition(position);
+                        clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
+
+                        adapterp.setSelectedIndex(position);
+
+                        prodid=item.Cod;
+                        gl.gstr=prodid;//gl.prodmenu=prodid;
+                        gl.pprodname=item.Name;
+                                     */
                             } catch (Exception e) {}
+ */
 
                         }
                     })
@@ -1006,16 +1053,6 @@ public class Venta extends PBase {
 
             vv = cant * prec;vv = mu.round(vv, 2);
 
-            //region Descuento , Bonif
-
-             /*
-            clsBonif = new clsBonif(this, prodid, cant, vv);
-            if (clsBonif.tieneBonif()) {
-                for (int i = 0; i < clsBonif.items.size(); i++) {
-                    gl.bonus.add(clsBonif.items.get(i));
-                }
-            }
-            */
 
             //Descuentos
             gl.auxCantVenta = cant;
@@ -1049,13 +1086,6 @@ public class Venta extends PBase {
             impval=prc.impval;
             totsin=prc.totsin;
 
-            /*
-            tot = prc.tot;
-            descmon = savetot-tot;//prc.descmon;
-            prodtot = tot;
-            percep = 0;
-            */
-
             tipo=prodTipo(gl.prodcod);
 
             if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S") || tipo.equalsIgnoreCase("PB")) {
@@ -1079,7 +1109,6 @@ public class Venta extends PBase {
             sql="DELETE FROM T_VENTA WHERE CANT=0";
             db.execSQL(sql);
         } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Error : " + e.getMessage());
         }
     }
@@ -1242,7 +1271,7 @@ public class Venta extends PBase {
         }
     }
 
-    private boolean addItem(){
+    private boolean addItem() {
         Cursor dt;
         double precdoc,fact,cantbas,peso,vtot;
         long prri;
@@ -1256,7 +1285,10 @@ public class Venta extends PBase {
                 dt=Con.OpenDT(sql);
                 if (dt.getCount()>0) {
                     if (dt!=null) dt.close();
-                    openItem();return true;
+
+
+                    openItem();
+                    return true;
                 }
                 if (dt!=null) dt.close();
             } catch (SQLException e) {
@@ -5001,9 +5033,15 @@ public class Venta extends PBase {
                     fbcallmode=5;
                     gl.limcant=getDisp(prodid);
 
-                    browse=6;
-                    startActivity(new Intent(Venta.this,VentaEdit.class));
+                    //browse=6;
+                    //startActivity(new Intent(Venta.this,VentaEdit.class));
 
+                    int ncant=(int) item.Cant;
+                    gl.retcant=ncant+1;
+
+                    descflag=true;
+                    gl.modo_upd_venta=false;
+                    updateCant();
 
                 }
             }
