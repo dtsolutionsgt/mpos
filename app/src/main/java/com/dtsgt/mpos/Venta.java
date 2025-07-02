@@ -633,6 +633,12 @@ public class Venta extends PBase {
                     "FROM T_VENTA INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=T_VENTA.PRODUCTO "+
                     "ORDER BY P_PRODUCTO.DESCCORTA ";
 
+            sql="SELECT T_VENTA.PRODUCTO, P_PRODUCTO.DESCCORTA, T_VENTA.TOTAL, T_VENTA.CANT, T_VENTA.PRECIODOC, " +
+                    "T_VENTA.DES, T_VENTA.IMP, T_VENTA.PERCEP, T_VENTA.UM, T_VENTA.PESO, T_VENTA.UMSTOCK, " +
+                    "T_VENTA.DESMON, T_VENTA.EMPRESA, T_VENTA.VAL2  " +
+                    "FROM T_VENTA INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=T_VENTA.PRODUCTO "+
+                    "ORDER BY T_VENTA.PESO ";
+
             DT=Con.OpenDT(sql);
 
             if (DT.getCount()>0) {
@@ -733,6 +739,11 @@ public class Venta extends PBase {
                 lblStot.setText("Subt : "+mu.frmcur(stot));
             }
 
+            int lastPosition = adapter.getCount() - 1;
+            listView.smoothScrollToPosition(lastPosition);
+            if (lastPosition>=0) adapter.setSelectedIndex(lastPosition);
+
+            /*
             if (selidx>-1) {
                 adapter.setSelectedIndex(selidx);
                 try {
@@ -746,6 +757,7 @@ public class Venta extends PBase {
 
                 listView.smoothScrollToPosition(selidx);
             } else seluid="";
+            */
 
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
