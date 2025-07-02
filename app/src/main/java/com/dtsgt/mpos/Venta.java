@@ -741,7 +741,10 @@ public class Venta extends PBase {
 
             int lastPosition = adapter.getCount() - 1;
             listView.smoothScrollToPosition(lastPosition);
-            if (lastPosition>=0) adapter.setSelectedIndex(lastPosition);
+            if (lastPosition>=0) {
+                adapter.setSelectedIndex(lastPosition);
+                seluid=items.get(lastPosition).emp;
+            }
 
             /*
             if (selidx>-1) {
@@ -2658,24 +2661,25 @@ public class Venta extends PBase {
                 }
 
                 item = clsCls.new clsMenu();
-                item.ID=52;item.Name="Cliente";item.Icon=52;
-                mmitems.add(item);
-
-                item = clsCls.new clsMenu();
-                item.ID=71;item.Name="Descuento";item.Icon=71;
-                mmitems.add(item);
-
-                item = clsCls.new clsMenu();
-                item.ID=50;item.Name="Buscar ";item.Icon=50;
-                mmitems.add(item);
-
-                item = clsCls.new clsMenu();
                 item.ID=54;item.Name="Borrar linea ";item.Icon=54;
                 mmitems.add(item);
 
                 item = clsCls.new clsMenu();
                 item.ID=55;item.Name="Borrar todo ";item.Icon=55;
                 mmitems.add(item);
+
+                item = clsCls.new clsMenu();
+                item.ID=52;item.Name="Cliente";item.Icon=52;
+                mmitems.add(item);
+
+                //item = clsCls.new clsMenu();
+                //item.ID=71;item.Name="Descuento";item.Icon=71;
+                //mmitems.add(item);
+
+                item = clsCls.new clsMenu();
+                item.ID=50;item.Name="Buscar ";item.Icon=50;
+                mmitems.add(item);
+
 
                 if (gl.peRest | gl.pelOrdenComanda) {
                     item = clsCls.new clsMenu();
