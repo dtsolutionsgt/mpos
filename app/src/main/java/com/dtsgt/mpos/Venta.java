@@ -770,7 +770,10 @@ public class Venta extends PBase {
 
             int lastPosition = radapterv.getItemCount() - 1;
             recventa.scrollToPosition(lastPosition);
-            if (lastPosition>=0) radapterv.setSelectedIndex(lastPosition);
+            if (lastPosition>=0) {
+                radapterv.setSelectedIndex(lastPosition);
+                seluid=items.get(lastPosition).emp;
+            }
 
             /*
             if (selidx>-1) {
