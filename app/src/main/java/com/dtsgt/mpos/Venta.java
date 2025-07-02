@@ -568,58 +568,79 @@ public class Venta extends PBase {
                                 gl.pprodname=item.Name;
 
                                 msgAskAdd(item.Name,position);
-
-/*
-                                prodid=item.Cod;
-                        gl.prodid=prodid;
-                        gl.prodcod=item.icod;
-                        gl.gstr=prodid;
-                        gl.prodmenu=gl.prodcod;
-                        gl.pprodname=item.Name;
-                        ppos=gl.pprodname.indexOf("[");
-                        if (ppos<=1) pprodname=gl.pprodname;else pprodname=gl.pprodname.substring(0,ppos-1);
-
-                        gl.um=app.umVenta(gl.prodid);
-                        gl.menuitemid=prodid;
-                        menuitemadd=true;
-
-                        if (khand.val.isEmpty()) {
-                            processItem(false);
-                        } else {
-                            try {
-                                kcant=Integer.parseInt(khand.val);
-                                if (kcant>0) {
-                                    processItem(kcant);
-                                }
-                            } catch (Exception e) { }
-                            khand.clear();
-                        }
-
-                    } catch (Exception e) {
-                        String ss=e.getMessage();
-                    }
-                };
-            });
-
-            grdprod.setOnItemLongClickListener(new OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                    try {
-                        Object lvObj = grdprod.getItemAtPosition(position);
-                        clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
-
-                        adapterp.setSelectedIndex(position);
-
-                        prodid=item.Cod;
-                        gl.gstr=prodid;//gl.prodmenu=prodid;
-                        gl.pprodname=item.Name;
-                                     */
                             } catch (Exception e) {}
- */
 
                         }
                     })
             );
+
+
+            /*
+            recprod.addOnItemTouchListener(new RecyclerItemClickListener((Context) this, recprod,
+                    new RecyclerItemClickListener.OnItemClickListener() {
+
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            applyItem(position);
+                        }
+
+                        @Override
+                        public void onLongItemClick(View view, int position) {
+                            clsClasses.clsMenu item;
+
+                            try {
+
+                                if (imgflag) {
+                                    item = radapterp.items.get(position);
+                                    radapterp.setSelectedIndex(position);
+                                } else {
+                                    item = radapterpl.items.get(position);
+                                    radapterpl.setSelectedIndex(position);
+                                }
+
+                                prodid = item.Cod;
+                                gl.gstr = prodid;//gl.prodmenu=prodid;
+                                gl.pprodname = item.Name;
+
+                                msgAskAdd(item.Name, position);
+
+
+                                prodid = item.Cod;
+                                gl.prodid = prodid;
+                                gl.prodcod = item.icod;
+                                gl.gstr = prodid;
+                                gl.prodmenu = gl.prodcod;
+                                gl.pprodname = item.Name;
+                                ppos = gl.pprodname.indexOf("[");
+                                if (ppos <= 1) pprodname = gl.pprodname;
+                                else pprodname = gl.pprodname.substring(0, ppos - 1);
+
+                                gl.um = app.umVenta(gl.prodid);
+                                gl.menuitemid = prodid;
+                                menuitemadd = true;
+
+                                if (khand.val.isEmpty()) {
+                                    processItem(false);
+                                } else {
+                                    try {
+                                        kcant = Integer.parseInt(khand.val);
+                                        if (kcant > 0) {
+                                            processItem(kcant);
+                                        }
+                                    } catch (Exception e) {
+                                    }
+                                    khand.clear();
+                                }
+
+                            } catch (Exception e) {
+                                String ss = e.getMessage();
+                            }
+                        }
+
+            );
+
+             */
+
 
             gridViewOpciones.setOnItemClickListener(new OnItemClickListener() {
                 @Override
