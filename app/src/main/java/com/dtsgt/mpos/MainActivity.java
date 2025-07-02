@@ -75,7 +75,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
 
-    private String  parVer = "4.11.5.1";
+    private String  parVer = "4.11.5.2";
     private boolean bloqueo_venta=false;
 
     private Typeface typeface;

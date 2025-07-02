@@ -1570,7 +1570,7 @@ public class CliPos extends PBase {
         if  (!mu.emptystr(gl.felUsuarioCertificacion) && ! mu.emptystr(gl.felLlaveCertificacion) && !mu.emptystr(txtNIT.getText().toString())) {
 
             nc=txtNIT.getText().toString();
-            if (nc.length()>9) return;
+            if (nc.length()>10) return;
 
             JSONObject params = new JSONObject();
 
