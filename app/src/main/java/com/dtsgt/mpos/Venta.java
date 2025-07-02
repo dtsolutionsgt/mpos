@@ -3012,6 +3012,9 @@ public class Venta extends PBase {
                     }
 
                     if (!validaMinimoCF()) return;
+
+                    if (!validaMinimoCF()) return;
+
                     if (!disponibleCorel()) return;
                     finalizarOrden();break;
                 case 3:

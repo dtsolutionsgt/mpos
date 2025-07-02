@@ -791,6 +791,19 @@ public class Menu extends PBase {
 
 	}
 
+	private void menuInventarioOpc(String mt) {
+		try {
+			if (mt.equalsIgnoreCase("Ajuste de inventario")) menuAjuste();
+			if (mt.equalsIgnoreCase("Ingreso de mercancía")) menuRecarga();
+			if (mt.equalsIgnoreCase("Inventario inicial")) menuInvIni();
+			if (mt.equalsIgnoreCase("Orden de compra")) menuCompra();
+			if (mt.equalsIgnoreCase("Traslado entre almacénes")) menuTraslado();
+			if (mt.equalsIgnoreCase("Egreso de almacén")) menuEgreso();
+			if (mt.equalsIgnoreCase("Barril")) menuBarril();
+			if (mt.equalsIgnoreCase("Inventario centralizado")) validaSuperInvCent();
+		} catch (Exception e) {}
+	}
+
 	private void menuExist() {
 		try {
 			gl.tipo=0;gl.idalm=0;gl.nom_alm="";
@@ -1099,6 +1112,51 @@ public class Menu extends PBase {
 		modo_supervis=2;
 		validaSupervisor();
 	}
+
+	private void validaSupervisorInventario(String opctext) {
+
+		clsClasses.clsVendedores item;
+
+		try {
+			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+			app.fillSuper(VendedoresObj);
+
+			if (VendedoresObj.count==0) {
+				msgbox("No está definido ningún supervisor");return;
+			}
+
+			extListPassDlg listdlg = new extListPassDlg();
+			listdlg.buildDialog(Menu.this,"Autorización","Salir");
+
+			for (int i = 0; i <VendedoresObj.count; i++) {
+				item=VendedoresObj.items.get(i);
+				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+			}
+
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
+
+			listdlg.onEnterClick(v -> {
+
+				if (listdlg.getInput().isEmpty()) return;
+
+				if (listdlg.validPassword()) {
+					menuInventarioOpc(opctext);
+					listdlg.dismiss();
+				} else {
+					toast("Contraseña incorrecta");
+				}
+			});
+
+			listdlg.setWidth(350);
+			listdlg.setLines(4);
+
+			listdlg.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
 
 	//endregion
 
