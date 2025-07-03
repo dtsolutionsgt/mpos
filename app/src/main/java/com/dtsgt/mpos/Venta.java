@@ -1910,8 +1910,11 @@ public class Venta extends PBase {
 
         //browse=11;
         //startActivity(new Intent(this,ValidaSuper.class));
-        modo_supervis=1;
-        validaSupervisor();
+        //modo_supervis=1;
+        //validaSupervisor();
+
+        validaSuperDescuento();
+
     }
 
     private void aplicaCortesia() {
@@ -3180,6 +3183,60 @@ public class Venta extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
+    private void validaSuperDescuento() {
+        clsClasses.clsVendedores item;
+
+        try {
+            clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+            app.fillSuper(VendedoresObj);
+
+            if (VendedoresObj.count==0) {
+                msgbox("No está definido ningún supervisor");return;
+            }
+
+            extListPassDlg listdlg = new extListPassDlg();
+            listdlg.buildDialog(Venta.this,"Autorización","Salir");
+
+            for (int i = 0; i <VendedoresObj.count; i++) {
+                item=VendedoresObj.items.get(i);
+                listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+            }
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.onEnterClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listdlg.getInput().isEmpty()) return;
+
+                    if (listdlg.validPassword()) {
+                        browse=13;
+                        gl.total_factura_previo_descuento=prodtotlin;
+                        startActivity(new Intent(Venta.this,DescMonto.class));
+                        listdlg.dismiss();
+                    } else {
+                        toast("Contraseña incorrecta");
+                    }
+                }
+            });
+
+            listdlg.setWidth(350);
+            listdlg.setLines(4);
+
+            listdlg.show();
+
+        } catch (Exception e) {
+            String ss=e.getMessage();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
 
     public void cierreCaja(){
         try{
