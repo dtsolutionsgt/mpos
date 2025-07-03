@@ -154,7 +154,7 @@ public class Venta extends PBase {
     private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot,savecant,desccant;
     private double px,py,cpx,cpy,cdist,savetot,saveprec,prodtotlin;
 
-    private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname;
+    private String uid,descuid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname;
     private int nivel,dweek,clidia,counter,menuitemid, lineaId, marcaId,prw;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos,descflag,meseros=false;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
@@ -396,12 +396,17 @@ public class Venta extends PBase {
                         gl.prodmenu=app.codigoProducto(prodid);//gl.prodmenu=prodid;
                         uprodid=prodid;
                         prodtotlin=vitem.Total;
-                        uid=vitem.emp;gl.menuitemid=uid;seluid=uid;// identificador unico de linea de T_VENTA ( Campo EMPRESA )
+                        uid=vitem.emp;
+                        gl.menuitemid=uid;
+                        seluid=uid;// identificador unico de linea de T_VENTA ( Campo EMPRESA )
+                        descuid=uid;
+
                         try {
                             gl.produid=Integer.parseInt(uid);
                         } catch (Exception e) {
                             gl.produid=0;
                         }
+
                         adapter.setSelectedIndex(position);
 
                         gl.gstr=vitem.Nombre;
@@ -1479,21 +1484,32 @@ public class Venta extends PBase {
     }
 
     private void updItemMonto(){
-        double ptot=0,precdoc;
+        double ptot=0,precdoc,valdesc;
 
         try {
 
+            valdesc=gl.promdesc;
             savetot=mu.round(prec*cant,2);
-            ptot=savetot-gl.promdesc;
+            if (gl.peDescPerc) {
+                valdesc=savetot*valdesc/100;
+                valdesc=mu.round(valdesc,2);
+            }
+            ptot=savetot-valdesc;
             descmon = savetot-ptot;
             if (savetot>0) desc=100*descmon/savetot;else desc=0;
 
             imp=mu.round2dec(imp*cant);
-            //impval=mu.round2dec(prc.impval); //JP20230911
+            impval=mu.round2dec(prc.impval); //JP20230911
             impval=impval*cant;
-            impval=mu.round6dec(prc.impval); //JP20230911
+            impval=impval*ptot/savetot;
+            //impval=mu.round6dec(prc.impval); //JP20230911
 
-            if (sinimp) precdoc=precsin; else precdoc=prec;
+            if (sinimp) {
+                precdoc=prc.precsin;
+            } else {
+                precdoc=prec;
+            }
+
 
             upd.init("T_VENTA");
 
@@ -1510,7 +1526,8 @@ public class Venta extends PBase {
                 upd.add("PRECIODOC",prec);
             }
 
-            upd.Where("EMPRESA='"+uid+"'");
+            upd.Where("EMPRESA='"+descuid+"'");
+            //upd.Where("EMPRESA='"+uid+"'");
 
             db.execSQL(upd.sql());
 
