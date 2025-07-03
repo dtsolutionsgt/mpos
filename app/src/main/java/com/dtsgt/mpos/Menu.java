@@ -2234,7 +2234,7 @@ public class Menu extends PBase {
 						if (valida()) {
 
 							if (gl.cajaid==2) {
-								startActivity(new Intent(Menu.this, CajaPagos.class));
+								startActivity(new Intent(Menu.this, CajaPagosLista.class));
 							} else {
 								validaCaja();
 							}

@@ -31,7 +31,6 @@
     <uses-permission android:name="Android.permission.DEVICE_POWER" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
-
     <application
         android:name="com.dtsgt.base.appGlobals"
         android:allowBackup="true"
@@ -812,6 +811,11 @@
             android:name=".InstalaVersion"
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".CajaPagosLista"
+            android:exported="false"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
     </application>
 
