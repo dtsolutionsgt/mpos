@@ -1176,6 +1176,21 @@ public class AppMethods {
 		if (dt!=null) dt.close();
 
 		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=169";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peDescPerc = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peDescPerc = false;
+		}
+
+
+
+		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=171";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
@@ -1244,6 +1259,19 @@ public class AppMethods {
 			gl.paCortProd = false;
 		}
 		if (dt!=null) dt.close();
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=174";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.paDesc100 = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.paDesc100 = false;
+		}
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=176";
