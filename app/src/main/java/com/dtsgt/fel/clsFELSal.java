@@ -98,7 +98,10 @@ public class clsFELSal {
     private double iva=12;
 
     private String WSURL="https://signer-emisores.feel.com.gt/sign_solicitud_firmas/firma_xml";
+
     private String WSURLCert="https://certificador.feel.com.gt/fel/certificacion/v2/dte/";
+    //private String WSURLCert="https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
+
     private String WSURLAnul="https://certificador.feel.com.gt/fel/anulacion/v2/dte/";
     private String WSURLIdUni="https://certificador.feel.com.gt/fel/consulta/dte/v2/identificador_unico";
     private TextView lblProgress;

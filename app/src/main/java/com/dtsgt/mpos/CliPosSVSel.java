@@ -35,7 +35,7 @@ public class CliPosSVSel extends PBase {
 
             P_clienteObj=new clsP_clienteObj(this,Con,db);
 
-            //txtNIT.setText("000162975");
+            txtNIT.setText("000162975");
             //txtNIT.setText("2247806");
 
             setHandlers();
