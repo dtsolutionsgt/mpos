@@ -29,6 +29,7 @@ public class DescMonto extends PBase {
         khand.clear(true);
 
         gl.desc_monto=-1;
+        gl.desc_monto=-1;
 
     }
 
