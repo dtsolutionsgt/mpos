@@ -274,6 +274,18 @@ public class BaseDatosVersion {
             sql="CREATE INDEX P_hotel_brazalete_idx1 ON P_hotel_brazalete(BARRA)";db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [P_proveedor_sucursal] ("+
+                    "CODIGO_PROVEEDOR INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_PROVEEDOR])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
+
+
 
         try {
 

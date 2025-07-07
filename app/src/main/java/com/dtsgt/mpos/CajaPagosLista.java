@@ -49,7 +49,7 @@ public class CajaPagosLista extends PBase {
 
     private int tipo;
     private String itemid;
-    double htot;
+    private double htot;
 
     //Fecha
     private boolean dateTxt,report;
@@ -82,6 +82,8 @@ public class CajaPagosLista extends PBase {
             setFechaAct();
 
             rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
+
+            ajustaFormato();
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -191,7 +193,6 @@ public class CajaPagosLista extends PBase {
     }
 
     //endregion
-
 
     //region Fecha
 
@@ -498,6 +499,16 @@ public class CajaPagosLista extends PBase {
         }
     }
 
+    private void ajustaFormato() {
+        try {
+
+            sql="UPDATE P_cajapagos SET referencia=proveedor  WHERE referencia is null";
+            db.execSQL(sql);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Activity Events
@@ -523,17 +534,6 @@ public class CajaPagosLista extends PBase {
 
         listItems();
 
-        if (gl.imp_inventario) {
-            Handler mtimer = new Handler();
-            Runnable mrunner=new Runnable() {
-                @Override
-                public void run() {
-                    //generarImpresion();
-                }
-            };
-            mtimer.postDelayed(mrunner,2000);
-
-        }
     }
 
     //endregion
