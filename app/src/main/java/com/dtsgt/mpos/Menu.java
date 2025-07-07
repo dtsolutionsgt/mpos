@@ -2,8 +2,11 @@ package com.dtsgt.mpos;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -143,6 +146,14 @@ public class Menu extends PBase {
 			}
 
 			this.setTitle("mPos");
+
+			try {
+				if (gl.parVer.isEmpty()) reinica();
+			} catch (Exception e) {
+				reinica();
+			}
+
+
 			lblTit.setText("mPos   -   Versión: "+gl.parVer+"   -   Caja: "+gl.rutanom+" [ "+gl.codigo_ruta+" ] ," +
 					       " -  Sucursal: "+gl.tiendanom+" [ "+gl.tienda+" ]");
 
@@ -236,7 +247,7 @@ public class Menu extends PBase {
 			//Process proc = Runtime.getRuntime() .exec(new String[]{ "su", "-c", "reboot -p" }); proc.waitFor();
 		} catch (Exception ex) { ex.printStackTrace(); }
 	}
-		
+
 	public void setHandlers(){
 
 	    try{
@@ -382,7 +393,8 @@ public class Menu extends PBase {
 				case 13:
 					apagar();break;
                 case 14:
-                    showEmergMenu();break;
+                    showEmergMenu();
+					break;
 			}
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -3344,6 +3356,45 @@ public class Menu extends PBase {
 			return 0;
 		}
 	}
+
+	private void reinica() {
+		try {
+			Handler mtimer = new Handler();
+			Runnable mrunner= () -> {
+				toastcentlong("LA APLICACiÓN MPOS SE REINICIÓ");
+				toastcentlong("LA APLICACiÓN MPOS SE REINICIÓ");
+			};
+			mtimer.postDelayed(mrunner,50);
+
+
+			Handler mtimer2 = new Handler();
+			Runnable mrunner2= () -> {
+				restartApp(getApplicationContext());
+			};
+			mtimer2.postDelayed(mrunner2,1000);
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	public void restartApp(Context context) {
+		Intent intent = context.getPackageManager()
+				.getLaunchIntentForPackage(context.getPackageName());
+		if (intent != null) {
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		}
+
+		PendingIntent pendingIntent = PendingIntent.getActivity(
+				context, 0, intent,
+				PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+		AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent);
+
+		System.exit(0);
+	}
+
 
 	//endregion
 
