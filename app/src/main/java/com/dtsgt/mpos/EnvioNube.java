@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -66,7 +67,12 @@ public class EnvioNube extends PBase {
         lbl1.setText("Enviando base de datos.\nEspere, por favor . . .");
         pbar.setVisibility(View.VISIBLE);
 
-        sendDB();
+        Handler mtimer = new Handler();
+        Runnable mrunner= () -> {
+            sendDB();
+        };
+        mtimer.postDelayed(mrunner,200);
+
     }
 
     public void doExit(View view) {
