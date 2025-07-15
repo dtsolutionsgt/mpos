@@ -5,7 +5,7 @@
     android:installLocation="preferExternal"
     android:largeHeap="true"
     android:versionCode="5"
-    android:versionName="5.5.10.1">
+    android:versionName="5.5.10.3">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -960,6 +960,11 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".DesgloseMon"
+            android:exported="false"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysVisible" />
+        <activity
+            android:name="com.dtsgt.mant.MantProvSuc"
             android:exported="false"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />

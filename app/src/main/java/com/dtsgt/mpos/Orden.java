@@ -460,7 +460,7 @@ public class Orden extends PBase {
                     if (item.estado==1) {
                         showItemPopMenu();
                     } else {
-                        showItemPopMenuLock();
+                        if (!gl.peNoModCom) showItemPopMenuLock();
                     }
 
                 } catch (Exception e) {
@@ -478,10 +478,12 @@ public class Orden extends PBase {
 
                     if (gl.emp==55) return true;
 
-                    if (items.get(position).estado==0) {
-                        msgAskState("Agregar a la comanda",1,position);
-                    } else {
-                        msgAskState("Marcar como preparado",0,position);
+                    if (!gl.peNoModCom) {
+                        if (items.get(position).estado == 0) {
+                            msgAskState("Agregar a la comanda", 1, position);
+                        } else {
+                            msgAskState("Marcar como preparado", 0, position);
+                        }
                     }
                     cierraPantalla();
                 } catch (Exception e) {

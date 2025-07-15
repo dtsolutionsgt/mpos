@@ -738,6 +738,27 @@ public class DateUtils {
 		return f;
 	}
 
+	public long getCorelBaseNum(){
+
+		long f,f1,f2;
+		int cyear,cmonth,cday,ch,cm,cs,vd,vh;
+
+		final Calendar c = Calendar.getInstance();
+
+		cyear = c.get(Calendar.YEAR);cyear=cyear % 100;
+		cmonth = c.get(Calendar.MONTH)+1;
+		cday = c.get(Calendar.DAY_OF_MONTH);
+		ch=c.get(Calendar.HOUR_OF_DAY);
+		cm=c.get(Calendar.MINUTE);
+		cs=c.get(Calendar.SECOND);
+
+		f1=ch*10000+cm*100+cs;
+		f2=cyear*10000+cmonth*100+cday;
+
+		f=f2*1000000+f1;
+		return f;
+	}
+
 	public String getCorelBaseLong(long f) {
 
 		long vy,vm,vd,m,h,sec;

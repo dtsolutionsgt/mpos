@@ -501,8 +501,7 @@ public class CajaPagosLista extends PBase {
 
     private void ajustaFormato() {
         try {
-
-            sql="UPDATE P_cajapagos SET referencia=proveedor  WHERE referencia is null";
+            sql="UPDATE P_cajapagos SET referencia=proveedor WHERE referencia=''";
             db.execSQL(sql);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

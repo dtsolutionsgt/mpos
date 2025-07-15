@@ -3,6 +3,7 @@ package com.dtsgt.mpos;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
@@ -23,6 +24,8 @@ import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsP_cajapagosObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsRepBuilder;
+import com.dtsgt.mant.Lista;
+import com.dtsgt.mant.MantProvSuc;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,7 +46,8 @@ public class CajaPagos extends PBase {
 
     private String dateS,dateAct,docAsoc,desc,montoS,provName,cPagoName;
     private double monto;
-    private int proveedor,cPago,corel;
+    private int cPago,corel;
+    private long proveedor;
 
     //Impresion
     private clsRepBuilder rep;
@@ -102,6 +106,12 @@ public class CajaPagos extends PBase {
         msgask(1,"¿Guardar pago?");
     }
 
+    public void doProveedor(View view) {
+        gl.mantid=35;
+        browse=1;
+        startActivity(new Intent(this, Lista.class));
+    }
+
     public void doDate(View view) {
         obtenerFecha();
     }
@@ -121,7 +131,7 @@ public class CajaPagos extends PBase {
                     spinlabel.setTextSize(30);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
                     String scod = spincode.get(position);
-                    proveedor =  Integer.parseInt(scod);
+                    proveedor =  Long.parseLong(scod);
                     provName = spinlist.get(position);
                 } catch (Exception e) {
                     addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -233,10 +243,11 @@ public class CajaPagos extends PBase {
             item.anulado=0;
             item.fecha=date;
             item.tipo=cPago;
-            item.proveedor=proveedor;
+            //item.proveedor=proveedor;
+            item.proveedor=0;
             item.monto=monto;
             item.nodocumento=docAsoc;
-            item.referencia="";
+            item.referencia=""+proveedor;
             item.observacion=desc;
             item.vendedor=gl.codigo_vendedor;
             item.statcom="N";
@@ -251,7 +262,6 @@ public class CajaPagos extends PBase {
     }
 
     //endregion
-
 
     //region DocPrint
 
@@ -295,7 +305,7 @@ public class CajaPagos extends PBase {
                 rep.empty();
                 rep.add("Proveedor: "+provName);
                 rep.add("Concepto Pago: "+cPagoName);
-                rep.add("Fecha : "+fecharango);
+                rep.add("Fecha : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
                 rep.empty();
                 rep.add("Documento asociado");
                 rep.line();
@@ -455,13 +465,15 @@ public class CajaPagos extends PBase {
         String icode,iname;
 
         try {
-            spincode.clear();
-            spinlist.clear();
+            spincode.clear();spinlist.clear();
 
             spincode.add("0");
             spinlist.add("< Sin especificar >");
 
-            sql="SELECT CODIGO,NOMBRE FROM P_PROVEEDOR ORDER BY CODIGO";
+            sql="SELECT CODIGO,NOMBRE FROM P_PROVEEDOR " +
+                "UNION " +
+                "SELECT CODIGO_PROVEEDOR AS CODIGO,NOMBRE FROM P_proveedor_sucursal WHERE (ACTIVO=1) " +
+                "ORDER BY NOMBRE ";
 
             DT=Con.OpenDT(sql);
             DT.moveToFirst();
@@ -545,7 +557,10 @@ public class CajaPagos extends PBase {
             super.onResume();
             gl.dialogr = () -> {dialogswitch();};
 
-
+            if (browse==1) {
+                browse=0;
+                fillSpinner2();
+            }
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

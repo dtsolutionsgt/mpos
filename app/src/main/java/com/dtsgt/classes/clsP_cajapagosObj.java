@@ -222,7 +222,7 @@ public class clsP_cajapagosObj {
 
     }
 
-    public String addItemSqlFecha(clsClasses.clsP_cajapagos item) {
+    public String addItemSqlPagos(clsClasses.clsP_cajapagos item) {
 
         String fs=""+du.univfechalong(item.fecha);
 
@@ -236,7 +236,16 @@ public class clsP_cajapagosObj {
         ins.add("ANULADO",item.anulado);
         ins.add("FECHA",fs);
         ins.add("TIPO",item.tipo);
-        ins.add("PROVEEDOR",item.proveedor);
+        //ins.add("PROVEEDOR",item.proveedor);
+        try {
+            long prov=Long.parseLong(item.referencia);
+            ins.add("PROVEEDOR",prov);
+        } catch (Exception e) {
+            String ss=e.getMessage();
+            ss=ss+"";
+            ins.add("PROVEEDOR","0");
+        }
+
         ins.add("MONTO",item.monto);
         ins.add("NODOCUMENTO",item.nodocumento);
         ins.add("REFERENCIA",item.referencia);

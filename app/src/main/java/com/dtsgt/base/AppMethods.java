@@ -1414,7 +1414,7 @@ public class AppMethods {
         } catch (Exception e) {
             gl.pePropinaFELconIVA = false;
         }
-
+        if (dt!=null) dt.close();
 
         try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=187";
@@ -1428,6 +1428,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peAnulFact = false;
 		}
+        if (dt!=null) dt.close();
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=188";
@@ -1441,11 +1442,22 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peNoModInv = false;
 		}
-
-
         if (dt!=null) dt.close();
 
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=189";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peNoModCom = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peNoModCom = false;
+        }
 		if (dt!=null) dt.close();
+
 	}
 
     public boolean paramCierre(int pid) {

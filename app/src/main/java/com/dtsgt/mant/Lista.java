@@ -73,6 +73,8 @@ public class Lista extends PBase {
             }
         }
 
+        if (gl.mantid==35) imgadd.setVisibility(View.VISIBLE);
+
     }
 
     //region Events
@@ -113,6 +115,10 @@ public class Lista extends PBase {
                     if(item.f2.equals("Pagos")){
                         gl.gcods="P";
                     }
+                }
+
+                if (gl.mantid==35) {
+                    abrirMant();return;
                 }
 
                 if (listaedit) {
@@ -398,6 +404,12 @@ public class Lista extends PBase {
                 if (act)  sql+="AND (ACTIVO=1) ";else sql+="AND (ACTIVO=0) ";
                 sql+="ORDER BY NOMBRE";
                 break;
+            case 35: // Impresora
+                sql="SELECT 0,CODIGO_PROVEEDOR,NOMBRE,'','', '','','','' FROM P_proveedor_sucursal  WHERE (1=1) ";
+                if (flag) sql+="AND (NOMBRE '%"+ft+"%') ";
+                if (act)  sql+="AND (ACTIVO=1) ";else sql+="AND (ACTIVO=0) ";
+                sql+="ORDER BY NOMBRE";
+                break;
 
         }
     }
@@ -471,6 +483,8 @@ public class Lista extends PBase {
                 lblTit.setText("Impresora modelo");break;
             case 34:
                 lblTit.setText("Impresora");break;
+            case 35:
+                lblTit.setText("Proveedor local");break;
         }
     }
 
@@ -532,6 +546,8 @@ public class Lista extends PBase {
                 startActivity(new Intent(this, MantImpModelo.class));break;
             case 34:
                 startActivity(new Intent(this, MantImpresora.class));break;
+            case 35:
+                startActivity(new Intent(this, MantProvSuc.class));break;
         }
 
         progress.cancel();

@@ -1,20 +1,16 @@
 package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
@@ -41,6 +37,7 @@ import com.dtsgt.classes.clsP_cajapagosObj;
 import com.dtsgt.classes.clsP_cajareporteObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_depositoObj;
+import com.dtsgt.classes.clsP_proveedor_sucursalObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsP_stock_almacenObj;
@@ -51,12 +48,6 @@ import com.dtsgt.classes.clsT_venta_horaObj;
 import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.wsOpenDT;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class WSEnv extends PBase {
@@ -95,6 +86,7 @@ public class WSEnv extends PBase {
     private clsD_cxcObj D_cxcObj;
     private clsP_depositoObj P_depositoObj;
     private clsD_orden_statObj D_orden_statObj;
+    private clsP_proveedor_sucursalObj P_proveedor_sucursalObj;
 
 
     private ArrayList<String> clients = new ArrayList<String>();
@@ -118,7 +110,7 @@ public class WSEnv extends PBase {
     private int ftot, fsend, fidx, fTotMov, fIdxMov, fTotMovAlm, fIdxMovAlm,
             mSend, cjCierreTot, cjCierreSend, cjAsist, fTotAnul, cjReporteTot, cjReporteSend,
             cjPagosTot, cjPagosSend, cjFelBita, cStockTot, cStockSend, cfjCxcSend, cCosto,
-            cCorCie,cFELErr,cDepos,cOrdStat;
+            cCorCie,cFELErr,cDepos,cOrdStat,cProvLoc;
     private boolean factsend, movSend, cjCierreSendB, cjReporteSendB, cjPagosSendB, cStockSendB;
 
     @Override
@@ -168,6 +160,7 @@ public class WSEnv extends PBase {
         D_cxcObj=new clsD_cxcObj(this,Con,db);
         P_depositoObj=new clsP_depositoObj(this,Con,db);
         D_orden_statObj=new clsD_orden_statObj(this,Con,db);
+        P_proveedor_sucursalObj=new clsP_proveedor_sucursalObj(this,Con,db);
 
         preparaEnvio();
 
@@ -308,6 +301,13 @@ public class WSEnv extends PBase {
                             callMethod("Commit", "SQL", CSQL);
                         }
                         break;
+                    case 17:
+                        processProvLoc();
+                        if (cProvLoc > 0) {
+                            callMethod("Commit", "SQL", CSQL);
+                        }
+                        break;
+
 
                 }
             } catch (Exception e) {
@@ -404,6 +404,10 @@ public class WSEnv extends PBase {
                     break;
                 case 16:
                     statusOrdStat();
+                    execws(17);
+                    break;
+                case 17:
+                    statusProvLoc();
                     processComplete();
                     break;
 
@@ -1305,7 +1309,7 @@ public class WSEnv extends PBase {
 
             ss = "DELETE FROM P_CAJAPAGOS WHERE (CODIGO_CAJAPAGOS='" + cCjPago + "')";
             CSQL = CSQL + ss + ";";
-            ss = P_cajapagosObj.addItemSqlFecha(P_cajapagosObj.items.get(i));
+            ss = P_cajapagosObj.addItemSqlPagos(P_cajapagosObj.items.get(i));
             CSQL = CSQL + ss + ";";
 
             cjPagos.add("" + cCjPago);
@@ -1703,8 +1707,6 @@ public class WSEnv extends PBase {
         }
     }
 
-
-
     private void processOrdStat() {
         clsClasses.clsD_orden_stat item;
         CSQL = "";
@@ -1724,6 +1726,32 @@ public class WSEnv extends PBase {
     private void statusOrdStat() {
         try {
             sql = "UPDATE D_orden_stat SET STATCOM='S' WHERE STATCOM='N'";
+            db.execSQL(sql);
+        } catch (Exception e) {
+            msgbox2(e.getMessage());
+        }
+    }
+
+    private void processProvLoc() {
+        clsClasses.clsP_proveedor_sucursal item;
+        CSQL = "";
+
+        P_proveedor_sucursalObj.fill("WHERE STATCOM='N'");
+
+        for (int i = 0; i < P_proveedor_sucursalObj.count; i++) {
+            item = P_proveedor_sucursalObj.items.get(i);
+            CSQL = CSQL + "DELETE FROM P_PROVEEDOR_SUCURSAL WHERE CODIGO_PROVEEDOR="+item.codigo_proveedor+";";
+            CSQL = CSQL + addProvLocItemSql(item) + ";";
+        }
+
+        String ss = CSQL;
+        ss=ss+"";
+
+    }
+
+    private void statusProvLoc() {
+        try {
+            sql = "UPDATE P_proveedor_sucursal SET STATCOM='S' WHERE STATCOM='N'";
             db.execSQL(sql);
         } catch (Exception e) {
             msgbox2(e.getMessage());
@@ -1823,6 +1851,7 @@ public class WSEnv extends PBase {
         movErr = "";
 
         limpiaTablas();
+        ajustaFormatoPagos();
 
         try {
 
@@ -1981,6 +2010,10 @@ public class WSEnv extends PBase {
             cOrdStat=D_orden_statObj.count;
             total_enviar += cOrdStat;
 
+            P_proveedor_sucursalObj.fill("WHERE (STATCOM='N')");
+            cProvLoc=P_proveedor_sucursalObj.count;
+            total_enviar += cProvLoc;
+
             if (total_enviar > 0) {
 
                 lbl1.setText("Pendientes envio : \nFacturas: " + ftot +
@@ -2009,6 +2042,15 @@ public class WSEnv extends PBase {
             }
         });
         new Thread(runnable).start();
+    }
+
+    private void ajustaFormatoPagos() {
+        try {
+            sql="UPDATE P_cajapagos SET referencia=proveedor WHERE referencia=''";
+            db.execSQL(sql);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     public String addUpdateItem(int idruta, int idproducto, double cant, String um) {
@@ -2138,6 +2180,19 @@ public class WSEnv extends PBase {
 
         return ins.sql();
 
+    }
+
+    public String addProvLocItemSql(clsClasses.clsP_proveedor_sucursal item) {
+        ins.init("P_PROVEEDOR_SUCURSAL");
+
+        ins.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
+        ins.add("EMPRESA",gl.emp);
+        ins.add("CODIGO_SUCURSAL",gl.tienda);
+        ins.add("NOMBRE",item.nombre);
+        ins.add("ACTIVO",item.activo);
+        ins.add("user_agr",gl.codigo_vendedor);
+
+        return ins.sql();
     }
 
     //endregion

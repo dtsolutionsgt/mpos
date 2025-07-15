@@ -1381,6 +1381,13 @@ public class clsClasses {
         public int activo;
     }
 
+    public class clsP_proveedor_sucursal {
+        public long codigo_proveedor;
+        public String nombre;
+        public int  activo;
+        public String statcom;
+    }
+
     public class clsP_regla_costo {
         public int codigo_empresa;
         public int codigo_tipo;

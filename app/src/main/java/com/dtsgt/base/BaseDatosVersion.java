@@ -275,13 +275,18 @@ public class BaseDatosVersion {
         } catch (Exception e) { }
 
         try {
+
             sql="CREATE TABLE [P_proveedor_sucursal] ("+
                     "CODIGO_PROVEEDOR INTEGER NOT NULL,"+
                     "NOMBRE TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
+                    "STATCOM TEXT NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_PROVEEDOR])"+
                     ");";
             db.execSQL(sql);
+
+            sql="CREATE INDEX P_proveedor_sucursal_idx1 ON P_proveedor_sucursal(STATCOM)";db.execSQL(sql);
+
         } catch (Exception e) { }
 
 
