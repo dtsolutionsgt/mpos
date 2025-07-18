@@ -1458,6 +1458,26 @@ public class AppMethods {
         }
 		if (dt!=null) dt.close();
 
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=190";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peNotaEnvio = val.equalsIgnoreCase("S");
+
+            if (gl.peNotaEnvio) {
+                gl.peMFact=false;
+                gl.peFEL="SIN FEL";
+            }
+        } catch (Exception e) {
+            gl.peNotaEnvio = false;
+        }
+        if (dt!=null) dt.close();
+
+
 	}
 
     public boolean paramCierre(int pid) {
@@ -1504,6 +1524,7 @@ public class AppMethods {
     }
 
     public boolean usaFEL() {
+        if (gl.peNotaEnvio) return false;
         if (gl.peFEL.isEmpty() | gl.peFEL.equalsIgnoreCase(" ") |
                 gl.peFEL.equalsIgnoreCase("N") | gl.peFEL.equalsIgnoreCase("SIN FEL")) {
             return false;
@@ -1542,6 +1563,10 @@ public class AppMethods {
                 toast("Creado archivo de conexion");
             }
         } catch (Exception e) {}
+    }
+
+    public void getAPIUrl() {
+        gl.apiurl = "http://ec2-52-41-114-122.us-west-2.compute.amazonaws.com:8090/";
     }
 
     public void logoutUser(long ff) {

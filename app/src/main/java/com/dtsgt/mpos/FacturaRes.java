@@ -52,12 +52,15 @@ import com.dtsgt.classes.clsD_facturamuniObj;
 import com.dtsgt.classes.clsD_facturaprObj;
 import com.dtsgt.classes.clsD_facturarObj;
 import com.dtsgt.classes.clsD_facturasObj;
+import com.dtsgt.classes.clsD_notaenvioObj;
+import com.dtsgt.classes.clsD_notaenviodObj;
 import com.dtsgt.classes.clsD_ordencObj;
 import com.dtsgt.classes.clsD_ordendObj;
 import com.dtsgt.classes.clsDescGlob;
 import com.dtsgt.classes.clsDocCuenta;
 import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.classes.clsDocFactura;
+import com.dtsgt.classes.clsEnvioUpdate;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_impresoraObj;
@@ -70,7 +73,6 @@ import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_factrecetaObj;
-import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsT_res_sessionObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsT_venta_corObj;
@@ -91,6 +93,7 @@ import com.dtsgt.firebase.fbOrdenNota;
 import com.dtsgt.firebase.fbResSesion;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptTotals;
+import com.dtsgt.webapi.HttpClient;
 import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.wsOpenDT;
 
@@ -135,6 +138,7 @@ public class FacturaRes extends PBase {
 	private clsRepBuilder rep;
 
 	private wsOpenDT wso;
+	private HttpClient httpcli;
 
 	private fbStock fbs;
 	private fbOrdenEstado fboe;
@@ -149,7 +153,7 @@ public class FacturaRes extends PBase {
 	private long fecha,fechae;
 	private int fcorel,clidia, Nivel_Media_Pago,idtransbar,hora;
 	private boolean EsNivelPrecioDelivery =false,esorden;
-	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,osql,sprodlinea;
+	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,osql,sprodlinea,uid_envio;
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres,recid,ordennum,prodlinea,modo_super;
 
 	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,propina,propinaperc,propinaext;
@@ -384,6 +388,8 @@ public class FacturaRes extends PBase {
 			fbs =new fbStock("Stock",gl.tienda);
 
 			if (corcheck) assignCorel();
+			uid_envio=gl.codigo_ruta+"_"+du.getCorelBaseLong();
+			if (gl.peNotaEnvio) corelNotaEnvio();
 
 			cliPorDia();
 
@@ -399,9 +405,9 @@ public class FacturaRes extends PBase {
 				lblCred.setVisibility(View.INVISIBLE);
 			}
 
-        //if (gl.peImpOrdCos) msgAskComanda("Imprimir comanda");
+			//if (gl.peImpOrdCos) msgAskComanda("Imprimir comanda");
 
-        //if (gl.mesero_precuenta) prnCuenta(null);
+			//if (gl.mesero_precuenta) prnCuenta(null);
 
 			sn=gl.gNITCliente;
 
@@ -996,7 +1002,7 @@ public class FacturaRes extends PBase {
 			if (!certificarFEL) {
 				if ( gl.peEnvio) {
 					if (isNetworkAvailable()) {
-						impresionDocumento();
+						actualizaNotaEnvio();
 					} else {
 						toast("No hay conexion a internet");
 						impresionDocumento();
@@ -1225,37 +1231,37 @@ public class FacturaRes extends PBase {
 			intcod,itemuid,cuid,tipo_factura=1;
 		boolean flag,pagocarta=false,pagopendiente=false;
 
-        corel=gl.codigo_ruta+"_"+mu.getCorelBase();
-		hora=du.getActHour();
-
-        try {
-            if (gl.numero_orden.isEmpty()) gl.numero_orden=" ";
-        } catch (Exception e) {
-            gl.numero_orden=" ";
-        }
-
-        sql="SELECT MAX(ITEM) FROM D_FACT_LOG";
-        dt=Con.OpenDT(sql);
-
-        if (dt.getCount()>0){
-            dt.moveToFirst();
-            mitem=dt.getInt(0);
-        } else {
-            mitem=0;
-        }
-		mitem++;
-
-		try {
-			dt=Con.OpenDT("SELECT MAX(CODIGO_TRANS) FROM D_barril_trans");
-			dt.moveToFirst();
-			idtransbar=dt.getInt(0)+1;
-		} catch (Exception e) {
-			idtransbar=1;
-		}
-
 		try {
 
-			//region Consistencia de Factura
+			//region Inicio
+
+			corel=gl.codigo_ruta+"_"+mu.getCorelBase();
+			hora=du.getActHour();
+
+			try {
+				if (gl.numero_orden.isEmpty()) gl.numero_orden=" ";
+			} catch (Exception e) {
+				gl.numero_orden=" ";
+			}
+
+			sql="SELECT MAX(ITEM) FROM D_FACT_LOG";
+			dt=Con.OpenDT(sql);
+
+			if (dt.getCount()>0){
+				dt.moveToFirst();
+				mitem=dt.getInt(0);
+			} else {
+				mitem=0;
+			}
+			mitem++;
+
+			try {
+				dt=Con.OpenDT("SELECT MAX(CODIGO_TRANS) FROM D_barril_trans");
+				dt.moveToFirst();
+				idtransbar=dt.getInt(0)+1;
+			} catch (Exception e) {
+				idtransbar=1;
+			}
 
 			double tott,totpg=0;
 
@@ -1273,15 +1279,13 @@ public class FacturaRes extends PBase {
 				msgbox("Monto de pago no coincide con total de factura.");return false;
 			}
 
-			//endregion
-
-			String ssnt=gl.gNITCliente;
-
   			String ss="WHERE anulado=0 AND feelfechaprocesado=0 AND feeluuid=' ' AND fecha>2010010000";
             D_fact.fill(ss);
             fpend=D_fact.count;
 
 			db.beginTransaction();
+
+			//endregion
 
 			//region D_FACTURA
 
@@ -1393,12 +1397,6 @@ public class FacturaRes extends PBase {
 
 			//region D_FACTURAD
 
-            if (gl.numero_orden.isEmpty() || gl.numero_orden.equalsIgnoreCase(" ")) {
-                //toastlong("Venta directa ");
-            } else {
-                //toastlong("Venta orden ");
-            }
-
 			sql="SELECT PRODUCTO,CANT,PRECIO,IMP,DES,DESMON,TOTAL,PRECIODOC,PESO,VAL2,VAL4,UM,FACTOR,UMSTOCK,EMPRESA FROM T_VENTA";
 			dt=Con.OpenDT(sql);
 
@@ -1508,6 +1506,66 @@ public class FacturaRes extends PBase {
                 }
 
             }
+
+			//endregion
+
+			//region Envio
+
+			if (gl.peNotaEnvio) {
+
+				clsD_notaenvioObj D_notaenvioObj=new clsD_notaenvioObj(this,Con,db);
+				clsClasses.clsD_notaenvio eeitem;
+
+				int eestat = -1;if (gl.nota_envio_modo==1) eestat = 2;
+
+				eeitem = clsCls.new clsD_notaenvio();
+
+				eeitem.codigo_nota_envio_enc=gl.nota_envio_corel;
+				eeitem.codigo_nota_envio_estatus=eestat;
+				eeitem.codigo_cliente=gl.codigo_cliente;
+				eeitem.referencia=corel;
+				eeitem.persona_entrega=0;
+				eeitem.fecha=du.getActDateTime();
+
+				D_notaenvioObj.add(eeitem);
+
+
+				clsD_notaenviodObj D_notaenviodObj=new clsD_notaenviodObj(this,Con,db);
+				clsClasses.clsD_notaenviod editem;
+				double eeprec,eecant,eedescm,eetot,eedescpr;
+
+				int edcor=D_notaenviodObj.newID("SELECT MAX(codigo_nota_envio_det) FROM D_notaenviod");
+
+				sql="SELECT PRODUCTO,CANT,PRECIO,IMP,DES,DESMON,TOTAL,PRECIODOC,PESO,VAL2,VAL4,UM,FACTOR,UMSTOCK,EMPRESA FROM T_VENTA";
+				dt=Con.OpenDT(sql);
+				dt.moveToFirst();
+
+				while (!dt.isAfterLast()) {
+
+					intcod=app.codigoProducto(dt.getString(0));
+					eeprec=dt.getDouble(2);eecant=dt.getDouble(1);eetot=eeprec*eecant;
+					eedescm=dt.getDouble(5);
+					if (tot>0) eedescpr=100*eedescm/eetot; else eedescpr=0;
+
+					editem = clsCls.new clsD_notaenviod();
+
+					editem.codigo_nota_envio_det=edcor;
+					editem.codigo_nota_envio_enc=gl.nota_envio_corel;
+					editem.codigo_producto=intcod;
+					editem.cantidad=eecant;
+					editem.precio_venta=eeprec;
+					editem.total=dt.getDouble(6);
+					editem.descuento=eedescm;
+					editem.descuento_porcentaje=eedescpr;
+					editem.nombre_producto=app.prodNombre(intcod);
+
+					D_notaenviodObj.add(editem);
+
+					dt.moveToNext();
+					edcor++;
+				}
+
+			}
 
 			//endregion
 
@@ -2015,7 +2073,7 @@ public class FacturaRes extends PBase {
 
 			//endregion
 
-						//region D_FACTURACOR
+			//region D_FACTURACOR
 
 			clsD_facturacorObj D_facturacorObj=new clsD_facturacorObj(this,Con,db);
 			int newfcid=D_facturacorObj.newID("SELECT MAX(id) FROM D_facturacor");
@@ -2046,7 +2104,6 @@ public class FacturaRes extends PBase {
 			}
 
 			//endregion
-
 
             procesaInventario();
 
@@ -4327,6 +4384,78 @@ public class FacturaRes extends PBase {
 
 
     //endregion
+
+	//region Nota envio
+
+	private void corelNotaEnvio() {
+		long necor,lcodr;
+
+		try {
+
+			necor=1000000000000L;lcodr=gl.codigo_ruta;necor=necor*lcodr;
+			necor=necor+du.getCorelBaseNum();
+			gl.nota_envio_corel=necor;
+			gl.nota_envio_modo=0;
+
+			app.getAPIUrl();
+			String url=gl.apiurl+"mpos/Mpos/EnvioNuevo?pEmpresa="+gl.emp+
+					   "&pSucursal="+gl.tienda+"&identificador="+uid_envio;
+
+			httpcli = new HttpClient();
+			httpcli.processRequest(url, () -> cbCorelNotaEnvio());
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void cbCorelNotaEnvio() {
+		try {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					if (httpcli.retcode==1) {
+						int ncor=Integer.parseInt(httpcli.data);
+
+						gl.nota_envio_corel=ncor;
+						gl.nota_envio_modo=1;
+					} else {
+						//toast("Http fail "+httpcli.data);
+					}
+				}
+			});
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void actualizaNotaEnvio() {
+		try {
+			if (gl.nota_envio_modo==0) {
+				impresionDocumento();
+				return;
+			}
+
+			clsEnvioUpdate EnvioUpdateObj= new clsEnvioUpdate(this, Con, db);
+
+			String usql=EnvioUpdateObj.generaSQL(corel,gl.nota_envio_corel,gl.tienda,gl.codigo_vendedor);
+
+			cbActualizaNotaEnvio();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void cbActualizaNotaEnvio() {
+		try {
+
+
+			impresionDocumento();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	//endregion
 
 	//region Aux
 

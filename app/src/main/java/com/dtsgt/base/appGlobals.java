@@ -36,7 +36,7 @@ public class appGlobals extends Application {
 	public String ref1,ref2,ref3,escaneo,corel_d_mov,barra,parVer,gcods,prtipo,prpar;
 	public String gNITCliente, gDirCliente, gNombreCliente, gCorreoCliente,gTelCliente;
 	public String felcorel,felserie,felnum,feluuid,prodid,pedid,pedcorel,idorden,mesanom,nom_est;
-	public String tiendanom,tiendanit,cajanom,urlglob,menuitemid,titReport,pickcode,pickname,wsurl;
+	public String tiendanom,tiendanit,cajanom,urlglob,menuitemid,titReport,pickcode,pickname,wsurl,apiurl;
 	public int tiponcredito,validarCred,gpsdist,gcodi,savemantid,salaid,idmesero,modoclave,mododocesa;
     public boolean vcredito,vcheque,vchequepost,validimp,dev,banco,disc,iniciaVenta,listaedit,exitflag;
 	public boolean closeCliDet, closeVenta,closePedido, promapl, pagado, pagocobro, sinimp, rutapos, devol, modoadmin,
@@ -50,7 +50,8 @@ public class appGlobals extends Application {
 				mesa_vend,mesa_codigo,invcent_cod,invcen_alm,sal_idneg,desc_tipo_apl,prcu_mesa,
 			    prcu_vend,precuenta_cuenta,combo_cuenta,dias_credito,precuenta_modo,domicilio_notif,
 			    servidor_anio,idcombo,set_cant,set_cant_max,fact_sin_cert,fd_hn_cori,fd_hn_corf,
-				dom_est_val,repartidor_codigo,ped_dom_empresa;
+				dom_est_val,repartidor_codigo,ped_dom_empresa,nota_envio_modo;
+	public long nota_envio_corel;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel,
                 corelmov, linea_sel="",mesa_alias,nummesapedido, nombre_cortesia,bar_um,bar_idbarril;
@@ -125,7 +126,7 @@ public class appGlobals extends Application {
 			       peLlevarSinPropina, pePropinaFELconIVA,peDescPassSimple,peModoSupermercado,
 			       impStarCutPaper=false;
 	public double  pePropinaPerc,pePropinaCarta,peDescMax;
-	public Boolean peAnulFact,peNoModInv,peNoModCom;
+	public Boolean peAnulFact,peNoModInv,peNoModCom,peNotaEnvio;
 
     // Parametros Extra Local
     public Boolean pelCaja,pelCajaRecep,pelDespacho, pelOrdenComanda;

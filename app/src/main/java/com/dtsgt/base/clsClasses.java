@@ -459,6 +459,27 @@ public class clsClasses {
         public int motivo_ajuste;
     }
 
+    public class clsD_notaenvio {
+        public long codigo_nota_envio_enc;
+        public int  codigo_nota_envio_estatus;
+        public int  codigo_cliente;
+        public String referencia;
+        public int  persona_entrega;
+        public long fecha;
+    }
+
+    public class clsD_notaenviod {
+        public int  codigo_nota_envio_det;
+        public long codigo_nota_envio_enc;
+        public int  codigo_producto;
+        public double cantidad;
+        public double precio_venta;
+        public double total;
+        public double descuento;
+        public double descuento_porcentaje;
+        public String nombre_producto;
+    }
+
     public class clsD_orden {
         public int codigo_orden;
         public String corel;
@@ -724,6 +745,16 @@ public class clsClasses {
     public class clsFbOrdenNota {
         public int id;
         public String nota;
+    }
+
+    public class clsfbVersion {
+        public String actver;
+        public int  eid;
+        public String enombre;
+        public int  rid;
+        public String rnombre;
+        public int  sid;
+        public String snombre;
     }
 
     //endregion

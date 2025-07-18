@@ -330,11 +330,15 @@ public class Venta extends PBase {
                         if (!gl.cliposflag) {
                             gl.cliposflag=true;
                             if (!gl.exitflag) {
-                                if (!gl.peRest) {
-                                    if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-                                        startActivity(new Intent(Venta.this,CliPosSVSel.class));
-                                    } else  {
-                                        startActivity(new Intent(Venta.this,CliPos.class));
+                                if (gl.peNotaEnvio) {
+                                    startActivity(new Intent(Venta.this, CliPos.class));
+                                } else {
+                                    if (!gl.peRest) {
+                                        if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                                            startActivity(new Intent(Venta.this, CliPosSVSel.class));
+                                        } else {
+                                            startActivity(new Intent(Venta.this, CliPos.class));
+                                        }
                                     }
                                 }
                             }

@@ -289,7 +289,38 @@ public class BaseDatosVersion {
 
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [D_notaenvio] ("+
+                    "CODIGO_NOTA_ENVIO_ENC INTEGER NOT NULL,"+
+                    "CODIGO_NOTA_ENVIO_ESTATUS INTEGER NOT NULL,"+
+                    "CODIGO_CLIENTE INTEGER NOT NULL,"+
+                    "REFERENCIA TEXT NOT NULL,"+
+                    "PERSONA_ENTREGA INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_NOTA_ENVIO_ENC])"+
+                    ");";
+            db.execSQL(sql);
 
+            sql="CREATE INDEX D_notaenvio_idx1 ON D_notaenvio(CODIGO_NOTA_ENVIO_ESTATUS)";db.execSQL(sql);
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [D_notaenviod] ("+
+                    "CODIGO_NOTA_ENVIO_DET INTEGER NOT NULL,"+
+                    "CODIGO_NOTA_ENVIO_ENC INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "CANTIDAD REAL NOT NULL,"+
+                    "PRECIO_VENTA REAL NOT NULL,"+
+                    "TOTAL REAL NOT NULL,"+
+                    "DESCUENTO REAL NOT NULL,"+
+                    "DESCUENTO_PORCENTAJE REAL NOT NULL,"+
+                    "NOMBRE_PRODUCTO TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_NOTA_ENVIO_DET])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX D_notaenviod_idx1 ON D_notaenviod(CODIGO_NOTA_ENVIO_ENC)";db.execSQL(sql);
+        } catch (Exception e) { }
 
 
         try {

@@ -62,11 +62,14 @@ import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.firebase.fbBase;
 import com.dtsgt.firebase.fbStock;
+import com.dtsgt.firebase.fbVersion;
 import com.dtsgt.ladapt.LA_Login;
+import com.dtsgt.webapi.HttpClient;
 import com.dtsgt.webservice.srvBase;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -78,6 +81,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.Call;
+import okhttp3.Callback;
+
 
 
 public class MainActivity extends PBase {
@@ -91,6 +101,7 @@ public class MainActivity extends PBase {
     private LA_Login adapter;
 
     private fbStock fbs;
+    private fbVersion fbv;
 
     private fbBase fbdom;
     private DatabaseReference fbdomref;
@@ -103,13 +114,18 @@ public class MainActivity extends PBase {
     private ArrayList<String> spinlist = new ArrayList<>();
 
     private clsKeybHandler khand;
+    private HttpClient hcli;
 
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
-
-    private String parVer = "5.5.10.3";
     private boolean bloqueo_venta=false;
+
+    // ***************************************
+    private String parVer = "5.6.0.0";
+
+    //ver. 5.6. - registro de version actual en Firebase
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,10 +148,11 @@ public class MainActivity extends PBase {
 
             try {
                 fbs =new fbStock("Stock",0);
-            } catch (Exception e) {
-                String se=e.getMessage();
-                se=se+"";
-            }
+            } catch (Exception e) { }
+
+            try {
+                fbv =new fbVersion("Version");
+            } catch (Exception e) { }
 
             grantPermissions();
 
@@ -417,8 +434,8 @@ public class MainActivity extends PBase {
     }
 
     public void doFPTest(View view) {
-
-        testaskdlg();
+        testhttp();
+        //testaskdlg();
 
         //startActivity(new Intent(this, FBTest.class));
         /*
@@ -644,30 +661,7 @@ public class MainActivity extends PBase {
 
         if (gl.pePedidos) iniciaDomicilio();
 
-
-
-        /*
-
-         if (gl.pePedidos | gl.pelCajaRecep) {
-            String params = gl.wsurl + "#" + gl.emp + "#" + gl.tienda;
-            startMainTimer.startService(this, params);
-        }
-
-        if (gl.pePedidos) {
-            String params = gl.wsurl + "#" + gl.emp + "#" + gl.tienda;
-            startPedidosImport.startService(this, params);
-            toasttop("Captura de pedidos activada");
-        }
-
-        if (gl.pelCajaRecep) {
-            String params = gl.wsurl + "#" + gl.emp + "#" + gl.tienda;
-            startOrdenImport.startService(this, params);
-            toasttop("Captura de ordenes activada");
-        }
-        */
-
-
-
+        registraVersion();
 
     }
 
@@ -1449,6 +1443,24 @@ public class MainActivity extends PBase {
         }
     }
 
+    private void registraVersion() {
+        try {
+            clsClasses.clsfbVersion item=clsCls.new clsfbVersion();
+
+            item.actver=parVer;
+            item.eid=gl.emp;
+            item.enombre=gl.empnom;
+            item.rid=gl.codigo_ruta;
+            item.rnombre=gl.rutanom;
+            item.sid=gl.tienda ;
+            item.snombre=gl.tiendanom;
+
+            fbv.setItem(item);
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Dialogs
@@ -1505,6 +1517,78 @@ public class MainActivity extends PBase {
     //endregion
 
     //region Test Button
+
+    private void testhttp() {
+        try {
+            app.getAPIUrl();
+
+            String euid="233445";
+
+            hcli = new HttpClient();
+            String url=gl.apiurl+"mpos/Mpos/EnvioNuevo?pEmpresa="+gl.emp+"&pSucursal="+gl.tienda+"&identificador="+euid;
+
+            hcli.processRequest(url, () -> cbHttp());
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void cbHttp() {
+        try {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (hcli.retcode==1) {
+                        int cor=Integer.parseInt(hcli.data);
+                        toastlong("Http : "+hcli.data+" : "+cor);
+                    } else {
+                        toast("Http fail "+hcli.data);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void testhttporig() {
+        try {
+
+            OkHttpClient client = new OkHttpClient();
+
+            // Build the request
+            Request request = new Request.Builder()
+                    .url("http://ec2-52-41-114-122.us-west-2.compute.amazonaws.com:8090/api/Orden/GetListaOrdenes?pUsuario=58")
+                    .build();
+
+            // Create the call
+            Call call = client.newCall(request);
+
+            // Execute the call asynchronously
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    // Handle failure
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        // Handle successful response
+                        String responseBody = response.body().string();
+                        System.out.println(responseBody);
+                    } else {
+                        // Handle unsuccessful response
+                        System.out.println("Request failed with code: " + response.code());
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     private void testaskdlg() {
         try {
