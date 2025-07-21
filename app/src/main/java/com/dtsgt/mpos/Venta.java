@@ -3320,6 +3320,12 @@ public class Venta extends PBase {
 
                         if (gl.reportid == 9 || gl.reportid == 10) {
                             startActivity(new Intent(Venta.this,CierreX.class));
+                        } else if (gl.reportid == 4) {
+                            if (gl.peRepFormaSuper) {
+                                validaSupervisorFormaPago();
+                            } else {
+                                startActivity(new Intent(Venta.this, Reportes.class));
+                            }
                         }else{
                             startActivity(new Intent(Venta.this,Reportes.class));
                         }
@@ -6017,6 +6023,51 @@ public class Venta extends PBase {
 
         dialog.show();
     }
+
+    private void validaSupervisorFormaPago() {
+
+        clsClasses.clsVendedores item;
+
+        try {
+            clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+            app.fillSuper(VendedoresObj);
+
+            if (VendedoresObj.count==0) {
+                msgbox("No está definido ningún supervisor");return;
+            }
+
+            extListPassDlg listdlg = new extListPassDlg();
+            listdlg.buildDialog(Venta.this,"Autorización","Salir");
+
+            for (int i = 0; i <VendedoresObj.count; i++) {
+                item=VendedoresObj.items.get(i);
+                listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+            }
+
+            listdlg.setOnLeftClick(v -> listdlg.dismiss());
+
+            listdlg.onEnterClick(v -> {
+
+                if (listdlg.getInput().isEmpty()) return;
+
+                if (listdlg.validPassword()) {
+                    startActivity(new Intent(Venta.this, Reportes.class));
+                    listdlg.dismiss();
+                } else {
+                    toast("Contraseña incorrecta");
+                }
+            });
+
+            listdlg.setWidth(350);
+            listdlg.setLines(4);
+
+            listdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
 
     //endregion
 
