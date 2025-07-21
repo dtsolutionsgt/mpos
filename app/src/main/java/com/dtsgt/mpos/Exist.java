@@ -605,7 +605,9 @@ public class Exist extends PBase {
                             idalm=Integer.parseInt(listdlg.items.get(position).codigo);
                             gl.idalm=idalm;
                             P_almacenObj.fill("WHERE (CODIGO_ALMACEN="+idalm+")");
+
                             if (P_almacenObj.first().es_principal==1) gl.idalm=0;
+
                             gl.nom_alm=listdlg.items.get(position).text;
                             lblalm.setText(gl.nom_alm);
                             listItems();
