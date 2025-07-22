@@ -557,7 +557,6 @@ public class clsRepBuilder {
 		items.add(stot);
 	}
 
-
 	public void add3lrr(String s1,double v2,double v3) {
 		String s2,s3;
 		

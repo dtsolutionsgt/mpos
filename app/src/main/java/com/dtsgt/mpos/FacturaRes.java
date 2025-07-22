@@ -94,6 +94,7 @@ import com.dtsgt.firebase.fbResSesion;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptTotals;
 import com.dtsgt.webapi.HttpClient;
+import com.dtsgt.webapi.HttpCommit;
 import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.wsOpenDT;
 
@@ -139,6 +140,7 @@ public class FacturaRes extends PBase {
 
 	private wsOpenDT wso;
 	private HttpClient httpcli;
+	private HttpCommit httpcom;
 
 	private fbStock fbs;
 	private fbOrdenEstado fboe;
@@ -1111,6 +1113,8 @@ public class FacturaRes extends PBase {
 				fdoc.impStarLANFact=gl.impStarLANFact;
 				fdoc.impStarLANFactMac =gl.impStarLANFactMac;
 				fdoc.FactCantProd=gl.peFactCantProd;
+
+				if (gl.peNotaEnvio) fdoc.num_envio=gl.nota_envio_corel; else fdoc.num_envio=0;
 
 				fdoc.buildPrint(corel,0,"",gl.peMFact);
 
@@ -4439,21 +4443,44 @@ public class FacturaRes extends PBase {
 
 			String usql=EnvioUpdateObj.generaSQL(corel,gl.nota_envio_corel,gl.tienda,gl.codigo_vendedor);
 
-			cbActualizaNotaEnvio();
+			app.getAPIUrl();
+
+			httpcom = new HttpCommit(gl.apiurl+"api/Orden/Commit");
+			httpcom.commit(usql , () -> cbActualizaNotaEnvio() );
+
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
 	}
 
 	private void cbActualizaNotaEnvio() {
+
+
 		try {
-
-
 			impresionDocumento();
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
+
+		ActualizaNotaEnvio();
+
+
 	}
+
+	private void ActualizaNotaEnvio() {
+		try {
+			browse=0;
+			onResume();
+
+			sql="UPDATE D_notaenvio SET  CODIGO_NOTA_ENVIO_ESTATUS=1 WHERE (CODIGO_NOTA_ENVIO_ENC="+gl.nota_envio_corel+")";
+			db.execSQL(sql);
+		} catch (Exception e) {
+			String se=e.getMessage();
+			se=se+"";
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
 
 	//endregion
 

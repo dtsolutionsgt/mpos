@@ -1058,38 +1058,42 @@ public class clsDocFactura extends clsDocument {
             stot = stot - propina;
             tot = tot - propina;
             if (desc != 0) {
-                rep.addtotsp("Subtotal: ", stot);
-                rep.addtotsp("Descuento: ", -desc);
+                rep.addtotsptic("Subtotal: ", stot);
+                rep.addtotsptic("Descuento: ", -desc);
             }
         } else {
-            if (desc != 0 | propina != 0) {
-                stot = stot - propina;
-                rep.addtotsp("Subtotal: ", stot);
+            if (!modo_envio) {
+                if (desc != 0 | propina != 0) {
+                    stot = stot - propina;
+                    rep.addtotsptic("Subtotal: ", stot);
+                }
+                if (desc != 0) rep.addtotsptic("Descuento: ", -desc);
+                if (propina != 0) rep.addtotsptic("Propina: ", propina);
             }
-            if (desc != 0) rep.addtotsp("Descuento: ", -desc);
-            if (propina != 0) rep.addtotsp("Propina: ", propina);
         }
 
         rep.addtotsptic("TOTAL A PAGAR: ", tot);
         rep.add("");
 
-        rep.add("Detalle pago : ");
-        for (int i = 0; i <pagos.size(); i++) {
-            rep.addtotDS(pagos.get(i).nombre,pagos.get(i).cant);
-        }
+        if (!modo_envio) {
 
-        if (impresionorden) {
-            String sod=add1;
-            if (!sod.isEmpty()) {
-                rep.add("");
-                rep.addc("************************");
-                rep.addc("ORDEN # "+sod.toUpperCase());
-                rep.addc("************************");
-                rep.add("");
+            rep.add("Detalle pago : ");
+            for (int i = 0; i <pagos.size(); i++) {
+                rep.addtotDS(pagos.get(i).nombre,pagos.get(i).cant);
             }
 
-        } else {
-            rep.add("");
+            if (impresionorden) {
+                String sod = add1;
+                if (!sod.isEmpty()) {
+                    rep.add("");
+                    rep.addc("************************");
+                    rep.addc("ORDEN # " + sod.toUpperCase());
+                    rep.addc("************************");
+                    rep.add("");
+                }
+            } else {
+                rep.add("");
+            }
         }
 
         if (parallevar){

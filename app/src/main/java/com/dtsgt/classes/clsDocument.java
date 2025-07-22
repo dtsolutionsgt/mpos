@@ -31,13 +31,13 @@ public class clsDocument {
 	public boolean parallevar,domicilio,factsinpropina,modorest,LANPrint,PropinaAparte,
                    precuenta1015,impStarLANFact=false,FactCantProd;
     public boolean qrsalvador;
-    public long ffecha;
+    public long ffecha,num_envio;
     public int pendiente,diacred,pagoefectivo,empid,tipo_doc,corel_doc;
 	public String TipoCredito, NoAutorizacion,LAN_IP;
 	public double ptotal,pdesc,pprop,propvalor,propperc,sv_subt,cantdet;
     public String svcf_nit,svcf_dep,svcf_muni,svcf_neg;
 
-    public boolean es_pickup, es_delivery;
+    public boolean es_pickup, es_delivery,modo_envio;
 
     // Honduras
     public double fh_stotal,fh_exon,fh_exent,fh_grav,fh_imp1,fh_imp2,fh_val1, fh_val2;
@@ -142,6 +142,8 @@ public class clsDocument {
         modofact=modo;
         facturaflag=esfactura;
         rep.clear();
+
+        modo_envio=num_envio>0;
 
         try{
 
@@ -426,13 +428,21 @@ public class clsDocument {
             if (docfactura) {
                 if (!facturaflag) {
                     rep.add("");
-                    rep.add("Esto no es un documento fiscal");
+                    if (modo_envio) {
+                        rep.line();
+                        rep.add("ENVIO No. "+num_envio);
+                        rep.line();
+                    } else {
+                        rep.add("Esto no es un documento fiscal");
+                    }
                     rep.add("");
                 }
             }
 		}
 
-        if (docfactura) rep.add("Version: "+fversion);
+        if (docfactura) {
+            if (!modo_envio) rep.add("Version: "+fversion);
+        }
         //rep.add("");
         //if (es_pickup) rep.add("------ (RECOGER EN SITIO)  -------");
         //if (es_delivery) rep.add("-------  (DELIVERY)  -------");
@@ -508,7 +518,7 @@ public class clsDocument {
                 if (facturaflag) {
                     rep.addc(nombre);
                 } else {
-                    rep.addc("TICKET");
+                    if (!modo_envio) rep.addc("TICKET");
                 }
 
                 if (numero.length()<8) {

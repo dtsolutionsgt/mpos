@@ -54,6 +54,7 @@ public class clsEnvioUpdate {
         upd.add("REFERENCIA", D_facturaObj.first().corel);
         upd.add("USER_AGR", cod_usuario);
         upd.add("USER_MOD", cod_usuario);
+
         upd.Where("CODIGO_NOTA_ENVIO_ENC="+corel_envio);
 
         sql=upd.sql()+";";
