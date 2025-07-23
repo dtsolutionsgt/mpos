@@ -1417,49 +1417,8 @@ public class WSEnv extends PBase {
 
             cStock.clear();
 
-            clsP_stockObj P_stockObj = new clsP_stockObj(this, Con, db);
-            clsP_stockbofObj P_stockbofObj = new clsP_stockbofObj(this, Con, db);
-            clsP_stock_almacenObj P_stock_almacenObj = new clsP_stock_almacenObj(this, Con, db);
+            CSQL = "UPDATE P_STOCK SET CODIGOLIQUIDACION=0 WHERE SUCURSAL=" + gl.tienda + ";";
 
-            //P_stockObj.fill("WHERE enviado=1");
-            //P_stockObj.fill();
-            CSQL = "DELETE FROM P_STOCK WHERE SUCURSAL=" + gl.tienda + ";";
-
-            /*
-            for (int i = 0; i < P_stockObj.count; i++) {
-
-                sitem = clsCls.new clsP_stockbof();
-                sitem.empresa = gl.emp;
-                sitem.sucursal = gl.tienda;
-                sitem.codigo_producto = P_stockObj.items.get(i).codigo;
-                sitem.cant = P_stockObj.items.get(i).cant;
-                sitem.cantm = 0;
-                sitem.peso = 0;
-                sitem.pesom = 0;
-                sitem.lote = "";
-                sitem.unidadmedida = P_stockObj.items.get(i).unidadmedida;
-                sitem.anulado = 0;
-                sitem.enviado = 1;
-                sitem.codigoliquidacion = 0;
-                sitem.documento = "";
-
-                ss = P_stockbofObj.addItemSql(sitem);
-                CSQL = CSQL + ss + ";";
-                cStock.add("" + i);
-
-            }
-             */
-
-            //P_stock_almacenObj.fill();
-            CSQL = CSQL + "DELETE FROM P_stock_almacen WHERE CODIGO_SUCURSAL=" + gl.tienda + ";";
-
-            /*
-            for (int i = 0; i < P_stock_almacenObj.count; i++) {
-                ss = P_stock_almacenObj.addItemSqlBOF(P_stock_almacenObj.items.get(i));
-                CSQL = CSQL + ss + ";";
-                //cStock.add(""+i);
-            }
-             */
 
         } catch (Exception e) {
             String ss = e.getMessage();
