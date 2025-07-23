@@ -329,9 +329,15 @@ public class Exist extends PBase {
                         fbitem.cant=dt.getDouble(1);
                         fbitem.um=dt.getString(2);
 
-                        P_productoObj.fill("WHERE CODIGO_PRODUCTO="+fbitem.idprod+"");
-                        fbitem.nombre=P_productoObj.first().desclarga;
-                        fbitem.costo=P_productoObj.first().costo;
+                        try {
+                            P_productoObj.fill("WHERE CODIGO_PRODUCTO="+fbitem.idprod);
+                            fbitem.nombre=P_productoObj.first().desclarga;
+                            fbitem.costo=P_productoObj.first().costo;
+                        } catch (Exception e) {
+                            String scd=""+fbitem.idprod;
+                            fbitem.nombre="Codigo: "+fbitem.idprod+ " ( desactivado )";
+                            fbitem.costo=0;
+                        }
 
                         sitems.add(fbitem);
                         dt.moveToNext();
