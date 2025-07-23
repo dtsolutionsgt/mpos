@@ -1414,15 +1414,10 @@ public class WSEnv extends PBase {
         cjReporte.clear();
 
         try {
-
             cStock.clear();
-
             CSQL = "UPDATE P_STOCK SET CODIGOLIQUIDACION=0 WHERE SUCURSAL=" + gl.tienda + ";";
-
-
         } catch (Exception e) {
             String ss = e.getMessage();
-            //    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
