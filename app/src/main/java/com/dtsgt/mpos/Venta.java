@@ -958,7 +958,6 @@ public class Venta extends PBase {
             fbcallmode=3;
             gl.limcant=getDisp(prodid);
 
-
             if (!tipo.equalsIgnoreCase("M")) {
                 if (tipo.equalsIgnoreCase("P")) {
                     if (gl.limcant>0) {
@@ -982,6 +981,7 @@ public class Venta extends PBase {
         Cursor DT;
 
         txtBarra.setText("");
+
         txtBarra.requestFocus();
 
         try {
