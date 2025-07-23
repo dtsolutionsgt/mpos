@@ -913,6 +913,8 @@ public class clsDocFactura extends clsDocument {
         rep.add3sss("Cantidad ","Precio","Total");
         rep.line();
 
+        cant_detalle=items.size();
+
         for (int i = 0; i <items.size(); i++) {
             item=items.get(i);
             if (!item.flag) {
@@ -929,6 +931,9 @@ public class clsDocFactura extends clsDocument {
             }
         }
 
+        if (modo_envio) {
+            if (cant_detalle==1) rep.add("1 articulo"); else rep.add(cant_detalle+" articulos ");
+        }
         rep.line();
 
         return true;

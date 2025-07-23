@@ -32,7 +32,7 @@ public class clsDocument {
                    precuenta1015,impStarLANFact=false,FactCantProd;
     public boolean qrsalvador;
     public long ffecha,num_envio;
-    public int pendiente,diacred,pagoefectivo,empid,tipo_doc,corel_doc;
+    public int pendiente,diacred,pagoefectivo,empid,tipo_doc,corel_doc,cant_detalle;
 	public String TipoCredito, NoAutorizacion,LAN_IP;
 	public double ptotal,pdesc,pprop,propvalor,propperc,sv_subt,cantdet;
     public String svcf_nit,svcf_dep,svcf_muni,svcf_neg;
@@ -326,7 +326,7 @@ public class clsDocument {
 
         if (docfactura) {
             if (!facturaflag) {
-                rep.addc("TICKET");
+                if (!modo_envio)  rep.addc("TICKET");
                 rep.add("");
             }
         }
@@ -952,18 +952,22 @@ public class clsDocument {
         if (idx>=0) {
             rep.addc("");
             if (emptystr(vendnom)) return "@@";
-            l=l.replace("@Vendedor", vendnom);return l;
+            l=l.replace("@Vendedor", vendnom);
+            if (modo_envio) return ""; else return l;
         }
 
         idx=lu.indexOf("@Ruta");
         if (idx>=0) {
             if (emptystr(rutanombre)) return "@@";
-            l=l.replace("@Ruta",rutanombre);return l;
+            l=l.replace("@Ruta",rutanombre);
+            if (modo_envio) return ""; else return l;
         }
 
         idx=lu.indexOf("@Cliente");
         if (idx>=0) {
-            if (emptystr(nombre_cliente)) return "@@";
+            //if (emptystr(nombre_cliente)) return "@@";
+            if (emptystr(nombre_cliente)) nombre_cliente="Consumidor final";
+            if (nombre_cliente.equalsIgnoreCase(" ")) nombre_cliente="Consumidor final";
 
             l=l.replace("@Cliente",nombre_cliente);l=l.trim();
 
