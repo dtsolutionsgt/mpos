@@ -1451,7 +1451,7 @@ public class WSEnv extends PBase {
              */
 
             //P_stock_almacenObj.fill();
-            CSQL = CSQL + "DELETE FROM P_stock_almacen WHERE CODIGO_SUCURSAL=" + gl.tienda + ";";
+            //CSQL = CSQL + "DELETE FROM P_stock_almacen WHERE CODIGO_SUCURSAL=" + gl.tienda + ";";
 
             /*
             for (int i = 0; i < P_stock_almacenObj.count; i++) {

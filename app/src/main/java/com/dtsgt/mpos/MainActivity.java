@@ -120,7 +120,6 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
 
-    private String parVer = "5.5.10.4";
     private boolean bloqueo_venta=false;
 
     // ***************************************
