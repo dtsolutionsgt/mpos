@@ -61,7 +61,7 @@ import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.firebase.fbBase;
-import com.dtsgt.firebase.fbStock;
+import com.dtsgt.firebase.fbVersion;
 import com.dtsgt.ladapt.LA_Login;
 import com.dtsgt.webservice.srvBase;
 
@@ -88,6 +88,8 @@ public class MainActivity extends PBase {
     private Spinner spin;
 
     private BaseDatosVersion dbVers;
+    private fbVersion fbv;
+
     private LA_Login adapter;
 
     private fbStock fbs;
@@ -136,6 +138,10 @@ public class MainActivity extends PBase {
                 String se=e.getMessage();
                 se=se+"";
             }
+
+            try {
+                fbv =new fbVersion("Version");
+            } catch (Exception e) { }
 
             grantPermissions();
 
@@ -668,7 +674,7 @@ public class MainActivity extends PBase {
 
 
 
-
+        registraVersion();
     }
 
     private void processLogIn() {
@@ -1446,6 +1452,24 @@ public class MainActivity extends PBase {
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void registraVersion() {
+        try {
+            clsClasses.clsfbVersion item=clsCls.new clsfbVersion();
+
+            item.actver=parVer;
+            item.eid=gl.emp;
+            item.enombre=gl.empnom;
+            item.rid=gl.codigo_ruta;
+            item.rnombre=gl.rutanom;
+            item.sid=gl.tienda ;
+            item.snombre=gl.tiendanom;
+
+            fbv.setItem(item);
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
