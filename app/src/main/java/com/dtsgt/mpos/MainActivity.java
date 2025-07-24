@@ -53,6 +53,7 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
+import com.dtsgt.firebase.fbVersion;
 import com.dtsgt.ladapt.LA_Login;
 import com.dtsgt.webservice.startMainTimer;
 
@@ -65,17 +66,23 @@ public class MainActivity extends PBase {
     private TextView lblDts,lblRuta, lblRTit, lblVer, lblEmp, lblPass, lblKeyDP;
     private ImageView imgLogo;
     private Spinner spin;
+
     private BaseDatosVersion dbVers;
+    private fbVersion fbv;
+
     private LA_Login adapter;
+
     private ArrayList<clsClasses.clsMenu> mitems = new ArrayList<>();
     private ArrayList<String> spincode = new ArrayList<>();
     private ArrayList<String> spinlist = new ArrayList<>();
+
     private clsKeybHandler khand;
+
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
 
-    private String  parVer = "4.11.6.1";
+    private String  parVer = "4.11.7.0";
     private boolean bloqueo_venta=false;
 
     private Typeface typeface;
@@ -99,6 +106,10 @@ public class MainActivity extends PBase {
                 setContentView(R.layout.activity_main);
                 modopantalla = 2;
             }
+
+            try {
+                fbv =new fbVersion("Version");
+            } catch (Exception e) { }
 
             grantPermissions();
             //typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.inconsolata);
@@ -609,7 +620,7 @@ public class MainActivity extends PBase {
 
         //ubicacion();
 
-
+        registraVersion();
     }
 
     private void processLogIn() {
@@ -1280,6 +1291,24 @@ public class MainActivity extends PBase {
             String ss=e.getMessage();
         }
 
+    }
+
+    private void registraVersion() {
+        try {
+            clsClasses.clsfbVersion item=clsCls.new clsfbVersion();
+
+            item.actver=parVer;
+            item.eid=gl.emp;
+            item.enombre=gl.empnom;
+            item.rid=gl.codigo_ruta;
+            item.rnombre=gl.rutanom;
+            item.sid=gl.tienda ;
+            item.snombre=gl.tiendanom;
+
+            fbv.setItem(item);
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     //endregion

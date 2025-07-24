@@ -28,6 +28,8 @@ import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_cierre_credObj;
 import com.dtsgt.classes.extMontoDlg;
 import com.dtsgt.fel.FELVerificacion;
+import com.dtsgt.firebase.fbCierre;
+import com.dtsgt.firebase.fbVersion;
 import com.dtsgt.ladapt.LA_T_cierre_cred;
 import com.dtsgt.webservice.wsOpenDT;
 
@@ -48,6 +50,9 @@ public class Caja extends PBase {
 
     private wsOpenDT wso;
     private Runnable rnDateCallback;
+
+    private fbCierre fbc;
+
     private extMontoDlg mdlg = new extMontoDlg();
 
     public ArrayList<clsClasses.clsT_cierre_cred> items= new ArrayList<clsClasses.clsT_cierre_cred>();
@@ -215,6 +220,10 @@ public class Caja extends PBase {
                 startActivity(new Intent(Caja.this, FELVerificacion.class));
             }
         }
+
+        try {
+            fbc =new fbCierre("Cierre");
+        } catch (Exception e) { }
 
     }
 
@@ -705,8 +714,34 @@ public class Caja extends PBase {
 
                         caja.add(itemC);
 
+
                     }
 
+                }
+
+
+                clsClasses.clsfbCierre itemfbc= clsCls.new clsfbCierre();
+
+                try {
+                    itemfbc.eid=gl.emp;
+                    itemfbc.enombre=gl.empnom;
+                    itemfbc.rid=gl.codigo_ruta;
+                    itemfbc.rnombre=gl.rutanom;
+                    itemfbc.sid=gl.tienda ;
+                    itemfbc.snombre=gl.tiendanom;
+
+                    itemfbc.afecha=du.getActDateTime();
+                    itemfbc.estado=1;
+                    itemfbc.fondocaja=itemC.fondocaja;
+                    itemfbc.montoini=itemC.montoini;
+                    itemfbc.montofin=itemC.montofin;
+                    itemfbc.montodif=itemC.montodif;
+
+                    fbc.setItem(itemfbc);
+                } catch (Exception e) {
+                    String se=e.getMessage();
+                    se=se+"";
+                    //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }
 
                 sql="UPDATE D_FACTURA SET KILOMETRAJE = "+ gl.corelZ +" WHERE KILOMETRAJE = 0 AND FECHA >= " + gl.lastDate;
