@@ -61,6 +61,7 @@ import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.firebase.fbBase;
+import com.dtsgt.firebase.fbStock;
 import com.dtsgt.firebase.fbVersion;
 import com.dtsgt.ladapt.LA_Login;
 import com.dtsgt.webservice.srvBase;
