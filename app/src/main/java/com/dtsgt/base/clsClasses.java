@@ -2109,22 +2109,29 @@ public class clsClasses {
         public long fechault;
     }
 
-    public class clsT_mov_almacen {
-        public String corel;
-        public int almacen_origen;
-        public int almacen_destino;
-        public String referencia;
-        public double total;
-        public int idtrasalmacen;
-        public int estado;
-        public long fechaini;
-        public long fechafin;
-        public int usrini;
-        public int usrfin;
-        public int idalmtrans;
-        public int completo;
+    public class clsfbVersion {
+        public String actver;
+        public int  eid;
+        public String enombre;
+        public int  rid;
+        public String rnombre;
+        public int  sid;
+        public String snombre;
+    }
 
-        public String sestado, salmacen, sfechaini, sfechafin, scompleto;
+    public class clsfbCierre {
+        public int  eid;
+        public String enombre;
+        public int  rid;
+        public String rnombre;
+        public int  sid;
+        public String snombre;
+        public long afecha;
+        public int  estado;
+        public double fondocaja;
+        public double montoini;
+        public double montofin;
+        public double montodif;
     }
 
     public class clsT_movd_almacen {
