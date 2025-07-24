@@ -685,6 +685,22 @@ public class clsClasses {
 
     //region FB Clases
 
+
+    public class clsfbCierre {
+        public int  eid;
+        public String enombre;
+        public int  rid;
+        public String rnombre;
+        public int  sid;
+        public String snombre;
+        public long afecha;
+        public int  estado;
+        public double fondocaja;
+        public double montoini;
+        public double montofin;
+        public double montodif;
+    }
+
     public class clsfbMesaAbierta {
         public int codigo_mesa;
         public int estado;
@@ -2140,6 +2156,16 @@ public class clsClasses {
         public long fechault;
     }
 
+    public class clsfbVersion {
+        public String actver;
+        public int  eid;
+        public String enombre;
+        public int  rid;
+        public String rnombre;
+        public int  sid;
+        public String snombre;
+    }
+
     public class clsT_mov_almacen {
         public String corel;
         public int almacen_origen;
@@ -2170,7 +2196,6 @@ public class clsClasses {
         public String sprod, scant, scantv;
         public int flag;
     }
-
 
     //endregion
 
