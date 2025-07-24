@@ -2156,16 +2156,6 @@ public class clsClasses {
         public long fechault;
     }
 
-    public class clsfbVersion {
-        public String actver;
-        public int  eid;
-        public String enombre;
-        public int  rid;
-        public String rnombre;
-        public int  sid;
-        public String snombre;
-    }
-
     public class clsT_mov_almacen {
         public String corel;
         public int almacen_origen;
