@@ -4454,17 +4454,31 @@ public class FacturaRes extends PBase {
 	}
 
 	private void cbActualizaNotaEnvio() {
-
-
 		try {
 			impresionDocumento();
 		} catch (Exception e) {
-			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			showMsg(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
 
-		ActualizaNotaEnvio();
+		if (httpcom.errflag) {
+			showMsg(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+httpcom.error);
+		} else {
+			ActualizaNotaEnvio();
+		}
+	}
 
-
+	private void showMsg(String msg) {
+		try {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() { toastlong(msg);}
+					});
+				}
+			}).start();
+		} catch (Exception e) {}
 	}
 
 	private void ActualizaNotaEnvio() {

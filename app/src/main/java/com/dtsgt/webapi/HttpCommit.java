@@ -12,10 +12,11 @@ import java.io.IOException;
 
 public class HttpCommit {
 
-    private String URL;
+
     public boolean errflag = true;
     public String error = null;
 
+    private String URL;
     private final OkHttpClient client = new OkHttpClient();
     private Runnable rnCallback = null;
 

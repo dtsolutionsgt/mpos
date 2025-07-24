@@ -98,7 +98,6 @@ public class MainActivity extends PBase {
     private Spinner spin;
 
     private BaseDatosVersion dbVers;
-    private fbVersion fbv;
 
     private LA_Login adapter;
 

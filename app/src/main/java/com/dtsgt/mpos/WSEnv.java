@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -30,8 +31,10 @@ import com.dtsgt.classes.clsD_fel_bitacoraObj;
 import com.dtsgt.classes.clsD_fel_errorObj;
 import com.dtsgt.classes.clsD_mov_almacenObj;
 import com.dtsgt.classes.clsD_movd_almacenObj;
+import com.dtsgt.classes.clsD_notaenvioObj;
 import com.dtsgt.classes.clsD_orden_statObj;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
+import com.dtsgt.classes.clsEnvioPendiente;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_cajapagosObj;
 import com.dtsgt.classes.clsP_cajareporteObj;
@@ -87,6 +90,8 @@ public class WSEnv extends PBase {
     private clsP_depositoObj P_depositoObj;
     private clsD_orden_statObj D_orden_statObj;
     private clsP_proveedor_sucursalObj P_proveedor_sucursalObj;
+    private clsD_notaenvioObj D_notaenvioObj;
+
 
 
     private ArrayList<String> clients = new ArrayList<String>();
@@ -161,6 +166,8 @@ public class WSEnv extends PBase {
         P_depositoObj=new clsP_depositoObj(this,Con,db);
         D_orden_statObj=new clsD_orden_statObj(this,Con,db);
         P_proveedor_sucursalObj=new clsP_proveedor_sucursalObj(this,Con,db);
+        D_notaenvioObj=new clsD_notaenvioObj(this,Con,db);
+
 
         preparaEnvio();
 
@@ -516,6 +523,8 @@ public class WSEnv extends PBase {
                 msgboxwait(ws.error);
             } else {
 
+                pendientesNotasEnvio();
+
                 if (gl.autocom==1) {
                     if (ferr.isEmpty() && movErr.isEmpty()) {
                         toast("Envío correcto");
@@ -608,6 +617,29 @@ public class WSEnv extends PBase {
                 intent.putExtra("command", CSQL);
                 startService(intent);
             }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //endregion
+
+    //region Notas envio pendientes
+
+    private void pendientesNotasEnvio() {
+        try {
+            D_notaenvioObj.fill("WHERE (CODIGO_NOTA_ENVIO_ESTATUS=-1)");
+
+            app.getAPIUrl();
+
+            for (clsClasses.clsD_notaenvio itm : D_notaenvioObj.items) {
+                clsEnvioPendiente envpend=new clsEnvioPendiente(gl.apiurl,this,Con,db);
+
+                envpend.procesaEnvio(itm.codigo_nota_envio_enc,gl.emp,gl.tienda,gl.codigo_vendedor);
+
+                SystemClock.sleep(200);
+            }
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1967,6 +1999,9 @@ public class WSEnv extends PBase {
             P_proveedor_sucursalObj.fill("WHERE (STATCOM='N')");
             cProvLoc=P_proveedor_sucursalObj.count;
             total_enviar += cProvLoc;
+
+            D_notaenvioObj.fill("WHERE (CODIGO_NOTA_ENVIO_ESTATUS=-1)");
+            total_enviar +=D_notaenvioObj.count;
 
             if (total_enviar > 0) {
 
