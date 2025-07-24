@@ -664,6 +664,22 @@ public class clsClasses {
 
     //region FB Clases
 
+
+    public class clsfbCierre {
+        public int  eid;
+        public String enombre;
+        public int  rid;
+        public String rnombre;
+        public int  sid;
+        public String snombre;
+        public long afecha;
+        public int  estado;
+        public double fondocaja;
+        public double montoini;
+        public double montofin;
+        public double montodif;
+    }
+
     public class clsfbMesaAbierta {
         public int codigo_mesa;
         public int estado;
@@ -2119,19 +2135,22 @@ public class clsClasses {
         public String snombre;
     }
 
-    public class clsfbCierre {
-        public int  eid;
-        public String enombre;
-        public int  rid;
-        public String rnombre;
-        public int  sid;
-        public String snombre;
-        public long afecha;
-        public int  estado;
-        public double fondocaja;
-        public double montoini;
-        public double montofin;
-        public double montodif;
+    public class clsT_mov_almacen {
+        public String corel;
+        public int almacen_origen;
+        public int almacen_destino;
+        public String referencia;
+        public double total;
+        public int idtrasalmacen;
+        public int estado;
+        public long fechaini;
+        public long fechafin;
+        public int usrini;
+        public int usrfin;
+        public int idalmtrans;
+        public int completo;
+
+        public String sestado, salmacen, sfechaini, sfechafin, scompleto;
     }
 
     public class clsT_movd_almacen {
@@ -2146,7 +2165,6 @@ public class clsClasses {
         public String sprod, scant, scantv;
         public int flag;
     }
-
 
     //endregion
 
