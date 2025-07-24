@@ -98,6 +98,8 @@ public class MainActivity extends PBase {
     private Spinner spin;
 
     private BaseDatosVersion dbVers;
+    private fbVersion fbv;
+
     private LA_Login adapter;
 
     private fbStock fbs;
@@ -149,6 +151,10 @@ public class MainActivity extends PBase {
 
             try {
                 fbs =new fbStock("Stock",0);
+            } catch (Exception e) { }
+
+            try {
+                fbv =new fbVersion("Version");
             } catch (Exception e) { }
 
             try {
@@ -664,6 +670,7 @@ public class MainActivity extends PBase {
 
         registraVersion();
 
+        registraVersion();
     }
 
     private void processLogIn() {
