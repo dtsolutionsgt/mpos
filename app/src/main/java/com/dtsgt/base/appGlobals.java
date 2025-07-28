@@ -112,19 +112,19 @@ public class appGlobals extends Application {
 	public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps,peAvizoFEL;
 	public int peCajaPricipal,peNumImp,peLineaIngred,pePorConsumo,peMaxOrden;
 	public int peDomTiempo;
-    public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,pePedidos;
+	public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,pePedidos;
 	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio,peInvCompart;
-    public Boolean peImprFactCorrecta,peMCent,peImpOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;
-    public Boolean peAnulSuper,peRest,peModifPed,pePropinaFija,peBotComanda,peEditTotCombo;
-    public Boolean peAgregarCombo,peComboLimite,peComboDet,peFactSinPropina,peRedondPropina;
+	public Boolean peImprFactCorrecta,peMCent,peImpOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;
+	public Boolean peAnulSuper,peRest,peModifPed,pePropinaFija,peBotComanda,peEditTotCombo;
+	public Boolean peAgregarCombo,peComboLimite,peComboDet,peFactSinPropina,peRedondPropina;
 	public Boolean peVentaDomicilio,peVentaEntrega,peDomEntEnvio,peNoCerrarMesas,peActOrdenMesas;
 	public Boolean peCafeTicket,peNoEnviar,peUsaSoloBOF,peAcumDesc, peNumOrdCommandaVenta;
 	public Boolean peImpFactBT,peImpFactLan,peImpFactUSB,peImpFactUSBSTAR,peNumOrdCentral,peCajaMesasManual,peMesaAtenderTodos;
 	public Boolean peFactPropinaAparte,pePrecu1015,peCargarClientes,pePagoCredito,peRepLimitado,peRepFormaSuper;
 	public Boolean peDescPerc,peESAComprobante,peComandaVentaLAN,peComandaBorrarPass,
-			       peReg4impr,paDesc100,paCortProd,peFactCantProd,peComensalesComanda,peOcultarPagoMeseros,
-			       peLlevarSinPropina, pePropinaFELconIVA,peDescPassSimple,peModoSupermercado,
-			       impStarCutPaper=false;
+			peReg4impr,paDesc100,paCortProd,peFactCantProd,peComensalesComanda,peOcultarPagoMeseros,
+			peLlevarSinPropina, pePropinaFELconIVA,peDescPassSimple,peModoSupermercado,
+			impStarCutPaper=false,peFechaInv;
 	public double  pePropinaPerc,pePropinaCarta,peDescMax;
 	public Boolean peAnulFact,peNoModInv,peNoModCom,peNotaEnvio;
 
