@@ -43,7 +43,7 @@ import com.dtsgt.classes.clsP_modo_emergenciaObj;
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_stockObj;
-import com.dtsgt.classes.clsP_sucursalObj;;
+import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsP_vendedor_rolObj;
 import com.dtsgt.classes.clsT_cierreObj;
 import com.dtsgt.classes.clsVendedoresObj;
@@ -1265,35 +1265,11 @@ public class Menu extends PBase {
 
     private void actualizaVersion() {
 		try {
-			gl.upgradeVer5=false;
 			startActivity(new Intent(this,InstalaVersion.class));
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
     }
-
-	private void migrarVersion5() {
-		boolean flag=true;
-
-		try {
-			clsP_stockObj P_stockObj=new clsP_stockObj(this,Con,db);
-			P_stockObj.fill();
-			clsP_stock_almacenObj P_stock_almacenObj=new clsP_stock_almacenObj(this,Con,db);
-			P_stock_almacenObj.fill();
-
-			if (P_stockObj.count+P_stock_almacenObj.count>0) flag=false;
-
-			if (flag) {
-				gl.upgradeVer5=true;
-				startActivity(new Intent(this,InstalaVersion.class));
-			} else {
-				msgbox("No puede migrar a version 5. Consulte con soporte.");
-			}
-
-		} catch (Exception e) {
-			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-		}
-	}
 
 	private void actualizaVersionOld() {
 		try {
