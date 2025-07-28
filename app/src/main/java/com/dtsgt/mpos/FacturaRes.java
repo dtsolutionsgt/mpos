@@ -4728,7 +4728,8 @@ public class FacturaRes extends PBase {
 		if (validaNIT(gl.gNITCliente)) {
 			gl.nit_tipo = "N";
 		} else {
-			gl.nit_tipo = "E";
+			//gl.nit_tipo = "E";
+			gl.nit_tipo = "N";
 			gl.gNITCliente = "CF";
 		}
 

@@ -1238,10 +1238,12 @@ public class Menu extends PBase {
 						case 14:
 							inicioDia();break;
 						case 15:
-							validaSuperNumOrden();break;
+							validaSuperInventario();break;
 						case 16:
-							msgAskDatabase("Enviar base de datos al centro de soporte");break;
+							validaSuperNumOrden();break;
 						case 17:
+							msgAskDatabase("Enviar base de datos al centro de soporte");break;
+						case 18:
 							actualizaVersionOld();break;
 					}
 					listdlg.dismiss();

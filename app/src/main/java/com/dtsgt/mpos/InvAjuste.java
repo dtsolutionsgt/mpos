@@ -1,5 +1,6 @@
 package com.dtsgt.mpos;
 
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -10,6 +11,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
@@ -40,6 +42,7 @@ import com.dtsgt.ladapt.LA_T_venta_mod;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Objects;
 
 public class InvAjuste extends PBase {
@@ -48,7 +51,7 @@ public class InvAjuste extends PBase {
     private GridView grdbtn;
     private EditText txtBarra,txtprod;
     private TextView lblBar,lblKeyDP,lblProd,lblCant, lblRazon,lblCosto,lblTCant;
-    private TextView lblTCosto,lblTit,lblDisp;
+    private TextView lblTCosto,lblTit,lblDisp,lblfecha;
     private RelativeLayout relprod;
 
     private clsKeybHandler khand;
@@ -79,6 +82,15 @@ public class InvAjuste extends PBase {
     private double exist,cantt,costot,htot,disp;
     private boolean almpr,almacen,scanning=false;
 
+    //Fecha
+    private long afecha;
+    public final Calendar c = Calendar.getInstance();
+    final int mes = c.get(Calendar.MONTH);
+    final int dia = c.get(Calendar.DAY_OF_MONTH);
+    final int anio = c.get(Calendar.YEAR);
+    private int cyear, cmonth, cday;
+    private DatePickerDialog recogerFecha=null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,12 +117,15 @@ public class InvAjuste extends PBase {
         lblDisp= findViewById(R.id.textView266);
         txtBarra = findViewById(R.id.editText10);
         txtprod = findViewById(R.id.editTextText);
+        lblfecha = findViewById(R.id.textView309);lblfecha.setVisibility(View.INVISIBLE);
         relprod = findViewById(R.id.relprod);relprod.setVisibility(View.INVISIBLE);
 
         corel=gl.ruta+"_"+mu.getCorelBase();
         String na=gl.nom_alm.toUpperCase();if (!na.isEmpty()) na="almacén: "+na+ " -";
         invtext=na+" Ajuste de inventario - #"+corel;
         lblTit.setText(invtext);
+        afecha=du.getActDate();lblfecha.setText(du.sfechash(afecha));
+        if (gl.peFechaInv) lblfecha.setVisibility(View.VISIBLE);
 
         prodid=0;disp=0;
         almpr=gl.idalm==gl.idalmpred;
@@ -216,6 +231,10 @@ public class InvAjuste extends PBase {
 
     public void doClearFilter(View view) {
         txtprod.setText("");
+    }
+
+    public void doFecha(View view) {
+        cambiaFecha();
     }
 
     private void setHandlers() {
@@ -421,7 +440,7 @@ public class InvAjuste extends PBase {
             header.COREL=corel;
             header.RUTA=gl.codigo_ruta;
             header.ANULADO=0;
-            header.FECHA=du.getActDateTime();
+            header.FECHA=afecha;
             header.TIPO="D";
             header.USUARIO=gl.codigo_vendedor;
             header.REFERENCIA=" ";
@@ -505,7 +524,7 @@ public class InvAjuste extends PBase {
             header.almacen_origen=gl.idalm;
             header.almacen_destino=0;
             header.anulado=0;
-            header.fecha=du.getActDateTime();
+            header.fecha=afecha;
             header.tipo="D";
             header.usuario=gl.codigo_vendedor;
             header.referencia=" ";
@@ -1207,6 +1226,24 @@ public class InvAjuste extends PBase {
         scanning=false;
     }
 
+    private void cambiaFecha() {
+
+        try {
+            recogerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                    month = month + 1;
+                    afecha = du.cfecha(year, month, dayOfMonth);
+                    lblfecha.setText(du.sfechash(afecha));
+                    recogerFecha.dismiss();
+                }
+            },anio, mes, dia);
+
+            recogerFecha.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     //endregion
 
