@@ -1458,6 +1458,18 @@ public class AppMethods {
         }
 		if (dt!=null) dt.close();
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=191";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peFechaInv = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peFechaInv = false;
+		}
 	}
 
     public boolean paramCierre(int pid) {

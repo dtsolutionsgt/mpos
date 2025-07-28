@@ -118,14 +118,11 @@ public class appGlobals extends Application {
     public Boolean peAgregarCombo,peComboLimite,peComboDet,peFactSinPropina,peRedondPropina;
 	public Boolean peVentaDomicilio,peVentaEntrega,peDomEntEnvio,peNoCerrarMesas,peActOrdenMesas;
 	public Boolean peCafeTicket,peNoEnviar,peUsaSoloBOF,peAcumDesc, peNumOrdCommandaVenta;
-	public Boolean peImpFactBT,peImpFactLan,peImpFactUSB,peImpFactUSBSTAR,peNumOrdCentral,peCajaMesasManual,peMesaAtenderTodos;
-	public Boolean peFactPropinaAparte,pePrecu1015,peCargarClientes,pePagoCredito,peRepLimitado,peRepFormaSuper;
-	public Boolean peDescPerc,peESAComprobante,peComandaVentaLAN,peComandaBorrarPass,
-			       peReg4impr,paDesc100,paCortProd,peFactCantProd,peComensalesComanda,peOcultarPagoMeseros,
-			       peLlevarSinPropina, pePropinaFELconIVA,peDescPassSimple,peModoSupermercado,
-			       impStarCutPaper=false;
-	public double  pePropinaPerc,pePropinaCarta,peDescMax;
-	public Boolean peAnulFact,peNoModInv,peNoModCom;
+	public Boolean peImpFactBT,peImpFactLan,peImpFactUSB,peImpFactUSBSTAR,peNumOrdCentral,peCajaMesasManual;
+	public Boolean peFactPropinaAparte,pePrecu1015,peComandaVentaLAN,peReg4impr,peRepFormaSuper;
+	public Boolean peAnulFact,peNoModInv,peFechaInv;
+    public double  pePropinaPerc,pePropinaCarta,peDescMax;
+	public Boolean peDescPerc,paDesc100;
 
     // Parametros Extra Local
     public Boolean pelCaja,pelCajaRecep,pelDespacho, pelOrdenComanda;
