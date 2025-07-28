@@ -599,7 +599,6 @@ public class ListaInventario extends PBase {
 
         }catch (Exception e){
         }
-
     }
 
     private void setFechaAct(){
