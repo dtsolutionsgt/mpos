@@ -85,6 +85,7 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="110dp"
         android:layout_marginEnd="5dp"
+        android:layout_marginBottom="90dp"
         android:numColumns="1" />
 
     <TextView
@@ -236,9 +237,10 @@
                 android:id="@+id/relKeyb"
                 android:layout_width="400dp"
                 android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginStart="0dp"
+                android:layout_marginStart="105dp"
                 android:layout_marginTop="2dp">
 
                 <RelativeLayout
@@ -679,12 +681,11 @@
                 android:id="@+id/relwrap"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@id/relKeyb">
+                android:layout_alignParentLeft="true">
 
                 <GridView
                     android:id="@+id/grdbtn"
-                    android:layout_width="match_parent"
+                    android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="5dp"
                     android:layout_marginTop="10dp"
@@ -1131,6 +1132,24 @@
 
         </RelativeLayout>
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textView309"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@+id/relSep2"
+        android:background="@drawable/frame_btn4"
+        android:clickable="true"
+        android:gravity="center"
+        android:onClick="doFecha"
+        android:text="DD/MM"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
 
 </RelativeLayout>

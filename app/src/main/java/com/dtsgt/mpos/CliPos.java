@@ -204,7 +204,8 @@ public class CliPos extends PBase {
             gl.nit_tipo="N";
 
             if (gl.codigo_pais.equalsIgnoreCase("GT")) {
-                if (sNITCliente.length()>12) {
+                if (sNITCliente.length()>10 || sNITCliente.length()<8) {
+                    //if (sNITCliente.length()>12) {
                     msgbox("Identificación incorrecta");return;
                 }
             }  else if (gl.codigo_pais.equalsIgnoreCase("HN")) {

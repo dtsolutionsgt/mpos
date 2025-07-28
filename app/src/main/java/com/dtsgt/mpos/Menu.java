@@ -42,6 +42,8 @@ import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_modo_emergenciaObj;
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
+import com.dtsgt.classes.clsP_stockObj;
+import com.dtsgt.classes.clsP_stock_almacenObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsP_vendedor_rolObj;
 import com.dtsgt.classes.clsT_cierreObj;
@@ -1093,6 +1095,7 @@ public class Menu extends PBase {
 			listdlg.add("Tablas");
 			listdlg.add("Actualizar versión");
 			listdlg.add("Enviar base de datos");
+			listdlg.add("Migrar a versión 5");
 			listdlg.add("Certificar facturas");
 			listdlg.add("Limpiar tablas");
 			listdlg.add("Prueba de bluetooth");
@@ -1123,34 +1126,36 @@ public class Menu extends PBase {
 						case 3:
 							uploadDB();break;
 						case 4:
-							msgAskFEL("Certificar facturas pendientes");break;
+							migrarVersion5();break;
 						case 5:
+							msgAskFEL("Certificar facturas pendientes");break;
+						case 6:
 							msgAskLimpiar("Este proceso se debe ejecutar únicamente antes " +
 									"de abrir la caja o despues de cierre de caja.\n Continuar?");break;
 							//validaSuperLimpia();
-						case 6:
-							estadoBluTooth();break;
 						case 7:
-							startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
+							estadoBluTooth();break;
 						case 8:
-							msgAskActualizar("Actualizar correlativos de contingencia");break;
+							startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
 						case 9:
-							infoSystem();break;
+							msgAskActualizar("Actualizar correlativos de contingencia");break;
 						case 10:
-							msgAskImprimir();break;
+							infoSystem();break;
 						case 11:
-							msgAskCF();break;
+							msgAskImprimir();break;
 						case 12:
-							msgAskCorregirFechas();break;
+							msgAskCF();break;
 						case 13:
-							inicioDia();break;
+							msgAskCorregirFechas();break;
 						case 14:
-							validaSuperInventario();break;
+							inicioDia();break;
 						case 15:
-							validaSuperNumOrden();break;
+							validaSuperInventario();break;
 						case 16:
-							msgAskDatabase("Enviar base de datos al centro de soporte");break;
+							validaSuperNumOrden();break;
 						case 17:
+							msgAskDatabase("Enviar base de datos al centro de soporte");break;
+						case 18:
 							actualizaVersionOld();break;
 					}
 					listdlg.dismiss();
@@ -1172,11 +1177,35 @@ public class Menu extends PBase {
 
     private void actualizaVersion() {
 		try {
+			gl.upgradeVer5=false;
 			startActivity(new Intent(this,InstalaVersion.class));
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
     }
+
+	private void migrarVersion5() {
+		boolean flag=true;
+
+		try {
+			clsP_stockObj P_stockObj=new clsP_stockObj(this,Con,db);
+			P_stockObj.fill();
+			clsP_stock_almacenObj P_stock_almacenObj=new clsP_stock_almacenObj(this,Con,db);
+			P_stock_almacenObj.fill();
+
+			if (P_stockObj.count+P_stock_almacenObj.count>0) flag=false;
+
+			if (flag) {
+				gl.upgradeVer5=true;
+				startActivity(new Intent(this,InstalaVersion.class));
+			} else {
+				msgbox("No puede migrar a version 5. Consulte con soporte.");
+			}
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
 
 	private void actualizaVersionOld() {
 		try {

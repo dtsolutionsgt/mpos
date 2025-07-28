@@ -35,7 +35,7 @@ public class InstalaVersion extends PBase {
     private FirebaseStorage storage;
     private StorageReference storageReference;
 
-    boolean idle=true;
+    boolean idle=true,ver5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +51,8 @@ public class InstalaVersion extends PBase {
 
             storage = FirebaseStorage.getInstance();
             storageReference = storage.getReference();
+
+            ver5=gl.upgradeVer5;
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -93,8 +95,13 @@ public class InstalaVersion extends PBase {
         try {
 
             String dir= Environment.getExternalStorageDirectory()+"";
+
             fname=dir+"/mpos.apk";
-            fbname="mpos.apk";
+            if (ver5) {
+                fbname="mpos550.apk";
+            } else {
+                fbname="mpos.apk";
+            }
 
             StorageReference ref = storageReference.child(fbname);
 

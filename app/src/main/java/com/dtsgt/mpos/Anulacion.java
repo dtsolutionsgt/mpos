@@ -533,7 +533,7 @@ public class Anulacion extends PBase {
                 } else {
 		          	//#EJC20200712: Si la factura fue generada en contingencia no anular en FEL.
                 	if (uuid!=null) {
-						if (uuid.equalsIgnoreCase(" ")) {
+						if (uuid.length()<5) {
 							anulFactura(itemid);
 						} else {
 							if (idfel.equalsIgnoreCase(gl.felInfile)) {
