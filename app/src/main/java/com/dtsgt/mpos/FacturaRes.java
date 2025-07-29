@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.text.Editable;
@@ -4434,6 +4435,7 @@ public class FacturaRes extends PBase {
 
 	private void actualizaNotaEnvio() {
 		try {
+
 			if (gl.nota_envio_modo==0) {
 				impresionDocumento();
 				return;
@@ -4455,15 +4457,36 @@ public class FacturaRes extends PBase {
 
 	private void cbActualizaNotaEnvio() {
 		try {
-			impresionDocumento();
+
+			llamaImpresion();
+
+			if (httpcom.errflag) {
+				showMsg(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+httpcom.error);
+			} else {
+				ActualizaNotaEnvio();
+			}
+
 		} catch (Exception e) {
 			showMsg(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
+	}
 
-		if (httpcom.errflag) {
-			showMsg(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+httpcom.error);
-		} else {
-			ActualizaNotaEnvio();
+	private void llamaImpresion() {
+		try {
+
+			new Thread(() -> {
+				Looper.prepare();
+
+				Handler handler = new Handler(Looper.myLooper());
+				handler.post(() -> {
+					impresionDocumento();
+				});
+
+				Looper.loop();
+			}).start();
+
+		} catch (Exception e) {
+			showMsg(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
 	}
 
