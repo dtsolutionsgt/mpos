@@ -502,9 +502,6 @@ public class Caja extends PBase {
                 caja.fill(" WHERE ESTADO = 0  ORDER BY COREL");
                 gl.corelZ = caja.last().corel;
 
-                caja.fill(" WHERE ESTADO = 0  ORDER BY COREL");
-                gl.corelZ = caja.last().corel;
-
                 writeCorelLog(4,gl.corelZ,"");
 
                 fecha = caja.last().fecha;
@@ -601,44 +598,6 @@ public class Caja extends PBase {
                             }
                         }
 
-                        /*
-                        if (cred==1) {
-
-                            if(dt.getInt(3)==4){ //#CKFK 20200623 Cuando la forma de pago es Crédito
-
-                                corelidx++;
-
-                                try {
-                                    sql="DROP INDEX IX_P_CAJACIERRE ";
-                                    db.execSQL(sql);
-                                } catch (Exception e) {
-                                    String ss=e.getMessage();
-                                    ss=ss+"";
-                                }
-
-                                sql="SELECT EMPRESA FROM P_cajacierre";
-                                dt2=Con.OpenDT(sql);
-                                if (dt2.getCount()>0) {
-                                    sql="SELECT MAX(EMPRESA) FROM P_cajacierre";
-                                    dt2=Con.OpenDT(sql);
-                                    ecor=dt2.getInt(0)+1;
-                                } else {
-                                    ecor=1;
-                                }
-
-                                itemC.empresa=ecor;
-                                itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase()+"C"+corelidx;
-                                montoIni = mu.round2(dt.getDouble(2));
-                                itemC.montoini = montoIni;
-                                itemC.montofin = montoCred;
-                                itemC.montodif = mu.round2(montoCred - montoIni);
-                                itemC.estado=1;
-
-                                caja.add(itemC);
-                            }
-                        }
-                        */
-
                         dt.moveToNext();
                     }
 
@@ -714,11 +673,8 @@ public class Caja extends PBase {
 
                         caja.add(itemC);
 
-
                     }
-
                 }
-
 
                 clsClasses.clsfbCierre itemfbc= clsCls.new clsfbCierre();
 

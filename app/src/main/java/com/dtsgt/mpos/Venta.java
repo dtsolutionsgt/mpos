@@ -2682,6 +2682,11 @@ public class Venta extends PBase {
                     mitems.add(item);
                 }
             }
+
+            item = clsCls.new clsMenu();
+            item.ID=27;item.Name="Enviar Base";item.Icon=73;
+            mitems.add(item);
+
             if (pedidos | domenvio) {
                 item = clsCls.new clsMenu();
                 item.ID=16;item.Name="Para llevar";item.Icon=16;
@@ -2716,15 +2721,6 @@ public class Venta extends PBase {
             item.ID=24;item.Name="Salir";item.Icon=57;
             mitems.add(item);
 
-            /*
-            item = clsCls.new clsMenu();
-            item.ID=7;item.Name="Existencias";item.Icon=7;
-            mitems.add(item);
-
-            item = clsCls.new clsMenu();
-            item.ID=101;item.Name="Baktún";item.Icon=101;
-            mitems.add(item);
-            */
 
             adaptergrid=new ListAdaptMenuVenta(this, mitems);
             gridViewOpciones.setAdapter(adaptergrid);
@@ -2771,8 +2767,9 @@ public class Venta extends PBase {
                 case 16:
                     menuPedidos();break;
                 case 24:
-                    exitBtn();
-                    break;
+                    exitBtn();break;
+                case 27:
+                    startActivity(new Intent(this,EnvioNube.class));break;
             }
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");

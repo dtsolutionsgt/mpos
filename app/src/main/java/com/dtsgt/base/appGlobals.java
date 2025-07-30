@@ -36,7 +36,7 @@ public class appGlobals extends Application {
                 comensales, cliente_dom, idclidir, idalm, idalm2, idalmpred,mesa_grupo,
 			    uidingrediente, idgrres, idgrsel, idgrpos, usuario_cortesia,bar_prod,cuenta_borrar,
 				mesa_vend,mesa_codigo,invcent_cod,sal_idneg,desc_tipo_apl,servidor_anio,fact_sin_cert,
-			    idcombo,set_cant,set_cant_max;
+			    idcombo,set_cant,set_cant_max,cierre_ini_flag;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel,
                 corelmov, linea_sel="",mesa_alias,nummesapedido, nombre_cortesia,bar_um,bar_idbarril;

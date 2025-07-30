@@ -221,6 +221,7 @@ public class Menu extends PBase {
 			if (modosuper) addMenuItem(9,"Utilerias");
 			if (modosuper) addMenuItem(11,"Mantenimientos");
 			if (modosuper) addMenuItem(12,"Reportes");
+			addMenuItem(15,"Reporte cierre");
 			addMenuItem(4,"Anulación");
 			addMenuItem(10,"Cambio usuario");
 			addMenuItem(14,"Modo de emergencia");
@@ -261,12 +262,11 @@ public class Menu extends PBase {
 
 				adaptergrid.setSelectedIndex(position);
 
-				if (menuid==1) {
-					if (validaFacturas())
-						showMenuItem();
-					} else {
-						showMenuItem();
-					}
+				/* 	if (menuid==1) {
+					if (validaFacturas()) showMenuItem();
+				} else 	showMenuItem();	*/
+
+				showMenuItem();
 			});
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -279,7 +279,6 @@ public class Menu extends PBase {
 		boolean epssetflag = false;
 		Float cantidad;
 
-		//JP 20200527
 		if (!listo) return;
 
 		listo=false;
@@ -323,10 +322,6 @@ public class Menu extends PBase {
 						gl.gNITCliente ="C.F.";gl.gDirCliente ="Ciudad";
                         gl.cliposflag=false;gl.rutatipo="V";gl.rutatipog="V";
 
-						if (!validaVenta()) {
-							//return;//Se valida si hay correlativos de factura para la venta
-						}
-
                         gl.iniciaVenta=true;gl.exitflag=false;gl.forcedclose=false;
                         gl.preimpresion=false;gl.codigo_cliente=0;
 
@@ -339,16 +334,19 @@ public class Menu extends PBase {
 
                         writeCorelLog(103,gl.cajaid,"showMenuItem gl.cajaid");
 
-						//gl.cierreDiario=false;
+                        if (gl.cajaid==5) {
+							procInicioCaja();
+						}
 
-                        if(gl.cajaid==5) msgAskIniciarCaja("La caja está cerrada. ¿Realizar el inicio de caja?");
-						//msgAskValid("La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja");
-						//#CKFK 20200521 Se modificó lo del cierre a través de un parámetro, si se utiliza FEL es obligatorio hacer el cierre de caja diario
-						if (gl.cierreDiario){
+						if (gl.cajaid==6) {
+							msgAskValidaCierre("No realizó el cierre de caja del día " + du.sfecha(gl.lastDate) + ". ¿Realizar cierre Z?");
+						}
+
+						/*    if (gl.cierreDiario){
 							if(gl.cajaid==6) msgAskValidaCierre("No realizó el cierre de caja del día " + du.sfecha(gl.lastDate) + ". ¿Realizar cierre Z?");
 						} else {
 							if(gl.cajaid==6) msgAskValidUltZ("No se realizó el último cierre de caja, ¿Desea continuar la venta con la fecha: "+du.univfechaReport(gl.lastDate)+", o desea realizar el cierre Z?");
-						}
+						}	 */
 					}
 					break;
 				case 2:  // Comunicacion
@@ -395,13 +393,23 @@ public class Menu extends PBase {
 				case 13:
 					apagar();break;
                 case 14:
-                    showEmergMenu();
-					break;
+                    showEmergMenu();break;
+				case 15:
+					listaCierres();
 			}
-		}catch (Exception e){
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
+	}
 
+	private void procInicioCaja() {
+		try {
+			browse=2;
+			startActivity(new Intent(this, CierreInicio.class));
+			//msgAskIniciarCaja("La caja está cerrada. ¿Realizar el inicio de caja?");
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 	}
 
 	//endregion
@@ -2074,6 +2082,8 @@ public class Menu extends PBase {
 			extListDlg listdlg = new extListDlg();
 			listdlg.buildDialog(Menu.this,"Reportes");
 
+			listdlg.add("Cierre del día");
+
 			listdlg.add("Reporte de Documentos por Día");
 			listdlg.add("Reporte Venta por Día");
 			listdlg.add("Reporte Venta por Producto");
@@ -2087,7 +2097,6 @@ public class Menu extends PBase {
 			listdlg.add("Margen y Beneficio por Familia");
 			listdlg.add("Cierre X");
 			listdlg.add("Cierre Z");
-			listdlg.add("Cierre del día");
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
@@ -2329,7 +2338,7 @@ public class Menu extends PBase {
 				browse = 1;
 				startActivity(new Intent(Menu.this, Caja.class));
 			}
-			} catch (Exception e) {
+		} catch (Exception e) {
 			msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
 		}
 	}
@@ -2976,9 +2985,10 @@ public class Menu extends PBase {
 
 			gl.cajaid=5;gl.cajaid=5;gl.cajaid=5;gl.cajaid=5;
 
-			if(!valida()){
-				if (gl.cajaid==5){
-					msgAskIniciarCaja("Caja cerrada. ¿Inicializar?");
+			if (!valida()){
+				if (gl.cajaid==5) {
+					//procInicioCaja();
+					//msgAskIniciarCaja("Caja cerrada. ¿Inicializar?");
 				}
 			}
 		} catch (Exception ex){
@@ -3443,16 +3453,13 @@ public class Menu extends PBase {
         dialog.setMessage(msg);
         dialog.setCancelable(false);
 		dialog.setPositiveButton("Si", (dialog12, which) -> {
-
 			if (gl.cajaid==5){
 				gl.cajaid=1;
 				if (valida()){
-
 					if (gl.cajaid!=2){
 						gl.inicio_caja_correcto =false;
 						startActivity(new Intent(Menu.this,Caja.class));
 					}
-
 				}
 			}
 		});
@@ -3822,9 +3829,17 @@ public class Menu extends PBase {
 
 			setPrintWidth();
 
-			if(browse==1 && gl.inicio_caja_correcto && !gl.inicia_caja_primera_vez){
+			if (browse==1 && gl.inicio_caja_correcto && !gl.inicia_caja_primera_vez){
 				gl.recibir_automatico = false;
 				browse=0;
+			}
+
+			if (browse==2){
+				browse=0;
+				if ( gl.cierre_ini_flag==2) listaCierres();
+				if ( gl.cierre_ini_flag==1) {
+					msgAskIniciarCaja("La caja está cerrada. ¿Realizar el inicio de caja?");
+				}
 			}
 
  		} catch (Exception e){
@@ -3835,7 +3850,7 @@ public class Menu extends PBase {
 
 	@Override
 	public void onBackPressed() {
-		try{
+        try{
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
