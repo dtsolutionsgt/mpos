@@ -125,6 +125,7 @@ public class ListAdaptMenuVenta extends BaseAdapter {
         if (items.get(position).Icon==70) holder.imgEst.setImageResource(R.drawable.cocina_msg);
         if (items.get(position).Icon==71) holder.imgEst.setImageResource(R.drawable.bot_desc);
         if (items.get(position).Icon==72) holder.imgEst.setImageResource(R.drawable.bot_desc_total);
+		if (items.get(position).Icon==73) holder.imgEst.setImageResource(R.drawable.act_stock);
 
 		if (items.get(position).Icon==99) holder.imgEst.setImageResource(R.drawable.nowifi3);
 

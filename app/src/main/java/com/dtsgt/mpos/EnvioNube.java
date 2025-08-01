@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.dtsgt.base.clsClasses;
+import com.dtsgt.firebase.fbEnviodb;
+import com.dtsgt.firebase.fbVersion;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FileDownloadTask;
@@ -32,6 +35,9 @@ public class EnvioNube extends PBase {
     private FirebaseStorage storage;
     private StorageReference storageReference;
 
+    private fbEnviodb fbed;
+
+
     boolean idle=true;
 
     @Override
@@ -48,6 +54,10 @@ public class EnvioNube extends PBase {
 
             storage = FirebaseStorage.getInstance();
             storageReference = storage.getReference();
+
+            try {
+                fbed =new fbEnviodb("Enviodb");
+            } catch (Exception e) { }
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -107,6 +117,7 @@ public class EnvioNube extends PBase {
                                     try {
                                         idle=true;
                                         pbar.setVisibility(View.INVISIBLE);
+                                        registraEnvio();
                                         msgExit();
                                     } catch (Exception e) {
                                         lbl1.setText("Error: "+e.getMessage());
@@ -163,7 +174,25 @@ public class EnvioNube extends PBase {
 
     //region Aux
 
+    private void registraEnvio() {
+        try {
+            long ff=du.getActDateTime();
 
+            clsClasses.clsfbVersion item=clsCls.new clsfbVersion();
+
+            item.actver=du.sfecha(ff)+" "+du.shora(ff);
+            item.eid=gl.emp;
+            item.enombre=gl.empnom;
+            item.rid=gl.codigo_ruta;
+            item.rnombre=gl.rutanom;
+            item.sid=gl.tienda ;
+            item.snombre=gl.tiendanom;
+
+            fbed.setItem(item);
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
     //endregion
 
     //region Activity Events
