@@ -1114,7 +1114,7 @@ public class Menu extends PBase {
 			listdlg.add("Consumidor final");
 			listdlg.add("Actualizar fechas erroneas");
 			listdlg.add("Inicio de caja");
-			listdlg.add("Inicializar inventario");
+			//listdlg.add("Inicializar inventario");
 			listdlg.add("Reinicializar numero de orden");
 			listdlg.add("Envio datos por correo");
 			listdlg.add("Actualizar");
