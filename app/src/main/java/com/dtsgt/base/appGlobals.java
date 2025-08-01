@@ -71,7 +71,7 @@ public class appGlobals extends Application {
 			       modo_cortesia,modo_apertura,imp_inventario,sal_NIT,sal_NRC,sal_PER,nueva_mesa,
 				   combo_edit,cliente_credito=false,pedido_dom_import,repartidor_select,
 			       impStarLAN,impStarLANFact,desc_acceso,
-			       reinicia_venta=false,autostart_venta=false;
+			       reinicia_venta=false,autostart_venta=false,modo_envio;
 
 	//FEL Identificacion
 	public String felSIN="SIN FEL";

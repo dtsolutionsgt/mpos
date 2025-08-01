@@ -1536,7 +1536,13 @@ public class AppMethods {
     }
 
     public boolean usaFEL() {
-        if (gl.peNotaEnvio) return false;
+        if (gl.peNotaEnvio) {
+            if (gl.modo_envio) {
+                return false;
+            } else {
+                return true;
+            }
+        }
         if (gl.peFEL.isEmpty() | gl.peFEL.equalsIgnoreCase(" ") |
                 gl.peFEL.equalsIgnoreCase("N") | gl.peFEL.equalsIgnoreCase("SIN FEL")) {
             return false;

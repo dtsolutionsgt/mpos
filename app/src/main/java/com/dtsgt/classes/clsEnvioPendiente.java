@@ -27,7 +27,7 @@ public class clsEnvioPendiente {
 
     private String sql,apiurl,usql,url,corel_fact;
     private long corel_orig,corel;
-    private int emp,sucursal,usuario;
+    private int emp,sucursal,usuario,cliente;
 
 
     public clsEnvioPendiente(String URL,Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
@@ -45,11 +45,12 @@ public class clsEnvioPendiente {
         EnvioUpdateObj= new clsEnvioUpdate(cont,Con,db);
     }
 
-    public void procesaEnvio(long corel_envio,int cod_emp,int cod_sucursal,int cod_usuario) {
+    public void procesaEnvio(long corel_envio,int cod_emp,int cod_sucursal,int cod_usuario,int cod_cliente) {
         corel_orig=corel_envio;
         emp=cod_emp;
         sucursal=cod_sucursal;
         usuario=cod_usuario;
+        cliente=cod_cliente;
 
         D_notaenvioObj.fill("WHERE (CODIGO_NOTA_ENVIO_ENC="+corel_orig+")");
         corel_fact=D_notaenvioObj.first().referencia;
@@ -76,7 +77,7 @@ public class clsEnvioPendiente {
         estado=-1;
         if (corel==0) return;
 
-        usql=EnvioUpdateObj.generaSQL(corel_fact,corel,sucursal,usuario);
+        usql=EnvioUpdateObj.generaSQL(corel_fact,corel,sucursal,usuario,emp,cliente);
         httpcom.commit(usql , () -> {
             try {
                 cbActualizaNotaEnvio();

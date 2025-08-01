@@ -635,7 +635,8 @@ public class WSEnv extends PBase {
             for (clsClasses.clsD_notaenvio itm : D_notaenvioObj.items) {
                 clsEnvioPendiente envpend=new clsEnvioPendiente(gl.apiurl,this,Con,db);
 
-                envpend.procesaEnvio(itm.codigo_nota_envio_enc,gl.emp,gl.tienda,gl.codigo_vendedor);
+                envpend.procesaEnvio(itm.codigo_nota_envio_enc,gl.emp,gl.tienda,
+                        gl.codigo_vendedor,itm.codigo_cliente);
 
                 SystemClock.sleep(200);
             }

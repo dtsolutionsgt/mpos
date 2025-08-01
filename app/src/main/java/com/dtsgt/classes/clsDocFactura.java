@@ -55,6 +55,10 @@ public class clsDocFactura extends clsDocument {
 				
 		super.loadHeadData(corel);
 
+        if (formato_envio) {
+            return loadHeadDataEnvio(corel);
+        }
+
         if (banderafel) nombre = "FACTURA ELECTRONICA"; nombre = "FACTURA";
 		
 		try {
@@ -475,6 +479,10 @@ public class clsDocFactura extends clsDocument {
 		itemData item,bon,pag;
 		String corNota,idcombo,dls;
 		int corrl;
+
+        if (formato_envio) {
+            return loadDocDataEnvio(corel);
+        }
 
 		ccorel=corel;
 		loadHeadData(corel);
@@ -1805,6 +1813,444 @@ public class clsDocFactura extends clsDocument {
     }
 
     //endregion
+
+    //endregion
+
+    //region Envio
+
+    protected boolean loadHeadDataEnvio(String corel) {
+        Cursor DT,DTt;
+        String cli="",vend="",val,empp="", anulado,s1,s2,s3,tp;
+        long ff;
+        int impres, cantimpres;
+
+        nombre = "ENVIO";
+
+        try {
+
+            sql=" SELECT codigo_cliente,fecha FROM D_notaenvio WHERE codigo_nota_envio_enc="+num_envio;
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()>0) {
+
+                DT.moveToFirst();
+
+                cli=""+DT.getInt(0);
+                ffecha=DT.getLong(1);
+                fsfecha=sfecha(ffecha)+" "+shora(ffecha);
+                fsfechah=sfechahon(ffecha)+" "+shora(ffecha);
+
+                codigo_ruta=""+rutaid;
+                ruta=codigo_ruta;
+                serie="";
+                numero="" ;corel_doc=0;
+                vend=""+vendedorid;
+                imp=0;
+                add1="add1 ";
+                add2="add2 ";
+
+                vendcod=vend; //#CKFK 20200516 Validar para que se hace esto
+
+                anulado="N";
+                impres=0;
+                cantimpres=1;
+
+                feluuid=" f1";
+                feldcert="f2 ";
+                felcont="f3 ";
+                contacc="f4 ";
+                //empid=DT.getInt(19);
+                fversion="ver ";
+                tipo_doc=0;
+
+            }
+
+        } catch (Exception e) {
+            //Toast.makeText(cont,e.getMessage(), Toast.LENGTH_SHORT).show();return false;
+        }
+
+        try {
+            sql="SELECT NOMBRE FROM P_RUTA WHERE CODIGO_RUTA="+ruta;
+            DT=Con.OpenDT(sql);
+            DT.moveToFirst();
+            rutanombre=DT.getString(0);
+        } catch (Exception e) {
+            rutanombre=ruta;
+        }
+
+        try {
+            sql="SELECT NOMBRE FROM VENDEDORES WHERE CODIGO_VENDEDOR="+vend;
+            DT=Con.OpenDT(sql);
+            DT.moveToFirst();
+            vendnom=DT.getString(0);
+        } catch (Exception e) {
+            vendnom=""+vend;
+        }
+
+        try {
+
+            sql="SELECT RESOL,FECHARES,FECHAVIG,SERIE,CORELINI,CORELFIN FROM P_COREL WHERE (RUTA="+ruta+") AND (RESGUARDO=0)";
+            DT=Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            if (pais.equalsIgnoreCase("HN")) {
+
+                resol = DT.getString(0);
+                ff = DT.getLong(1);
+                resfecha = "De Fecha: " + sfecha_dos(ff);
+                ff = DT.getLong(2);
+                resvence = "Fecha limite: " + sfecha_dos(ff);
+                //#EJC20181130: Se cambió el mensaje por revisión de auditor de SAT.
+
+                resrangot = "Rango autorizado del";
+                String li, lf,l;
+                long nn;
+
+                nn=100000000+DT.getLong(4);
+                l=""+nn;li=l.substring(1,9);
+                nn=100000000+DT.getLong(5);
+                l=""+nn;lf=l.substring(1,9);
+
+                resrango = DT.getString(3) + "-" + li + " al " + lf;
+
+            } else if (pais.equalsIgnoreCase("SV")) {
+
+                resol = DT.getString(0);
+                ff = DT.getLong(1);
+                resfecha = "De Fecha: " + sfecha_dos(ff);
+                ff = DT.getLong(2);
+                resvence = "Fecha limite: " + sfecha_dos(ff);
+                //#EJC20181130: Se cambió el mensaje por revisión de auditor de SAT.
+                resrangot = "Rango autorizado del";
+                String numini = "" + DT.getLong(4);
+                String numfin = "" + DT.getLong(5);
+                String li, lf;
+
+                if (numini.length() < 8) {
+                    long nn = 100000000 + Long.parseLong(numini);
+                    li = "" + nn;
+                    li = li.substring(1, 9);
+                } else li = numini;
+
+                if (numfin.length() < 8) {
+                    long nn = 100000000 + Long.parseLong(numfin);
+                    lf = "" + nn;
+                    lf = lf.substring(1, 9);
+                } else lf = numfin;
+
+                resrango = DT.getString(3) + "-" + li + " al " + lf;
+            } else {
+                resol="Resolucion No.: "+DT.getString(0);
+                ff=DT.getLong(1);
+                resfecha="De Fecha: "+sfecha_dos(ff);
+                ff=DT.getLong(2);
+                resvence="Vigente hasta: "+sfecha_dos(ff);
+                resrangot="";
+                resrango="Serie: "+DT.getString(3)+" del "+DT.getInt(4)+" al "+DT.getInt(5);
+            }
+
+        } catch (Exception e) {
+            //Toast.makeText(cont,e.getMessage(), Toast.LENGTH_SHORT).show();return false;
+        }
+
+        try {
+            sinimp=false;
+        } catch (Exception e) {
+            sinimp=false;
+        }
+
+        val=vend;
+        vendedor=val;
+
+        svcf_nit="";svcf_dep="";svcf_muni="";svcf_neg="";
+
+        if (pais.equalsIgnoreCase("SV")) {
+            String ss="";
+
+            sql="SELECT CODIGO_DEPARTAMENTO,CODIGO_MUNICIPIO,CODIGO_TIPO_NEGOCIO FROM D_factura_sv WHERE COREL='"+corel+"'";
+            DT=Con.OpenDT(sql);
+            if (DT.getCount()>0) {
+                DT.moveToFirst();
+                ss=DT.getString(0);
+
+                sql="SELECT NOMBRE FROM P_DEPARTAMENTO WHERE CODIGO='"+ss+"'";
+                DTt=Con.OpenDT(sql);
+                if (DTt.getCount()>0) {
+                    DTt.moveToFirst();
+                    nomdepto=DTt.getString(0);
+                }
+
+                ss=DT.getString(1);
+                sql="SELECT NOMBRE FROM P_MUNICIPIO WHERE CODIGO='"+ss+"'";
+                DTt=Con.OpenDT(sql);
+                if (DTt.getCount()>0) {
+                    DTt.moveToFirst();
+                    nommuni=DTt.getString(0);
+                }
+
+                ss=""+DT.getInt(2);
+                sql="SELECT DESCRIPCION FROM P_giro_negocio WHERE (CODIGO="+ss+") AND (COD_PAIS='SV')";
+                DTt=Con.OpenDT(sql);
+                if (DTt.getCount()>0) {
+                    DTt.moveToFirst();
+                    nomtipo=DTt.getString(0);
+                }
+            } else {
+                nomdepto="";nommuni="";nomtipo="";
+            }
+
+            svcf_dep=nomdepto;svcf_muni=nommuni;svcf_neg=nomtipo;
+        }
+
+        try {
+            sql="SELECT NOMBRE,PERCEPCION,TIPO_CONTRIBUYENTE,DIRECCION,NIT,DIACREDITO,EMAIL " +
+                    "FROM P_CLIENTE WHERE CODIGO_CLIENTE ='"+cli+"'";
+
+            DT=Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            val=DT.getString(0);
+            percep=DT.getDouble(1);
+
+            contrib=""+DT.getString(2);
+            if (contrib.equalsIgnoreCase("C")) sinimp=true;
+            if (contrib.equalsIgnoreCase("F")) sinimp=false;
+
+            clicod=cli;
+            clidir=DT.getString(3);
+            nit_cliente =DT.getString(4);
+            diacred=DT.getInt(5);
+            clicorreo=DT.getString(6);
+
+        } catch (Exception e) {
+            val=cli;
+        }
+
+        if (pais.equalsIgnoreCase("SV")) {
+            String ss = "";
+
+            sql="SELECT NIT FROM P_gran_cont WHERE (NRC='"+nit_cliente+"') ";
+            DT=Con.OpenDT(sql);
+            if (DT.getCount()>0) {
+                DT.moveToFirst();
+                svcf_nit=DT.getString(0);
+            }
+
+        }
+
+        try {
+
+            sql="SELECT TIPO FROM D_FACTURAP WHERE (COREL='"+corel+"') AND (TIPO='E')";
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()>0) {
+                pagoefectivo=1;
+            } else {
+                pagoefectivo=0;
+            }
+
+        } catch (Exception e) {
+            pagoefectivo=0;
+        }
+
+        //#EJC20210705: TipoCredito, NoAutorizacion;
+        try {
+
+            /*
+            sql="SELECT A.DESC2 AS Tipo, A.DESC1 AS Autorizacion FROM T_PAGO A" +
+                    "INNER JOIN P_MEDIAPAGO B" +
+                    "ON A.CODPAGO = B.CODIGO\n" +
+                    "INNER JOIN D_FACTURAP P\n" +
+                    "ON A.ITEM = P.ITEM\n" +
+                    "AND B.NIVEL = 4 AND (P.COREL='" +corel+ "')";
+             */
+
+            sql="SELECT DESC2,DESC1 FROM D_FACTURAP WHERE (TIPO='K') AND (COREL='" +corel+ "')";
+            DT=Con.OpenDT(sql);
+            if (DT.getCount()>0) {
+                DT.moveToFirst();
+                TipoCredito=DT.getString(0);
+                NoAutorizacion=DT.getString(1);
+            } else {
+                TipoCredito="";
+                NoAutorizacion="";
+            }
+        } catch (Exception e) {
+            TipoCredito="";
+            NoAutorizacion="";
+        }
+
+        plines.clear();
+
+        if (pais.equalsIgnoreCase("GT")) {
+
+            sql = "SELECT P.DESC2, SUM(P.VALOR) " +
+                    "FROM P_MEDIAPAGO M INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
+                    "WHERE (COREL='" + corel + "') GROUP BY P.DESC2";
+
+            sql = "SELECT P.DESC2, P.VALOR, P.DESC1, P.TIPO " +
+                    "FROM P_MEDIAPAGO M INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
+                    "WHERE (COREL='" + corel + "') ";
+            try {
+                DT = Con.OpenDT(sql);
+
+                if (DT.getCount() > 0) {
+                    DT.moveToFirst();
+                    while (!DT.isAfterLast()) {
+                        s1 = DT.getString(0);
+                        s3 = DT.getString(2);
+                        tp = DT.getString(3);
+                        //if (s1.isEmpty()) s1="Contado";
+                        if (tp.equalsIgnoreCase("E")) s1 = "Contado";
+                        plines.add(addtotsptic(s1, DT.getDouble(1)));
+                        if (tp.equalsIgnoreCase("K")) {
+                            if (!s3.equalsIgnoreCase("NO_AUT_20221022")) {
+                                plines.add("Autorizacion: " + s3);
+                            }
+                        }
+                        DT.moveToNext();
+                    }
+                }
+
+            } catch (Exception e) {
+            }
+        } else   if (pais.equalsIgnoreCase("SV")) {
+            if (pagoefectivo==1) plines.add("Contado");else plines.add("A credito");
+        }
+
+        propina=0;
+        try {
+            sql="SELECT PROPINA FROM D_FACTURAPR WHERE (COREL='"+corel+"')";
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()>0) {
+                DT.moveToFirst();
+                propina=DT.getDouble(0);
+            }
+        } catch (Exception e) {
+            propina=0;
+        }
+
+        try {
+            sql="SELECT NOMBRE,NIT,DIRECCION FROM D_FACTURAF WHERE COREL='"+corel+"'";
+            DT=Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            nombre_cliente =DT.getString(0);
+            nit_cliente =DT.getString(1);
+            clidir=DT.getString(2);
+
+        } catch (Exception e) {
+        }
+
+        add1=add1+"";
+        add2=add2+" - ";
+
+        //#EJC20210729: GET NIT EMISOR.
+        try {
+            sql="SELECT NIT FROM P_SUCURSAL ";
+            DT=Con.OpenDT(sql);
+            if(DT!=null){
+                DT.moveToFirst();
+                if (DT.getCount()>0) {
+                    nit_emisor=DT.getString(0);
+
+                } else {
+                    nit_emisor="";
+                }
+            }
+        } catch (Exception e) {
+
+        }
+
+        //region #EJC20210729: QR CODE
+        String Numero_Factura=feluuid;
+        if (Numero_Factura.equalsIgnoreCase(" ")) {
+            Numero_Factura=contacc;
+        }
+
+        nit_emisor=nit_emisor.trim();
+        nit_emisor=nit_emisor.replace("-","");
+        nit_emisor=nit_emisor.replace(".","");
+        nit_emisor=nit_emisor.replace(" ","");
+        nit_emisor=nit_emisor.toUpperCase();
+
+        nit_cliente=nit_cliente.trim();
+
+        if (pais.equalsIgnoreCase("GT")) {
+            nit_cliente=nit_cliente.replace("-","");
+        }
+
+        nit_cliente=nit_cliente.replace(".","");
+        nit_cliente=nit_cliente.replace(" ","");
+        nit_cliente=nit_cliente.toUpperCase();
+
+        if (pais.equalsIgnoreCase("GT")) {
+            QRCodeStr= "https://felpub.c.sat.gob.gt/verificador-web/publico/vistas/verificacionDte.jsf?tipo=autorizacion&" +
+                    "numero="+ Numero_Factura + "&emisor="+ nit_emisor +"&receptor="+ nit_cliente +"&monto=" + stot;
+        } else {
+            QRCodeStr="";
+        }
+
+        return true;
+    }
+
+    protected boolean loadDocDataEnvio(String corel) {
+        Cursor DT;
+        itemData item;
+        double ttot=0,tdes=0;
+
+        ccorel=corel;
+        loadHeadDataEnvio(corel);
+
+        items.clear();bons.clear();pagos.clear();totalsinimp=0;
+
+        try {
+
+            sql="SELECT cantidad,precio_venta,total,descuento," +
+                    "descuento_porcentaje,nombre_producto " +
+                    "FROM D_notaenviod WHERE (codigo_nota_envio_enc="+num_envio+")";
+
+            DT=Con.OpenDT(sql);
+            DT.moveToFirst();
+            totitems=DT.getCount();
+
+            while (!DT.isAfterLast()) {
+
+                item = new itemData();
+
+                item.nombre = DT.getString(5);
+                item.cant = DT.getDouble(0);
+                item.prec = DT.getDouble(1);
+                item.tot = DT.getDouble(2);ttot+=item.tot;
+                item.prec_orig= DT.getDouble(1);
+                item.descper = DT.getDouble(4);
+                item.desc = DT.getDouble(3);tdes+=item.desc;
+
+                item.cod = "cod";
+                item.imp = 0;
+                item.um = "UN";
+                item.ump = "UN";
+                item.peso = 0;
+                item.flag=false;
+
+                items.add(item);
+
+                DT.moveToNext();
+            }
+
+            tot=ttot;
+            desc=tdes;
+            stot=tot+desc;
+
+        } catch (Exception e) {
+            String se=e.getMessage();
+            se=se+"";
+            Toast.makeText(cont,e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+        return true;
+    }
 
     //endregion
 

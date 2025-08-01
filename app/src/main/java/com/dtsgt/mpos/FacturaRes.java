@@ -392,7 +392,9 @@ public class FacturaRes extends PBase {
 
 			if (corcheck) assignCorel();
 			uid_envio=gl.codigo_ruta+"_"+du.getCorelBaseLong();
-			if (gl.peNotaEnvio) corelNotaEnvio();
+			if (gl.peNotaEnvio) {
+				if (gl.modo_envio) corelNotaEnvio();
+			}
 
 			cliPorDia();
 
@@ -427,6 +429,11 @@ public class FacturaRes extends PBase {
 
 			app.validaImpresoraBT();
 
+			if (gl.peNotaEnvio) {
+				if (gl.modo_envio) {
+					askNotaEnvio();
+				}
+			}
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
@@ -523,6 +530,7 @@ public class FacturaRes extends PBase {
 		}
 	}
 
+    @SuppressLint("SuspiciousIndentation")
     public void payCred(View view) {
 		if (!validaMontoMaximo()) return;
         pendiente=false;
@@ -983,7 +991,9 @@ public class FacturaRes extends PBase {
 			}
 
 			if (!saved) {
-				if (!saveOrder()) return;
+				if (!saveOrder()) {
+					return;
+				}
 			}
 
 			completaEstadoOrden();
@@ -1017,10 +1027,17 @@ public class FacturaRes extends PBase {
 			} else {
 				browse=2;
 				gl.felcorel=corel;
-				if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
-					startActivity(new Intent(this, FELFactura.class));
-				} else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
-					startActivity(new Intent(this, FELFacturaSV.class));
+
+				if (gl.peNotaEnvio) {
+					if (!gl.modo_envio) {
+						startActivity(new Intent(this, FELFactura.class));
+					}
+				} else {
+					if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
+						startActivity(new Intent(this, FELFactura.class));
+					} else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
+						startActivity(new Intent(this, FELFacturaSV.class));
+					}
 				}
 			}
 
@@ -1115,7 +1132,22 @@ public class FacturaRes extends PBase {
 				fdoc.impStarLANFactMac =gl.impStarLANFactMac;
 				fdoc.FactCantProd=gl.peFactCantProd;
 
-				if (gl.peNotaEnvio) fdoc.num_envio=gl.nota_envio_corel; else fdoc.num_envio=0;
+				fdoc.num_envio=0;
+				fdoc.formato_envio=false;
+				if (gl.peNotaEnvio) {
+					if (gl.modo_envio) {
+						fdoc.num_envio=gl.nota_envio_corel;
+						fdoc.formato_envio=true;
+						fdoc.ruta=""+gl.codigo_ruta;
+						fdoc.empid=gl.emp;
+						fdoc.rutaid=gl.codigo_ruta;
+						fdoc.sucid=gl.tienda;
+						fdoc.vendedorid=gl.codigo_vendedor;
+						gl.peMFact=false;
+					} else {
+						gl.peMFact=true;
+					}
+				}
 
 				fdoc.buildPrint(corel,0,"",gl.peMFact);
 
@@ -1129,10 +1161,12 @@ public class FacturaRes extends PBase {
 
             gl.impresion_comanda=false;
 
-			if (gl.pelOrdenComanda) {
-                gl.impresion_comanda=true;
-			    imprimeComanda();
-            }
+			if (!gl.peNotaEnvio) {
+				if (gl.pelOrdenComanda) {
+					gl.impresion_comanda = true;
+					imprimeComanda();
+				}
+			}
 
 	        gl.iniciaVenta=true;
             gl.ventalock=false;
@@ -1157,14 +1191,16 @@ public class FacturaRes extends PBase {
 
 			if (!app.usaFEL()) {
 				if (gl.peEnvio) {
-					Handler mtimer = new Handler();
-					Runnable mrunner= () -> {
-						gl.autocom = 1;
-						if (!gl.peNoEnviar) {
-							startActivity(new Intent(FacturaRes.this, WSEnv.class));
-						}
-					};
-					mtimer.postDelayed(mrunner,2000);
+					if (!gl.modo_envio) {
+						Handler mtimer = new Handler();
+						Runnable mrunner = () -> {
+							gl.autocom = 1;
+							if (!gl.peNoEnviar) {
+								startActivity(new Intent(FacturaRes.this, WSEnv.class));
+							}
+						};
+						mtimer.postDelayed(mrunner, 2000);
+					}
 				}
 			}
 
@@ -1281,7 +1317,16 @@ public class FacturaRes extends PBase {
 
 			tott=mu.round2(tot);totpg=mu.round2(totpg);
 			if (tott!=totpg) {
-				msgbox("Monto de pago no coincide con total de factura.");return false;
+				if (gl.peNotaEnvio) {
+					if (gl.modo_envio) {
+						toast("Aplicando envío . . .");
+					} else {
+						msgbox("Monto de pago no coincide con total de factura.");return false;
+					}
+				} else {
+					msgbox("Monto de pago no coincide con total de factura.");return false;
+				}
+
 			}
 
   			String ss="WHERE anulado=0 AND feelfechaprocesado=0 AND feeluuid=' ' AND fecha>2010010000";
@@ -1396,7 +1441,11 @@ public class FacturaRes extends PBase {
             ins.add("FEELCONTINGENCIA"," ");
 			ins.add("CODIGO_TIPO_FACTURA",tipo_factura);
 
-			db.execSQL(ins.sql());
+			boolean eflag=true;
+			if (gl.peNotaEnvio) {
+				if (gl.modo_envio) eflag = false;
+			}
+			if (eflag) db.execSQL(ins.sql());
 
 			//endregion
 
@@ -1442,7 +1491,15 @@ public class FacturaRes extends PBase {
 				ins.add("UMPESO",dt.getString(13));
 
 				ssq=ins.sql();
-			    db.execSQL(ins.sql());
+				db.execSQL(ins.sql());
+
+				/*
+				boolean dflag=true;
+				if (gl.peNotaEnvio) {
+					if (gl.modo_envio) dflag = false;
+				}
+				if (dflag) db.execSQL(ins.sql());
+				 */
 
 			    vprod=dt.getString(0);
 				//vumstock=dt.getString(13);
@@ -1518,58 +1575,63 @@ public class FacturaRes extends PBase {
 
 			if (gl.peNotaEnvio) {
 
-				clsD_notaenvioObj D_notaenvioObj=new clsD_notaenvioObj(this,Con,db);
-				clsClasses.clsD_notaenvio eeitem;
+				if (gl.modo_envio) {
 
-				int eestat = -1;if (gl.nota_envio_modo==1) eestat = 2;
+					clsD_notaenvioObj D_notaenvioObj = new clsD_notaenvioObj(this, Con, db);
+					clsClasses.clsD_notaenvio eeitem;
 
-				eeitem = clsCls.new clsD_notaenvio();
+					int eestat = -1;
+					if (gl.nota_envio_modo == 1) eestat = 2;
 
-				eeitem.codigo_nota_envio_enc=gl.nota_envio_corel;
-				eeitem.codigo_nota_envio_estatus=eestat;
-				eeitem.codigo_cliente=gl.codigo_cliente;
-				eeitem.referencia=corel;
-				eeitem.persona_entrega=0;
-				eeitem.fecha=du.getActDateTime();
+					eeitem = clsCls.new clsD_notaenvio();
 
-				D_notaenvioObj.add(eeitem);
+					eeitem.codigo_nota_envio_enc = gl.nota_envio_corel;
+					eeitem.codigo_nota_envio_estatus = eestat;
+					eeitem.codigo_cliente = gl.codigo_cliente;
+					eeitem.referencia = corel;
+					eeitem.persona_entrega = 0;
+					eeitem.fecha = du.getActDateTime();
 
+					D_notaenvioObj.add(eeitem);
 
-				clsD_notaenviodObj D_notaenviodObj=new clsD_notaenviodObj(this,Con,db);
-				clsClasses.clsD_notaenviod editem;
-				double eeprec,eecant,eedescm,eetot,eedescpr;
+					clsD_notaenviodObj D_notaenviodObj = new clsD_notaenviodObj(this, Con, db);
+					clsClasses.clsD_notaenviod editem;
+					double eeprec, eecant, eedescm, eetot, eedescpr;
 
-				int edcor=D_notaenviodObj.newID("SELECT MAX(codigo_nota_envio_det) FROM D_notaenviod");
+					int edcor = D_notaenviodObj.newID("SELECT MAX(codigo_nota_envio_det) FROM D_notaenviod");
 
-				sql="SELECT PRODUCTO,CANT,PRECIO,IMP,DES,DESMON,TOTAL,PRECIODOC,PESO,VAL2,VAL4,UM,FACTOR,UMSTOCK,EMPRESA FROM T_VENTA";
-				dt=Con.OpenDT(sql);
-				dt.moveToFirst();
+					sql = "SELECT PRODUCTO,CANT,PRECIO,IMP,DES,DESMON,TOTAL,PRECIODOC,PESO,VAL2,VAL4,UM,FACTOR,UMSTOCK,EMPRESA FROM T_VENTA";
+					dt = Con.OpenDT(sql);
+					dt.moveToFirst();
 
-				while (!dt.isAfterLast()) {
+					while (!dt.isAfterLast()) {
 
-					intcod=app.codigoProducto(dt.getString(0));
-					eeprec=dt.getDouble(2);eecant=dt.getDouble(1);eetot=eeprec*eecant;
-					eedescm=dt.getDouble(5);
-					if (tot>0) eedescpr=100*eedescm/eetot; else eedescpr=0;
+						intcod = app.codigoProducto(dt.getString(0));
+						eeprec = dt.getDouble(2);
+						eecant = dt.getDouble(1);
+						eetot = eeprec * eecant;
+						eedescm = dt.getDouble(5);
+						if (tot > 0) eedescpr = 100 * eedescm / eetot;
+						else eedescpr = 0;
 
-					editem = clsCls.new clsD_notaenviod();
+						editem = clsCls.new clsD_notaenviod();
 
-					editem.codigo_nota_envio_det=edcor;
-					editem.codigo_nota_envio_enc=gl.nota_envio_corel;
-					editem.codigo_producto=intcod;
-					editem.cantidad=eecant;
-					editem.precio_venta=eeprec;
-					editem.total=dt.getDouble(6);
-					editem.descuento=eedescm;
-					editem.descuento_porcentaje=eedescpr;
-					editem.nombre_producto=app.prodNombre(intcod);
+						editem.codigo_nota_envio_det = edcor;
+						editem.codigo_nota_envio_enc = gl.nota_envio_corel;
+						editem.codigo_producto = intcod;
+						editem.cantidad = eecant;
+						editem.precio_venta = eeprec;
+						editem.total = dt.getDouble(6);
+						editem.descuento = eedescm;
+						editem.descuento_porcentaje = eedescpr;
+						editem.nombre_producto = app.prodNombre(intcod);
 
-					D_notaenviodObj.add(editem);
+						D_notaenviodObj.add(editem);
 
-					dt.moveToNext();
-					edcor++;
+						dt.moveToNext();
+						edcor++;
+					}
 				}
-
 			}
 
 			//endregion
@@ -1719,7 +1781,12 @@ public class FacturaRes extends PBase {
                 ins.add("DESC2", dt.getString(5));
                 ins.add("DESC3", dt.getString(6));
                 ins.add("DEPOS", false);
-                db.execSQL(ins.sql());
+
+				boolean pflag=true;
+				if (gl.peNotaEnvio) {
+					if (gl.modo_envio) pflag = false;
+				}
+				if (pflag) db.execSQL(ins.sql());
 
 				if (dt.getString(2).equalsIgnoreCase("C")) total_credito+=dt.getDouble(3);
 
@@ -2615,9 +2682,11 @@ public class FacturaRes extends PBase {
 
 			if (DT!=null) DT.close();
 
+			/*
 			if (fcorel-cult>1) {
 				if (cult>0) msgAskSend("Encontramos un inconveniente en los correlativos, por favor envie el siguiente correo al soporte.");
 			}
+			*/
 
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -3845,6 +3914,20 @@ public class FacturaRes extends PBase {
 		}
     }
 
+	private void checkPagoEnvio() {
+		try {
+
+			lblPago.setText("Pago completo.\n"+s);
+			pago=true;
+			pagocompleto=true;
+
+			finishOrder();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
 	private double totalPago() {
 		Cursor DT;
 		double tpago;
@@ -4443,7 +4526,8 @@ public class FacturaRes extends PBase {
 
 			clsEnvioUpdate EnvioUpdateObj= new clsEnvioUpdate(this, Con, db);
 
-			String usql=EnvioUpdateObj.generaSQL(corel,gl.nota_envio_corel,gl.tienda,gl.codigo_vendedor);
+			String usql=EnvioUpdateObj.generaSQL(corel,gl.nota_envio_corel,gl.tienda,
+					gl.codigo_vendedor,gl.emp,gl.codigo_cliente);
 
 			app.getAPIUrl();
 
@@ -4463,7 +4547,7 @@ public class FacturaRes extends PBase {
 			if (httpcom.errflag) {
 				showMsg(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+httpcom.error);
 			} else {
-				ActualizaNotaEnvio();
+				//ActualizaNotaEnvio();
 			}
 
 		} catch (Exception e) {
@@ -5240,6 +5324,30 @@ public class FacturaRes extends PBase {
 			listdlg.setLines(4);
 			listdlg.show();
 
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void askNotaEnvio() {
+
+		try {
+			ExDialog dialog = new ExDialog(this);
+			dialog.setMessage("¿Aplicar envio?");
+
+			dialog.setPositiveButton("Si", (dialog1, which) -> {
+				try {
+					checkPagoEnvio();;
+				} catch (Exception e) {
+					msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+				}
+			});
+
+			dialog.setNegativeButton("No", (dialog12, which) -> {
+				prevScreen(null);
+			});
+
+			dialog.show();
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}

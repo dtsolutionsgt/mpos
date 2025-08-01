@@ -433,6 +433,18 @@ public class Venta extends PBase {
         txtBarra.requestFocus();
     }
 
+    public void doEnvio(View view) {
+        if (gl.peNotaEnvio) {
+            try {
+                gl.modo_envio=true;
+                processMenuTools(1);
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+            //procesaEnvio();
+        }
+    }
+
     private void setHandlers(){
 
         try {
@@ -655,11 +667,8 @@ public class Venta extends PBase {
 
                         adaptergrid.setSelectedIndex(position);
 
-                        //if (item.ID==1) {
-                        //    if (validaFacturas()) processMenuTools(item.ID);
-                        //} else {
-                            processMenuTools(item.ID);
-                        //}
+                        gl.modo_envio=false;
+                        processMenuTools(item.ID);
                     } catch (Exception e) {
                         String ss=e.getMessage();
                     }
@@ -3241,7 +3250,6 @@ public class Venta extends PBase {
         }
     }
 
-
     public void cierreCaja(){
         try{
             if (ss.equalsIgnoreCase("Cierre de Caja")) gl.cajaid=3;
@@ -5164,6 +5172,12 @@ public class Venta extends PBase {
 
         } else reldocesa.setVisibility(View.INVISIBLE);
 
+        if (gl.peNotaEnvio) {
+            reldocesa.setVisibility(View.VISIBLE);
+            lbldocesa.setVisibility(View.VISIBLE);
+            lbldocesa.setText("ENVIO");
+        }
+
         gl.exitflag=false;
         if (!gl.scancliente.isEmpty())  gl.cliente=gl.scancliente;
         if (gl.cliente.isEmpty()) {
@@ -6067,6 +6081,29 @@ public class Venta extends PBase {
 
             listdlg.show();
 
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void procesaEnvio()  {
+
+        try {
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage("¿Aplicar envio?");
+
+            dialog.setPositiveButton("Si", (dialog1, which) -> {
+                try {
+                    gl.modo_envio=true;
+                    processMenuTools(1);
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+            });
+
+            dialog.setNegativeButton("No", (dialog12, which) -> {});
+
+            dialog.show();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

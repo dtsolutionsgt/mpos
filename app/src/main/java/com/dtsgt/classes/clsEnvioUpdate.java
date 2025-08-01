@@ -37,7 +37,7 @@ public class clsEnvioUpdate {
 
 
 
-    public String generaSQL(String corel,long corel_envio,int cod_sucursal,int cod_usuario) {
+    public String generaSQL(String corel,long corel_envio,int cod_sucursal,int cod_usuario,int cod_empresa,int cod_cliente) {
         double tot,prec,cant,descm,descpr;
 
         sql="";
@@ -47,11 +47,21 @@ public class clsEnvioUpdate {
 
         upd.init("D_NOTA_ENVIO_BOF_ENC");
 
+        /*
         upd.add("EMPRESA",D_facturaObj.first().empresa );
         upd.add("CODIGO_NOTA_ENVIO_ESTATUS", 2);
         upd.add("CODIGO_SUCURSAL", cod_sucursal);
         upd.add("CODIGO_CLIENTE", D_facturaObj.first().cliente);
         upd.add("REFERENCIA", D_facturaObj.first().corel);
+        upd.add("USER_AGR", cod_usuario);
+        upd.add("USER_MOD", cod_usuario);
+         */
+
+        upd.add("EMPRESA",cod_empresa );
+        upd.add("CODIGO_NOTA_ENVIO_ESTATUS", 2);
+        upd.add("CODIGO_SUCURSAL", cod_sucursal);
+        upd.add("CODIGO_CLIENTE", cod_cliente);
+        upd.add("REFERENCIA", " ");
         upd.add("USER_AGR", cod_usuario);
         upd.add("USER_MOD", cod_usuario);
 
