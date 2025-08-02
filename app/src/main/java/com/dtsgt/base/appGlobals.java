@@ -50,13 +50,12 @@ public class appGlobals extends Application {
 				mesa_vend,mesa_codigo,invcent_cod,invcen_alm,sal_idneg,desc_tipo_apl,prcu_mesa,
 			    prcu_vend,precuenta_cuenta,combo_cuenta,dias_credito,precuenta_modo,domicilio_notif,
 			    servidor_anio,idcombo,set_cant,set_cant_max,fact_sin_cert,fd_hn_cori,fd_hn_corf,
-				dom_est_val,repartidor_codigo,ped_dom_empresa;
-			    uidingrediente, idgrres, idgrsel, idgrpos, usuario_cortesia,bar_prod,cuenta_borrar,
-				mesa_vend,mesa_codigo,invcent_cod,sal_idneg,desc_tipo_apl,servidor_anio,fact_sin_cert,
-			    idcombo,set_cant,set_cant_max,cierre_ini_flag;
+				dom_est_val,repartidor_codigo,ped_dom_empresa, cierre_ini_flag;
+
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel,
                 corelmov, linea_sel="",mesa_alias,nummesapedido, nombre_cortesia,bar_um,bar_idbarril;
+
 	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir,sal_iddep,sal_idmun,sal_neg,sal_mun,sal_dep,
 			     prcu_corel,nom_alm,nom_alm2,mesa_area,nit_tipo,invcent_tipo,FEL_llave_cont,
   	             cli_muni,cli_muni_suc,cli_depto,cli_depto_suc,dom_det_cod,
