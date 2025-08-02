@@ -508,9 +508,6 @@ public class Caja extends PBase {
                 caja.fill(" WHERE ESTADO = 0  ORDER BY COREL");
                 gl.corelZ = caja.last().corel;
 
-                caja.fill(" WHERE ESTADO = 0  ORDER BY COREL");
-                gl.corelZ = caja.last().corel;
-
                 writeCorelLog(4,gl.corelZ,"");
 
                 fecha = caja.last().fecha;
@@ -693,11 +690,8 @@ public class Caja extends PBase {
 
                         caja.add(itemC);
 
-
                     }
-
                 }
-
 
                 clsClasses.clsfbCierre itemfbc= clsCls.new clsfbCierre();
 

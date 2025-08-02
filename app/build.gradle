@@ -121,9 +121,17 @@ dependencies {
     implementation 'com.google.firebase:firebase-perf:20.2.0'
     implementation 'com.google.firebase:firebase-messaging:23.1.0'
     implementation 'com.google.firebase:firebase-iid:21.1.0'
-    implementation 'com.google.firebase:firebase-perf'
     implementation 'com.google.firebase:firebase-storage'
 
+    implementation 'androidx.work:work-runtime:2.7.1'
+    implementation platform('com.google.firebase:firebase-bom:29.0.3')
+    implementation 'com.google.firebase:firebase-perf'
+    implementation 'com.android.volley:volley:1.2.1'
+    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'com.google.firebase:firebase-storage'
+
+    implementation files('libs/javax.mail.jar')
+    //implementation 'androidx.activity:activity:1.10.1'
     implementation 'com.google.code.gson:gson:2.10'
 
 }
