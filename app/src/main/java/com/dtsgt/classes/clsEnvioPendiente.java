@@ -2,6 +2,10 @@ package com.dtsgt.classes;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.clsClasses;
@@ -46,28 +50,31 @@ public class clsEnvioPendiente {
     }
 
     public void procesaEnvio(long corel_envio,int cod_emp,int cod_sucursal,int cod_usuario,int cod_cliente) {
-        corel_orig=corel_envio;
-        emp=cod_emp;
-        sucursal=cod_sucursal;
-        usuario=cod_usuario;
-        cliente=cod_cliente;
+        try {
+            corel_orig=corel_envio;
+            emp=cod_emp;
+            sucursal=cod_sucursal;
+            usuario=cod_usuario;
+            cliente=cod_cliente;
 
-        D_notaenvioObj.fill("WHERE (CODIGO_NOTA_ENVIO_ENC="+corel_orig+")");
-        corel_fact=D_notaenvioObj.first().referencia;
+            D_notaenvioObj.fill("WHERE (CODIGO_NOTA_ENVIO_ENC="+corel_orig+")");
+            corel_fact=D_notaenvioObj.first().referencia;
 
-        corel=0;
-        estado =0;
+            corel=0;
+            estado =0;
 
-        apiurl=url+"mpos/Mpos/EnvioNuevo?pEmpresa="+emp+"&pSucursal="+sucursal+"&identificador="+corel_fact;
+            apiurl=url+"mpos/Mpos/EnvioNuevo?pEmpresa="+emp+"&pSucursal="+sucursal+"&identificador="+corel_fact;
 
-
-        httpcli.processRequest(apiurl, () -> {
-            try {
-                cbCorelNotaEnvio();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+            httpcli.processRequest(apiurl, () -> {
+                try {
+                    cbCorelNotaEnvio();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            muestraMensaje(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     private void cbCorelNotaEnvio() throws Exception {
@@ -115,4 +122,26 @@ public class clsEnvioPendiente {
         }
 
     }
+
+    private void muestraMensaje(String msg) {
+        try {
+
+            new Thread(() -> {
+                Looper.prepare();
+
+                Handler handler = new Handler(Looper.myLooper());
+                handler.post(() -> {
+                    Toast toast= Toast.makeText(cont,msg, Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();;
+                });
+
+                Looper.loop();
+            }).start();
+
+        } catch (Exception e) {
+            //showMsg(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
 }

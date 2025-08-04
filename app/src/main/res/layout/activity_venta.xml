@@ -11,7 +11,7 @@
     <RelativeLayout
         android:id="@+id/reltipodoc"
         android:layout_width="80dp"
-        android:layout_height="50dp"
+        android:layout_height="80dp"
         android:layout_below="@+id/relRoad"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="5dp"
@@ -31,6 +31,35 @@
             android:text="CREDITO FISCAL"
             android:textSize="16sp"
             android:textStyle="bold" />
+
+        <RelativeLayout
+            android:id="@+id/relenvio"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF"
+            android:clickable="true"
+            android:onClick="doEnvio">
+
+            <ImageView
+                android:id="@+id/imageView177"
+                android:layout_width="wrap_content"
+                android:layout_height="65dp"
+                android:clickable="true"
+                android:onClick="doEnvio"
+                android:src="@drawable/btn_envio" />
+
+            <TextView
+                android:id="@+id/textView385"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="0dp"
+                android:clickable="true"
+                android:gravity="center_horizontal"
+                android:onClick="doEnvio"
+                android:text="Envío"
+                android:textSize="12sp" />
+        </RelativeLayout>
     </RelativeLayout>
 
     <GridView

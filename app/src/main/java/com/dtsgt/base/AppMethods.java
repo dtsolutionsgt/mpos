@@ -1469,8 +1469,8 @@ public class AppMethods {
             gl.peNotaEnvio = val.equalsIgnoreCase("S");
 
             if (gl.peNotaEnvio) {
-                gl.peMFact=false;
-                gl.peFEL="SIN FEL";
+                //gl.peMFact=false;
+                //gl.peFEL="SIN FEL";
             }
         } catch (Exception e) {
             gl.peNotaEnvio = false;

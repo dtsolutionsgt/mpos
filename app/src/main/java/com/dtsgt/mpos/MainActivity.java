@@ -123,7 +123,7 @@ public class MainActivity extends PBase {
     private boolean bloqueo_venta=false;
 
     // ***************************************
-    private String parVer = "5.6.0.0";
+    private String parVer = "5.6.1.0";
 
     //ver. 5.6. - registro de version actual en Firebase
 

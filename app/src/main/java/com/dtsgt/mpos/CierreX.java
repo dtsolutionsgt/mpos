@@ -82,6 +82,9 @@ public class CierreX extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        try {
+
         super.onCreate(savedInstanceState);
 
         if (pantallaHorizontal()) {
@@ -144,6 +147,10 @@ public class CierreX extends PBase {
         doc=new CierreX.clsDocExist(this, prn.prw,"");
 
         lblFact.setMovementMethod(new ScrollingMovementMethod());
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     //region Events
@@ -230,15 +237,14 @@ public class CierreX extends PBase {
 
                 SetCorreoCliente();
 
-                if (!CorreoSucursal.equalsIgnoreCase(""))
-                {
+                if (!CorreoSucursal.equalsIgnoreCase("")) {
                     if(isValidEmail(CorreoSucursal)){
                         txtEnviarCorreo.setVisibility(View.VISIBLE);
                     }else{
                         txtEnviarCorreo.setVisibility(View.GONE);
                     }
 
-                }else{
+                } else {
                     txtEnviarCorreo.setVisibility(View.GONE);
                 }
 

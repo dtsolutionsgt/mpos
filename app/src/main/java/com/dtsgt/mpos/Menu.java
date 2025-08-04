@@ -4120,6 +4120,7 @@ public class Menu extends PBase {
 
 			if (browse==2){
 				browse=0;
+				gl.cajaid=1;
 				validaCaja();
 				return;
 			}

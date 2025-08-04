@@ -119,7 +119,7 @@ public class Venta extends PBase {
     private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir, lbldocesa, lblprcant;
     private EditText txtBarra,txtFilter;
     private ImageView imgroad,imgscan,imgllevar;
-    private RelativeLayout relScan,reldocesa;
+    private RelativeLayout relScan,reldocesa,relenvio;
 
     private ArrayList<clsVenta> items= new ArrayList<clsVenta>();
     private ListAdaptVenta adapter;
@@ -2140,6 +2140,7 @@ public class Venta extends PBase {
         lblVend.setText("");
         gl.mododocesa=-1;
         lbldocesa.setVisibility(View.INVISIBLE);
+        relenvio.setVisibility(View.INVISIBLE);
 
         khand.clear(true);khand.enable();
 
@@ -3019,6 +3020,18 @@ public class Venta extends PBase {
                     item = clsCls.new clsMenu();
                     item.ID=15;item.Name="FEL";item.Icon=15;item.cant=pendfel;
                     mitems.add(item);
+                }
+            } else {
+                if (gl.peNotaEnvio) {
+                    int pendfel=pendienteFEL();
+
+                    if (pendfel>0) {
+                        item = clsCls.new clsMenu();
+                        item.ID=15;item.Name="FEL";item.Icon=15;item.cant=pendfel;
+                        mitems.add(item);
+                    }
+                } else {
+
                 }
             }
 
@@ -4722,6 +4735,7 @@ public class Venta extends PBase {
 
             relScan= findViewById(R.id.relScan);
             reldocesa = findViewById(R.id.reltipodoc);
+            relenvio = findViewById(R.id.relenvio);
 
             if (!gl.codigo_pais.equalsIgnoreCase("SV")) reldocesa.setVisibility(View.INVISIBLE);
 
@@ -5154,6 +5168,8 @@ public class Venta extends PBase {
         double lcred,cred,disp;
 
         lbldocesa.setVisibility(View.INVISIBLE);
+        relenvio.setVisibility(View.INVISIBLE);
+
         if (gl.codigo_pais.equalsIgnoreCase("SV")) {
             if (gl.mododocesa>=0) {
                 lbldocesa.setVisibility(View.VISIBLE);
@@ -5174,7 +5190,8 @@ public class Venta extends PBase {
 
         if (gl.peNotaEnvio) {
             reldocesa.setVisibility(View.VISIBLE);
-            lbldocesa.setVisibility(View.VISIBLE);
+            lbldocesa.setVisibility(View.INVISIBLE);
+            relenvio.setVisibility(View.VISIBLE);
             lbldocesa.setText("ENVIO");
         }
 
@@ -5219,7 +5236,7 @@ public class Venta extends PBase {
 
         } catch (Exception e) {
             lblVend.setText("");lbldocesa.setVisibility(View.INVISIBLE);
-
+            relenvio.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -6923,7 +6940,8 @@ public class Venta extends PBase {
                 }
 
                 browse=0;
-                lblVend.setText(" ");lbldocesa.setVisibility(View.INVISIBLE);
+                lblVend.setText(" ");
+                lbldocesa.setVisibility(View.INVISIBLE);relenvio.setVisibility(View.INVISIBLE);
 
                 gl.nit_tipo="N";
                 gl.numero_orden=" ";

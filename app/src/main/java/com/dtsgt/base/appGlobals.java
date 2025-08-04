@@ -50,7 +50,7 @@ public class appGlobals extends Application {
 				mesa_vend,mesa_codigo,invcent_cod,invcen_alm,sal_idneg,desc_tipo_apl,prcu_mesa,
 			    prcu_vend,precuenta_cuenta,combo_cuenta,dias_credito,precuenta_modo,domicilio_notif,
 			    servidor_anio,idcombo,set_cant,set_cant_max,fact_sin_cert,fd_hn_cori,fd_hn_corf,
-				dom_est_val,repartidor_codigo,ped_dom_empresa, cierre_ini_flag;
+				dom_est_val,repartidor_codigo,ped_dom_empresa, cierre_ini_flag, nota_envio_modo;
 
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel,
@@ -73,6 +73,7 @@ public class appGlobals extends Application {
 				   combo_edit,cliente_credito=false,pedido_dom_import,repartidor_select,
 			       impStarLAN,impStarLANFact,desc_acceso,
 			       reinicia_venta=false,autostart_venta=false,modo_envio;
+	public long nota_envio_corel;
 
 	//FEL Identificacion
 	public String felSIN="SIN FEL";
