@@ -2180,6 +2180,7 @@ public class Menu extends PBase {
 			listdlg.add("Reporte por Forma de Pago");
 			listdlg.add("Reporte por Familia");
 			if (cortesias) listdlg.add("Cortesias");
+			if (gl.peNotaEnvio) listdlg.add("Envíos");
 			listdlg.add("Reporte Ventas por Vendedor");
 			listdlg.add("Consumo materia prima");
 			listdlg.add("Reporte de Ventas por Cliente");
@@ -2215,6 +2216,7 @@ public class Menu extends PBase {
 					if (ss.equalsIgnoreCase("Pagos de caja")) gl.reportid=16;
 					if (ss.equalsIgnoreCase("Cortesia por artículo")) gl.reportid=17;
 					if (ss.equalsIgnoreCase("Comensales")) gl.reportid=18;
+					if (ss.equalsIgnoreCase("Envíos")) gl.reportid=19;
 
 
 					gl.titReport = ss;

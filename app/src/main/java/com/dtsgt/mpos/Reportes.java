@@ -750,6 +750,17 @@ public class Reportes extends PBase {
 
                     break;
 
+                case 19:
+
+                    sql="SELECT '','',0,'',COUNT(D_notaenvio.FECHA),CAST(D_notaenvio.FECHA/10000 AS INTEGER),0,0,SUM(D_notaenviod.TOTAL),D_notaenvio.FECHA " +
+                            "FROM D_notaenvio INNER JOIN D_notaenviod ON D_notaenviod.CODIGO_NOTA_ENVIO_ENC=D_notaenvio.CODIGO_NOTA_ENVIO_ENC  " +
+                            "GROUP BY CAST(D_notaenvio.FECHA/10000 AS INTEGER) " +
+                            "HAVING  (D_notaenvio.FECHA>="+ dateini +") AND (D_notaenvio.FECHA<"+datefin+")  " +
+                            "ORDER BY CAST(D_notaenvio.FECHA/10000 AS INTEGER)";
+
+
+                    break;
+
                 default:
                     msgbox("Error, al identificar el tipo de reporte, cierre la ventana e inténtelo de nuevo");return false;
             }
@@ -1385,6 +1396,26 @@ public class Reportes extends PBase {
                             int itot=(int) tot;
                             rep.addtotcant("Total:",""+itot);
                         }
+                    }  else if (gl.reportid==19) {
+
+                        if(acc==1){
+                            tot=0;
+                            rep.addc("REPORTE DE ENVIOS ");
+                            rep.addc(fecharango);
+                            setDatosVersion();
+                            rep.add3lrr("Fecha","Cantidad","Total");
+                            rep.line();
+                            acc = 2;
+                        }
+
+                        tot+=itemR.get(i).total;
+                         rep.add3lrr(du.sfecha(itemR.get(i).fecha), itemR.get(i).descrip, mu.frmcur(itemR.get(i).total));
+
+                        if(i==itemR.size()-1){
+                            rep.line();
+                            rep.add3llr("Total:", "", mu.frmcur(tot));
+                        }
+
                     }
 
                 }
