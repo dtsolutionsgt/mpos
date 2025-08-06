@@ -36,6 +36,8 @@ public class ExDialog extends  AlertDialog.Builder {
 
         AlertDialog adg=super.show();adg.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+        adg.setCancelable(false);
+
         TextView textView = (TextView) adg.getWindow().findViewById(android.R.id.message);
         textView.setTextColor(Color.BLACK);
         textView.setBackgroundColor(Color.WHITE);
