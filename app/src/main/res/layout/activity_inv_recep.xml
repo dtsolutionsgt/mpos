@@ -600,12 +600,11 @@
                 android:id="@+id/relwrap"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:minWidth="50dp">
+                android:layout_alignParentLeft="true">
 
                 <GridView
                     android:id="@+id/grdbtn"
-                    android:layout_width="match_parent"
+                    android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="5dp"
                     android:layout_marginTop="10dp"
@@ -614,7 +613,7 @@
 
                 <RelativeLayout
                     android:id="@+id/relScan"
-                    android:layout_width="329dp"
+                    android:layout_width="100dp"
                     android:layout_height="64dp"
                     android:layout_alignParentStart="false"
                     android:layout_alignParentRight="true"

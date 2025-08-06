@@ -647,6 +647,12 @@ public class Exist extends PBase {
         try {
             rep.clear();
 
+            if (gl.peImpFactLan) {
+                rep.add("..");
+                rep.add("..");
+                rep.add(gl.peImpFactIP);
+            }
+
             rep.empty();
             rep.addc("REPORTE DE EXISTENCIAS");
             setDatosVersion();

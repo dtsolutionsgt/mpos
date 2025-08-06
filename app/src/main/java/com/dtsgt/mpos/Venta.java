@@ -183,6 +183,8 @@ public class Venta extends PBase {
     private Runnable rnFbCallBack;
     private int fbprodid,fbcallmode=0;
 
+    private fbPrecio fbp;
+
     private clsRepBuilder rep;
     private printer prn;
     private clsVenta vitem;
@@ -244,6 +246,8 @@ public class Venta extends PBase {
             gl.ateninistr=du.geActTimeStr();
             gl.climode=true;
             mu.currsymb(gl.peMon);
+
+            fbp=new fbPrecio("Precio",gl.emp);
 
             getURL();
 

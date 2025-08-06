@@ -1032,6 +1032,12 @@ public class InvAjuste extends PBase {
 
     private void impresionEncabezado(int aid) {
 
+        if (gl.peImpFactLan) {
+            rep.add("..");
+            rep.add("..");
+            rep.add(gl.peImpFactIP);
+        }
+
         rep.empty();
         rep.empty();
         rep.addc(gl.empnom);
@@ -1041,7 +1047,7 @@ public class InvAjuste extends PBase {
         rep.addc("INGRESO DE MERCANCIA");
         rep.empty();
         rep.add("Numero: "+corel+" ");
-        rep.add("Fecha: "+du.sfecha(du.getActDate()));
+        rep.add("Fecha: "+du.sfecha(afecha));
         rep.add("Operador: "+gl.vendnom);
         if (gl.tipo==5) rep.add("Almacen: "+gl.nom_alm);
         rep.empty();
