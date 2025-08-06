@@ -86,6 +86,7 @@ import com.dtsgt.firebase.fbPedidoCombo;
 import com.dtsgt.firebase.fbPedidoDet;
 import com.dtsgt.firebase.fbPedidoEnc;
 import com.dtsgt.firebase.fbPedidoLog;
+import com.dtsgt.firebase.fbPrecio;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptGridProd;
 import com.dtsgt.ladapt.ListAdaptGridProdList;
@@ -183,6 +184,8 @@ public class Venta extends PBase {
     private Runnable rnFbCallBack;
     private int fbprodid,fbcallmode=0;
 
+    private fbPrecio fbp;
+
     private clsRepBuilder rep;
     private printer prn;
     private clsVenta vitem;
@@ -244,6 +247,8 @@ public class Venta extends PBase {
             gl.ateninistr=du.geActTimeStr();
             gl.climode=true;
             mu.currsymb(gl.peMon);
+
+            fbp=new fbPrecio("Precio",gl.emp);
 
             getURL();
 
