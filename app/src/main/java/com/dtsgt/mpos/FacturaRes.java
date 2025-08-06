@@ -5329,7 +5329,33 @@ public class FacturaRes extends PBase {
 		}
 	}
 
-	private void askNotaEnvio() {
+	public void askNotaEnvio() {
+
+		try {
+
+			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+			dialog.setTitle(R.string.app_name);
+			dialog.setMessage("¿Aplicar envio?");
+			dialog.setCancelable(false);
+			dialog.setPositiveButton("Sí", (dialog1, which) -> {
+				try {
+					checkPagoEnvio();;
+				} catch (Exception e) {
+					msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+				}
+			});
+
+			dialog.setNegativeButton("No", (dialog1, which) -> {
+				prevScreen(null);
+			});
+			dialog.show();
+
+		} catch (Exception ex) {
+			toast(ex.getMessage());
+		}
+	}
+
+	private void askNotaEnvioOrig() {
 
 		try {
 			ExDialog dialog = new ExDialog(this);
