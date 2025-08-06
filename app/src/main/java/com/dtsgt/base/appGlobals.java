@@ -61,7 +61,7 @@ public class appGlobals extends Application {
     public int scrx,scry,scrdim;
     public boolean scrhoriz;
 
-	//#EJC20210804: Para pasar parámetro a appbundle print.
+	public ArrayList<clsClasses.clsfbPrecio> precios = new ArrayList<clsClasses.clsfbPrecio>();
 	public String QRCodeStr ="";
 
 	//#CKFK 20210705

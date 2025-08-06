@@ -1385,6 +1385,12 @@ public class InvRecep extends PBase {
 
     private void impresionEncabezado(int aid) {
 
+        if (gl.peImpFactLan) {
+            rep.add("..");
+            rep.add("..");
+            rep.add(gl.peImpFactIP);
+        }
+
         rep.empty();
         rep.empty();
         rep.addc(gl.empnom);

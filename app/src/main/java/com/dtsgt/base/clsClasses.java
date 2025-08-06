@@ -1735,6 +1735,12 @@ public class clsClasses {
         public long fechault;
     }
 
+    public class clsfbPrecio {
+        public int  nivel;
+        public int  codigo;
+        public double precio;
+    }
+
     public class clsfbVersion {
         public String actver;
         public int  eid;

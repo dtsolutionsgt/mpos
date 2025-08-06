@@ -1944,7 +1944,9 @@ public class AppMethods {
 				if (gl.peImpFactBT) {
 					if (estadoBluTooth()) printEpsonTMBT(copies);else return;
 				}
-				if (gl.peImpFactLan) print3nstar_print();
+				if (gl.peImpFactLan) {
+					print3nstar_print();
+				}
 
 				if (gl.peImpFactUSB) {
 

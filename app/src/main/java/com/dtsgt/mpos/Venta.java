@@ -71,6 +71,7 @@ import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.fel.FELVerificacion;
+import com.dtsgt.firebase.fbPrecio;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
 import com.dtsgt.ladapt.ListAdaptGridProd;
@@ -144,6 +145,8 @@ public class Venta extends PBase {
     private wsOpenDT wso;
     private Runnable rnOrdenInsert,rnOrdenQuery,rnOrdenDel,rnlicSuscursal;
 
+    private fbPrecio fbp;
+
     private clsRepBuilder rep;
     private printer prn;
     private clsVenta vitem;
@@ -204,6 +207,8 @@ public class Venta extends PBase {
             gl.ateninistr=du.geActTimeStr();
             gl.climode=true;
             mu.currsymb(gl.peMon);
+
+            fbp=new fbPrecio("Precio",gl.emp);
 
             getURL();
 
