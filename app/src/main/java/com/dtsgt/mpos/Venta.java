@@ -86,6 +86,7 @@ import com.dtsgt.firebase.fbPedidoCombo;
 import com.dtsgt.firebase.fbPedidoDet;
 import com.dtsgt.firebase.fbPedidoEnc;
 import com.dtsgt.firebase.fbPedidoLog;
+import com.dtsgt.firebase.fbPrecio;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptGridProd;
 import com.dtsgt.ladapt.ListAdaptGridProdList;
