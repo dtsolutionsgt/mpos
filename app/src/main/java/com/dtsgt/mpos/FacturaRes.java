@@ -5329,14 +5329,16 @@ public class FacturaRes extends PBase {
 		}
 	}
 
-	public void askNotaEnvio() {
+	public void askNotaEnviox() {
 
 		try {
 
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 			dialog.setTitle(R.string.app_name);
 			dialog.setMessage("¿Aplicar envio?");
+
 			dialog.setCancelable(false);
+
 			dialog.setPositiveButton("Sí", (dialog1, which) -> {
 				try {
 					checkPagoEnvio();;
@@ -5355,7 +5357,7 @@ public class FacturaRes extends PBase {
 		}
 	}
 
-	private void askNotaEnvioOrig() {
+	private void askNotaEnvio() {
 
 		try {
 			ExDialog dialog = new ExDialog(this);
