@@ -1736,8 +1736,8 @@ public class clsClasses {
     }
 
     public class clsfbPrecio {
-        public int  nivel;
-        public int  codigo;
+        public int codigo;
+        public String um;
         public double precio;
     }
 

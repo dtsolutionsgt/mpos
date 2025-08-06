@@ -1323,10 +1323,6 @@ public class AppMethods {
 		}
 	}
 
-	//                  Params extra
-	// *****************************************************
-
-
     public boolean paramCierre(int pid) {
         Cursor dt;
         String sql,val="";
@@ -2985,6 +2981,10 @@ public class AppMethods {
 		} catch (Exception ex) {
 		    toast(ex.getMessage());
 		}
+	}
+
+	public boolean tieneInternet() {
+		return isOnWifi()>0;
 	}
 
 	public int isOnWifi(){

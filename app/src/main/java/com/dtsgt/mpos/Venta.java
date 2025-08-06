@@ -208,7 +208,7 @@ public class Venta extends PBase {
             gl.climode=true;
             mu.currsymb(gl.peMon);
 
-            fbp=new fbPrecio("Precio",gl.emp);
+            fbp=new fbPrecio("Precios",gl.emp);
 
             getURL();
 
@@ -2424,29 +2424,6 @@ public class Venta extends PBase {
         try {
             pitems.clear();pcodes.clear();
 
-            /*
-            sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODPRECIO.UNIDADMEDIDA, " +
-                    "P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO  " +
-                    "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO INNER JOIN " +
-                    "P_PRODPRECIO ON P_STOCK.CODIGO=P_PRODPRECIO.CODIGO_PRODUCTO  " +
-                    "WHERE (P_PRODUCTO.ACTIVO=1) AND (P_PRODUCTO.CODIGO_TIPO ='P')";
-            if (famid !=-1) {
-                if (famid!=0) sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
-            }
-
-            sql += "UNION ";
-            sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,P_PRODPRECIO.UNIDADMEDIDA, " +
-                    "P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO " +
-                    "FROM P_PRODUCTO  INNER JOIN " +
-                    "P_PRODPRECIO ON P_PRODUCTO.CODIGO_PRODUCTO = P_PRODPRECIO.CODIGO_PRODUCTO  " +
-                    "WHERE ((P_PRODUCTO.CODIGO_TIPO ='S') OR (P_PRODUCTO.CODIGO_TIPO ='M') OR (P_PRODUCTO.CODIGO_TIPO ='PB')) " +
-                    "AND (P_PRODUCTO.ACTIVO=1)";
-            if (famid !=-1) {
-                if (famid!=0)
-                    sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
-            }
-            */
-
             sql = "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,P_PRODPRECIO.UNIDADMEDIDA, " +
                     "P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO " +
                     "FROM P_PRODUCTO  INNER JOIN " +
@@ -4061,6 +4038,35 @@ public class Venta extends PBase {
 
     //endregion
 
+    //region Precios
+
+    private void cargaPrecios() {
+        try {
+            if (!app.tieneInternet()) return;
+
+            gl.precios.clear();
+            fbp.listItems(nivel, this::procesaPrecios);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void procesaPrecios() {
+        try {
+            if (fbp.errflag) throw new Exception(fbp.error);
+
+            for (clsClasses.clsfbPrecio itm : fbp.items) {
+                gl.precios.add(itm);
+            }
+
+            int prn=gl.precios.size();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //endregion
+
     //region Aux
 
     private void setControls(){
@@ -4555,6 +4561,10 @@ public class Venta extends PBase {
         }
 
         return pr;
+    }
+
+    private double precioActual(int codpr,double precorig) {
+
     }
 
     private int getDisp(String prid) {
@@ -6317,8 +6327,10 @@ public class Venta extends PBase {
                 gl.nit_tipo="N";
                 gl.numero_orden=" ";
                 gl.nivel=gl.nivel_sucursal;
+
                 setNivel();
                 numeroOrden();
+                cargaPrecios();
 
                 gl.cliente_dom=0;gl.modo_domicilio=false;
 
