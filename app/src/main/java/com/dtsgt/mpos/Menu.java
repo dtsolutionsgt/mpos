@@ -87,7 +87,6 @@ public class Menu extends PBase {
 	private Runnable rnInvCent,rnNumOrden;
 
 	private ListAdaptMenuGrid adaptergrid;
-	private ExDialog menudlg;
 	private extWaitDlg waitdlg,waitdlglimp;
 
 	private fbStock fbs;
