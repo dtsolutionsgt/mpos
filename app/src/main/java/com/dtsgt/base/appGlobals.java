@@ -127,7 +127,7 @@ public class appGlobals extends Application {
 			peLlevarSinPropina, pePropinaFELconIVA,peDescPassSimple,peModoSupermercado,
 			impStarCutPaper=false,peFechaInv;
 	public double  pePropinaPerc,pePropinaCarta,peDescMax;
-	public Boolean peAnulFact,peNoModInv,peNoModCom,peNotaEnvio;
+	public Boolean peAnulFact,peNoModInv,peNoModCom,peNotaEnvio,paPreciosFB;
 
     // Parametros Extra Local
     public Boolean pelCaja,pelCajaRecep,pelDespacho, pelOrdenComanda;

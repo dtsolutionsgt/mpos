@@ -21,10 +21,10 @@ public class fbPrecio extends fbBase {
         empresa=idempresa;
     }
 
-    public void listItems(int nivel,Runnable rnCallback) {
+    public void listItems(Runnable rnCallback) {
         try {
 
-            fdb.getReference(root+"/"+empresa+"/"+nivel+"/").
+            fdb.getReference(root+"/"+empresa+"/").
                     get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -41,8 +41,9 @@ public class fbPrecio extends fbBase {
 
                                             litem = clsCls.new clsfbPrecio();
 
-                                            litem.nivel = snap.child("nivel").getValue(Integer.class);
                                             litem.codigo = snap.child("codigo").getValue(Integer.class);
+                                            litem.nivel = snap.child("nivel").getValue(Integer.class);
+                                            litem.um = snap.child("um").getValue(String.class);
                                             litem.precio = snap.child("precio").getValue(Double.class);
 
                                             items.add(litem);

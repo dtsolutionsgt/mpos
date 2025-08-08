@@ -202,12 +202,25 @@ public class CliPos extends PBase {
             sTelCliente=txtTel.getText().toString();
 
             if (sNITCliente.isEmpty()) {
-                msgbox("Identificación incorrecta");return;
+                msgbox("NIT / Identificación incorrecta");return;
             }
 
             if (sNITCliente.length()<3) {
-                msgbox("Identificación incorrecta");return;
+                msgbox("NIT / Identificación incorrecta");return;
             }
+
+            if (sNITCliente.length()>12) {
+                msgbox("NIT / Identificación incorrecta");return;
+            }
+
+
+            if (sDireccionCliente.isEmpty()) {
+                toast("Falta definir la direccion");return;
+            }
+
+            sDireccionCliente=sDireccionCliente+" ";
+
+            gl.nit_tipo="N";
 
             if (gl.codigo_pais.equalsIgnoreCase("SV")) {
                 if (sNombreCliente.isEmpty()) {
@@ -218,16 +231,9 @@ public class CliPos extends PBase {
                 }
             }
 
-            if (sDireccionCliente.isEmpty()) {
-                toast("Falta definir la direccion");return;
-            }
-
-            sDireccionCliente=sDireccionCliente+" ";
-
-            gl.nit_tipo="N";
 
             if (gl.codigo_pais.equalsIgnoreCase("GT")) {
-                if (sNITCliente.length()>10 || sNITCliente.length()<8) {
+                if (sNITCliente.length()>10 || sNITCliente.length()<7) {
                     //if (sNITCliente.length()>12) {
                     msgbox("Identificación incorrecta");return;
                 }

@@ -30,6 +30,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsMenu;
 import com.dtsgt.classes.ExDialog;
@@ -51,8 +53,7 @@ import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.classes.extWaitDlg;
 import com.dtsgt.fel.FELVerificacion;
-import com.dtsgt.felesa.FELContingenciaSV;
-import com.dtsgt.firebase.fbStock;
+import com.dtsgt.firebase.fbPrecio;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
 import com.dtsgt.mant.MantConfig;
@@ -63,6 +64,11 @@ import com.dtsgt.mant.MantRepCierre;
 import com.dtsgt.mant.MantRol;
 import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 
 import org.apache.commons.io.FileUtils;
 
@@ -71,6 +77,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Menu extends PBase {
 
@@ -83,6 +90,10 @@ public class Menu extends PBase {
 
 	private wsOpenDT wsic;
 	private wsCommit wscom;
+
+	private DatabaseReference fbpref;
+	private ValueEventListener fbplist;
+	private fbPrecio fbp;
 
 	private Runnable rnInvCent,rnNumOrden;
 
@@ -159,7 +170,6 @@ public class Menu extends PBase {
 				reinica();
 			}
 
-
 			lblTit.setText("mPos   -   Versión: "+gl.parVer+"   -   Caja: "+gl.rutanom+" [ "+gl.codigo_ruta+" ] ," +
 					       " -  Sucursal: "+gl.tiendanom+" [ "+gl.tienda+" ]");
 
@@ -174,8 +184,11 @@ public class Menu extends PBase {
 			cajaCerrada();
 
 			gl.ingreso_mesero=false;
-            //gl.ingreso_mesero=gl.rol==4;
-            //if (gl.ingreso_mesero && gl.after_login) autoLoginMesero();
+
+			fbp=new fbPrecio("Precios",gl.emp);
+
+			fbpref = fbp.fdb.getReference("Precios/"+gl.emp);
+			addValueListener();
 
 			app.getURL();
 			wsic=new wsOpenDT(gl.wsurl);
@@ -2726,6 +2739,36 @@ public class Menu extends PBase {
 
 	//endregion
 
+	//region Handlers
+
+	private void addValueListener() {
+		try {
+
+			fbplist=fbpref.addValueEventListener(new ValueEventListener() {
+
+				@Override
+				public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+					try {
+						if (gl.paPreciosFB) {
+							gl.fbprecioflag=true;
+						} else {
+							gl.fbprecioflag=false;
+						}
+					} catch (Exception e) {	}
+     			}
+
+				@Override
+				public void onCancelled(@NonNull DatabaseError error) {}
+
+			});
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	//endregion
+
 	//region Aux
 
 	public void CierreZ(){
@@ -3621,6 +3664,19 @@ public class Menu extends PBase {
 		System.exit(0);
 	}
 
+	private void showUIMsg(String msg) {
+		try {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() { toastlong(msg);}
+					});
+				}
+			}).start();
+		} catch (Exception e) {}
+	}
 
 	//endregion
 
@@ -4133,6 +4189,17 @@ public class Menu extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
+	}
+
+	@Override
+	protected void onDestroy() {
+		try {
+			super.onDestroy();
+
+			if (fbpref != null) fbpref.removeEventListener(fbplist);
+		} catch (Exception e) {
+			toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 	}
 
 	@Override

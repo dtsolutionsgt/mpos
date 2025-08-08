@@ -1470,7 +1470,24 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peFechaInv = false;
 		}
-	}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=192";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+			gl.paPreciosFB = true;
+
+			if (val.equalsIgnoreCase("N")) gl.paPreciosFB = false;
+		} catch (Exception e) {
+			gl.paPreciosFB = true;
+		}
+
+	//                  Params extra
+	// *****************************************************
+
 
     public boolean paramCierre(int pid) {
         Cursor dt=null;
@@ -3369,7 +3386,11 @@ public class AppMethods {
 		}
 	}
 
-	public int isOnWifi() {
+	public boolean tieneInternet() {
+		return isOnWifi()>0;
+	}
+
+	public int isOnWifi(){
 		int activo=0;
 
 		try {
