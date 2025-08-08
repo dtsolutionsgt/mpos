@@ -38,6 +38,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
+import androidx.annotation.NonNull;
+
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsVenta;
@@ -100,6 +103,11 @@ import com.dtsgt.ladapt.RV_GridProdList;
 import com.dtsgt.ladapt.RV_Venta;
 import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 
 import org.apache.commons.io.FileUtils;
 
@@ -110,6 +118,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.HashMap;
 
 public class Venta extends PBase {
 
@@ -204,7 +213,7 @@ public class Venta extends PBase {
     private String cliid,saveprodid,pedcorel,prodlinea;
     private int famid = -1,numero_orden;
     public boolean DescPorProducto, DesPorLinea = false, DesPorMarca = false;
-    public int pTipo = -1,modo_supervis;
+    public int pTipo = -1,modo_supervis,fbPrecioFlag=-1;
     public double auxCant=0;
 
     @Override
@@ -247,8 +256,6 @@ public class Venta extends PBase {
             gl.ateninistr=du.geActTimeStr();
             gl.climode=true;
             mu.currsymb(gl.peMon);
-
-            fbp=new fbPrecio("Precio",gl.emp);
 
             getURL();
 
@@ -2720,29 +2727,6 @@ public class Venta extends PBase {
         try {
             pitems.clear();pcodes.clear();
 
-            /*
-            sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODPRECIO.UNIDADMEDIDA, " +
-                    "P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO  " +
-                    "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO INNER JOIN " +
-                    "P_PRODPRECIO ON P_STOCK.CODIGO=P_PRODPRECIO.CODIGO_PRODUCTO  " +
-                    "WHERE (P_PRODUCTO.ACTIVO=1) AND (P_PRODUCTO.CODIGO_TIPO ='P')";
-            if (famid !=-1) {
-                if (famid!=0) sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
-            }
-
-            sql += "UNION ";
-            sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,P_PRODPRECIO.UNIDADMEDIDA, " +
-                    "P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO " +
-                    "FROM P_PRODUCTO  INNER JOIN " +
-                    "P_PRODPRECIO ON P_PRODUCTO.CODIGO_PRODUCTO = P_PRODPRECIO.CODIGO_PRODUCTO  " +
-                    "WHERE ((P_PRODUCTO.CODIGO_TIPO ='S') OR (P_PRODUCTO.CODIGO_TIPO ='M') OR (P_PRODUCTO.CODIGO_TIPO ='PB')) " +
-                    "AND (P_PRODUCTO.ACTIVO=1)";
-            if (famid !=-1) {
-                if (famid!=0)
-                    sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
-            }
-            */
-
             sql = "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,P_PRODPRECIO.UNIDADMEDIDA, " +
                     "P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO " +
                     "FROM P_PRODUCTO  INNER JOIN " +
@@ -4699,6 +4683,23 @@ public class Venta extends PBase {
 
     //endregion
 
+    //region Precios
+
+    private void cargaPrecios() {
+        try {
+            if (!app.tieneInternet()) return;
+
+            if (gl.fbprecioflag) {
+                gl.fbprecioflag=false;
+                startActivity(new Intent(this,PreciosFb.class));
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+    //endregion
+
     //region Aux
 
     private void setControls(){
@@ -5867,6 +5868,20 @@ public class Venta extends PBase {
         }
     }
 
+    private void showUIMsg(String msg) {
+        try {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() { toastlong(msg);}
+                    });
+                }
+            }).start();
+        } catch (Exception e) {}
+    }
+
     //endregion
 
     //region Dialogs
@@ -6951,8 +6966,10 @@ public class Venta extends PBase {
                 gl.nit_tipo="N";
                 gl.numero_orden=" ";
                 gl.nivel=gl.nivel_sucursal;
+
                 setNivel();
                 numeroOrden();
+                cargaPrecios();
 
                 gl.cliente_dom=0;gl.modo_domicilio=false;
 
