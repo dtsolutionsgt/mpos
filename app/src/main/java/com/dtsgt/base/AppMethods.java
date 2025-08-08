@@ -106,514 +106,514 @@ public class AppMethods {
 	//region Public
 
 	public void parametrosExtra() {
-		Cursor dt=null;
-		String sql,val="";
-		int ival;
-		double dval;
+        Cursor dt = null;
+        String sql, val = "";
+        int ival;
+        double dval;
 
-		//region Parametros Road
+        //region Parametros Road
 
-		gl.peLimiteGPS =50;
-		gl.peStockItf=false;
-		gl.peModal="TOL";
-		gl.peSolicInv=false;
-		gl.peAceptarCarga=false;
-		gl.peBotInv=false;
-		gl.peBotPrec=false;
-		gl.peBotStock=false;
-		gl.peDec=2;
-		gl.peDecImp=2;
-		gl.peDecCant=2;
-		gl.peVehAyud=false;
-		gl.peEnvioParcial=true;
-		gl.peOrdPorNombre=true;
-		gl.peFormatoFactura="TOL";
-		gl.peImprFactCorrecta=true;
-		gl.peVentaGps = -1;
-		gl.peMargenGPS =10;
+        gl.peLimiteGPS = 50;
+        gl.peStockItf = false;
+        gl.peModal = "TOL";
+        gl.peSolicInv = false;
+        gl.peAceptarCarga = false;
+        gl.peBotInv = false;
+        gl.peBotPrec = false;
+        gl.peBotStock = false;
+        gl.peDec = 2;
+        gl.peDecImp = 2;
+        gl.peDecCant = 2;
+        gl.peVehAyud = false;
+        gl.peEnvioParcial = true;
+        gl.peOrdPorNombre = true;
+        gl.peFormatoFactura = "TOL";
+        gl.peImprFactCorrecta = true;
+        gl.peVentaGps = -1;
+        gl.peMargenGPS = 10;
 
-		//endregion
+        //endregion
 
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=12";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peMon=val;
-		} catch (Exception e) {
-			gl.peMon="Q";
-		}
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=100";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=12";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
-            gl.peMCent=val.equalsIgnoreCase("S");
+            gl.peMon = val;
         } catch (Exception e) {
-            gl.peMCent=false;
+            gl.peMon = "Q";
         }
-		if (dt!=null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=101";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=100";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
-            gl.peImpOrdCos =val.equalsIgnoreCase("S");
+            gl.peMCent = val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.peImpOrdCos =false;
+            gl.peMCent = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=102";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=101";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
-            gl.peMImg=val.equalsIgnoreCase("S");
+            gl.peImpOrdCos = val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.peMImg=false;
+            gl.peImpOrdCos = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=103";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=102";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0).toUpperCase();
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
-            gl.peMMod=val;
+            gl.peMImg = val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.peMMod="0";
+            gl.peMImg = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=104";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=103";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0).toUpperCase();
             if (emptystr(val)) throw new Exception();
 
-            gl.peMFact=val.equalsIgnoreCase("S");
-
+            gl.peMMod = val;
         } catch (Exception e) {
-            gl.peMFact=false;
+            gl.peMMod = "0";
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
 
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=105";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=104";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
-            gl.peFEL=val;
+            gl.peMFact = val.equalsIgnoreCase("S");
 
         } catch (Exception e) {
-            gl.peFEL="";
+            gl.peMFact = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
 
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=106";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=105";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
-            gl.peFotoBio=val.equalsIgnoreCase("S");
+            gl.peFEL = val;
+
         } catch (Exception e) {
-            gl.peFotoBio=true;
+            gl.peFEL = "";
         }
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=107";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.cierreDiario=val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.cierreDiario=true;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=108";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.dias_anul=Integer.valueOf(val);
-
-		} catch (Exception e) {
-            gl.dias_anul=5;
-		}
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=109";
-            dt=Con.OpenDT(sql);
+
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=106";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
-            gl.peEnvio=val.equalsIgnoreCase("S");
+            gl.peFotoBio = val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.peEnvio=true;
+            gl.peFotoBio = true;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=110";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=107";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
-            gl.peAvizoFEL=Integer.valueOf(val);
+            gl.cierreDiario = val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.peAvizoFEL=3;
+            gl.cierreDiario = true;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=111";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=108";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
-            gl.peCajaRec=val.equalsIgnoreCase("S");
+            gl.dias_anul = Integer.valueOf(val);
+
         } catch (Exception e) {
-            gl.peCajaRec=false;
+            gl.dias_anul = 5;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=112";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=109";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
-            gl.peInvCompart =val.equalsIgnoreCase("S");
-            gl.peInvCompart =false;
+            gl.peEnvio = val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.peInvCompart =false;
+            gl.peEnvio = true;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=113";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=110";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
-            gl.pePedidos =val.equalsIgnoreCase("S");
+            gl.peAvizoFEL = Integer.valueOf(val);
         } catch (Exception e) {
-            gl.pePedidos =false;
+            gl.peAvizoFEL = 3;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=114";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=111";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
-            ival=Integer.parseInt(val);
-            if (ival<1 | ival>5) ival=1;
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
 
-            gl.peNumImp =ival;
+            gl.peCajaRec = val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.peNumImp=1;
+            gl.peCajaRec = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=115";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=112";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peInvCompart = val.equalsIgnoreCase("S");
+            gl.peInvCompart = false;
+        } catch (Exception e) {
+            gl.peInvCompart = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=113";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.pePedidos = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.pePedidos = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=114";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            ival = Integer.parseInt(val);
+            if (ival < 1 | ival > 5) ival = 1;
+
+            gl.peNumImp = ival;
+        } catch (Exception e) {
+            gl.peNumImp = 1;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=115";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.peRepVenCod = val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.peRepVenCod =false;
+            gl.peRepVenCod = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=116";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=116";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.peAnulSuper = val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.peAnulSuper=false;
+            gl.peAnulSuper = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=117";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=117";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.pePropinaFija = val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.pePropinaFija =true;
+            gl.pePropinaFija = true;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=118";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=118";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.peRest = val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.peRest =false;
+            gl.peRest = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=119";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=119";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.peModifPed = val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.peModifPed=false;
+            gl.peModifPed = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=120";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=120";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
-            dval=Double.parseDouble(val);
-            if (dval<0 | dval>99) dval=0;
+            val = dt.getString(0);
+            dval = Double.parseDouble(val);
+            if (dval < 0 | dval > 99) dval = 0;
 
-            gl.pePropinaPerc =dval;
+            gl.pePropinaPerc = dval;
         } catch (Exception e) {
-            gl.pePropinaPerc=0;
+            gl.pePropinaPerc = 0;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=121";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=121";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.peBotComanda = val.equalsIgnoreCase("S");
         } catch (Exception e) {
             gl.peBotComanda = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=122";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=122";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
             gl.peComNoAplic = dt.getString(0);
         } catch (Exception e) {
             gl.peComNoAplic = "NO APLICA";
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=123";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=123";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.peEditTotCombo = val.equalsIgnoreCase("S");
         } catch (Exception e) {
             gl.peEditTotCombo = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=124";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=124";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.peAgregarCombo = val.equalsIgnoreCase("S");
         } catch (Exception e) {
             gl.peAgregarCombo = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=125";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=125";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.peComboLimite = val.equalsIgnoreCase("S");
         } catch (Exception e) {
             gl.peComboLimite = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=126";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=126";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.peComboDet = val.equalsIgnoreCase("S");
         } catch (Exception e) {
             gl.peComboDet = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=127";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=127";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
-            dval=Double.parseDouble(val);
-            if (dval<0 | dval>99) dval=0;
+            val = dt.getString(0);
+            dval = Double.parseDouble(val);
+            if (dval < 0 | dval > 99) dval = 0;
 
-            gl.pePropinaCarta =dval;
+            gl.pePropinaCarta = dval;
         } catch (Exception e) {
-            gl.pePropinaCarta=0;
+            gl.pePropinaCarta = 0;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=128";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=128";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.peFactSinPropina = val.equalsIgnoreCase("S");
         } catch (Exception e) {
             gl.peFactSinPropina = false;
         }
-		if (dt!=null) dt.close();
-
-		try {
-
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=129";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.pelComandaBT = val.equalsIgnoreCase("S");
-
-		} catch (Exception e) {
-			gl.pelComandaBT = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=130";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.pelPrefijoOrden = val;
-		} catch (Exception e) {
-			gl.pelPrefijoOrden = "";
-		}
-		if (dt!=null) dt.close();
-
-		try {
-
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=131";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.pelCaja = val.equalsIgnoreCase("S");
-
-		} catch (Exception e) {
-			gl.pelCaja = false;
-		}
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
 
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=132";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=129";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.pelComandaBT = val.equalsIgnoreCase("S");
+
+        } catch (Exception e) {
+            gl.pelComandaBT = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=130";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.pelPrefijoOrden = val;
+        } catch (Exception e) {
+            gl.pelPrefijoOrden = "";
+        }
+        if (dt != null) dt.close();
+
+        try {
+
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=131";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.pelCaja = val.equalsIgnoreCase("S");
+
+        } catch (Exception e) {
+            gl.pelCaja = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=132";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.pelCajaRecep = val.equalsIgnoreCase("S");
@@ -621,15 +621,15 @@ public class AppMethods {
         } catch (Exception e) {
             gl.pelCajaRecep = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
 
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=133";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=133";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.pelDespacho = val.equalsIgnoreCase("S");
@@ -637,45 +637,45 @@ public class AppMethods {
         } catch (Exception e) {
             gl.pelDespacho = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
 
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=134";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=134";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.pelOrdenComanda = val.equalsIgnoreCase("S");
         } catch (Exception e) {
             gl.pelOrdenComanda = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
 
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=135";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=135";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.pelClaveMes = val.equalsIgnoreCase("S");
         } catch (Exception e) {
             gl.pelClaveMes = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
 
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=136";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=136";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.pelClaveCaja = val.equalsIgnoreCase("S");
@@ -683,15 +683,15 @@ public class AppMethods {
         } catch (Exception e) {
             gl.pelClaveCaja = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
 
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=137";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=137";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.pelMeseroCaja = val.equalsIgnoreCase("S");
@@ -699,791 +699,803 @@ public class AppMethods {
         } catch (Exception e) {
             gl.pelMeseroCaja = false;
         }
-		if (dt!=null) dt.close();
-
-		try {
-
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=138";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peVentaDomicilio = val.equalsIgnoreCase("S");
-
-		} catch (Exception e) {
-			gl.peVentaDomicilio = false;
-		}
-		if (dt!=null) dt.close();
-
-		if (gl.pePedidos) gl.peVentaDomicilio=false;
-
-		try {
-
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=139";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peVentaEntrega = val.equalsIgnoreCase("S");
-
-		} catch (Exception e) {
-			gl.peVentaEntrega = false;
-		}
-		if (dt!=null) dt.close();
-
-		if (gl.pePedidos) gl.peVentaEntrega=false;
-
-		try {
-
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=140";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peDomEntEnvio = val.equalsIgnoreCase("S");
-
-		} catch (Exception e) {
-			gl.peDomEntEnvio = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=141";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peNoCerrarMesas = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peNoCerrarMesas = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=142";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peActOrdenMesas = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peActOrdenMesas = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=143";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peLineaIngred = Integer.parseInt(val);
-		} catch (Exception e) {
-			gl.peLineaIngred = 0;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=147";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			gl.peTextoPie =val;
-		} catch (Exception e) {
-			gl.peTextoPie = "";
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=148";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peRedondPropina = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peRedondPropina = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=149";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			ival=Integer.parseInt(val);
-
-			gl.peCajaPricipal = ival;
-		} catch (Exception e) {
-			gl.peCajaPricipal = 34;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=150";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peFraseIVA = val;
-		} catch (Exception e) {
-			gl.peFraseIVA = "";
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=151";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peFraseISR = val;
-		} catch (Exception e) {
-			gl.peFraseISR = "";
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=152";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peCafeTicket = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peCafeTicket = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=153";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			ival=Integer.parseInt(val);
-
-			gl.pePorConsumo = ival;
-		} catch (Exception e) {
-			gl.pePorConsumo = 0;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=154";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peNoEnviar = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peNoEnviar = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=155";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peUsaSoloBOF = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peUsaSoloBOF = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=156";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peAcumDesc = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peAcumDesc = false;
-		}
-		if (dt!=null) dt.close();
-		// temporalmente deshabilitada acumulacion
-		gl.peAcumDesc = false;
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=157";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			dval=Double.parseDouble(val);
-			if (dval<0 | dval>99) dval=50;
-
-			gl.peDescMax =dval;
-		} catch (Exception e) {
-			gl.peDescMax=50;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=158";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peNumOrdCommandaVenta = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peNumOrdCommandaVenta = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			gl.peImpFactBT=true;gl.peImpFactLan=false;gl.peImpFactUSB=false;gl.peImpFactIP="";
-
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=159";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-
-			gl.peImpFactUSBSTAR=false;
-			if (!emptystr(val)) {
-				if (val.equalsIgnoreCase("USB")) {
-					gl.peImpFactBT=false;gl.peImpFactLan=false;gl.peImpFactUSB=true;
-					gl.peImpFactIP="";
-				} else if (val.equalsIgnoreCase("USBSTAR")){
-					gl.peImpFactBT=false;gl.peImpFactLan=false;
-					gl.peImpFactUSB=true;gl.peImpFactUSBSTAR=true;
-					gl.peImpFactIP="";
-				} else if (val.indexOf(".")>0){
-					gl.peImpFactBT=false;gl.peImpFactLan=true;gl.peImpFactUSB=false;
-					gl.peImpFactIP=val;
-				}
-			}
-		} catch (Exception e) {
-			gl.peImpFactBT=true;
-			gl.peImpFactLan=false;gl.peImpFactUSB=false;gl.peImpFactIP="";
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=160";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			ival=Integer.parseInt(val);
-
-			gl.peMaxOrden = ival;
-		} catch (Exception e) {
-			gl.peMaxOrden = 1000;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=161";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peNumOrdCentral = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peNumOrdCentral = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=162";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peCajaMesasManual = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peCajaMesasManual = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=163";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) val="S";
-
-			gl.peMesaAtenderTodos = val.equalsIgnoreCase("N");
-		} catch (Exception e) {
-			gl.peMesaAtenderTodos = true;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=164";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peFactPropinaAparte = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peFactPropinaAparte = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=165";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.pePrecu1015 = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.pePrecu1015 = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=164";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peFactPropinaAparte = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peFactPropinaAparte = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=165";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.pePrecu1015 = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.pePrecu1015 = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=166";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peCargarClientes = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peCargarClientes = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=167";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.pePagoCredito = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.pePagoCredito = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=168";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peRepLimitado = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peRepLimitado = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=169";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peDescPerc = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peDescPerc = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=170";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peESAComprobante = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peESAComprobante = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=169";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peDescPerc = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peDescPerc = false;
-		}
-
-
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=171";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peComandaVentaLAN = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peComandaVentaLAN = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=172";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			ival=Integer.parseInt(val);
-
-			gl.peDomTiempo = ival;
-		} catch (Exception e) {
-			gl.peDomTiempo = 15;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=173";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peComandaBorrarPass = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peComandaBorrarPass = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=174";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.paDesc100 = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.paDesc100 = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=175";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.paCortProd = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.paCortProd = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=174";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.paDesc100 = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.paDesc100 = false;
-		}
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=176";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peReg4impr = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peReg4impr = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=178";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peRepFormaSuper = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peRepFormaSuper = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=179";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.impStarLANFactMac = val;
-			gl.impStarLANFact = val.length()==17;
-		} catch (Exception e) {
-			gl.impStarLANFactMac = "";
-            gl.impStarLANFact= false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=180";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peFactCantProd = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peFactCantProd = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=181";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peDescPassSimple = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peDescPassSimple = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=182";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peModoSupermercado = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peModoSupermercado = false;
-		}
-		if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=183";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peComensalesComanda = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peComensalesComanda = false;
-		}
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=184";
-            dt=Con.OpenDT(sql);
+
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=138";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peVentaDomicilio = val.equalsIgnoreCase("S");
+
+        } catch (Exception e) {
+            gl.peVentaDomicilio = false;
+        }
+        if (dt != null) dt.close();
+
+        if (gl.pePedidos) gl.peVentaDomicilio = false;
+
+        try {
+
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=139";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peVentaEntrega = val.equalsIgnoreCase("S");
+
+        } catch (Exception e) {
+            gl.peVentaEntrega = false;
+        }
+        if (dt != null) dt.close();
+
+        if (gl.pePedidos) gl.peVentaEntrega = false;
+
+        try {
+
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=140";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peDomEntEnvio = val.equalsIgnoreCase("S");
+
+        } catch (Exception e) {
+            gl.peDomEntEnvio = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=141";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peNoCerrarMesas = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peNoCerrarMesas = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=142";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peActOrdenMesas = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peActOrdenMesas = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=143";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peLineaIngred = Integer.parseInt(val);
+        } catch (Exception e) {
+            gl.peLineaIngred = 0;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=147";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            gl.peTextoPie = val;
+        } catch (Exception e) {
+            gl.peTextoPie = "";
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=148";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peRedondPropina = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peRedondPropina = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=149";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            ival = Integer.parseInt(val);
+
+            gl.peCajaPricipal = ival;
+        } catch (Exception e) {
+            gl.peCajaPricipal = 34;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=150";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peFraseIVA = val;
+        } catch (Exception e) {
+            gl.peFraseIVA = "";
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=151";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peFraseISR = val;
+        } catch (Exception e) {
+            gl.peFraseISR = "";
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=152";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peCafeTicket = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peCafeTicket = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=153";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            ival = Integer.parseInt(val);
+
+            gl.pePorConsumo = ival;
+        } catch (Exception e) {
+            gl.pePorConsumo = 0;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=154";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peNoEnviar = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peNoEnviar = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=155";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peUsaSoloBOF = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peUsaSoloBOF = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=156";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peAcumDesc = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peAcumDesc = false;
+        }
+        if (dt != null) dt.close();
+        // temporalmente deshabilitada acumulacion
+        gl.peAcumDesc = false;
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=157";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            dval = Double.parseDouble(val);
+            if (dval < 0 | dval > 99) dval = 50;
+
+            gl.peDescMax = dval;
+        } catch (Exception e) {
+            gl.peDescMax = 50;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=158";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peNumOrdCommandaVenta = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peNumOrdCommandaVenta = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            gl.peImpFactBT = true;
+            gl.peImpFactLan = false;
+            gl.peImpFactUSB = false;
+            gl.peImpFactIP = "";
+
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=159";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+
+            gl.peImpFactUSBSTAR = false;
+            if (!emptystr(val)) {
+                if (val.equalsIgnoreCase("USB")) {
+                    gl.peImpFactBT = false;
+                    gl.peImpFactLan = false;
+                    gl.peImpFactUSB = true;
+                    gl.peImpFactIP = "";
+                } else if (val.equalsIgnoreCase("USBSTAR")) {
+                    gl.peImpFactBT = false;
+                    gl.peImpFactLan = false;
+                    gl.peImpFactUSB = true;
+                    gl.peImpFactUSBSTAR = true;
+                    gl.peImpFactIP = "";
+                } else if (val.indexOf(".") > 0) {
+                    gl.peImpFactBT = false;
+                    gl.peImpFactLan = true;
+                    gl.peImpFactUSB = false;
+                    gl.peImpFactIP = val;
+                }
+            }
+        } catch (Exception e) {
+            gl.peImpFactBT = true;
+            gl.peImpFactLan = false;
+            gl.peImpFactUSB = false;
+            gl.peImpFactIP = "";
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=160";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            ival = Integer.parseInt(val);
+
+            gl.peMaxOrden = ival;
+        } catch (Exception e) {
+            gl.peMaxOrden = 1000;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=161";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peNumOrdCentral = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peNumOrdCentral = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=162";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peCajaMesasManual = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peCajaMesasManual = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=163";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) val = "S";
+
+            gl.peMesaAtenderTodos = val.equalsIgnoreCase("N");
+        } catch (Exception e) {
+            gl.peMesaAtenderTodos = true;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=164";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peFactPropinaAparte = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peFactPropinaAparte = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=165";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.pePrecu1015 = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.pePrecu1015 = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=164";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peFactPropinaAparte = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peFactPropinaAparte = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=165";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.pePrecu1015 = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.pePrecu1015 = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=166";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peCargarClientes = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peCargarClientes = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=167";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.pePagoCredito = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.pePagoCredito = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=168";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peRepLimitado = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peRepLimitado = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=169";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peDescPerc = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peDescPerc = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=170";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peESAComprobante = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peESAComprobante = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=169";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peDescPerc = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peDescPerc = false;
+        }
+
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=171";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peComandaVentaLAN = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peComandaVentaLAN = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=172";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            ival = Integer.parseInt(val);
+
+            gl.peDomTiempo = ival;
+        } catch (Exception e) {
+            gl.peDomTiempo = 15;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=173";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peComandaBorrarPass = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peComandaBorrarPass = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=174";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.paDesc100 = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.paDesc100 = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=175";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.paCortProd = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.paCortProd = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=174";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.paDesc100 = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.paDesc100 = false;
+        }
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=176";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peReg4impr = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peReg4impr = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=178";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peRepFormaSuper = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peRepFormaSuper = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=179";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.impStarLANFactMac = val;
+            gl.impStarLANFact = val.length() == 17;
+        } catch (Exception e) {
+            gl.impStarLANFactMac = "";
+            gl.impStarLANFact = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=180";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peFactCantProd = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peFactCantProd = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=181";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peDescPassSimple = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peDescPassSimple = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=182";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peModoSupermercado = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peModoSupermercado = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=183";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peComensalesComanda = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peComensalesComanda = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=184";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.peOcultarPagoMeseros = val.equalsIgnoreCase("S");
         } catch (Exception e) {
             gl.peOcultarPagoMeseros = false;
         }
-        if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=185";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=185";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.peLlevarSinPropina = val.equalsIgnoreCase("S");
         } catch (Exception e) {
             gl.peLlevarSinPropina = false;
         }
-        if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
 
         try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=186";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=186";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.pePropinaFELconIVA = val.equalsIgnoreCase("S");
         } catch (Exception e) {
             gl.pePropinaFELconIVA = false;
         }
-        if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
         try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=187";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peAnulFact = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peAnulFact = false;
-		}
-        if (dt!=null) dt.close();
-
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=188";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-
-			gl.peNoModInv = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peNoModInv = false;
-		}
-        if (dt!=null) dt.close();
-
-        try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=189";
-            dt=Con.OpenDT(sql);
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=187";
+            dt = Con.OpenDT(sql);
             dt.moveToFirst();
 
-            val=dt.getString(0);
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peAnulFact = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peAnulFact = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=188";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peNoModInv = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peNoModInv = false;
+        }
+        if (dt != null) dt.close();
+
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=189";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
             gl.peNoModCom = val.equalsIgnoreCase("S");
         } catch (Exception e) {
             gl.peNoModCom = false;
         }
-		if (dt!=null) dt.close();
+        if (dt != null) dt.close();
 
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=191";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=191";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
 
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
 
-			gl.peFechaInv = val.equalsIgnoreCase("S");
-		} catch (Exception e) {
-			gl.peFechaInv = false;
-		}
+            gl.peFechaInv = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peFechaInv = false;
+        }
 
-		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=192";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=192";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
 
-			val=dt.getString(0);
-			if (emptystr(val)) throw new Exception();
-			gl.paPreciosFB = true;
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+            gl.paPreciosFB = true;
 
-			if (val.equalsIgnoreCase("N")) gl.paPreciosFB = false;
-		} catch (Exception e) {
-			gl.paPreciosFB = true;
-		}
+            if (val.equalsIgnoreCase("N")) gl.paPreciosFB = false;
+        } catch (Exception e) {
+            gl.paPreciosFB = true;
+        }
+
+    }
 
 	//                  Params extra
 	// *****************************************************

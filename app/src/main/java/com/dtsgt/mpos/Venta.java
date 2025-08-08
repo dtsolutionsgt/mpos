@@ -213,8 +213,7 @@ public class Venta extends PBase {
     private String cliid,saveprodid,pedcorel,prodlinea;
     private int famid = -1,numero_orden;
     public boolean DescPorProducto, DesPorLinea = false, DesPorMarca = false;
-    public int pTipo = -1,modo_supervis;
-    public int pTipo = -1,fbPrecioFlag=-1;
+    public int pTipo = -1,modo_supervis,fbPrecioFlag=-1;
     public double auxCant=0;
 
     @Override

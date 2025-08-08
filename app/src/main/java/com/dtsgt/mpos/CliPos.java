@@ -195,32 +195,36 @@ public class CliPos extends PBase {
 
             purgeNIT();
 
-            sNITCliente =txtNIT.getText().toString();
-            sNombreCliente =txtNom.getText().toString();
-            sDireccionCliente =txtRef.getText().toString();
+            sNITCliente = txtNIT.getText().toString();
+            sNombreCliente = txtNom.getText().toString();
+            sDireccionCliente = txtRef.getText().toString();
             sCorreoCliente = txtCorreo.getText().toString();
-            sTelCliente=txtTel.getText().toString();
+            sTelCliente = txtTel.getText().toString();
 
             if (sNITCliente.isEmpty()) {
-                msgbox("NIT / Identificación incorrecta");return;
+                msgbox("NIT / Identificación incorrecta");
+                return;
             }
 
-            if (sNITCliente.length()<3) {
-                msgbox("NIT / Identificación incorrecta");return;
+            if (sNITCliente.length() < 3) {
+                msgbox("NIT / Identificación incorrecta");
+                return;
             }
 
-            if (sNITCliente.length()>12) {
-                msgbox("NIT / Identificación incorrecta");return;
+            if (sNITCliente.length() > 12) {
+                msgbox("NIT / Identificación incorrecta");
+                return;
             }
 
 
             if (sDireccionCliente.isEmpty()) {
-                toast("Falta definir la direccion");return;
+                toast("Falta definir la direccion");
+                return;
             }
 
-            sDireccionCliente=sDireccionCliente+" ";
+            sDireccionCliente = sDireccionCliente + " ";
 
-            gl.nit_tipo="N";
+            gl.nit_tipo = "N";
 
             if (gl.codigo_pais.equalsIgnoreCase("SV")) {
                 if (sNombreCliente.isEmpty()) {
