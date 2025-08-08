@@ -149,6 +149,7 @@ public class PreciosFb extends PBase {
 
     private void closeSession() {
         try {
+
             Handler mtimer = new Handler();
             Runnable mrunner= () -> {
                 showUIToast("Los precios actualizados.");
