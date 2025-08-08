@@ -170,7 +170,7 @@ public class Venta extends PBase {
     private String cliid,saveprodid,pedcorel,prodlinea;
     private int famid = -1,numero_orden;
     public boolean DescPorProducto, DesPorLinea = false, DesPorMarca = false;
-    public int pTipo = -1,fbPrecioFlag=-1;
+    public int pTipo = -1;
     public double auxCant=0;
 
     @Override
@@ -4047,6 +4047,7 @@ public class Venta extends PBase {
 
             if (gl.fbprecioflag) {
                 gl.fbprecioflag=false;
+                browse=14;
                 startActivity(new Intent(this,PreciosFb.class));
             }
 
@@ -4054,6 +4055,7 @@ public class Venta extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
     //endregion
 
     //region Aux
@@ -6470,6 +6472,25 @@ public class Venta extends PBase {
                 }
                 return;
             }
+
+            if (browse==14) {
+                browse=0;
+
+                if (imgflag) {
+                    pitems.clear();
+                    adapterp.notifyDataSetChanged();
+                    adapterp=new ListAdaptGridProd(this,pitems,imgfold,horiz);
+                    grdprod.setAdapter(adapterp);
+                } else {
+                    pitems.clear();
+                    adapterpl.notifyDataSetChanged();
+                    adapterpl=new ListAdaptGridProdList(this,pitems,imgfold,horiz);
+                    grdprod.setAdapter(adapterpl);
+                }
+
+                return;
+            }
+
 
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

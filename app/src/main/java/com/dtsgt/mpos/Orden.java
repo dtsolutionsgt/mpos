@@ -300,13 +300,10 @@ public class Orden extends PBase {
         };
         wsbtr =new wsCommit(gl.wsurl);
 
-        rnOrdenInsert= () -> {
-            ordenInsert();
-        };
+        rnOrdenInsert = () -> { ordenInsert(); };
+        rnOrdenQuery  = () -> { ordenQuery();  };
 
-        rnOrdenQuery= () -> {
-            ordenQuery();
-        };
+        cargaPrecios();
 
         ft3x5=new clsFont3x5(32);
     }
@@ -4519,6 +4516,23 @@ public class Orden extends PBase {
         } catch (Exception e) {
             toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             return "";
+        }
+    }
+
+    //endregion
+
+    //region Precios
+
+    private void cargaPrecios() {
+        try {
+            if (!app.tieneInternet()) return;
+
+            if (gl.fbprecioflag) {
+                gl.fbprecioflag=false;
+                startActivity(new Intent(this,PreciosFb.class));
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 

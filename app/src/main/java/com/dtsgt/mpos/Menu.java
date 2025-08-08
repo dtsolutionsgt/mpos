@@ -2569,6 +2569,7 @@ public class Menu extends PBase {
 						} else {
 							gl.fbprecioflag=false;
 						}
+						//showUIMsg("Precio  "+gl.fbprecioflag);
 					} catch (Exception e) {	}
      			}
 

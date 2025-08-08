@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#B0000000"
-        tools:context=".PreciosFb">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#D0000000"
+    tools:context=".PreciosFb">
 
     <RelativeLayout
-        android:layout_width="460dp"
+        android:layout_width="500dp"
         android:layout_height="220dp"
-        android:layout_centerInParent="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="50dp"
         android:background="#FFFFFF">
 
         <RelativeLayout
@@ -41,6 +44,16 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp" />
+
+            <ImageView
+                android:id="@+id/imageView150"
+                android:layout_width="48dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="0dp"
+                android:padding="3dp"
+                android:src="@drawable/btn_caja2" />
 
         </RelativeLayout>
 
@@ -80,11 +93,11 @@
             android:id="@+id/progressBar11"
             style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
             android:layout_width="wrap_content"
-            android:layout_height="100dp"
+            android:layout_height="80dp"
             android:layout_below="@+id/relRoad"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="20dp" />
 
     </RelativeLayout>
-    </RelativeLayout>
+</RelativeLayout>
