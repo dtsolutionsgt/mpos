@@ -26,6 +26,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ListView;
+
+import androidx.annotation.NonNull;
+
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsVenta;
@@ -60,9 +63,6 @@ import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_lic_estadoObj;
-import com.dtsgt.classes.clsT_ordenObj;
-import com.dtsgt.classes.clsT_ordencomboObj;
-import com.dtsgt.classes.clsT_ordencomboadObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsT_venta_horaObj;
@@ -81,6 +81,11 @@ import com.dtsgt.ladapt.ListAdaptMenuVenta;
 import com.dtsgt.ladapt.ListAdaptVenta;
 import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 
 import org.apache.commons.io.FileUtils;
 
@@ -90,6 +95,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Venta extends PBase {
 
@@ -145,8 +151,6 @@ public class Venta extends PBase {
     private wsOpenDT wso;
     private Runnable rnOrdenInsert,rnOrdenQuery,rnOrdenDel,rnlicSuscursal;
 
-    private fbPrecio fbp;
-
     private clsRepBuilder rep;
     private printer prn;
     private clsVenta vitem;
@@ -166,7 +170,7 @@ public class Venta extends PBase {
     private String cliid,saveprodid,pedcorel,prodlinea;
     private int famid = -1,numero_orden;
     public boolean DescPorProducto, DesPorLinea = false, DesPorMarca = false;
-    public int pTipo = -1;
+    public int pTipo = -1,fbPrecioFlag=-1;
     public double auxCant=0;
 
     @Override
@@ -208,8 +212,6 @@ public class Venta extends PBase {
             gl.climode=true;
             mu.currsymb(gl.peMon);
 
-            fbp=new fbPrecio("Precios",gl.emp);
-
             getURL();
 
             wscom =new wsCommit(gl.wsurl);
@@ -219,7 +221,6 @@ public class Venta extends PBase {
             rnOrdenQuery = () -> {ordenQuery();};
             rnOrdenDel = () -> {ordenDel();};
             rnlicSuscursal= () -> { licSucursal();};
-
 
             pedidos=gl.pePedidos;
             domenvio=gl.peDomEntEnvio;
@@ -4044,27 +4045,15 @@ public class Venta extends PBase {
         try {
             if (!app.tieneInternet()) return;
 
-            gl.precios.clear();
-            fbp.listItems(nivel, this::procesaPrecios);
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void procesaPrecios() {
-        try {
-            if (fbp.errflag) throw new Exception(fbp.error);
-
-            for (clsClasses.clsfbPrecio itm : fbp.items) {
-                gl.precios.add(itm);
+            if (gl.fbprecioflag) {
+                gl.fbprecioflag=false;
+                startActivity(new Intent(this,PreciosFb.class));
             }
 
-            int prn=gl.precios.size();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
-
     //endregion
 
     //region Aux
@@ -4561,10 +4550,6 @@ public class Venta extends PBase {
         }
 
         return pr;
-    }
-
-    private double precioActual(int codpr,double precorig) {
-
     }
 
     private int getDisp(String prid) {
@@ -5317,6 +5302,20 @@ public class Venta extends PBase {
         }
 
         return true;
+    }
+
+    private void showUIMsg(String msg) {
+        try {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() { toastlong(msg);}
+                    });
+                }
+            }).start();
+        } catch (Exception e) {}
     }
 
     //endregion

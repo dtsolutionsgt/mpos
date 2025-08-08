@@ -50,7 +50,8 @@ public class appGlobals extends Application {
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,paraentrega,
                    impresion_comanda, modo_domicilio, cf_domicilio, cierra_clave, mesero_lista ,
                    ingreso_mesero,after_login,modo_prec,mesero_precuenta,sin_propina,modo_upd_venta,
-			       modo_cortesia,modo_apertura,imp_inventario,sal_NIT,sal_NRC,sal_PER,upgradeVer5;
+			       modo_cortesia,modo_apertura,imp_inventario,sal_NIT,sal_NRC,sal_PER,
+			       upgradeVer5,fbprecioflag;
 
 	//FEL Identificacion
 	public String felSIN="SIN FEL";
@@ -98,7 +99,7 @@ public class appGlobals extends Application {
 	public Boolean peFactPropinaAparte,pePrecu1015,peComandaVentaLAN,peReg4impr,peRepFormaSuper;
 	public Boolean peAnulFact,peNoModInv,peFechaInv;
     public double  pePropinaPerc,pePropinaCarta,peDescMax;
-	public Boolean peDescPerc,paDesc100;
+	public Boolean peDescPerc,paDesc100,paPreciosFB;
 
     // Parametros Extra Local
     public Boolean pelCaja,pelCajaRecep,pelDespacho, pelOrdenComanda;
