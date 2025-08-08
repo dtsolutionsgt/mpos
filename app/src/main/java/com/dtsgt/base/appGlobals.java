@@ -73,6 +73,7 @@ public class appGlobals extends Application {
 				   combo_edit,cliente_credito=false,pedido_dom_import,repartidor_select,
 			       impStarLAN,impStarLANFact,desc_acceso,
 			       reinicia_venta=false,autostart_venta=false,modo_envio,fbprecioflag;
+	public long nota_envio_corel;
 
 	//FEL Identificacion
 	public String felSIN="SIN FEL";
