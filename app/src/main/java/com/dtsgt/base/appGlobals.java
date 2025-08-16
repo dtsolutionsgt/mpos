@@ -126,7 +126,7 @@ public class appGlobals extends Application {
 	public Boolean peDescPerc,peESAComprobante,peComandaVentaLAN,peComandaBorrarPass,
 			peReg4impr,paDesc100,paCortProd,peFactCantProd,peComensalesComanda,peOcultarPagoMeseros,
 			peLlevarSinPropina, pePropinaFELconIVA,peDescPassSimple,peModoSupermercado,
-			impStarCutPaper=false,peFechaInv;
+			impStarCutPaper=false,peFechaInv,peComGrupos;
 	public double  pePropinaPerc,pePropinaCarta,peDescMax;
 	public Boolean peAnulFact,peNoModInv,peNoModCom,peNotaEnvio,paPreciosFB;
 

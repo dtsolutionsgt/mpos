@@ -1740,7 +1740,8 @@ public class Orden extends PBase {
 
     }
 
-    private void delItem(){
+    private void delItem() {
+
         try {
             db.beginTransaction();
 
@@ -1770,6 +1771,8 @@ public class Orden extends PBase {
             if (gl.peComandaBorrarPass) registraBorrado();
 
             listItems();
+
+            cancelaComanda();
         } catch (Exception e) {
             db.endTransaction();
             msgbox(e.getMessage());
@@ -3008,6 +3011,159 @@ public class Orden extends PBase {
         return ""+prodid;
     }
 
+    private void cancelaComanda() {
+        try {
+            if (gl.pelComandaBT) {
+                imprimeCancelaComandaBT();
+            } else {
+                if (!generaComandaAnulada()) return;
+                if (!generaArchivoAnulado()) return;
+                ejecutaImpresion();
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private boolean generaComandaAnulada() {
+        String prname;
+        int prodid, prid ,linea = 1;
+
+        try {
+            db.execSQL("DELETE FROM T_comanda");
+
+
+            prodid = app.codigoProducto(gl.prodid);
+            prname = getProd(prodid);
+            s = mu.frmdecno(gl.retcant) + " " + prname;
+            P_linea_impresoraObj.fill("WHERE CODIGO_LINEA=" + prodlinea);
+
+            prid = P_linea_impresoraObj.items.get(0).codigo_impresora;
+
+            agregaComanda(linea, prid, s);
+
+            return true;
+        } catch(Exception e){
+            msgbox(new Object() {  }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());return false;
+        }
+    }
+
+    private void imprimeCancelaComandaBT() {
+        try {
+
+            rep.clear();
+            rep.empty();
+            rep.add("A N U L A C I O N ");
+            rep.empty();
+            rep.add("MESA : "+mesa);
+            rep.add("Hora : "+du.shora(du.getActDateTime()));
+            rep.empty();
+            rep.line();
+            rep.empty();
+
+            s = " " + gl.gstr2;
+            rep.add(s);
+
+            rep.line();
+            rep.empty();
+            rep.empty();
+            rep.empty();
+            rep.empty();
+            rep.empty();
+            rep.save();
+
+            app.doPrint(1);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private boolean generaArchivoAnulado() {
+
+        clsRepBuilder rep;
+        int printid;
+        String fname,ss,prip;
+        File file;
+
+        try {
+
+            P_impresoraObj.fill();
+            for (int i = 0; i <P_impresoraObj.count; i++) {
+                fname = Environment.getExternalStorageDirectory()+"/comanda_"+P_impresoraObj.items.get(i).codigo_impresora+".txt";
+                file=new File(fname);
+                try {
+                    file.delete();
+                } catch (Exception e) { }
+            }
+        } catch (Exception e) { }
+
+        try {
+
+            clsViewObj ViewObj=new clsViewObj(this,Con,db);
+            ViewObj.fillSelect("SELECT DISTINCT ID, '','','','', '','','','' FROM T_comanda ORDER BY ID");
+
+            for (int i = 0; i <ViewObj.count; i++) {
+                printid=ViewObj.items.get(i).pk;
+
+                if (printid>0) {
+
+                    P_impresoraObj.fill("WHERE (CODIGO_IMPRESORA=" + printid + ")");
+
+                    if (P_impresoraObj.count>0) {
+                        rep = new clsRepBuilder(this, gl.prw, true, gl.peMon, gl.peDecImp, "comanda_" + printid + ".txt");
+
+                        rep.add(P_impresoraObj.first().tipo_impresora);
+
+                        rep.add("ANULACION ");
+
+                        if (app.impresoraStarLAN(P_impresoraObj.first().codigo_modelo)) {
+                            prip=app.ipBypass(P_impresoraObj.first().mac);
+                        } else {
+                            prip=app.ipBypass(P_impresoraObj.first().ip);
+                        }
+                        rep.add(prip);
+
+                        rep.add("A N U L A C I O N ");
+
+                        rep.empty();
+                        rep.add("MESA : " + mesa+"  Hora : " + du.shora(du.getActDateTime()));
+                        rep.add("Mesero : " + gl.nombre_mesero_sel);
+
+                        rep.line24();
+
+                        T_comandaObj.fill("WHERE ID=" + printid + " ORDER BY LINEA");
+
+                        tl.clear();
+                        for (int j = 0; j < T_comandaObj.count; j++) {
+                            ss = T_comandaObj.items.get(j).texto;
+                            tl.add(ss.toUpperCase());
+                        }
+
+                        for (int j = 0; j < tl.size(); j++) {
+                            rep.add(tl.get(j));
+                        }
+
+                        rep.line24();
+                        //rep.add("ORDEN # "+prnumord);
+
+                        rep.add(".");
+                        rep.add(".");
+                        rep.add(".");
+
+                        rep.save();
+                        rep.clear();
+                    }
+                }
+            }
+
+            return true;
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
     /*
     private String getProdCorto(int prodid) {
         try {
@@ -3021,6 +3177,7 @@ public class Orden extends PBase {
         return ""+prodid;
     }
     */
+
 
     //endregion
 

@@ -1515,6 +1515,21 @@ public class AppMethods {
             gl.paPreciosFB = true;
         }
 
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=193";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+            gl.peComGrupos = true;
+
+            if (val.equalsIgnoreCase("N")) gl.peComGrupos = false;
+        } catch (Exception e) {
+            gl.peComGrupos = true;
+        }
+
+
     }
 
 	//                  Params extra
