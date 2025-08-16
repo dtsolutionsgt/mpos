@@ -87,7 +87,6 @@ public class appGlobals extends Application {
     public int scrx,scry,scrdim;
     public boolean scrhoriz;
 
-	public ArrayList<clsClasses.clsfbPrecio> precios = new ArrayList<clsClasses.clsfbPrecio>();
 	public String QRCodeStr ="";
 
 	//#CKFK 20210705

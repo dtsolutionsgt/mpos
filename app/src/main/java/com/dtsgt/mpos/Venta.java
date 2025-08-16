@@ -4691,6 +4691,7 @@ public class Venta extends PBase {
 
             if (gl.fbprecioflag) {
                 gl.fbprecioflag=false;
+                browse=14;
                 startActivity(new Intent(this,PreciosFb.class));
             }
 
@@ -4698,6 +4699,7 @@ public class Venta extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
     //endregion
 
     //region Aux

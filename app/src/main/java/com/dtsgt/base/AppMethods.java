@@ -1510,10 +1510,10 @@ public class AppMethods {
             if (emptystr(val)) throw new Exception();
             gl.paPreciosFB = true;
 
-            if (val.equalsIgnoreCase("N")) gl.paPreciosFB = false;
-        } catch (Exception e) {
-            gl.paPreciosFB = true;
-        }
+			if (val.equalsIgnoreCase("S")) gl.paPreciosFB = false;
+		} catch (Exception e) {
+			gl.paPreciosFB = true;
+		}
 
         try {
             sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=193";

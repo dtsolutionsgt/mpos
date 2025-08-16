@@ -237,7 +237,7 @@ public class CliPos extends PBase {
 
 
             if (gl.codigo_pais.equalsIgnoreCase("GT")) {
-                if (sNITCliente.length()>10 || sNITCliente.length()<7) {
+                if (sNITCliente.length()>10 || sNITCliente.length()<6) {
                     //if (sNITCliente.length()>12) {
                     msgbox("Identificación incorrecta");return;
                 }

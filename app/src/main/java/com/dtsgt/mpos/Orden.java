@@ -4510,6 +4510,23 @@ public class Orden extends PBase {
 
     //endregion
 
+    //region Precios
+
+    private void cargaPrecios() {
+        try {
+            if (!app.tieneInternet()) return;
+
+            if (gl.fbprecioflag) {
+                gl.fbprecioflag=false;
+                startActivity(new Intent(this,PreciosFb.class));
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //endregion
+
     //region Aux
 
     private void setControls(){
