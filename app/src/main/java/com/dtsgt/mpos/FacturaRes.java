@@ -2277,7 +2277,8 @@ public class FacturaRes extends PBase {
 			clsClasses.clsFbStock ritem=clsCls.new clsFbStock();
 
 			ritem.idprod=pcod;
-			ritem.idalm=gl.idalmpred;
+			//ritem.idalm=gl.idalmpred;
+			ritem.idalm=0;
 			ritem.cant=-pcant;
 			ritem.um=um.trim();
 			ritem.bandera=0;

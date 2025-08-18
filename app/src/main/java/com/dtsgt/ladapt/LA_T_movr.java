@@ -79,7 +79,7 @@ public class LA_T_movr extends BaseAdapter {
         }
 
         holder.lbl4.setText(mu.frmdecno(items.get(position).cant)+" "+items.get(position).unidadmedida);
-        holder.lbl5.setText(""+items.get(position).val1+" "+items.get(position).unidadmedida);
+        //holder.lbl5.setText(""+items.get(position).val1+" "+items.get(position).unidadmedida);
         holder.lbl6.setText(""+items.get(position).val2+" "+items.get(position).unidadmedida);
         holder.lbl7.setText(mu.frmcur(items.get(position).pesom));
         holder.lbl8.setText(""+items.get(position).lote);

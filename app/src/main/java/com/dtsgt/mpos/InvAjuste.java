@@ -78,7 +78,7 @@ public class InvAjuste extends PBase {
     private clsClasses.clsT_movr selitemr;
 
     private String barcode,prodname,um,invtext,corel;
-    private int prodid,selidx, motivo,selcant,fbprodid,cargalim,cargacnt;
+    private int prodid,selidx, motivo,selcant,fbprodid,cargalim,cargacnt,idalm;
     private double exist,cantt,costot,htot,disp;
     private boolean almpr,almacen,scanning=false;
 
@@ -131,6 +131,9 @@ public class InvAjuste extends PBase {
         almpr=gl.idalm==gl.idalmpred;
         almacen=gl.tipo==5;if (almpr) almacen=false;
         almacen=true;
+
+        idalm=gl.idalm;
+        if (gl.idalm==gl.idalmpred) idalm=0;
 
         khand=new clsKeybHandler(this, lblBar,lblKeyDP);
         khand.clear(true);khand.enable();
@@ -521,7 +524,7 @@ public class InvAjuste extends PBase {
 
             header.corel=corel;
             header.codigo_sucursal=gl.tienda;
-            header.almacen_origen=gl.idalm;
+            header.almacen_origen=idalm;
             header.almacen_destino=0;
             header.anulado=0;
             header.fecha=afecha;
@@ -607,7 +610,7 @@ public class InvAjuste extends PBase {
                         "P_PRODUCTO.CODIGO_PRODUCTO, P_PRODUCTO.COSTO " +
                         "FROM P_STOCK_ALMACEN INNER JOIN " +
                         "P_PRODUCTO ON P_STOCK_ALMACEN.CODIGO_PRODUCTO=P_PRODUCTO.CODIGO_PRODUCTO " +
-                        "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") ";
+                        "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+idalm+") ";
             /*
             } else {
                 sql="SELECT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODUCTO.UNIDBAS, " +
@@ -701,7 +704,8 @@ public class InvAjuste extends PBase {
     }
 
     private void adjustStockAlmacen(int pcod,double pcant,String um) {
-        int idalmacen=gl.idalm;
+        int idalmacen=idalm;
+
 
         try {
             //if (gl.idalm==gl.idalmpred) idalmacen=0;
@@ -723,7 +727,7 @@ public class InvAjuste extends PBase {
     private void adjustStockAlmacenOld(int pcod,double pcant,String um) {
         um=um.trim();
         sql="UPDATE P_stock_almacen SET CANT=CANT+"+pcant+" " +
-                "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") AND (CODIGO_PRODUCTO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
+                "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+idalm+") AND (CODIGO_PRODUCTO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
         db.execSQL(sql);
     }
 
@@ -1010,7 +1014,7 @@ public class InvAjuste extends PBase {
         try {
 
             rep.clear();
-            if (gl.tipo==5) aid=gl.idalm;
+            if (gl.tipo==5) aid=idalm;
 
             impresionEncabezado(aid);
             impresionDetalle(aid);
@@ -1087,7 +1091,7 @@ public class InvAjuste extends PBase {
     private void getFbProdStock(int prodid) {
         try {
             fbprodid=prodid;
-            fbs.calculaTotal("/"+gl.tienda+"/",gl.idalm,fbprodid,rnFbCallBack);
+            fbs.calculaTotal("/"+gl.tienda+"/",idalm,fbprodid,rnFbCallBack);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1190,7 +1194,7 @@ public class InvAjuste extends PBase {
         double val=0;
         try {
             if (almacen) {
-                P_stock_almacenObj.fill("WHERE (CODIGO_PRODUCTO="+prodid+") AND (CODIGO_ALMACEN="+gl.idalm+")");
+                P_stock_almacenObj.fill("WHERE (CODIGO_PRODUCTO="+prodid+") AND (CODIGO_ALMACEN="+idalm+")");
                 if (P_stock_almacenObj.count>0) val=P_stock_almacenObj.first().cant;
             } else {
                 T_stockObj.fill("WHERE IDPROD="+prodid);

@@ -82,7 +82,7 @@ public class InvRecep extends PBase {
     private clsClasses.clsT_movr selitemr;
 
     private String barcode,prodname,um,invtext,ubas,convum,corel,docnum;
-    private int prodid,fbprodid,selidx,cargalim,cargacnt;
+    private int prodid,fbprodid,selidx,cargalim,cargacnt,idalm;
     private double cantt,costot,convcant,htot;
     private boolean ingreso,almpr,almacen,readonly,scanning=false;
 
@@ -126,6 +126,9 @@ public class InvRecep extends PBase {
         if (gl.tipo==0) almacen=false;
         almpr=gl.idalm==gl.idalmpred;
         if (almpr) almacen=false;
+
+        idalm=gl.idalm;
+        if (gl.idalm==gl.idalmpred) idalm=0;
 
         almacen=true;
 
@@ -913,7 +916,7 @@ public class InvRecep extends PBase {
     }
 
     private void updateStockAlmacen(int pcod,double pcant,String um) {
-        int idalmacen=gl.idalm;
+        int idalmacen=idalm;
 
         try {
             //if (gl.idalm==gl.idalmpred) idalmacen=0;
