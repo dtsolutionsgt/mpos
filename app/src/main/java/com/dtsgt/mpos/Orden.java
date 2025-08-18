@@ -193,7 +193,7 @@ public class Orden extends PBase {
     private boolean prodflag=true,listflag=true,horiz,wsoidle=true,ordenpedido,barril,escombo;
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2,idtransbar;
     private String idorden,cliid,saveprodid, brtcorel, idresorig, idresdest;
-    private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo,tipoplatoid;
+    private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo,tipoplatoid=0;
     private String idorden_movcue,mesnom_movcue,prtipoaddid;
     private int maxprodid, maxcuenta=1,movcue_nueva,movcue_orig,movcue_maxdest,comensales,addmode=0;
 
@@ -1220,7 +1220,7 @@ public class Orden extends PBase {
             }
 
             fbitem.val2="0";
-            fbitem.val3=0;
+            fbitem.val3=tipoplatoid;
             fbitem.val4="0";
             fbitem.percep=percep;
             fbitem.cuenta=cui;
@@ -1335,7 +1335,7 @@ public class Orden extends PBase {
             ins.add("PESO",peso);
             ins.add("VAL1",0);
             ins.add("VAL2","");
-            ins.add("VAL3",0);
+            ins.add("VAL3",tipoplatoid);
             ins.add("VAL4","");
             ins.add("PERCEP",percep);
             ins.add("CUENTA",1);
@@ -1893,31 +1893,6 @@ public class Orden extends PBase {
 
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
-
-    private void addTipoPlatoItem() {
-        try {
-            for (clsOrden itm : items) {
-                if (itm.emp.equalsIgnoreCase(prtipoaddid)) {
-                    selitem=itm;
-                    showTipoPlatoMenu();
-                    return;
-                }
-            }
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void addTipoPlatoMenu() {
-        try {
-            //prtipoaddid
-            //ins.add("ID",newid);
-
-            showTipoPlatoMenu();
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
