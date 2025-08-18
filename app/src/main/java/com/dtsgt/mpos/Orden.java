@@ -193,10 +193,9 @@ public class Orden extends PBase {
     private boolean prodflag=true,listflag=true,horiz,wsoidle=true,ordenpedido,barril,escombo;
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2,idtransbar;
     private String idorden,cliid,saveprodid, brtcorel, idresorig, idresdest;
-    private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo;
-    private int IdCuentaAMover =0;
-    private String idorden_movcue,mesnom_movcue;
-    private int maxprodid, maxcuenta=1,movcue_nueva,movcue_orig,movcue_maxdest,comensales;
+    private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo,tipoplatoid;
+    private String idorden_movcue,mesnom_movcue,prtipoaddid;
+    private int maxprodid, maxcuenta=1,movcue_nueva,movcue_orig,movcue_maxdest,comensales,addmode=0;
 
     private int maxitems=100;
 
@@ -554,7 +553,12 @@ public class Orden extends PBase {
                     gl.menuitemid=prodid;
                     menuitemadd=true;
 
-                    processItem(false);
+                    if (gl.peComGrupos) {
+                        showSeleccionTipoPlato();
+                    } else {
+                        processItem(false);
+                    }
+
 
                 } catch (Exception e) {
                     String ss=e.getMessage();
@@ -707,7 +711,7 @@ public class Orden extends PBase {
         try {
             sql="SELECT T_ORDEN.PRODUCTO, P_PRODUCTO.DESCCORTA, T_ORDEN.TOTAL, T_ORDEN.CANT, T_ORDEN.PRECIODOC, " +
                 "T_ORDEN.DES, T_ORDEN.IMP, T_ORDEN.PERCEP, T_ORDEN.UM, T_ORDEN.PESO, T_ORDEN.UMSTOCK, " +
-                "T_ORDEN.DESMON, T_ORDEN.EMPRESA, T_ORDEN.CUENTA, T_ORDEN.ESTADO, T_ORDEN.ID " +
+                "T_ORDEN.DESMON, T_ORDEN.EMPRESA, T_ORDEN.CUENTA, T_ORDEN.ESTADO, T_ORDEN.ID, T_ORDEN.VAL3 " +
                 "FROM T_ORDEN INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=T_ORDEN.PRODUCTO "+
                 "WHERE (COREL='"+idorden+"') AND (T_ORDEN.ESTADO<>2) ORDER BY T_ORDEN.ID ";
 
@@ -789,6 +793,21 @@ public class Orden extends PBase {
                     if (T_orden_notaObj.count>0) snota=T_orden_notaObj.first().nota;
                     item.nota=snota;
 
+                    item.plato=" ";
+                    if (gl.peComGrupos) {
+                        int plcom=(int) DT.getDouble(16);
+                        switch (plcom) {
+                            case 0:
+                                item.plato=" ";break;
+                            case 1:
+                                item.plato="Entrada";break;
+                            case 2:
+                                item.plato="Plato principal";break;
+                            case 3:
+                                item.plato="Postre";break;
+                        }
+                    }
+
                     //if (!cuentaPagada(idorden,item.cuenta)) {
                     items.add(item);
 
@@ -829,13 +848,23 @@ public class Orden extends PBase {
             //listView.smoothScrollToPosition(selidx);
         } else seluid="";
 
-
         try {
             if (adapter.getCount()>0) {
                 adapter.setSelectedIndex(adapter.getCount()-1);
                 listView.smoothScrollToPosition(adapter.getCount()-1);
             }
         } catch (Exception e) { }
+
+        /*
+        if (addmode>0) {
+            if (gl.peComGrupos) {
+                if (addmode==1) addTipoPlatoItem();
+                if (addmode==2) addTipoPlatoMenu();
+            }
+
+            addmode=0;
+        }
+        */
 
     }
 
@@ -1147,6 +1176,8 @@ public class Orden extends PBase {
             newid=1;
         }
 
+        prtipoaddid=""+newid;
+
         try {
 
             if (gl.codigo_pais.equalsIgnoreCase("HN")) {
@@ -1221,8 +1252,10 @@ public class Orden extends PBase {
             counter++;
             gl.uidingrediente= fbo.new_id;
 
+            addmode=1;
             listItems();
             clearItem();
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1267,35 +1300,8 @@ public class Orden extends PBase {
             newid=1;
         }
 
-        /*
-        try {
-            sql="SELECT MAX(ID) FROM T_ORDEN";
-            //sql="SELECT MAX(ID) FROM T_ORDEN WHERE (COREL='"+idorden+"')";
-            dt=Con.OpenDT(sql);
-            dt.moveToFirst();
-            nid1=dt.getInt(0)+1;
-        } catch (Exception e) {
-            nid1=1;
-        }
+        prtipoaddid=""+newid;
 
-        try {
-            sql="SELECT MAX(ID) FROM T_orden_cor";
-            dt=Con.OpenDT(sql);
-            dt.moveToFirst();
-            nid2=dt.getInt(0)+1;
-        } catch (Exception e) {
-            nid2=1;
-        }
-
-        newid=nid2;if (nid1>newid) newid=nid1;
-
-        try {
-            db.execSQL("UPDATE T_orden_cor SET ID="+newid);
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-         */
 
         try {
 
@@ -1352,6 +1358,7 @@ public class Orden extends PBase {
             mu.msgbox("Error : " + e.getMessage());
         }
 
+        addmode=2;
         listItems();
 
         return true;
@@ -1855,6 +1862,60 @@ public class Orden extends PBase {
                 cerrarOrden();
             }
 
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void cambiaTipoPlato(int flag) {
+        try {
+
+            sql="UPDATE T_orden SET VAL3="+flag+" WHERE (ID="+selitem.id+") AND (COREL='"+idorden+"')";
+            db.execSQL(sql);
+
+            sql="UPDATE P_res_sesion SET FECHAULT="+du.getActDateTime()+" WHERE (ID='"+idorden+"')";
+            db.execSQL(sql);
+
+            fbo.updateValue(selitem.id,"val3",flag);
+
+           switch (flag) {
+                case 0:
+                    selitem.plato=" ";break;
+                case 1:
+                    selitem.plato="Entrada";break;
+                case 2:
+                    selitem.plato="Plato principal";break;
+                case 3:
+                    selitem.plato="Postre";break;
+            }
+
+            adapter.notifyDataSetChanged();
+
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void addTipoPlatoItem() {
+        try {
+            for (clsOrden itm : items) {
+                if (itm.emp.equalsIgnoreCase(prtipoaddid)) {
+                    selitem=itm;
+                    showTipoPlatoMenu();
+                    return;
+                }
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void addTipoPlatoMenu() {
+        try {
+            //prtipoaddid
+            //ins.add("ID",newid);
+
+            showTipoPlatoMenu();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -5535,11 +5596,12 @@ public class Orden extends PBase {
 
             if (gl.idmodgr>0) listdlg.setLines(7);else listdlg.setLines(6);
 
-            listdlg.add(R.drawable.agregar,"Modificar"); //imagen , texto - si imagen=0 no se despliega
-            listdlg.add(R.drawable.reportes,"Nota");
-            listdlg.add(R.drawable.cambio_usuario,"Cambiar cuenta");
-            listdlg.add(R.drawable.anulacion,"Borrar");
-            listdlg.add(R.drawable.recibir_archivos,"Dividir");
+            if (gl.peComGrupos) listdlg.add(8,R.drawable.btn_comanda,"Tipo Plato");
+            listdlg.add(1,R.drawable.agregar,"Modificar"); //imagen , texto - si imagen=0 no se despliega
+            listdlg.add(2,R.drawable.reportes,"Nota");
+            listdlg.add(3,R.drawable.cambio_usuario,"Cambiar cuenta");
+            listdlg.add(4,R.drawable.anulacion,"Borrar");
+            listdlg.add(5,R.drawable.recibir_archivos,"Dividir");
             //listdlg.add(R.drawable.venta_add,"Ingredientes adicionales");
             //if (gl.idmodgr>0) listdlg.add(R.drawable.btn_detail,"Modificadores");
 
@@ -5547,8 +5609,10 @@ public class Orden extends PBase {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
                     try {
-                        switch (position) {
-                            case 0:
+                        int icod=listdlg.getCodigoInt(position);
+
+                        switch (icod) {
+                            case 1:
                                 if (browse==6) {
                                     startActivity(new Intent(Orden.this,VentaEdit.class));
                                 } else if (browse==7) {
@@ -5556,25 +5620,25 @@ public class Orden extends PBase {
                                     startActivity(new Intent(Orden.this,OrdenMenu.class));
                                 }
                                 break;
-                            case 1:
-                                inputNota();break;
                             case 2:
-                                showMenuCuenta();break;
+                                inputNota();break;
                             case 3:
+                                showMenuCuenta();break;
+                            case 4:
                                 if (statenv==1) {
                                     msgbox("El artículo es parte de una cuenta enviada a pagar, no se puede borrar");
                                 } else {
                                     msgAskDelCom("Borrar artículo");
                                 }
                                 break;
-                            case 4:
+                            case 5:
                                 if (selitem.Cant>1) {
                                     msgAskDividir("Dividir articulo");
                                 } else {
                                     msgbox("No se puede dividir articulo con cantidad 1 ");
                                 }
                                 break;
-                            case 5:
+                            case 6:
                                 if (esIngrediente()) {
                                     msgbox("El articúlo es un ingrediente.");return;
                                 }
@@ -5583,8 +5647,11 @@ public class Orden extends PBase {
                                 }
                                 Ingredientes();
                                 break;
-                            case 6:
+                            case 7:
                                 startActivity(new Intent(Orden.this,ModifProd.class));
+                                break;
+                            case 8:
+                                showTipoPlatoMenu();
                                 break;
                         }
 
@@ -5668,6 +5735,87 @@ public class Orden extends PBase {
             });
 
             listdlg.show(); //Alto de dialog
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void showTipoPlatoMenu() {
+        try {
+
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(Orden.this,gl.gstr2);
+            listdlg.setLines(4);
+
+            listdlg.add(1,"ENTRADA");
+            listdlg.add(2,"PLATO PRINCIPAL");
+            listdlg.add(3,"POSTRE");
+            listdlg.add(0,"Sin tipo");
+
+            listdlg.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        int icod=listdlg.getCodigoInt(position);
+
+                        cambiaTipoPlato(icod);
+
+                        cierraPantalla();
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    cierraPantalla();
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void showSeleccionTipoPlato() {
+        try {
+
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(Orden.this,gl.gstr2);
+            listdlg.setLines(4);
+
+            listdlg.add(1,"ENTRADA");
+            listdlg.add(2,"PLATO PRINCIPAL");
+            listdlg.add(3,"POSTRE");
+            listdlg.add(0,"Sin tipo");
+
+            listdlg.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        tipoplatoid=listdlg.getCodigoInt(position);
+
+                        processItem(false);
+                        cierraPantalla();
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    cierraPantalla();
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.show();
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

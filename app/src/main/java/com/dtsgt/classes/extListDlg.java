@@ -68,9 +68,19 @@ public class extListDlg {
         mList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                 dialog.dismiss();
+
+                selcodint = -1;
+                try {
+                    selcodint = Integer.parseInt(items.get(position).codigo);
+                    text = items.get(position).text;
+                } catch (Exception e) {
+                    selcodint = -1;
+                }
+
+                dialog.dismiss();
             };
         });
+
         mList.setVerticalScrollBarEnabled(true);
         mList.setScrollBarFadeDuration(0);
 
@@ -153,6 +163,7 @@ public class extListDlg {
     }
 
     public void setOnItemClickListener(@Nullable OnItemClickListener l) {
+
         mList.setOnItemClickListener(l);
     }
 
@@ -160,6 +171,16 @@ public class extListDlg {
         clsListDialogItem item = new clsListDialogItem();
 
         item.idresource=0;
+        item.codigo=codigo+"";
+        item.text=text;
+        item.text2="";
+        items.add(item);
+    }
+
+    public void add(int codigo,int idresource,String text) {
+        clsListDialogItem item = new clsListDialogItem();
+
+        item.idresource=idresource;
         item.codigo=codigo+"";
         item.text=text;
         item.text2="";

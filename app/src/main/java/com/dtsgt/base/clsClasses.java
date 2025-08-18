@@ -2247,7 +2247,7 @@ public class clsClasses {
     }
 
     public class clsOrden {
-        public String Cod, Nombre, um, val, valp, sdesc, emp, nota;
+        public String Cod, Nombre, um, val, valp, sdesc, emp, nota, plato;
         public double Cant, Peso, Prec, Desc, Total, imp, percep;
         public int id, icant, cuenta, estado;
         public boolean indent, modif;

@@ -96,7 +96,8 @@ public class ListAdaptOrden extends BaseAdapter {
 		holder.lblNombre.setText(items.get(position).Nombre);
 		if (items.get(position).indent) holder.lblNombre.setPadding(50,0,0,0);else holder.lblNombre.setPadding(0,0,0,0);
 		//holder.lblCant.setText(items.get(position).icant+" x "+cursym+items.get(position).sdesc);
-		if (items.get(position).modif) holder.lblCant.setVisibility(View.VISIBLE);else holder.lblCant.setVisibility(View.INVISIBLE);
+		//if (items.get(position).modif) holder.lblCant.setVisibility(View.VISIBLE);else holder.lblCant.setVisibility(View.INVISIBLE);
+		holder.lblCant.setText(items.get(position).plato);holder.lblCant.setVisibility(View.VISIBLE);
 		holder.lblPrec.setText("");
         val=items.get(position).Total;
 		holder.lblDesc.setText(cursym+" "+frmdec.format(val));

@@ -212,7 +212,7 @@ public class Venta extends PBase {
     private int codigo_cliente, emp,pedidoscant,cod_prod,mododocesa,cort_user;
     private String cliid,saveprodid,pedcorel,prodlinea;
     private int famid = -1,numero_orden;
-    public boolean DescPorProducto, DesPorLinea = false, DesPorMarca = false;
+    public boolean DescPorProducto, DesPorLinea = false, DesPorMarca = false,updprecios;
     public int pTipo = -1,modo_supervis,fbPrecioFlag=-1;
     public double auxCant=0;
 
@@ -325,6 +325,7 @@ public class Venta extends PBase {
             setVisual();
 
             checkLock();
+            updprecios=gl.fbprecioflag;
 
             if(!gl.exitflag) {
 
@@ -336,25 +337,29 @@ public class Venta extends PBase {
 
                     gl.iniciaVenta=false;
 
-                    if (usarbio) {
-                        startActivity(new Intent(Venta.this,Clientes.class));
-                    } else {
-                        if (!gl.cliposflag) {
-                            gl.cliposflag=true;
-                            if (!gl.exitflag) {
-                                if (gl.peNotaEnvio) {
-                                    startActivity(new Intent(Venta.this, CliPos.class));
-                                } else {
-                                    if (!gl.peRest) {
-                                        if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-                                            startActivity(new Intent(Venta.this, CliPosSVSel.class));
-                                        } else {
-                                            startActivity(new Intent(Venta.this, CliPos.class));
+                    if (!updprecios) {
+
+                        if (usarbio) {
+                            startActivity(new Intent(Venta.this, Clientes.class));
+                        } else {
+                            if (!gl.cliposflag) {
+                                gl.cliposflag = true;
+                                if (!gl.exitflag) {
+                                    if (gl.peNotaEnvio) {
+                                        startActivity(new Intent(Venta.this, CliPos.class));
+                                    } else {
+                                        if (!gl.peRest) {
+                                            if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                                                startActivity(new Intent(Venta.this, CliPosSVSel.class));
+                                            } else {
+                                                startActivity(new Intent(Venta.this, CliPos.class));
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
+
                     }
                 };
                 mtimer.postDelayed(mrunner,100);
@@ -6971,6 +6976,8 @@ public class Venta extends PBase {
 
                 setNivel();
                 numeroOrden();
+
+                updprecios=gl.fbprecioflag;
                 cargaPrecios();
 
                 gl.cliente_dom=0;gl.modo_domicilio=false;
@@ -6991,17 +6998,20 @@ public class Venta extends PBase {
                     browse=8;
                     gl.iniciaVenta=false;
 
-                    if (usarbio) {
-                        startActivity(new Intent(Venta.this,Clientes.class));
-                    } else {
-                        if (!gl.cliposflag) {
-                            gl.cliposflag=true;
-                            if (!gl.forcedclose) {
-                                if (!gl.peRest) {
-                                    if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-                                        startActivity(new Intent(Venta.this,CliPosSVSel.class));
-                                    } else  {
-                                        startActivity(new Intent(Venta.this,CliPos.class));
+                    if (!updprecios) {
+
+                        if (usarbio) {
+                            startActivity(new Intent(Venta.this, Clientes.class));
+                        } else {
+                            if (!gl.cliposflag) {
+                                gl.cliposflag = true;
+                                if (!gl.forcedclose) {
+                                    if (!gl.peRest) {
+                                        if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                                            startActivity(new Intent(Venta.this, CliPosSVSel.class));
+                                        } else {
+                                            startActivity(new Intent(Venta.this, CliPos.class));
+                                        }
                                     }
                                 }
                             }
