@@ -1774,6 +1774,13 @@ public class clsClasses {
         public String texto;
     }
 
+    public class clsT_comanda_sort {
+        public int  linea;
+        public int  id;
+        public int  grupo;
+        public String texto;
+    }
+
     public class clsT_combo {
         public int codigo_menu;
         public int idcombo;

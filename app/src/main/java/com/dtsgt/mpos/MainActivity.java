@@ -439,20 +439,7 @@ public class MainActivity extends PBase {
     }
 
     public void doFPTest(View view) {
-        testhttp();
-        //testaskdlg();
-
-        //startActivity(new Intent(this, FBTest.class));
-        /*
-        try {
-            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.mposupd");
-            intent.putExtra("filename","mpos.apk");
-            this.startActivity(intent);
-        } catch (Exception e) {
-            msgbox("No está instalada aplicación para actualización de versiónes, por favor informe soporte.");
-        }
-
-         */
+        startActivity(new Intent(this,AIMasVendidos.class));
     }
 
     public void doFELESA(View view) {

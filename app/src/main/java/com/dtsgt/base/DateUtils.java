@@ -244,12 +244,12 @@ public class DateUtils {
 
 	public String univfechasinhora(long f) {
 
-		int vy,vm,vd;
+		long vy,vm,vd;
 		String s;
 
-		vy=(int) f/10000;f=f % 10000;
-		vm=(int) f/100;f=f % 100;
-		vd=(int) f;
+		vy=(long) f/10000;f=f % 10000;
+		vm=(long) f/100;f=f % 100;
+		vd=(long) f;
 
 		s=""+vy;
 		if (vm>9) s=s+vm; else s=s+"0"+vm;

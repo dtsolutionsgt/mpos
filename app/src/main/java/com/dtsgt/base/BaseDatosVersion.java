@@ -322,6 +322,21 @@ public class BaseDatosVersion {
             sql="CREATE INDEX D_notaenviod_idx1 ON D_notaenviod(CODIGO_NOTA_ENVIO_ENC)";db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [T_comanda_sort] ("+
+                    "LINEA INTEGER NOT NULL,"+
+                    "ID INTEGER NOT NULL,"+
+                    "GRUPO INTEGER NOT NULL,"+
+                    "TEXTO TEXT NOT NULL,"+
+                    "PRIMARY KEY ([LINEA])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX T_comanda_sort_idx1 ON T_comanda_sort(ID)";db.execSQL(sql);
+            sql="CREATE INDEX T_comanda_sort_idx2 ON T_comanda_sort(GRUPO)";db.execSQL(sql);
+        } catch (Exception e) { }
+
+
 
         try {
 
