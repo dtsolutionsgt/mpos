@@ -36,7 +36,7 @@ public class AIMasVendidos extends PBase {
     private int idsuc,idemp;
     private boolean completo=false;
 
-    private String ID="";
+    private String ID="   ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
