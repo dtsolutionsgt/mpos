@@ -2,7 +2,9 @@ package com.dtsgt.mpos;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -13,7 +15,11 @@ import com.google.gson.JsonParser;
 
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -52,6 +58,7 @@ public class AIMasVendidos extends PBase {
             idsuc=gl.tienda;idemp=gl.emp;
             idsuc=100;idemp=2;
 
+            getChatGPTKey();
             app.getURL();
             wso=new wsOpenDT(gl.wsurl);
 
@@ -154,7 +161,9 @@ public class AIMasVendidos extends PBase {
                 "GROUP BY D_FACTURA.EMPRESA, D_FACTURAD.PRODUCTO" +
                 "HAVING   (D_FACTURA.EMPRESA = "+idemp+") ORDER BY SUM(D_FACTURAD.CANT) DESC ";
 
-            wso.execute(sql,() -> { cbListaRutas(); });
+            //wso.execute(sql,() -> { cbListaRutas(); });
+
+            cbListaRutasx();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -277,6 +286,24 @@ public class AIMasVendidos extends PBase {
             String serror = e.getMessage();
             serror=serror+"";
         }
+    }
+
+    private void getChatGPTKey() {
+
+        try {
+
+            File file1 = new File(Environment.getExternalStorageDirectory(), "/apikey.txt");
+            if (!file1.exists()) return;
+
+            FileInputStream fIn = new FileInputStream(file1);
+            BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+            ID = myReader.readLine();
+            myReader.close();
+
+        } catch (Exception e) {
+            Log.e("getWS: ", e.getMessage());
+        }
+
     }
 
     //endregion
