@@ -336,6 +336,49 @@ public class BaseDatosVersion {
             sql="CREATE INDEX T_comanda_sort_idx2 ON T_comanda_sort(GRUPO)";db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [T_ai_masvend_lista] ("+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "CANT INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_PRODUCTO],[FECHA])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX T_ai_masvend_lista_idx1 ON T_ai_masvend_lista(CODIGO_PRODUCTO)";db.execSQL(sql);
+            sql="CREATE INDEX T_ai_masvend_lista_idx2 ON T_ai_masvend_lista(FECHA)";db.execSQL(sql);
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [T_ai_masvendidos] ("+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "DIA INTEGER NOT NULL,"+
+                    "HORA INTEGER NOT NULL,"+
+                    "CANT INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_PRODUCTO],[DIA],[HORA])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX T_ai_masvendidos_idx1 ON T_ai_masvendidos(CODIGO_PRODUCTO)";db.execSQL(sql);
+            sql="CREATE INDEX T_ai_masvendidos_idx2 ON T_ai_masvendidos(DIA)";db.execSQL(sql);
+            sql="CREATE INDEX T_ai_masvendidos_idx3 ON T_ai_masvendidos(HORA)";db.execSQL(sql);
+            sql="CREATE INDEX T_ai_masvendidos_idx4 ON T_ai_masvendidos(CANT)";db.execSQL(sql);
+
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [T_ai_masvend_tabla] ("+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "VAL1 INTEGER NOT NULL,"+
+                    "VAL2 INTEGER NOT NULL,"+
+                    "Val3 INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_PRODUCTO])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX T_ai_masvend_tabla_idx1 ON T_ai_masvend_tabla(CODIGO_PRODUCTO)";db.execSQL(sql);
+        } catch (Exception e) { }
+
 
 
         try {

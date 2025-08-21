@@ -1740,6 +1740,26 @@ public class clsClasses {
 
     //region T Clases
 
+    public class clsT_ai_masvend_lista {
+        public int  codigo_producto;
+        public long fecha;
+        public int  cant;
+    }
+
+    public class clsT_ai_masvend_tabla {
+        public int  codigo_producto;
+        public int  val1;
+        public int  val2;
+        public int  val3;
+    }
+
+    public class clsT_ai_masvendidos {
+        public int  codigo_producto;
+        public int  dia;
+        public int  hora;
+        public int  cant;
+    }
+
     public class clsT_almacen {
         public int codigo_almacen;
         public int codigo_sucursal;
