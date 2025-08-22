@@ -128,6 +128,7 @@ public class appGlobals extends Application {
 			impStarCutPaper=false,peFechaInv,peComGrupos;
 	public double  pePropinaPerc,pePropinaCarta,peDescMax;
 	public Boolean peAnulFact,peNoModInv,peNoModCom,peNotaEnvio,paPreciosFB;
+	public Boolean peAIMasVendidos;
 
     // Parametros Extra Local
     public Boolean pelCaja,pelCajaRecep,pelDespacho, pelOrdenComanda;

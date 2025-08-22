@@ -350,11 +350,13 @@ public class BaseDatosVersion {
         } catch (Exception e) { }
 
         try {
+
             sql="CREATE TABLE [T_ai_masvendidos] ("+
                     "CODIGO_PRODUCTO INTEGER NOT NULL,"+
                     "DIA INTEGER NOT NULL,"+
                     "HORA INTEGER NOT NULL,"+
                     "CANT INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_PRODUCTO],[DIA],[HORA])"+
                     ");";
             db.execSQL(sql);

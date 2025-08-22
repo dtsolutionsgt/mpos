@@ -93,7 +93,7 @@ public class MainActivity extends PBase {
 
     private GridView gridView;
     private TextView lblDts,lblRuta, lblRTit, lblVer, lblEmp, lblPass, lblKeyDP;
-    private ImageView imgLogo;
+    private ImageView imgLogo,imgAI;
     private Spinner spin;
 
     private BaseDatosVersion dbVers;
@@ -123,7 +123,7 @@ public class MainActivity extends PBase {
     private boolean bloqueo_venta=false;
 
     // ***************************************
-    private String parVer = "5.7.0.0";
+    private String parVer = "5.7.1.0";
 
     //ver. 5.6. - registro de version actual en Firebase
 
@@ -279,6 +279,7 @@ public class MainActivity extends PBase {
             lblPass = findViewById(R.id.lblPass);
             lblKeyDP = findViewById(R.id.textView110);
             imgLogo = findViewById(R.id.imgNext);
+            imgAI = findViewById(R.id.imageView178);imgAI.setVisibility(View.INVISIBLE);
 
             gridView = (GridView) findViewById(R.id.listView1);
             spin = (Spinner) findViewById(R.id.spinner22);
@@ -638,6 +639,8 @@ public class MainActivity extends PBase {
         } catch (Exception e) {
             msgbox(e.getMessage());
         }
+
+        if (gl.peAIMasVendidos) imgAI.setVisibility(View.VISIBLE);
 
         /*
         if (!gl.peFEL.equals("SIN FEL") && !gl.peFEL.isEmpty()) {

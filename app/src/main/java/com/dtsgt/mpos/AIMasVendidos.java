@@ -9,8 +9,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsT_ai_masvend_listaObj;
 import com.dtsgt.classes.clsT_ai_masvend_tablaObj;
+import com.dtsgt.classes.clsT_ai_masvendidosObj;
 import com.dtsgt.webservice.wsOpenDT;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -23,6 +25,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -40,8 +44,11 @@ public class AIMasVendidos extends PBase {
     private final OkHttpClient client = new OkHttpClient();
 
     private clsT_ai_masvend_listaObj T_ai_masvend_listaObj;
+    private clsP_productoObj P_productoObj;
 
     private wsOpenDT wso;
+
+    private List<String> lines = new ArrayList<>();
 
     private String query, result, slistr, slistp, slistf;
     private int idsuc, idemp;
@@ -63,11 +70,12 @@ public class AIMasVendidos extends PBase {
             pBar = findViewById(R.id.progressBar11);
 
             T_ai_masvend_listaObj = new clsT_ai_masvend_listaObj(this, Con, db);
+            P_productoObj = new clsP_productoObj(this, Con, db);
+            P_productoObj.fill();
 
             idsuc = gl.tienda;
             idemp = gl.emp;
-            idsuc = 100;
-            idemp = 2;
+            //idsuc = 100; idemp = 2;
 
 
             getChatGPTKey();
@@ -129,11 +137,17 @@ public class AIMasVendidos extends PBase {
 
                     try {
                         JsonArray jsonOutput = jsonResponse.getAsJsonArray("output");
+
                         if (jsonOutput.size() > 0) {
                             JsonObject json0 = jsonOutput.get(0).getAsJsonObject();
                             JsonArray jsonContent = json0.getAsJsonArray("content");
                             JsonObject jsonText = jsonContent.get(0).getAsJsonObject();
                             result = jsonText.get("text").getAsString();
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() { buildResult(); }
+                            }).start();
 
                             completo = true;
                             showResult();
@@ -147,8 +161,65 @@ public class AIMasVendidos extends PBase {
             });
 
         } catch (Exception e) {
-            result = new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage();
+            result = new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage();
+            showResult();
+        }
+    }
+
+    private void buildResult() {
+        int pcod=0,pval=0;
+        double dval=0;
+        String scod,sval;
+
+        try {
+            if (result == null || result.isEmpty()) {
+               completo = true;showResult();return;
+            }
+
+            db.execSQL("DELETE FROM T_ai_masvendidos");
+
+            clsT_ai_masvendidosObj T_ai_masvendidosObj=new clsT_ai_masvendidosObj(this,Con,db);
+            clsClasses.clsT_ai_masvendidos mitem;
+
+
+            String[] parts = result.split("\\r?\\n");
+            for (String line : parts) {
+                if (line.indexOf("|")>=0) {
+                    String[] parts2 = line.split("\\|");
+
+                    try {
+                        scod=parts2[1].trim();
+                        sval=parts2[2].trim();
+
+                        pcod=Integer.parseInt(scod);
+                        dval=Double.parseDouble(sval);
+                        pval=(int) dval;
+
+                        mitem = clsCls.new clsT_ai_masvendidos();
+
+                        mitem.codigo_producto=pcod;
+                        mitem.dia=0;
+                        mitem.hora=0;
+                        mitem.cant=pval;
+                        mitem.nombre=getProdName(pcod);
+
+                        T_ai_masvendidosObj.add(mitem);
+
+                        lines.add(pcod+" - "+pval);
+                    } catch (Exception e) {
+                        String sa=e.getMessage();
+                        sa=pcod+" - "+pval +" : "+sa;
+                    }
+                }
+            }
+
+            result = "";
+            for (String line : lines) {
+                result += line + "\n";
+            }
+            showResult();
+        } catch (Exception e) {
+            result = new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage();
             showResult();
         }
     }
@@ -360,38 +431,6 @@ public class AIMasVendidos extends PBase {
         }
     }
 
-    private void cbListaRutasx() {
-        try {
-            buildQuery();
-
-            Handler mtimer = new Handler();
-            Runnable mrunner = () -> {
-                processQuery();
-            };
-            mtimer.postDelayed(mrunner, 200);
-        } catch (Exception e) {
-            result = e.getMessage();
-            showResult();
-        }
-    }
-
-    private void buildQuery() {
-        try {
-            query = " Calculate sale forecast from following   \n" +
-                    "  \n" +
-                    "CODE,DATE1,DATE2,DATE3  \n" +
-                    "40,155,284,77  \n" +
-                    "41,119,153,85  \n" +
-                    "42,129,169,90 \n" +
-                    "43,111,254,56  \n" +
-                    "44,10,28  \n" +
-                    "  \n" +
-                    "answer with the final values only in csv format";
-        } catch (Exception e) {
-            msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
-        }
-    }
-
     //endregion
 
     //region Dialogs
@@ -440,6 +479,15 @@ public class AIMasVendidos extends PBase {
 
     }
 
+    private String getProdName(int pid) {
+        try {
+            P_productoObj.fill("WHERE CODIGO_PRODUCTO="+pid);
+            return P_productoObj.first().desclarga;
+        } catch (Exception e) {
+            return "Producto "+pid;
+        }
+    }
+
     //endregion
 
     //region Activity Events
@@ -449,12 +497,10 @@ public class AIMasVendidos extends PBase {
         super.onResume();
         try {
             T_ai_masvend_listaObj.reconnect(Con, db);
+            P_productoObj.reconnect(Con,db);P_productoObj.fill();
         } catch (Exception e) {
             msgbox(e.getMessage());
         }
-
-        //endregion
-
     }
 
     //endregion

@@ -26,7 +26,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -39,14 +38,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-import androidx.annotation.NonNull;
-
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsVenta;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.RecyclerItemClickListener;
-import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsBonFiltro;
 import com.dtsgt.classes.clsBonif;
 import com.dtsgt.classes.clsBonifGlob;
@@ -72,6 +68,7 @@ import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsP_vendedor_rolObj;
 import com.dtsgt.classes.clsRepBuilder;
+import com.dtsgt.classes.clsT_ai_masvendidosObj;
 import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_lic_estadoObj;
@@ -103,11 +100,6 @@ import com.dtsgt.ladapt.RV_GridProdList;
 import com.dtsgt.ladapt.RV_Venta;
 import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.GenericTypeIndicator;
-import com.google.firebase.database.ValueEventListener;
 
 import org.apache.commons.io.FileUtils;
 
@@ -117,8 +109,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.HashMap;
 
 public class Venta extends PBase {
 
@@ -126,10 +116,10 @@ public class Venta extends PBase {
     private ListView listMas;
     private GridView gridViewOpciones,grdbtn;
     private TextView lblTot,lblTit,lblAlm,lblVend, lblCambiarNivelPrecio,lblCant,lblBarra;
-    private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir, lbldocesa, lblprcant;
+    private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir, lbldocesa, lblprcant, lblmasvendidos;
     private EditText txtBarra,txtFilter;
     private ImageView imgroad,imgscan,imgllevar;
-    private RelativeLayout relScan,reldocesa,relenvio;
+    private RelativeLayout relScan,reldocesa,relenvio, relmasvendidos;
 
     private ArrayList<clsVenta> items= new ArrayList<clsVenta>();
     private ListAdaptVenta adapter;
@@ -159,6 +149,7 @@ public class Venta extends PBase {
     private ArrayList<String> lname = new ArrayList<String>();
     private ArrayList<String> tl = new ArrayList<String>();
     private ArrayList<String> peditems = new ArrayList<String>();
+    private ArrayList<clsClasses.clsT_ai_masvendidos> masvend = new ArrayList<clsClasses.clsT_ai_masvendidos>();
 
     private clsClasses.clsD_domicilio_enc pdeitem;
     private ArrayList<clsClasses.clsD_domicilio_det> pdditems= new ArrayList<clsClasses.clsD_domicilio_det>();
@@ -213,7 +204,7 @@ public class Venta extends PBase {
     private String cliid,saveprodid,pedcorel,prodlinea;
     private int famid = -1,numero_orden;
     public boolean DescPorProducto, DesPorLinea = false, DesPorMarca = false,updprecios;
-    public int pTipo = -1,modo_supervis,fbPrecioFlag=-1;
+    public int pTipo = -1,modo_supervis,fbPrecioFlag=-1, masvendcod;
     public double auxCant=0;
 
     @Override
@@ -234,6 +225,12 @@ public class Venta extends PBase {
             app = new AppMethods(this, gl, Con, db);
 
             setControls();
+
+             relmasvendidos.setVisibility(View.GONE);
+            if (gl.peAIMasVendidos) {
+                relmasvendidos.setVisibility(View.VISIBLE);
+                cargaDatosMV();
+            }
 
             P_nivelprecioObj=new clsP_nivelprecioObj(this,Con,db);
             P_nivelprecioObj.fill("ORDER BY Nombre");
@@ -462,6 +459,14 @@ public class Venta extends PBase {
         }
     }
 
+    public void doMasVend(View view) {
+        MVProducto(masvendcod);
+    }
+
+    public void doMasVendLista(View view) {
+        MVListaProductos();
+    }
+
     private void setHandlers(){
 
         try {
@@ -606,73 +611,6 @@ public class Venta extends PBase {
                         }
                     })
             );
-
-
-            /*
-            recprod.addOnItemTouchListener(new RecyclerItemClickListener((Context) this, recprod,
-                    new RecyclerItemClickListener.OnItemClickListener() {
-
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            applyItem(position);
-                        }
-
-                        @Override
-                        public void onLongItemClick(View view, int position) {
-                            clsClasses.clsMenu item;
-
-                            try {
-
-                                if (imgflag) {
-                                    item = radapterp.items.get(position);
-                                    radapterp.setSelectedIndex(position);
-                                } else {
-                                    item = radapterpl.items.get(position);
-                                    radapterpl.setSelectedIndex(position);
-                                }
-
-                                prodid = item.Cod;
-                                gl.gstr = prodid;//gl.prodmenu=prodid;
-                                gl.pprodname = item.Name;
-
-                                msgAskAdd(item.Name, position);
-
-
-                                prodid = item.Cod;
-                                gl.prodid = prodid;
-                                gl.prodcod = item.icod;
-                                gl.gstr = prodid;
-                                gl.prodmenu = gl.prodcod;
-                                gl.pprodname = item.Name;
-                                ppos = gl.pprodname.indexOf("[");
-                                if (ppos <= 1) pprodname = gl.pprodname;
-                                else pprodname = gl.pprodname.substring(0, ppos - 1);
-
-                                gl.um = app.umVenta(gl.prodid);
-                                gl.menuitemid = prodid;
-                                menuitemadd = true;
-
-                                if (khand.val.isEmpty()) {
-                                    processItem(false);
-                                } else {
-                                    try {
-                                        kcant = Integer.parseInt(khand.val);
-                                        if (kcant > 0) {
-                                            processItem(kcant);
-                                        }
-                                    } catch (Exception e) {
-                                    }
-                                    khand.clear();
-                                }
-
-                            } catch (Exception e) {
-                                String ss = e.getMessage();
-                            }
-                        }
-
-            );
-
-             */
 
 
             gridViewOpciones.setOnItemClickListener(new OnItemClickListener() {
@@ -4634,6 +4572,103 @@ public class Venta extends PBase {
 
     //endregion
 
+    //region AI Mas Vendidos
+
+    private void cargaDatosMV() {
+        try {
+            clsT_ai_masvendidosObj T_ai_masvendidosObj=new clsT_ai_masvendidosObj(this,Con,db);
+            T_ai_masvendidosObj.fill("ORDER BY CANT DESC");
+
+            if (T_ai_masvendidosObj.items.size()==0) {
+                gl.peAIMasVendidos=false;
+                relmasvendidos.setVisibility(View.GONE);
+                return;
+            }
+
+            masvend.clear();
+            for (clsClasses.clsT_ai_masvendidos itm:T_ai_masvendidosObj.items) {
+                masvend.add(itm);
+            }
+
+            lblmasvendidos.setText(masvend.get(0).nombre);
+            masvendcod =masvend.get(0).codigo_producto;
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void MVProducto(int pcod) {
+        clsClasses.clsP_producto  pitem;
+        int kcant,ppos;
+
+        try {
+
+            P_productoObj.fill("WHERE (CODIGO_PRODUCTO="+pcod+")");
+            pitem=P_productoObj.first();
+
+            prodid= pitem.codigo;
+            gl.prodid=prodid;
+            gl.prodcod=pitem.codigo_producto;
+            gl.gstr=prodid;
+            gl.prodmenu=gl.prodcod;
+            gl.pprodname=pitem.desclarga;
+            ppos=gl.pprodname.indexOf("[");
+            if (ppos<=1) pprodname=gl.pprodname;else pprodname=gl.pprodname.substring(0,ppos-1);
+
+            gl.um=app.umVenta(gl.prodid);
+            gl.menuitemid=prodid;
+            menuitemadd=true;
+
+            if (khand.val.isEmpty()) {
+                processItem(false);
+            } else {
+                try {
+                    kcant=Integer.parseInt(khand.val);
+                    if (kcant>0) processItem(kcant);
+                } catch (Exception e) { }
+                khand.clear();
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void MVListaProductos() {
+        try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(Venta.this,"Los más vendidos");
+
+            for (int i = 0; i <masvend.size(); i++) {
+                listdlg.add(""+masvend.get(i).codigo_producto,masvend.get(i).nombre);
+            }
+
+            listdlg.setLines(masvend.size());
+
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+
+                        MVProducto(Integer.parseInt(listdlg.items.get(position).codigo));
+                    } catch (Exception e) {
+                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                    }
+                    listdlg.dismiss();
+                };
+            });
+
+            listdlg.setOnLeftClick(v -> listdlg.dismiss());
+
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //endregion
+
     //region Firebase
 
     private void runFbCallBack() {
@@ -4739,6 +4774,7 @@ public class Venta extends PBase {
             lblDir= findViewById(R.id.lblDir);
             lbldocesa = findViewById(R.id.textView333);lbldocesa.setText("");
             lblprcant = findViewById(R.id.textView383);lblprcant.setText("( 0 )");
+            lblmasvendidos= findViewById(R.id.textView389);
 
             imgroad= findViewById(R.id.imgRoadTit);
             imgscan= findViewById(R.id.imageView13);
@@ -4749,6 +4785,7 @@ public class Venta extends PBase {
             relScan= findViewById(R.id.relScan);
             reldocesa = findViewById(R.id.reltipodoc);
             relenvio = findViewById(R.id.relenvio);
+            relmasvendidos = findViewById(R.id.relmasvend);
 
             if (!gl.codigo_pais.equalsIgnoreCase("SV")) reldocesa.setVisibility(View.INVISIBLE);
 

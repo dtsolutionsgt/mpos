@@ -1529,7 +1529,19 @@ public class AppMethods {
             gl.peComGrupos = true;
         }
 
+        try {
+            sql = "SELECT VALOR FROM P_PARAMEXT WHERE ID=194";
+            dt = Con.OpenDT(sql);
+            dt.moveToFirst();
 
+            val = dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+            gl.peAIMasVendidos = false;
+
+            if (val.equalsIgnoreCase("S")) gl.peAIMasVendidos = true;
+        } catch (Exception e) {
+            gl.peAIMasVendidos = false;
+        }
     }
 
 	//                  Params extra

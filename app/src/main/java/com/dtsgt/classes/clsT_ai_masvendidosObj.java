@@ -79,6 +79,7 @@ public class clsT_ai_masvendidosObj {
         ins.add("DIA",item.dia);
         ins.add("HORA",item.hora);
         ins.add("CANT",item.cant);
+        ins.add("NOMBRE",item.nombre);
 
         db.execSQL(ins.sql());
 
@@ -89,6 +90,7 @@ public class clsT_ai_masvendidosObj {
         upd.init("T_ai_masvendidos");
 
         upd.add("CANT",item.cant);
+        upd.add("NOMBRE",item.nombre);
 
         upd.Where("(CODIGO_PRODUCTO="+item.codigo_producto+") And (DIA="+item.dia+") And (HORA="+item.hora+")");
 
@@ -125,6 +127,7 @@ public class clsT_ai_masvendidosObj {
             item.dia=dt.getInt(1);
             item.hora=dt.getInt(2);
             item.cant=dt.getInt(3);
+            item.nombre=dt.getString(4);
 
             items.add(item);
 
@@ -178,6 +181,7 @@ public class clsT_ai_masvendidosObj {
         ins.add("DIA",item.dia);
         ins.add("HORA",item.hora);
         ins.add("CANT",item.cant);
+        ins.add("NOMBRE",item.nombre);
 
         return ins.sql();
 
@@ -188,6 +192,7 @@ public class clsT_ai_masvendidosObj {
         upd.init("T_ai_masvendidos");
 
         upd.add("CANT",item.cant);
+        upd.add("NOMBRE",item.nombre);
 
         upd.Where("(CODIGO_PRODUCTO="+item.codigo_producto+") And (DIA="+item.dia+") And (HORA="+item.hora+")");
 
@@ -198,5 +203,4 @@ public class clsT_ai_masvendidosObj {
 
     //endregion
 }
-
 

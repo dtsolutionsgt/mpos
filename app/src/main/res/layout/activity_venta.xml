@@ -1021,10 +1021,72 @@
             android:layout_marginStart="0dp"
             android:layout_marginTop="1dp">
 
+            <RelativeLayout
+                android:id="@+id/relmasvend"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/frame_rect_3">
+
+                <TextView
+                    android:id="@+id/textView389"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_toStartOf="@+id/textView388"
+                    android:layout_toEndOf="@+id/imageView179"
+                    android:background="@drawable/frame_btn2"
+                    android:clickable="true"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:onClick="doMasVend"
+                    android:singleLine="true"
+                    android:text="Producto más vendido"
+                    android:textColor="#202020"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView388"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/frame_btn2"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:onClick="doMasVendLista"
+                    android:singleLine="true"
+                    android:text="MÁS VENDIDOS"
+                    android:textColor="#202020"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/imageView179"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp"
+                    android:adjustViewBounds="true"
+                    android:padding="5dp"
+                    android:src="@drawable/masvendido" />
+            </RelativeLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recfam"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_above="@+id/relmasvend"
+                android:layout_marginBottom="3dp" />
 
         </RelativeLayout>
 

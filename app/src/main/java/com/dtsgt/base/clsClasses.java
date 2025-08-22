@@ -1758,6 +1758,7 @@ public class clsClasses {
         public int  dia;
         public int  hora;
         public int  cant;
+        public String nombre;
     }
 
     public class clsT_almacen {
