@@ -247,7 +247,7 @@
             android:onClick="consFinal"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:text="Consumidor Final"
+            android:text="C.F."
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#000000"
             android:textSize="24sp"

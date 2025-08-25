@@ -3207,10 +3207,12 @@ public class WSRec extends PBase {
             clsBeP_RES_SALA item = new clsBeP_RES_SALA();
             clsClasses.clsP_res_sala var;
 
-            script.add("DELETE FROM P_res_sala");
 
             items = xobj.getresult(clsBeP_RES_SALAList.class, "GetP_RES_SALA");
             if (items==null) return;
+
+            script.add("DELETE FROM P_res_sala");
+
 
             try {
                 if (items.items.size() == 0) return;
@@ -3248,10 +3250,12 @@ public class WSRec extends PBase {
             clsBeP_RES_MESA item = new clsBeP_RES_MESA();
             clsClasses.clsP_res_mesa var;
 
-            script.add("DELETE FROM P_RES_MESA");
 
             items = xobj.getresult(clsBeP_RES_MESAList.class, "GetP_RES_MESA");
             if (items==null) return;
+
+            script.add("DELETE FROM P_RES_MESA");
+
 
             try {
                 if (items.items.size() == 0) return;
@@ -3293,10 +3297,10 @@ public class WSRec extends PBase {
             clsBeP_RES_GRUPO item = new clsBeP_RES_GRUPO();
             clsClasses.clsP_res_grupo var;
 
-            script.add("DELETE FROM P_RES_GRUPO");
-
             items = xobj.getresult(clsBeP_RES_GRUPOList.class, "GetP_RES_GRUPO");
             if (items==null) return;
+
+            script.add("DELETE FROM P_RES_GRUPO");
 
             try {
                 if (items.items.size() == 0) return;

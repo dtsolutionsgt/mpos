@@ -73,6 +73,8 @@ public class BaseDatosScript {
 
             if (scriptTablasT(database)==0) {return 0;}
 
+
+
             return 1;
 
         } catch (SQLiteException e) {
@@ -193,6 +195,16 @@ public class BaseDatosScript {
                     "CODIGO_LINEA INTEGER NOT NULL,"+
                     "IMAGEN TEXT,"+
                     "PRIMARY KEY ([CODIGO_LINEA])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [P_linea_impresora] ("+
+                    "CODIGO_LINEA_IMPRESORA INTEGER NOT NULL,"+
+                    "CODIGO_LINEA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_IMPRESORA INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_LINEA_IMPRESORA])"+
                     ");";
             database.execSQL(sql);
 
@@ -360,9 +372,22 @@ public class BaseDatosScript {
                     "CODIGO_ESCENARIO_IVA INTEGER NOT NULL,"+
                     "CODIGO_MUNICIPIO TEXT NOT NULL,"+
                     "CODIGO_PROVEEDOR INTEGER NOT NULL,"+
+                    "FECHA_CONTR INTEGER NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_SUCURSAL])"+
                     ");";
              database.execSQL(sql);
+
+            sql="CREATE TABLE [P_res_sala] ("+
+                    "CODIGO_SALA INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "ESCALA REAL NOT NULL,"+
+                    "TAM_LETRA REAL NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_SALA])"+
+                    ");";
+            database.execSQL(sql);
 
             sql="CREATE TABLE [P_STOCK] ("+
                     "[CODIGO] INT NOT NULL,"+

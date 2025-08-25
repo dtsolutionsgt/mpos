@@ -226,7 +226,7 @@ public class Venta extends PBase {
 
             setControls();
 
-             relmasvendidos.setVisibility(View.GONE);
+            //relmasvendidos.setVisibility(View.GONE);
             if (gl.peAIMasVendidos) {
                 relmasvendidos.setVisibility(View.VISIBLE);
                 cargaDatosMV();

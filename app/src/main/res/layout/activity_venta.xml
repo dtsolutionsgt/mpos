@@ -349,8 +349,9 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="54dp">
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="54dp"
+                android:layout_toEndOf="@+id/relwrap">
 
                 <RelativeLayout
                     android:id="@+id/relKeyBase"
@@ -410,7 +411,7 @@
                                     android:tag="7"
                                     android:text="7"
                                     android:textColor="#000000"
-                                    android:textSize="30sp"
+                                    android:textSize="26sp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -428,7 +429,7 @@
                                     android:tag="8"
                                     android:text="8"
                                     android:textColor="#000000"
-                                    android:textSize="30sp"
+                                    android:textSize="26sp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -446,7 +447,7 @@
                                     android:tag="4"
                                     android:text="4"
                                     android:textColor="#000000"
-                                    android:textSize="30sp"
+                                    android:textSize="26sp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -464,7 +465,7 @@
                                     android:tag="5"
                                     android:text="5"
                                     android:textColor="#000000"
-                                    android:textSize="30sp"
+                                    android:textSize="26sp"
                                     android:textStyle="bold" />
 
                             </RelativeLayout>
@@ -500,7 +501,7 @@
                                     android:tag="1"
                                     android:text="1"
                                     android:textColor="#000000"
-                                    android:textSize="30sp"
+                                    android:textSize="26sp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -518,7 +519,7 @@
                                     android:tag="2"
                                     android:text="2"
                                     android:textColor="#000000"
-                                    android:textSize="30sp"
+                                    android:textSize="26sp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -536,7 +537,7 @@
                                     android:tag="0"
                                     android:text="0"
                                     android:textColor="#000000"
-                                    android:textSize="30sp"
+                                    android:textSize="26sp"
                                     android:textStyle="bold" />
 
                             </RelativeLayout>
@@ -591,7 +592,7 @@
                                     android:tag="9"
                                     android:text="9"
                                     android:textColor="#000000"
-                                    android:textSize="30sp"
+                                    android:textSize="26sp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -609,7 +610,7 @@
                                     android:tag="6"
                                     android:text="6"
                                     android:textColor="#000000"
-                                    android:textSize="30sp"
+                                    android:textSize="26sp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -628,7 +629,7 @@
                                     android:tag="C"
                                     android:text="C"
                                     android:textColor="#000000"
-                                    android:textSize="30sp"
+                                    android:textSize="26sp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -713,7 +714,7 @@
                                     android:tag="3"
                                     android:text="3"
                                     android:textColor="#000000"
-                                    android:textSize="30sp"
+                                    android:textSize="26sp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -728,11 +729,10 @@
                                     android:clickable="true"
                                     android:gravity="center"
                                     android:onClick="doKey"
-                                    android:paddingBottom="20dp"
                                     android:tag="."
                                     android:text="."
                                     android:textColor="#000000"
-                                    android:textSize="34sp"
+                                    android:textSize="24sp"
                                     android:textStyle="bold" />
 
                             </RelativeLayout>
@@ -788,11 +788,10 @@
 
             <RelativeLayout
                 android:id="@+id/relwrap"
-                android:layout_width="wrap_content"
+                android:layout_width="130dp"
                 android:layout_height="match_parent"
                 android:layout_below="@id/rellaytot"
-                android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@id/relKeyb">
+                android:layout_alignParentLeft="true">
 
                 <GridView
                     android:id="@+id/grdbtn"
@@ -1021,6 +1020,13 @@
             android:layout_marginStart="0dp"
             android:layout_marginTop="1dp">
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recfam"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/relmasvend"
+                android:layout_marginBottom="3dp" />
+
             <RelativeLayout
                 android:id="@+id/relmasvend"
                 android:layout_width="match_parent"
@@ -1080,13 +1086,6 @@
                     android:padding="5dp"
                     android:src="@drawable/masvendido" />
             </RelativeLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recfam"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@+id/relmasvend"
-                android:layout_marginBottom="3dp" />
 
         </RelativeLayout>
 

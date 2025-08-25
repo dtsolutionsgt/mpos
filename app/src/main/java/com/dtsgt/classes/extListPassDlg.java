@@ -265,7 +265,9 @@ public class extListPassDlg {
         int fwidth,fheight,icount,rlcount;
         int itemHeight,headerHeight,footerHeight;
 
-        fwidth=bwidth;fheight=bheight;
+        fwidth=bwidth;
+        fwidth=0;
+        fheight=bheight;
 
         adapter=new Adapter(cont);
         mList.setAdapter(adapter);
@@ -279,7 +281,13 @@ public class extListPassDlg {
         if (icount>rlcount) icount=rlcount;
         if (icount<mminlines) icount=mminlines;
 
-        if (fwidth==0) fwidth=bwidth;
+        DisplayMetrics displayMetrics = cont.getResources().getDisplayMetrics();
+
+        //if (fwidth==0) fwidth=bwidth;
+        if (fwidth==0) {
+            double dw=displayMetrics.widthPixels;dw=dw*0.35;
+            fwidth =(int) dw;
+        }
 
         if (mwidth*mheight>0) {
             fwidth=mwidth;
@@ -302,7 +310,6 @@ public class extListPassDlg {
             }
         }
 
-        DisplayMetrics displayMetrics = cont.getResources().getDisplayMetrics();
         int dispw = displayMetrics.widthPixels;dispw=(int) (0.9*dispw);
         int disph = displayMetrics.heightPixels;disph=(int) (0.9*disph);
 

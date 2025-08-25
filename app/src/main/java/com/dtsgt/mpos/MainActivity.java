@@ -136,15 +136,13 @@ public class MainActivity extends PBase {
 
             if (pantallaHorizontal()) {
                 if (scrdim > 6) {
-                    setContentView(R.layout.activity_main);
-                    modopantalla = 1;
+                    setContentView(R.layout.activity_main);modopantalla = 1;
                 } else {
-                    setContentView(R.layout.activity_main2);
-                    modopantalla = 3;
+                    setContentView(R.layout.activity_main);modopantalla = 1;
+                    //setContentView(R.layout.activity_main2);modopantalla = 3;
                 }
             } else {
-                setContentView(R.layout.activity_main);
-                modopantalla = 2;
+                setContentView(R.layout.activity_main);modopantalla = 2;
             }
 
             try {
@@ -522,6 +520,11 @@ public class MainActivity extends PBase {
             gl.autocom = 0;
             toastcent("¡La base de datos está vacia!");
             browse = 1;
+
+            dbVers = new BaseDatosVersion(this, db, Con);
+            dbVers.update();
+
+
             Intent intent = new Intent(MainActivity.this, WSRec.class);
             intent.putExtra("bd_vacia", true);
             startActivity(intent);
