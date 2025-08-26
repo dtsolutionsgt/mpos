@@ -828,6 +828,7 @@ public class FELFactura extends PBase {
 
                 tipo_producto = f.prodTipo(D_facturadObj.items.get(i).producto);
 
+                /*
                 if (tipo_producto.equalsIgnoreCase("P")) {
 
                     UpdateToStock =D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
@@ -842,6 +843,7 @@ public class FELFactura extends PBase {
                         }
                     }
                 }
+                */
             }
 
             for (int i = 0; i < D_facturapObj.count; i++) {
