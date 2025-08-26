@@ -240,6 +240,19 @@ public class extListDlg {
         if (mwidth<100) mwidth=0;
     }
 
+    public void setWidthPerc(int pWidth) {
+        DisplayMetrics displayMetrics = cont.getResources().getDisplayMetrics();
+        int scrw=displayMetrics.widthPixels;
+        int limw=(int) (0.9*scrw);
+
+        if (pWidth>100) pWidth=100;
+        if (pWidth<0) pWidth=0;
+
+        double dispw = scrw;dispw=pWidth*dispw/100;
+        if (dispw>limw) dispw=limw;
+        mwidth=(int) dispw;
+    }
+
     public void setHeight(int pHeight) {
         mheight=pHeight;
         if (mheight<100) mheight=0;
@@ -294,7 +307,6 @@ public class extListDlg {
         mList.setAdapter(adapter);
         icount=adapter.getCount();rlcount=icount;
         if (icount<1) return;
-
 
         if (mlines>0) {
             icount=mlines;mheight=0;

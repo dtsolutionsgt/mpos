@@ -2097,6 +2097,8 @@ public class Venta extends PBase {
         lbldocesa.setVisibility(View.INVISIBLE);
         relenvio.setVisibility(View.INVISIBLE);
 
+        activarEnvio();
+
         khand.clear(true);khand.enable();
 
         uid="0";
@@ -4639,6 +4641,7 @@ public class Venta extends PBase {
         try {
             extListDlg listdlg = new extListDlg();
             listdlg.buildDialog(Venta.this,"Los más vendidos");
+            listdlg.setWidthPerc(45);
 
             for (int i = 0; i <masvend.size(); i++) {
                 listdlg.add(""+masvend.get(i).codigo_producto,masvend.get(i).nombre);
@@ -5219,6 +5222,7 @@ public class Venta extends PBase {
 
         lbldocesa.setVisibility(View.INVISIBLE);
         relenvio.setVisibility(View.INVISIBLE);
+        activarEnvio();
 
         if (gl.codigo_pais.equalsIgnoreCase("SV")) {
             if (gl.mododocesa>=0) {
@@ -5238,12 +5242,7 @@ public class Venta extends PBase {
 
         } else reldocesa.setVisibility(View.INVISIBLE);
 
-        if (gl.peNotaEnvio) {
-            reldocesa.setVisibility(View.VISIBLE);
-            lbldocesa.setVisibility(View.INVISIBLE);
-            relenvio.setVisibility(View.VISIBLE);
-            lbldocesa.setText("ENVIO");
-        }
+        activarEnvio();
 
         gl.exitflag=false;
         if (!gl.scancliente.isEmpty())  gl.cliente=gl.scancliente;
@@ -5288,6 +5287,8 @@ public class Venta extends PBase {
             lblVend.setText("");lbldocesa.setVisibility(View.INVISIBLE);
             relenvio.setVisibility(View.INVISIBLE);
         }
+
+        activarEnvio();
     }
 
     private double totalCredito() {
@@ -5909,6 +5910,15 @@ public class Venta extends PBase {
             }
 
         } catch (Exception e) {
+        }
+    }
+
+    private void activarEnvio() {
+        if (gl.peNotaEnvio) {
+            reldocesa.setVisibility(View.VISIBLE);
+            lbldocesa.setVisibility(View.INVISIBLE);
+            relenvio.setVisibility(View.VISIBLE);
+            lbldocesa.setText("ENVIO");
         }
     }
 
@@ -7006,6 +7016,7 @@ public class Venta extends PBase {
                 browse=0;
                 lblVend.setText(" ");
                 lbldocesa.setVisibility(View.INVISIBLE);relenvio.setVisibility(View.INVISIBLE);
+                activarEnvio();
 
                 gl.nit_tipo="N";
                 gl.numero_orden=" ";
