@@ -123,7 +123,7 @@ public class MainActivity extends PBase {
     private boolean bloqueo_venta=false;
 
     // ***************************************
-    private String parVer = "5.6.2.0";
+    private String parVer = "5.6.3.0";
 
     //ver. 5.6. - registro de version actual en Firebase
 
@@ -139,8 +139,8 @@ public class MainActivity extends PBase {
                     setContentView(R.layout.activity_main);
                     modopantalla = 1;
                 } else {
-                    setContentView(R.layout.activity_main2);
-                    modopantalla = 3;
+                    setContentView(R.layout.activity_main);modopantalla = 1;
+                    //setContentView(R.layout.activity_main2);modopantalla = 3;
                 }
             } else {
                 setContentView(R.layout.activity_main);

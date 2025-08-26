@@ -4474,7 +4474,7 @@ public class FacturaRes extends PBase {
 
     //endregion
 
-	//region Nota envio
+	//region Nota Envio
 
 	private void corelNotaEnvio() {
 		long necor,lcodr;
@@ -4602,7 +4602,6 @@ public class FacturaRes extends PBase {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
 	}
-
 
 	//endregion
 
