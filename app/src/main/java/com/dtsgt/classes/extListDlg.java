@@ -253,6 +253,10 @@ public class extListDlg {
         mwidth=(int) dispw;
     }
 
+    public void setWidth33() {
+        setWidthPerc(33);
+    }
+
     public void setHeight(int pHeight) {
         mheight=pHeight;
         if (mheight<100) mheight=0;

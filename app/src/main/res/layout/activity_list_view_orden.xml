@@ -63,7 +63,7 @@
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#575757"
-        android:textSize="38sp"
+        android:textSize="28sp"
         android:textStyle="bold" />
 
     <TextView
